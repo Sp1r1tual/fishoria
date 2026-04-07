@@ -10,8 +10,8 @@ import { add } from 'date-fns';
 import ms from 'ms';
 import * as bcrypt from 'bcrypt';
 
-import { RedisService } from 'src/common/redis/redis.service';
-import { MailService } from 'src/mail/mail.service';
+import { RedisService } from '../common/redis/redis.service';
+import { MailService } from '../mail/mail.service';
 import { GoogleAuthPayloadDto } from './dto/google-payload.dto';
 import { RegisterDto } from './dto/register.dto';
 import { AuthEntity } from './entities/auth.entity';
