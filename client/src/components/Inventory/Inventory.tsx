@@ -74,6 +74,24 @@ export function Inventory({ isModal = false }: { isModal?: boolean }) {
     }
   };
 
+  const sellButton = inventory.length > 0 && (
+    <WoodyButton
+      variant="green"
+      size="sm"
+      id="sell-all-btn"
+      onClick={handleSellAll}
+      disabled={sellMutation.isPending}
+    >
+      {t('inventory.sellAll')} —{' '}
+      <img
+        src={coinIcon}
+        alt="coins"
+        className={styles['inventory__coin-icon-btn-sm']}
+      />{' '}
+      {totalValue}
+    </WoodyButton>
+  );
+
   const content = (
     <div
       className={`${styles['inventory__inner']} ${!isModal ? 'fade-in' : ''}`}
@@ -84,6 +102,7 @@ export function Inventory({ isModal = false }: { isModal?: boolean }) {
             title={t('inventory.title')}
             titleIcon={keepnetIcon}
             onBack={handleBack}
+            headerExtra={sellButton}
           />
         </>
       )}
@@ -203,23 +222,7 @@ export function Inventory({ isModal = false }: { isModal?: boolean }) {
               </table>
             </div>
           </section>
-          <div className={styles['inventory__actions']}>
-            <WoodyButton
-              variant="green"
-              id="sell-all-btn"
-              className={styles['inventory__sell-btn']}
-              onClick={handleSellAll}
-              disabled={sellMutation.isPending}
-            >
-              {t('inventory.sellAll')} —{' '}
-              <img
-                src={coinIcon}
-                alt="coins"
-                className={styles['inventory__coin-icon-btn']}
-              />{' '}
-              {totalValue}
-            </WoodyButton>
-          </div>
+          {/* Кнопка тепер у хедері */}
         </>
       )}
     </div>
@@ -235,6 +238,7 @@ export function Inventory({ isModal = false }: { isModal?: boolean }) {
       titleIcon={keepnetIcon}
       onBack={handleBack}
       className={styles.inventory}
+      headerExtra={sellButton}
     >
       {content}
     </ScreenContainer>

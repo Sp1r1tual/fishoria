@@ -112,7 +112,7 @@
 }
 
 .stats-card__species-list {
-  padding: 16px 20px;
+  padding: 16px 0;
   display: flex;
   flex-direction: column;
   gap: 12px;

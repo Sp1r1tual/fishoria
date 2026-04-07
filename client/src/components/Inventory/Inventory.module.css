@@ -14,14 +14,14 @@
   z-index: 1;
   display: flex;
   flex-direction: column;
+  gap: 12px;
   flex: 1;
 }
 
 .inventory__stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-bottom: 16px;
+  gap: 8px;
 }
 
 @media (min-width: 640px) {
@@ -34,12 +34,13 @@
   background: #0f172a;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-lg);
-  padding: 10px 6px;
+  padding: 2px 8px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 6px;
+  min-height: 32px;
 }
 
 @media (max-width: 380px) {
@@ -49,31 +50,31 @@
 }
 
 .inventory__stat-value {
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: #fff;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .inventory__stat-value--accent {
-  color: var(--clr-accent);
+  color: #fbbf24;
 }
 
 .inventory__stat-icon {
-  width: 28px;
-  height: 28px;
+  width: 14px;
+  height: 14px;
   object-fit: contain;
 }
 
 .inventory__stat-label {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.55rem;
+  font-weight: 800;
   color: var(--clr-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.01em;
+  opacity: 0.7;
 }
 
 .inventory__table-container {
@@ -81,7 +82,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   flex: 1;
 }
 
@@ -108,7 +109,7 @@
 }
 
 .inventory__table td {
-  padding: 16px;
+  padding: 12px 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   font-size: 0.9rem;
   vertical-align: middle;
@@ -183,14 +184,9 @@
   opacity: 0.5;
 }
 
-.inventory__actions {
-  display: flex;
-  justify-content: center;
-  padding: 12px 0;
-}
-
-.inventory__coin-icon-btn {
-  width: 32px;
-  height: 32px;
+.inventory__coin-icon-btn-sm {
+  width: 18px;
+  height: 18px;
   object-fit: contain;
+  margin-top: -2px;
 }

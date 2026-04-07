@@ -81,3 +81,19 @@
 .info_btn {
   pointer-events: auto;
 }
+
+@media (max-width: 1000px) {
+  .header {
+    padding: 8px 12px;
+    min-height: 48px;
+  }
+
+  .title {
+    font-size: 1.15rem;
+  }
+
+  .title_icon {
+    width: 24px;
+    height: 24px;
+  }
+}
