@@ -1104,6 +1104,10 @@ export class LakeScene implements IScene {
       this.phase = 'bite';
       this.callbacks.onBite();
       this.callbacks.onPhaseChange(this.phase);
+
+      if (this.playerReeling && this.hookConfig?.rigType === 'spinning') {
+        this.hookFish();
+      }
     }
 
     return this.smoothedInterest;

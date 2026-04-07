@@ -164,13 +164,10 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
               (g: IOwnedGearItem) => g.uid === currentHookUid,
             );
             const hookName = hookInstance
-              ? SHOP_HOOKS.find((h) => h.id === hookInstance.itemId)?.name ||
-                'Hook'
+              ? t(`gear_items.${hookInstance.itemId}.name`)
               : 'Hook';
 
-            const baitName = isLure
-              ? hookName
-              : BAITS[activeBait]?.name || activeBait;
+            const baitName = isLure ? hookName : t(`baits.${activeBait}.name`);
 
             try {
               await breakMutationRef.current.mutateAsync({
@@ -213,10 +210,8 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
 
             const brokenInstance =
               targetType === 'rod' ? rodInstance : reelInstance;
-            const catalog = targetType === 'rod' ? SHOP_RODS : SHOP_REELS;
             const brokenName = brokenInstance
-              ? catalog.find((r) => r.id === brokenInstance.itemId)?.name ||
-                'Fishing Gear'
+              ? t(`gear_items.${brokenInstance.itemId}.name`)
               : 'Fishing Gear';
 
             try {
@@ -247,22 +242,13 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
               let shouldLoseBait = false;
 
               if (isScaredAway) {
-                // Was just a fish interested, but player pulled away. Bait is 100% safe.
                 shouldLoseHook = false;
                 shouldLoseBait = false;
               } else if (isLure) {
-                // Lures are both bait and hook. 5% chance to lose on escape.
-                if (Math.random() < 0.02) {
-                  shouldLoseHook = true;
-                }
+                shouldLoseHook = false;
               } else {
-                // For regular bait:
-                // 1. Bait is definitely lost if the fish was hooked.
-                // 2. If it was only a nibble (not hooked), there's a 50% chance it was eaten anyway.
                 shouldLoseBait = wasHooked ? true : Math.random() < 0.5;
 
-                // 3. Hook is only lost if the fish was actually hooked, and even then, only by chance.
-                // If the fish just swam away (wasHooked=false), the hook is 100% safe.
                 if (wasHooked && Math.random() < 0.1) {
                   shouldLoseHook = true;
                 }
@@ -279,13 +265,12 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
                   (g: IOwnedGearItem) => g.uid === currentHookUid,
                 );
                 const hookName = hookInstance
-                  ? SHOP_HOOKS.find((h) => h.id === hookInstance.itemId)
-                      ?.name || 'Hook'
+                  ? t(`gear_items.${hookInstance.itemId}.name`)
                   : 'Hook';
 
                 const baitName = isLure
                   ? hookName
-                  : BAITS[activeBait]?.name || activeBait;
+                  : t(`baits.${activeBait}.name`);
 
                 // Send mutation to sync gear damage and potentially lost hooks/baits
                 breakMutationRef.current.mutate({
@@ -354,13 +339,12 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
                 (g: IOwnedGearItem) => g.uid === currentHookUid,
               );
               const hookName = hookInstance
-                ? SHOP_HOOKS.find((h) => h.id === hookInstance.itemId)?.name ||
-                  'Hook'
+                ? t(`gear_items.${hookInstance.itemId}.name`)
                 : 'Hook';
 
               const baitName = isLure
                 ? hookName
-                : BAITS[activeBait]?.name || activeBait;
+                : t(`baits.${activeBait}.name`);
 
               try {
                 await breakMutationRef.current.mutateAsync({

@@ -1,6 +1,7 @@
 import type { IFishSpeciesConfig, CatchResultType } from '@/common/types';
 
 import { CATCH_RESULT } from '@/common/configs/game';
+import { getFishQuality } from '@/common/utils/fish.utils';
 
 export function generateCatch(
   fish: IFishSpeciesConfig,
@@ -11,7 +12,8 @@ export function generateCatch(
   lakeName: string,
   trashChance: number,
 ): CatchResultType {
-  const isTrash = Math.random() < trashChance;
+  const { isTrophy } = getFishQuality(weight, fish.weightRange.max);
+  const isTrash = !isTrophy && Math.random() < trashChance;
 
   if (isTrash) {
     const item =
