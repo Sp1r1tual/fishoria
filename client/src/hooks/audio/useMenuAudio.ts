@@ -52,18 +52,18 @@ export function useMenuAudio(musicActive = true) {
         const diff = targetVolume - currentMenuVolume;
         if (Math.abs(diff) < 0.01) {
           currentMenuVolume = targetVolume;
-          musicAudio.volume = currentMenuVolume;
+          musicAudio.volume = Math.max(0, Math.min(1, currentMenuVolume));
           if (fadeInterval) clearInterval(fadeInterval);
           fadeInterval = null;
         } else {
           currentMenuVolume += diff > 0 ? 0.02 : -0.02; // Change by ~2% per 20ms
-          musicAudio.volume = currentMenuVolume;
+          musicAudio.volume = Math.max(0, Math.min(1, currentMenuVolume));
         }
       }, 20);
     } else {
       fadeInterval = setInterval(() => {
         currentMenuVolume = Math.max(0, currentMenuVolume - 0.03);
-        musicAudio.volume = currentMenuVolume;
+        musicAudio.volume = Math.max(0, Math.min(1, currentMenuVolume));
         if (currentMenuVolume <= 0) {
           musicAudio.pause();
           if (fadeInterval) clearInterval(fadeInterval);
@@ -87,7 +87,7 @@ export function useMenuAudio(musicActive = true) {
   const playClick = useCallback(() => {
     if (!sfxEnabledRef.current) return;
     const clone = clickAudio.cloneNode() as HTMLAudioElement;
-    clone.volume = sfxVolumeRef.current / 100;
+    clone.volume = Math.max(0, Math.min(1, sfxVolumeRef.current / 100));
     clone.play().catch(() => {});
   }, []);
 

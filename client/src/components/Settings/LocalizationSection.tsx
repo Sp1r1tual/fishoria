@@ -5,6 +5,7 @@ import { loadTranslations, markLanguageInitialized } from '@/i18n';
 import { useUpdateLanguageMutation } from '@/queries/player.queries';
 
 import styles from './Settings.module.css';
+import { WoodySelect } from '../UI/WoodySelect/WoodySelect';
 
 export function LocalizationSection() {
   const { mutate: updateLangOnServer } = useUpdateLanguageMutation();
@@ -29,19 +30,14 @@ export function LocalizationSection() {
         <label className={styles['settings__label']}>
           {t('settings.selectLanguage')}
         </label>
-        <select
-          id="language-select"
-          name="language"
-          className={styles['settings__select']}
+        <WoodySelect
           value={i18n.language ?? 'en'}
-          onChange={(e) => {
-            handleLanguageChange(e.target.value as 'en' | 'uk');
-            (e.target as HTMLSelectElement).blur();
-          }}
-        >
-          <option value="en">{t('settings.langEn')}</option>
-          <option value="uk">{t('settings.langUk')}</option>
-        </select>
+          onChange={(val) => handleLanguageChange(val as 'en' | 'uk')}
+          options={[
+            { value: 'en', label: t('settings.langEn') },
+            { value: 'uk', label: t('settings.langUk') },
+          ]}
+        />
       </div>
     </section>
   );
