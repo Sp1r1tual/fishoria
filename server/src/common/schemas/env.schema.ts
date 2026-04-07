@@ -41,4 +41,6 @@ export const envSchema = z.object({
 
   SMTP_USER: z.email('SMTP_USER must be a valid email'),
   SMTP_PASSWORD: z.string().min(1, 'SMTP_PASSWORD is required'),
+
+  COOKIE_DOMAIN: z.string().optional(),
 });

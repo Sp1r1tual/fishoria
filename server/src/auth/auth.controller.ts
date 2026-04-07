@@ -257,6 +257,7 @@ export class AuthController {
     role: string,
   ) {
     const isProd = this.configService.get('NODE_ENV') === 'production';
+    const cookieDomain = this.configService.get<string>('COOKIE_DOMAIN');
     const jwtExp = this.configService.get<string>(
       'JWT_ACCESS_TOKEN_EXPIRATION',
     )!;
@@ -271,12 +272,14 @@ export class AuthController {
       secure: isProd,
       maxAge: jwtMs,
       sameSite: isProd ? 'none' : 'lax',
+      ...(cookieDomain && { domain: cookieDomain }),
     });
 
     res.cookie('Role', role, {
       secure: isProd,
       maxAge: jwtMs,
       sameSite: isProd ? 'none' : 'lax',
+      ...(cookieDomain && { domain: cookieDomain }),
     });
 
     res.cookie('Refresh', refreshToken, {
@@ -284,25 +287,30 @@ export class AuthController {
       secure: isProd,
       maxAge: ms(refreshExp as ms.StringValue),
       sameSite: isProd ? 'none' : 'lax',
+      ...(cookieDomain && { domain: cookieDomain }),
     });
   }
 
   private clearCookies(res: Response) {
     const isProd = this.configService.get('NODE_ENV') === 'production';
+    const cookieDomain = this.configService.get<string>('COOKIE_DOMAIN');
 
     res.clearCookie('Authentication', {
       httpOnly: true,
       secure: isProd,
       sameSite: isProd ? 'none' : 'lax',
+      ...(cookieDomain && { domain: cookieDomain }),
     });
     res.clearCookie('Role', {
       secure: isProd,
       sameSite: isProd ? 'none' : 'lax',
+      ...(cookieDomain && { domain: cookieDomain }),
     });
     res.clearCookie('Refresh', {
       httpOnly: true,
       secure: isProd,
       sameSite: isProd ? 'none' : 'lax',
+      ...(cookieDomain && { domain: cookieDomain }),
     });
   }
 }
