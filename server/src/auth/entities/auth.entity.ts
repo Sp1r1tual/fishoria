@@ -88,14 +88,14 @@ export class AuthEntity {
   }
 
   async executePasswordResetTx(userId: string, hashPassword: string) {
-    return this.prisma.$transaction([
-      this.prisma.user.update({
+    return this.prisma.$transaction(async (tx) => {
+      await tx.user.update({
         where: { id: userId },
         data: { password: hashPassword },
-      }),
-      this.prisma.passwordResetToken.deleteMany({
+      });
+      await tx.passwordResetToken.deleteMany({
         where: { userId },
-      }),
-    ]);
+      });
+    });
   }
 }
