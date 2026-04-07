@@ -153,7 +153,8 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
 
             dispatch(setCatch(result));
           },
-          onLineBroke: async (lostMeters, type = 'line') => {
+          onLineBroke: async (meters, type = 'line') => {
+            const lostMeters = Math.round(meters);
             audioRef.current.onLineBroke();
             const activeBait = playerRef.current?.activeBait || 'worm';
             const isLure = activeBait.startsWith('lure_');

@@ -46,7 +46,7 @@ export function LossSync() {
           </p>
           {lostMeters ? (
             <p className={styles.lostLineDetails}>
-              {t('loss.lostLine', { meters: lostMeters })}
+              {t('loss.lostLine', { meters: Math.round(lostMeters) })}
             </p>
           ) : null}
         </div>

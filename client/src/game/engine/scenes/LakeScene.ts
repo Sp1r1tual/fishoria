@@ -683,7 +683,7 @@ export class LakeScene implements IScene {
     } else {
       this.phase = 'broken';
       this.callbacks.onPhaseChange(this.phase);
-      this.callbacks.onLineBroke(this.castDistanceM);
+      this.callbacks.onLineBroke(Math.round(this.castDistanceM));
       this.scheduleReset(SCENE_TIMING.brokenResetDelay);
     }
     this.callbacks.onSnagEnd?.(success);
