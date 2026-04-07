@@ -6,6 +6,10 @@ Feel the adrenaline rush of fighting a trophy catch, carefully select your tackl
 
 ---
 
+![Fishoria](https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/marketing/fishoria_collage.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL21hcmtldGluZy9maXNob3JpYV9jb2xsYWdlLnBuZyIsImlhdCI6MTc3NTU5MDQ5NSwiZXhwIjo0ODk3NjU0NDk1fQ.aMFBQtMbMo_aVJi9cA8ZKxtbAdVYF1DOJMrAlsuDkPs)
+
+---
+
 ## Why will Fishoria hook you from the first minute?
 
 🌊 **Living Ecosystem & Advanced Fish AI**
@@ -65,9 +69,6 @@ Fishoria is also a technical masterpiece. We've combined the latest cutting-edge
 
 ---
 
-## License & Authorship
+## License
 
-Crafted with a profound love for detail and passion for game development.
-All rights reserved. Permission is required for modification or distribution.
-
-**Author:** Atmosphoria Software
+This project is licensed under the MIT License – see the [LICENCE.md](./LICENCE.md) file for details.
