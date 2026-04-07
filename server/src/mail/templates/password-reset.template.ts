@@ -5,18 +5,18 @@ export const getPasswordResetTemplate = (
 ) => {
   const isUa = lang === 'ua';
 
-  const title = isUa ? 'ЦЕНТР БЕЗПЕКИ' : 'SECURITY HUB';
+  const title = isUa ? 'ВІДНОВЛЕННЯ ПАРОЛЮ' : 'PASSWORD RESET';
   const message = isUa
-    ? `Загубили гачок? 🎣 <br> Не хвилюйтеся, у нас є запасний для вас!`
-    : `Did you lose your hook? 🎣 <br> No worries, we've got a backup for you!`;
-  const buttonText = isUa ? 'СКИНУТИ ПАРОЛЬ' : 'RESET PASSWORD';
+    ? `Ми отримали запит на скидання паролю для вашого акаунту на ${projectName}. <br> Натисніть кнопку нижче, щоб створити новий пароль.`
+    : `We received a request to reset your password for your account on ${projectName}. <br> Click the button below to create a new password.`;
+  const buttonText = isUa ? 'ВІДНОВИТИ ПАРОЛЬ' : 'RESET PASSWORD';
   const orCopy = isUa ? 'Або скопіюйте це посилання:' : 'Or copy this link:';
   const ignoreText = isUa
-    ? 'Якщо ви не надсилали цей запит, ви можете сміливо ігнорувати цей електронний лист.'
+    ? 'Якщо ви не робили цей запит, проігноруйте цей електронний лист.'
     : "If you didn't request this, you can safely ignore this email.";
   const footerText = isUa
-    ? `© ${new Date().getFullYear()} ${projectName}. Безпека — наш пріоритет!`
-    : `© ${new Date().getFullYear()} ${projectName}. Security is our priority!`;
+    ? `© ${new Date().getFullYear()} ${projectName}. Всі права захищено.`
+    : `© ${new Date().getFullYear()} ${projectName}. All rights reserved.`;
 
   return `
       <!DOCTYPE html>

@@ -5,15 +5,15 @@ export const getActivationTemplate = (
 ) => {
   const isUa = lang === 'ua';
 
-  const title = isUa ? 'РИБАЛКА ТА ПЕРЕМОГА' : 'FISH & WIN';
+  const title = isUa ? 'ПІДТВЕРДЖЕННЯ РЕЄСТРАЦІЇ' : 'ACCOUNT ACTIVATION';
   const message = isUa
-    ? `Сьогоднішній улов! 🎣 <br> Ви майже готові розпочати свою рибальську пригоду.`
-    : `Catch of the day! 🎣 <br> You're almost ready to start your fishing adventure.`;
+    ? `Дякуємо за реєстрацію на ${projectName}. <br> Будь ласка, активуйте свій акаунт, натиснувши кнопку нижче.`
+    : `Thank you for registering on ${projectName}. <br> Please activate your account by clicking the button below.`;
   const buttonText = isUa ? 'АКТИВУВАТИ АКАУНТ' : 'ACTIVATE ACCOUNT';
   const orCopy = isUa ? 'Або скопіюйте це посилання:' : 'Or copy this link:';
   const footerText = isUa
-    ? `© ${new Date().getFullYear()} ${projectName}. Вдалої риболовлі!`
-    : `© ${new Date().getFullYear()} ${projectName}. Happy fishing!`;
+    ? `© ${new Date().getFullYear()} ${projectName}. Всі права захищено.`
+    : `© ${new Date().getFullYear()} ${projectName}. All rights reserved.`;
 
   return `
       <!DOCTYPE html>
