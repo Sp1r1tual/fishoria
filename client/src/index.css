@@ -40,41 +40,36 @@
 
 html,
 body {
-  height: 100%;
+  min-height: 100dvh;
   width: 100%;
   margin: 0;
   padding: 0;
   background-color: #000;
   color: var(--clr-text);
   font-family: var(--font-sans);
-
-  /* Render Quality improvements */
+  background-color: var(--clr-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   image-rendering: -webkit-optimize-contrast;
-
   -webkit-overflow-scrolling: touch;
   touch-action: manipulation;
 }
 
 #root {
-  min-height: 100vh;
+  min-height: 100dvh;
   width: 100%;
   background-color: #000;
-  /* 'clip' obstructs horizontal overflow like 'hidden' but does NOT create
-     a scroll container. If we used 'hidden', CSS spec forces overflow-y to
-     computed 'auto', giving #root its own vertical scrollbar alongside window. */
   overflow-x: clip;
   position: relative;
 }
 input,
-textarea {
+textarea,
+select {
   user-select: text;
   -webkit-user-select: text;
-  /* iOS zoom is triggered when font-size < 16px on focus.
-     Ensuring 16px here (globally) is the most SEO-friendly way to avoid auto-zoom. */
   font-size: 16px;
+  max-width: 100%;
 }
 
 img {

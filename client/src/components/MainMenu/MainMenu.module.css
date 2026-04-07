@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
 }
 
@@ -17,7 +17,7 @@
   position: fixed;
   inset: 0;
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   pointer-events: none;
   background: linear-gradient(
