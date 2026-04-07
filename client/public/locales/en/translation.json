@@ -373,6 +373,7 @@
     "name": "Name",
     "avatar": "Choose Avatar",
     "placeholder": "Enter name...",
+    "namePlaceholder": "Enter your name",
     "save": "Save Changes",
     "savedSuccess": "Profile updated!",
     "errorLength": "Name must be 3-24 characters",
@@ -622,7 +623,8 @@
     "cachingAudio": "Caching audio...",
     "assetsLoaded": "Assets loaded! Starting engine...",
     "preparing": "Preparing...",
-    "done": "Ready!"
+    "done": "Ready!",
+    "clickToStart": "Start The Game"
   },
   "debug": {
     "title": "Debug Terminal",
@@ -658,6 +660,9 @@
     "lost": "Lost: {{items}}",
     "lostLine": " and {{meters}}m of line"
   },
+  "errors": {
+    "unknown": "An unknown error occurred"
+  },
   "error": {
     "gear_incomplete": "Your equipment is incomplete or broken!",
     "no_bait": "You must select bait first!",
@@ -689,7 +694,11 @@
     "or_continue_with": "Or continue with",
     "title": "Fishoria | Welcome",
     "hero": {
-      "subtitle": "Gather your gear, explore reservoirs and catch the rarest fish! Your personal fishing adventure awaits."
+      "subtitle": "Gather your gear, explore reservoirs and catch the rarest fish! Your personal fishing adventure awaits.",
+      "ariaLabel": "Game introduction"
+    },
+    "features": {
+      "ariaLabel": "Game features"
     },
     "auth": {
       "login": "Login",
@@ -698,6 +707,10 @@
       "google": "Login with Google",
       "google_short": "Google",
       "backToLogin": "Back to Login",
+      "hidePassword": "Hide password",
+      "showPassword": "Show password",
+      "ariaLabel": "Authentication form",
+      "methodsAriaLabel": "Authentication methods",
       "errors": {
         "userNotFound": "User with this email not found.",
         "incorrectPassword": "Incorrect password.",
@@ -712,6 +725,25 @@
         "generic": "Something went wrong. Please try again.",
         "accountActivated": "Your account has been activated, you can now log in."
       }
+    },
+    "branding": {
+      "ariaLabel": "Developer information",
+      "developedBy": "Developed by",
+      "logoAlt": "Company Logo"
+    },
+    "gallery": {
+      "ariaLabel": "Game screenshots gallery",
+      "openAriaLabel": "Open full image",
+      "image1": "Fishoria gameplay — lake fishing",
+      "image2": "Fishoria gameplay — fishing action",
+      "image3": "Fishoria gameplay — rare fish catch",
+      "image4": "Fishoria gameplay — equipment",
+      "image5": "Fishoria gameplay — inventory",
+      "caption1": "Lake fishing",
+      "caption2": "Fishing action",
+      "caption3": "Rare catch",
+      "caption4": "Equipment",
+      "caption5": "Inventory"
     },
     "login": {
       "title": "Authentication",
@@ -762,7 +794,12 @@
     "save": "Save",
     "remove": "Remove",
     "discard": "Discard",
-    "close": "Close"
+    "close": "Close",
+    "serverUnavailableTitle": "Server Temporarily Unavailable",
+    "serverUnavailableDesc": "We are experiencing some technical issues on our side. Please try again in a few minutes.",
+    "serverUnavailable": "Server is currently unavailable",
+    "refresh": "Retry Connection",
+    "retry": "Retry"
   },
   "game": {
     "groundbait_expired": "Groundbait effect has expired!",
