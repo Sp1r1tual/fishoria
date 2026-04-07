@@ -10,7 +10,7 @@ export const envSchema = z.object({
   PORT: z.string().min(1, 'PORT is required'),
   CLIENT_URL: z.url('CLIENT_URL must be a valid URL'),
   API_URL: z.url('API_URL must be a valid URL'),
-  MAIL_API_URL: z.url('MAIL_API_URL must be a valid URL'),
+  COOKIE_DOMAIN: z.string().optional(),
 
   DATABASE_URL: z.url('DATABASE_URL must be a valid URL'),
   POOLER_DATABASE_URL: z.url('POOLER_DATABASE_URL must be a valid URL'),
@@ -41,6 +41,4 @@ export const envSchema = z.object({
 
   SMTP_USER: z.email('SMTP_USER must be a valid email'),
   SMTP_PASSWORD: z.string().min(1, 'SMTP_PASSWORD is required'),
-
-  COOKIE_DOMAIN: z.string().optional(),
 });
