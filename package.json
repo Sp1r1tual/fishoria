@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "author": "Atmosphoria Software",
   "scripts": {
+    "translations:check": "node scripts/check_translations.cjs",
     "prepare": "husky"
   },
   "lint-staged": {
