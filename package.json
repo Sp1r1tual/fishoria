@@ -1,0 +1,23 @@
+{
+  "name": "fishoria",
+  "private": true,
+  "version": "0.1.0",
+  "author": "Atmosphoria Software",
+  "scripts": {
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "client/**/*.{js,jsx,ts,tsx,css}": [
+      "npm run --prefix client lint:fix",
+      "npm run --prefix client format"
+    ],
+    "server/**/*.{js,ts}": [
+      "npm run --prefix server lint:fix",
+      "npm run --prefix server format"
+    ]
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0"
+  }
+}

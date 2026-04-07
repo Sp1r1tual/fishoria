@@ -1,0 +1,771 @@
+{
+  "nav": {
+    "back": "Back",
+    "close": "Close",
+    "ok": "OK",
+    "and": " and "
+  },
+  "mainMenu": {
+    "startFishing": "Start Fishing",
+    "shop": "Shop",
+    "keepnet": "Keepnet",
+    "statistics": "Statistics",
+    "equipment": "Equipment",
+    "settings": "Settings",
+    "guide": "Guide",
+    "quests": "Quests",
+    "help": "Help",
+    "saveProgress": "Save Progress",
+    "level": "Level {{level}}",
+    "savedSuccess": "Game saved!",
+    "savedError": "Failed to save game!",
+    "news": "News",
+    "achievements": "Achievements"
+  },
+  "settings": {
+    "title": "Settings",
+    "localization": "Localization",
+    "account": "Account",
+    "selectLanguage": "Interface Language",
+    "langEn": "English",
+    "langUk": "Українська",
+    "gameplay": "Gameplay",
+    "timeProgression": "Time Progression",
+    "timeGameMode": "Game Time (10m = 30s)",
+    "timeRealMode": "Real Time (1:1)",
+    "timeHint": "Choose how fast time passes in the game world.",
+    "audio": "Audio",
+    "music": "Music",
+    "soundEffects": "Sound Effects",
+    "ambientSounds": "Ambient Sounds",
+    "dangerZone": "Danger Zone",
+    "resetWarning": "This will permanently delete all progress, including currency, levels, fish catch history, and equipment.",
+    "resetButton": "Reset Progress (Restart Game)",
+    "resetConfirm": "Are you sure you want to completely wipe all progress? This cannot be undone!",
+    "logoutButton": "Logout from account",
+    "logoutConfirmTitle": "Logout",
+    "logoutConfirmMessage": "Are you sure you want to logout from your account?"
+  },
+  "statistics": {
+    "title": "Fisher Statistics",
+    "totalCaught": "Total Caught",
+    "totalWeight": "Total Weight",
+    "minWeight": "Min Weight",
+    "maxWeight": "Max Weight",
+    "speciesWeight": "Weight (Combined)",
+    "details": "Details",
+    "recordWeights": "Record Weights",
+    "noRecords": "No records yet."
+  },
+  "inventory": {
+    "title": "Keeper net",
+    "fish": "Fish",
+    "totalKg": "Total KG",
+    "sellValue": "Sell Value",
+    "balance": "Balance",
+    "empty": "Your keeper net is empty.",
+    "goFish": "Go fishing and catch something!",
+    "sellAll": "Sell All Items",
+    "deleteConfirmTitle": "Delete item?",
+    "deleteConfirmMessage": "Are you sure you want to delete {{name}}? This cannot be undone.",
+    "deleteConfirmBtn": "Delete",
+    "table": {
+      "fish": "Fish",
+      "weight": "Weight",
+      "bait": "Bait",
+      "lake": "Reservoir",
+      "value": "Value"
+    },
+    "soldMessage": "Fish sold for: {{value}} coins"
+  },
+  "guide": {
+    "title": "Fishing Guide",
+    "description": "Description",
+    "weightRange": "Weight Range",
+    "favoredBaits": "Favored Baits",
+    "favoredMix": "Favored Groundbait",
+    "any": "Any",
+    "noPreference": "No specific preference"
+  },
+  "quests": {
+    "title": "Active Quests",
+    "comingSoon": "Coming Soon",
+    "comingSoonDesc": "The quest system is currently under development. Soon you will be able to complete tasks, earn rewards, and discover secrets of the reservoirs!",
+    "claimed": "Claimed",
+    "claim": "Claim Reward",
+    "inProgress": "In Progress",
+    "noAvailable": "No quests available at the moment.",
+    "notification": "Quest completed!"
+  },
+  "help": {
+    "title": "Help & FAQ",
+    "sections": [
+      {
+        "title": "General Gameplay",
+        "items": [
+          {
+            "q": "How to start fishing?",
+            "a": "Select a location on the map (initial one is 'Forest Lake'), pick a casting spot, set up your gear, and hit the 'Cast' button. When the bobber goes underwater or you feel strong resistance (for spinning), strike and start reeling!"
+          },
+          {
+            "q": "How does game time work?",
+            "a": "The game uses accelerated time: 1 real second equals approximately 20 game seconds. The world stays alive even when you're offline — the system calculates elapsed time and updates weather upon your return."
+          },
+          {
+            "q": "How does weather affect fishing?",
+            "a": "Weather changes dynamically. Rain and clouds increase fish activity, especially predators. Clear skies make fish more cautious but allow lures to flash brighter."
+          }
+        ]
+      },
+      {
+        "title": "Locations & Lakes",
+        "items": [
+          {
+            "q": "What is special about the Forest Lake?",
+            "a": "It's a natural starting location. You'll mostly find small to medium fish like Crucian, Roach, and Perch. There is a slight water current, and occasionally you might snag some trash from the bottom."
+          },
+          {
+            "q": "How is the Fish Farm different?",
+            "a": "It's an artificial reservoir with crystal clear water and high fish density. It holds valuable species like Carp, Grass Carp, and large predators. There is no current, and the chance of catching trash here is very low."
+          }
+        ]
+      },
+      {
+        "title": "Fish Parameters",
+        "items": [
+          {
+            "q": "What is bite probability (baseCatchChance)?",
+            "a": "This is the base probability that a fish will be interested in your bait. A high value represents maximum initial interest."
+          },
+          {
+            "q": "How does weight affect the game?",
+            "a": "Weight determines the fish's price in the shop and its resistance during the fight. Heavier fish are harder to pull in but much more valuable."
+          },
+          {
+            "q": "What is fish activity?",
+            "a": "It defines how active a fish is at different times. High activity indicates the perfect time to fish, while low activity means the fish will mostly ignore your bait."
+          },
+          {
+            "q": "What does aggression do?",
+            "a": "Aggression is the force with which a fish pulls and jerks the line. High aggression increases the risk of snapping your line if you're not careful."
+          },
+          {
+            "q": "What is stamina?",
+            "a": "Stamina determines how long a fish can fight actively before getting tired. High stamina fish require more patience during reeling and easily exhaust your gear."
+          },
+          {
+            "q": "What is curiosity?",
+            "a": "This represents how quickly a fish approaches the bait once it notices it in the water."
+          },
+          {
+            "q": "Can you scare the fish?",
+            "a": "Yes, the fear parameter determines how easily a fish is spooked by loud splashes or incorrect lure movement."
+          }
+        ]
+      },
+      {
+        "title": "Fishing Mechanics",
+        "items": [
+          {
+            "q": "What gear types are available?",
+            "a": "Float — classic fishing where you see bites on a bobber. Feeder — bottom fishing with a groundbait cage. Spinning — active fishing with artificial lures requiring constant retrieval."
+          },
+          {
+            "q": "How does the tension system work?",
+            "a": "The tension bar shows the load on your gear. Red zone means risk of breaking. Empty zone means risk of fish escaping. Keep tension in the yellow-green zone."
+          },
+          {
+            "q": "How do lures affect predator catches?",
+            "a": "Different predators have specific preferences. For example, Pike loves wobblers and spoons, while Zander and Perch respond much better to vibrotails."
+          }
+        ]
+      },
+      {
+        "title": "Fish Species Tips",
+        "items": [
+          {
+            "q": "How to catch Perch?",
+            "a": "Perch is an active predator that bites best in the morning and evening. Vibrotails work great. Use light gear and active retrieval."
+          },
+          {
+            "q": "What is the best tactic for Pike?",
+            "a": "Pike is exceptionally aggressive and makes sharp jerks. It takes well to wobblers or spoons. Use strong fishing line and avoid pulling by force when it's actively fighting — let it tire out first."
+          },
+          {
+            "q": "How to catch a big Carp?",
+            "a": "Carp are most active during evening and night and boast incredible stamina. Use a feeder rig combined with 'Pea Porridge' groundbait and cast corn or dough as bait."
+          },
+          {
+            "q": "Where to find Zander?",
+            "a": "It's a strictly nocturnal hunter. Fish for it at night in deep waters using vibrotails, to which it responds incredibly well."
+          },
+          {
+            "q": "How to catch the legendary Catfish?",
+            "a": "Catfish are nocturnal and are by far the strongest fighters in the game. You'll need the most powerful gear available and should target the deepest holes using live bait or large vibrotails."
+          },
+          {
+            "q": "Why am I catching so many Ruffe?",
+            "a": "Ruffe has immense curiosity and bites almost always. If you want to avoid it and target bigger fish, consider changing your spot, fishing depth or bait type."
+          },
+          {
+            "q": "How to handle Grass Carp?",
+            "a": "It's a very shy and cautious fish. It requires careful casting and high endurance during the fight due to its natural strength and stamina."
+          }
+        ]
+      },
+      {
+        "title": "Special Baits & Mixtures",
+        "items": [
+          {
+            "q": "How does Groundbait work?",
+            "a": "Mixtures create an 'attraction zone' where fish swim more actively. It doesn't pull them like a magnet but keeps them within the scent radius longer."
+          },
+          {
+            "q": "When to use Vanillin Mix?",
+            "a": "It's perfect for quickly attracting schooling 'white' fish like Roach, Crucian, and Ruffe. Great for beginners."
+          },
+          {
+            "q": "What are Crushed Peas for?",
+            "a": "This is a heavy mixture for trophy fish like Carp and Grass Carp. It helps 'filter out' smaller fish so you can wait for a real monster."
+          },
+          {
+            "q": "How does Dried Blood help?",
+            "a": "This is a strong attractant for predators. It lures Zander, Perch, and Catfish out of their ambushes to your hook."
+          }
+        ]
+      },
+      {
+        "title": "Equipment & Economy",
+        "items": [
+          {
+            "q": "Do rods and reels wear out?",
+            "a": "Yes, fighting fish reduces durability. Use a Repair Kit to restore them, otherwise your gear might break at the worst moment."
+          },
+          {
+            "q": "Why different types of fishing line?",
+            "a": "Different lines have varying strength and visibility. Braided cord is the strongest, while fluorocarbon is nearly invisible to fish."
+          },
+          {
+            "q": "How to make money fast?",
+            "a": "Target Carp or predators (Pike, Zander) as they are worth more than small fish. Also, keep an eye on your keepnet capacity."
+          }
+        ]
+      }
+    ]
+  },
+  "catch": {
+    "baitUsed": "Bait",
+    "caughtAt": "Caught at",
+    "sizeRank": "Size",
+    "trophy": "🏆 Trophy",
+    "good": "⭐ Good",
+    "small": "📏 Small",
+    "keep": "Keep",
+    "release": "Release",
+    "discard": "Discard"
+  },
+  "weather": {
+    "rain": "Rain 🌧️",
+    "cloudy": "Cloudy ☁️",
+    "clear": "Clear ☀️",
+    "viewForecast": "View Forecast",
+    "forecastModalTitle": "Weather Forecast",
+    "next24Hours": "Next 24 Hours",
+    "now": "Now",
+    "day": "Day"
+  },
+  "hud": {
+    "cast": "Cast",
+    "reel": "Reel",
+    "waiting": "Waiting...",
+    "bite": "Bite!",
+    "reeling": "Reeling!",
+    "escaped": "Escaped!",
+    "broken": "Line Snapped!",
+    "caught": "Caught!",
+    "depth": "Depth",
+    "retrievalSpeed": "Retrieval Speed",
+    "speed": {
+      "slow": "Slow",
+      "normal": "Normal",
+      "fast": "Fast"
+    },
+    "throwMix": "Throw Mix",
+    "bait": "Bait",
+    "groundbait": "Groundbait",
+    "active": "Active",
+    "noRod": "No rod equipped",
+    "noHook": "No hook equipped",
+    "noLine": "No line equipped",
+    "noReel": "No reel equipped",
+    "noBait": "No bait selected",
+    "extract": "Extract",
+    "noGear": "No gear available",
+    "titles": {
+      "goHome": "Go Home 🏠"
+    }
+  },
+  "lakeSelect": {
+    "title": "Select Location",
+    "locked": "Locked",
+    "go": "Go Fishing"
+  },
+  "shop": {
+    "title": "The Shop",
+    "yourBalance": "Your Balance",
+    "buy": "Buy",
+    "sell": "Sell",
+    "qty": "Qty",
+    "notEnoughMoney": "Not enough money!",
+    "tabs": {
+      "bait": "Bait",
+      "groundbait": "Mixture",
+      "rods": "Rods",
+      "reels": "Reels",
+      "lines": "Lines",
+      "hooks": "Hooks",
+      "gadgets": "Gadgets"
+    },
+    "owned": "Owned",
+    "alreadyOwned": "You already own this item",
+    "confirmTitle": "Confirm Purchase",
+    "confirmMessage": "Buy {{qty}}× {{name}}?",
+    "purchaseGear": "Purchase gear",
+    "free": "Free",
+    "buyButton": "Buy for ×{{qty}}",
+    "boughtSuccess": "Bought {{qty}}× {{name}}",
+    "buyItem": "Purchase Item",
+    "perEach": "/ ea",
+    "ownedCount": "Owned: {{count}}",
+    "totalCost": "Total Cost:"
+  },
+  "news": {
+    "title": "News & Updates",
+    "markRead": "Mark as read",
+    "markAllRead": "Mark all as read",
+    "noNews": "No news for now.",
+    "unread": "Unread",
+    "newBadge": "NEW",
+    "underDevelopment": "This tab is under development"
+  },
+  "gear": {
+    "title": "My Equipment",
+    "rod": "Rod",
+    "reel": "Reel",
+    "line": "Line",
+    "hook": "Hook",
+    "noGear": "None",
+    "equip": "Equip",
+    "equipped": "Equipped",
+    "condition": "Condition",
+    "lineLeft": "{{meters}}m left",
+    "notAvailableForSpinning": "This section is not available while using a spinning rod.",
+    "equipment_guide": "In the Gear menu, you can configure your fishing tackle. There are 3 fishing styles available: float, bottom, and spinning. Selecting a spinning rod will automatically equip a spinning lure (and vice versa). For bottom fishing, use a classic rod and choose a feeder rig in the hooks section.",
+    "repairModal": {
+      "title": "Select item to repair",
+      "empty": "All your gear is in perfect condition!",
+      "durability": "Durability left: {{value}}%",
+      "success": "Gear item repaired"
+    }
+  },
+  "profile": {
+    "editTitle": "Edit Profile",
+    "name": "Name",
+    "avatar": "Choose Avatar",
+    "placeholder": "Enter name...",
+    "save": "Save Changes",
+    "savedSuccess": "Profile updated!",
+    "errorLength": "Name must be 3-24 characters",
+    "errorChars": "Name contains invalid characters"
+  },
+  "portrait": {
+    "rotate": "Please rotate device",
+    "hint": "The game works only in landscape mode"
+  },
+  "footer": {
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "support": "Support",
+    "github": "GitHub"
+  },
+  "loading": "Loading reservoir assets...",
+  "fish": {
+    "perch": {
+      "name": "Perch",
+      "description": "A clever predator with distinctive stripes. Found near vegetation."
+    },
+    "pike": {
+      "name": "Pike",
+      "description": "An apex predator of freshwater. Prefers deep water ambushes."
+    },
+    "carp": {
+      "name": "Carp",
+      "description": "Powerful bottom dweller known for its incredible resistance."
+    },
+    "crucian": {
+      "name": "Crucian",
+      "description": "Resilient fish that survives in small ponds. Bites cautiously."
+    },
+    "roach": {
+      "name": "Roach",
+      "description": "Schooling fish found in various depths. Very common."
+    },
+    "zander": {
+      "name": "Zander",
+      "description": "Sleek deep water predator with excellent low-light vision."
+    },
+    "ruffe": {
+      "name": "Ruffe",
+      "description": "Small spiny fish, relative of perch. Often annoys with small nibbles."
+    },
+    "catfish": {
+      "name": "Catfish",
+      "description": "King of the depths. A nocturnal giant hiding in the darkest holes."
+    },
+    "grass_carp": {
+      "name": "Grass Carp",
+      "description": "Large herbivorous resident. Fights fiercely when hooked."
+    }
+  },
+  "baits": {
+    "worm": {
+      "name": "Worm",
+      "description": "Classic and reliable bait. Suitable for many fish species."
+    },
+    "maggot": {
+      "name": "Maggot",
+      "description": "Excellent for roach and smaller competition fish."
+    },
+    "bread": {
+      "name": "Bread",
+      "description": "Simple bait for crucian and carp."
+    },
+    "corn": {
+      "name": "Corn",
+      "description": "Attracts big carps and grass carps."
+    },
+    "dough": {
+      "name": "Dough",
+      "description": "Soft bait, fish love to nibble it."
+    },
+    "live_bait": {
+      "name": "Live Bait",
+      "description": "Small fish, attracts pike and zander."
+    },
+    "lure_vibrotail": {
+      "name": "Vibrotail 7cm",
+      "description": "Classic silicone for jigging."
+    },
+    "lure_spoon": {
+      "name": "Floating Spoon",
+      "description": "Heavier metallic bait for pike."
+    },
+    "lure_wobbler": {
+      "name": "Minnow Wobbler",
+      "description": "Injured fish imitation for mid-depths."
+    }
+  },
+  "groundbaits": {
+    "none": { "name": "None", "description": "" },
+    "vanillin": {
+      "name": "Vanillin Mix",
+      "description": "Sweet aroma that quickly gathers schooling fish."
+    },
+    "peas": {
+      "name": "Pea Porridge",
+      "description": "Heavy bottom mixture. Best for big carp."
+    },
+    "dried_blood": {
+      "name": "Dried Blood",
+      "description": "Strong scent that drives predators crazy."
+    }
+  },
+  "lakes": {
+    "forest_lake": {
+      "name": "Forest Lake",
+      "description": "A cozy lake surrounded by ancient trees. Varied depth, rich vegetation."
+    },
+    "fish_farm": {
+      "name": "Fish Farm",
+      "description": "Artificial reservoir for breeding. Even bottom, clear water, high fish density."
+    }
+  },
+  "gear_items": {
+    "rod_starter": {
+      "name": "Bamboo Stick",
+      "description": "Strong but very basic bamboo rod."
+    },
+    "rod_basic": {
+      "name": "Glass Fiber",
+      "description": "Decent rod with some flexibility."
+    },
+    "rod_pro": {
+      "name": "Carbon Rod",
+      "description": "Light, strong, professional level."
+    },
+    "rod_titanium": {
+      "name": "Titanium Beast",
+      "description": "Unbreakable rod for true monsters."
+    },
+    "hook_rusted": {
+      "name": "Rusted Hook",
+      "description": "Dull and fragile."
+    },
+    "hook_iron": {
+      "name": "Iron Hook",
+      "description": "Standard hook, holds moderately."
+    },
+    "hook_steel": {
+      "name": "Steel Hook",
+      "description": "Sharp and very resistant to bending."
+    },
+    "hook_barbed": {
+      "name": "Laser Cut Barbed",
+      "description": "Fish almost never escape from this hook."
+    },
+    "hook_feeder_basic": {
+      "name": "Simple Feeder Rig",
+      "description": "Classic bottom sinker with a hook. Always stays on bottom."
+    },
+    "hook_feeder_pro": {
+      "name": "Professional Feeder",
+      "description": "Long-range mixture cage with extra sharp hook."
+    },
+    "line_thread": {
+      "name": "Cotton Thread",
+      "description": "Breaks just by looking at it."
+    },
+    "line_mono": {
+      "name": "Mono Line 5lb",
+      "description": "Average cheap fishing line."
+    },
+    "line_fluoro": {
+      "name": "Fluorocarbon 12lb",
+      "description": "Nearly invisible in water."
+    },
+    "line_braid": {
+      "name": "Braid Cord 30lb",
+      "description": "Incredibly strong but visible."
+    },
+    "reel_handmade": {
+      "name": "Wooden Coil",
+      "description": "Barely pulls the line."
+    },
+    "reel_basic": {
+      "name": "Spinning Reel",
+      "description": "Does the job for small fish."
+    },
+    "reel_multi": {
+      "name": "Multiplicator",
+      "description": "Fast retrieval, smooth friction."
+    },
+    "reel_electric": {
+      "name": "Electric Winch",
+      "description": "Power like a crane."
+    },
+    "rod_spinning_basic": {
+      "name": "Starter Spinning",
+      "description": "Lightweight rod designed for active lure work."
+    },
+    "rod_spinning_pro": {
+      "name": "Graphite Master",
+      "description": "Great balance between sensitivity and strength."
+    },
+    "rod_spinning_ultra": {
+      "name": "Nano-Carbon Spin",
+      "description": "The peak of spinning technology."
+    },
+    "lure_vibrotail": {
+      "name": "Vibrotail 7cm",
+      "description": "Classic silicone for jigging."
+    },
+    "lure_spoon": {
+      "name": "Floating Spoon",
+      "description": "Heavier metallic bait for pike."
+    },
+    "lure_wobbler": {
+      "name": "Minnow Wobbler",
+      "description": "Injured fish imitation for mid-depths."
+    },
+    "echo_sounder": {
+      "name": "Echo Sounder",
+      "description": "Electronic device that shows fish presence and depth."
+    },
+    "repair_kit": {
+      "name": "Repair Kit",
+      "description": "Restores durability to damaged rods and reels."
+    }
+  },
+  "trash": {
+    "old_boot": { "name": "Old Boot", "description": "Wet smelly boot." },
+    "rusty_can": {
+      "name": "Rusty Can",
+      "description": "Trash from messy fishermen."
+    },
+    "tangled_line": {
+      "name": "Tangled Line",
+      "description": "A mess of broken fishing line."
+    },
+    "driftwood": {
+      "name": "Driftwood",
+      "description": "A piece of wood soaked in water."
+    }
+  },
+  "cookie": {
+    "title": "Cookies & Data",
+    "description": "We use cookies to save your game progress and settings. By continuing, you agree to our use of cookies.",
+    "accept": "I understand"
+  },
+  "preloader": {
+    "initializing": "Initializing download...",
+    "loadingTextures": "Loading textures...",
+    "cachingAudio": "Caching audio...",
+    "assetsLoaded": "Assets loaded! Starting engine...",
+    "preparing": "Preparing...",
+    "done": "Ready!"
+  },
+  "debug": {
+    "title": "Debug Terminal",
+    "show": "[+] Show Console",
+    "hide": "[-] Hide Console",
+    "active": "--- Debug Terminal Activated ---",
+    "helpHint": "Type \"help\" for list of commands"
+  },
+  "snag": {
+    "title": "Snagged!",
+    "description": "It seems your hook is stuck in underwater obstacles! Try to free your gear.",
+    "pullBtn": "Pull!",
+    "success": "Freed!",
+    "fail": "Broken!"
+  },
+  "loss": {
+    "tension": {
+      "title": "Tension too high!",
+      "msg": "Too much force caused your gear to break."
+    },
+    "bite": {
+      "title": "Fish bit off the bait!",
+      "msg": "The predator was too toothy."
+    },
+    "escape": {
+      "title": "Fish got away!",
+      "msg": "The fish got off the hook and took the bait with it."
+    },
+    "snag": {
+      "title": "Snagged!",
+      "msg": "Gear stuck in obstacle! While trying to free it, the line snapped."
+    },
+    "lost": "Lost: {{items}}",
+    "lostLine": " and {{meters}}m of line"
+  },
+  "error": {
+    "gear_incomplete": "Your equipment is incomplete or broken!",
+    "no_bait": "You must select bait first!",
+    "tooManyRequests": "Too many requests. Please try again later."
+  },
+  "errorPage": {
+    "title": "Oops! Something went wrong.",
+    "description": "An unexpected error occurred while loading this page.",
+    "boundaryTitle": "Oops! Something went wrong.",
+    "boundaryDescription": "An unexpected error occurred in this component.",
+    "reload": "Reload Page",
+    "goHome": "Go Home",
+    "goBack": "Go Back",
+    "unknown": "Unknown Error"
+  },
+  "bottomInfo": {
+    "title": "Project Information",
+    "text": "WELCOME TO FISHORIA — a next-generation web-based fishing simulator that combines classic gameplay with deep technical simulation. We've created an immersive world where every cast matters and every fish has its own character.\n\nGAMEPLAY EXPERIENCE\nFishoria offers a comprehensive fishing experience featuring multiple fishing styles: Float, Feeder, and Spinning. Manage your equipment carefully — from selecting the right hook size and line type (Mono, Fluoro, or Braid) to choosing the perfect bait for your target species. Success requires mastering the tension system: keep the pressure in the sweet spot to tire the fish without snapping your line or allowing it to escape.\n\nADVANCED FISH AI\nThe heart of Fishoria is our sophisticated Fish AI system. Instead of simple random encounters, our fish are autonomous agents powered by complex steering behaviors and environmental awareness:\n• NATURAL MOVEMENT: Fish use Simplex noise-driven wandering and flocking behaviors to navigate the underwater world realistically.\n• DYNAMIC LIFESTYLES: Every fish follows its own schedule, including migration to preferred depth zones, rest periods, and active hunting phases.\n• ENVIRONMENTAL SENSITIVITY: Fish behavior changes dynamically with the weather and time of day. Predators become more aggressive during rain and low-light conditions, while prey fish seek shelter.\n• REACTIVE INTELLIGENCE: Fish react to your presence. A loud splash might attract a hungry Pike but will scare away a cautious Crucian.\n• BITING STRATEGIES: Some fish are cautious 'nibblers' that test your patience, while others are aggressive 'strikers' that hit the bait with force.\n\nExplore beautifully rendered reservoirs, upgrade your gear, hunt for legendary trophies, and climb the global leaderboard. Whether you're a casual player or a hardcore angler, Fishoria offers a peaceful yet challenging escape into the world of fishing."
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "text": "Your privacy is important to us. We collect minimal data required for game operation, including username and basic progress. We do not sell your data to third parties. By playing Fishoria, you agree to our simple and fair privacy standards. We use cookies to maintain your session and ensure a smooth gaming experience. All collected data is used exclusively to improve the game and manage your account achievements and leaderboard standing."
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "text": "Welcome to Fishoria. By using this application, you agree to stay respectful, avoid exploits or cheating, and use the service as intended. We reserve the right to manage accounts that violate our community standards. All game assets and code are property of Fishoria developers. Our services are provided 'as is' without warranties of any kind. Continued use of the game manifests your complete and binding acceptance of these simple terms and any future modifications that may be published here."
+  },
+  "landing": {
+    "or_continue_with": "Or continue with",
+    "title": "Fishoria | Welcome",
+    "hero": {
+      "subtitle": "Gather your gear, explore reservoirs and catch the rarest fish! Your personal fishing adventure awaits."
+    },
+    "auth": {
+      "login": "Login",
+      "register": "Register",
+      "or": "or",
+      "google": "Login with Google",
+      "google_short": "Google",
+      "backToLogin": "Back to Login",
+      "errors": {
+        "userNotFound": "User with this email not found.",
+        "incorrectPassword": "Incorrect password.",
+        "googleAccount": "This account was registered via Google. Please use Google Login.",
+        "emailNotActivated": "Please activate your email. Check your inbox.",
+        "invalidActivationLink": "Invalid activation link.",
+        "invalidResetToken": "Invalid or expired reset token.",
+        "resetTokenExpired": "Reset token has expired.",
+        "accountSuspended": "Your account has been suspended.",
+        "accountBanned": "Your account has been permanently banned for violating the rules.",
+        "userAlreadyExists": "User with this email already exists.",
+        "generic": "Something went wrong. Please try again.",
+        "accountActivated": "Your account has been activated, you can now log in."
+      }
+    },
+    "login": {
+      "title": "Authentication",
+      "email": "Email address",
+      "password": "Password",
+      "forgot": "Forgot password?",
+      "back": "Back"
+    },
+    "register": {
+      "title": "Registration",
+      "username": "Username",
+      "confirmPassword": "Confirm Password",
+      "success": "Registration successful! Please check your email to activate your account."
+    },
+    "forgotPassword": {
+      "title": "Forgot Password",
+      "subtitle": "Enter your email address and we'll send you a link to reset your password.",
+      "submit": "Send Reset Link",
+      "success": "Reset link has been sent to your email!"
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "submit": "Update Password",
+      "successTitle": "Password Reset!",
+      "successText": "Your password has been successfully updated. You can now log in with your new password."
+    }
+  },
+  "validation": {
+    "required": "Required field",
+    "emailFormat": "Invalid email format",
+    "minLength": "Minimum 8 characters",
+    "mismatch": "Passwords do not match"
+  },
+  "branding": {
+    "developedBy": "Developed by",
+    "logoAlt": "Company Logo"
+  },
+  "visual": "Visual",
+  "achievements": {
+    "title": "Achievements",
+    "completed": "Completed",
+    "locked": "Locked",
+    "notification": "Achievement unlocked!"
+  },
+  "common": {
+    "loading": "Loading...",
+    "processing": "Processing...",
+    "save": "Save",
+    "remove": "Remove",
+    "discard": "Discard",
+    "close": "Close"
+  },
+  "game": {
+    "groundbait_expired": "Groundbait effect has expired!",
+    "bait_fell_off": "Bait fell off!"
+  }
+}

@@ -1,0 +1,175 @@
+.quests {
+  padding: 12px;
+  position: relative;
+  display: block;
+}
+
+.quests__content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.quests__card {
+  padding: 24px;
+  text-align: center;
+}
+
+.quests__card h3 {
+  color: var(--clr-accent);
+  margin-top: 0;
+  font-size: 1.5rem;
+}
+
+.quests__card p {
+  color: #e2e8f0;
+  line-height: 1.6;
+}
+
+.quest_list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.quest_card {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+  position: relative;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.quest_card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.quest_card--completed {
+  border-color: rgba(74, 222, 128, 0.3);
+}
+
+.quest_card__header {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.quest_card__image {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quest_card__info {
+  flex: 1;
+}
+
+.quest_card__title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--clr-accent);
+  margin-bottom: 4px;
+}
+
+.quest_card__desc {
+  font-size: 0.9rem;
+  color: #a0aec0;
+  line-height: 1.4;
+}
+
+.quest_card__conditions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quest_condition {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.quest_condition__label {
+  font-size: 0.85rem;
+  color: #cbd5e0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.quest_condition__target {
+  font-weight: 700;
+  color: #fff;
+}
+
+.progress_bar {
+  height: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress_fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3182ce, #63b3ed);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress_fill--completed {
+  background: linear-gradient(90deg, #38a169, #48bb78);
+}
+
+.quest_card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.quest_card__rewards {
+  display: flex;
+  gap: 12px;
+}
+
+.reward_item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.reward_icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.money {
+  color: #f6e05e;
+}
+
+.xp {
+  color: #63b3ed;
+}
+
+.claimed_badge {
+  color: #48bb78;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

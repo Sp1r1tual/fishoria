@@ -1,0 +1,181 @@
+.statistics {
+  padding: 12px;
+  position: relative;
+  display: block;
+}
+
+.statistics__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stats-card {
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+.stats-card--expanded {
+  background: rgba(15, 23, 42, 0.95);
+}
+
+.stats-card__header-preview {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.stats-card__preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stats-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+}
+
+.stats-card__body {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.stats-card__main-info {
+  padding: 16px 20px;
+}
+
+.stats-card__title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--clr-accent);
+  margin-bottom: 8px;
+}
+
+.stats-card__summaries {
+  display: flex;
+  gap: 20px;
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+.stats-card__summary-item span {
+  color: var(--clr-primary);
+  font-weight: 700;
+}
+
+.stats-card__toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: background 0.2s;
+  user-select: none;
+  font-weight: 600;
+  color: var(--clr-accent);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stats-card__toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.stats-card__details {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.stats-card__details--open {
+  max-height: 620px;
+  opacity: 1;
+  padding: 0 20px 20px 20px;
+  overflow-y: auto;
+}
+
+.stats-card__species-list {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stats-card__species-item {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stats-card__species-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stats-card__species-name {
+  font-weight: 700;
+  color: #fff;
+}
+
+.stats-card__species-count {
+  color: var(--clr-muted);
+  font-size: 0.85rem;
+}
+
+.stats-card__species-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.stats-card__spec-data {
+  display: flex;
+  flex-direction: column;
+}
+
+.stats-card__spec-data label {
+  font-size: 0.7rem;
+  color: var(--clr-muted);
+  text-transform: uppercase;
+}
+
+.stats-card__spec-data span {
+  font-size: 0.9rem;
+  color: var(--clr-accent);
+  font-weight: 600;
+}
+
+.stats-card__empty {
+  color: var(--clr-muted);
+  font-size: 0.9rem;
+  font-style: italic;
+  padding: 8px 0;
+}
+
+@media (min-width: 640px) {
+  .stats-card__species-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

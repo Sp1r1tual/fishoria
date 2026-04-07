@@ -1,0 +1,132 @@
+.circle_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  line-height: 1;
+}
+
+.circle_btn * {
+  pointer-events: none;
+}
+
+.circle_btn__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.circle_btn--xs {
+  width: 22px;
+  height: 22px;
+  font-size: 0.75rem;
+}
+
+.circle_btn--sm {
+  width: 26px;
+  height: 26px;
+  font-size: 0.85rem;
+}
+
+.circle_btn--md {
+  width: 32px;
+  height: 32px;
+  font-size: 1rem;
+}
+
+.circle_btn--lg {
+  width: 40px;
+  height: 40px;
+  font-size: 1.25rem;
+}
+
+.circle_btn--glass {
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+}
+
+@media (hover: hover) {
+  .circle_btn--glass:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+  }
+}
+
+.circle_btn--danger,
+.circle_btn--red {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+}
+
+@media (hover: hover) {
+  .circle_btn--danger:hover,
+  .circle_btn--red:hover {
+    background: #f43f5e;
+    border-color: #f43f5e;
+    color: #fff;
+    transform: scale(1.15);
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+  }
+}
+
+.circle_btn--brown,
+.circle_btn--wooden {
+  background-image:
+    radial-gradient(
+      circle at center,
+      rgba(255, 253, 230, 0.3) 0%,
+      rgba(255, 253, 230, 0) 75%
+    ),
+    url('https://www.transparenttextures.com/patterns/wood-pattern.png'),
+    linear-gradient(#5d432e, #4a3424);
+  border: 1px solid #3d2b1f;
+  border-bottom: 3px solid #2b1d12;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+@media (hover: hover) {
+  .circle_btn--brown:hover,
+  .circle_btn--wooden:hover {
+    filter: brightness(1.2);
+    transform: scale(1.05);
+    box-shadow:
+      inset 0 1px 2px rgba(255, 253, 230, 0.3),
+      0 6px 12px rgba(0, 0, 0, 0.5),
+      0 0 10px rgba(255, 253, 230, 0.2);
+    border-color: #5d432e;
+  }
+}
+
+.circle_btn--brown:active,
+.circle_btn--wooden:active {
+  transform: scale(0.95) translateY(2px);
+  border-bottom-width: 1px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.circle_btn:active {
+  transform: scale(0.95);
+}
+
+.circle_btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}

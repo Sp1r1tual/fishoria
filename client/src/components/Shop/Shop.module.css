@@ -1,0 +1,274 @@
+.shop {
+  padding: 12px;
+  position: relative;
+  display: block;
+}
+
+.shop__balance {
+  background: rgba(0, 0, 0, 0.4);
+  width: auto;
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 700;
+  color: var(--clr-accent);
+  margin-left: auto;
+}
+
+@media (max-width: 480px) {
+  .shop__balance {
+    padding: 6px 8px;
+    font-size: 0.75rem;
+    gap: 6px;
+  }
+}
+
+.shop__coin-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.shop__content_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.shop__tabs {
+  display: flex;
+  gap: 10px;
+}
+
+.shop__tab {
+  display: flex;
+  flex-grow: 1;
+}
+
+.shop__section {
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 480px) {
+  .shop__section {
+    padding: 16px 12px;
+  }
+}
+
+.shop__section-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--clr-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 10px;
+}
+
+.shop__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .shop__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.shop-item {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: all var(--transition);
+}
+
+@media (max-width: 480px) {
+  .shop-item {
+    padding: 14px 12px;
+    gap: 10px;
+  }
+}
+
+.shop-item:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.shop-item--owned {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.shop-item__top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.shop-item__icon {
+  font-size: 2.2rem;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.shop-item__info {
+  flex: 1;
+}
+
+.shop-item__name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.shop-item__price {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--clr-accent);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.shop-item__coin-icon-sm {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.shop-item__desc {
+  font-size: 0.85rem;
+  color: var(--clr-muted);
+  line-height: 1.4;
+  min-height: 2.8em;
+}
+
+.shop-item__owned {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--clr-muted);
+  text-transform: uppercase;
+}
+
+.shop-item__owned span {
+  color: #fff;
+}
+
+.shop-item__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.shop-item__status {
+  width: 100%;
+}
+
+.shop-item__buy-label {
+  display: block;
+  text-align: center;
+  padding: 8px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  background-image:
+    radial-gradient(
+      ellipse at center,
+      rgba(255, 253, 230, 0.8) 0%,
+      transparent 90%
+    ),
+    url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+  background-color: #4a3424;
+  border: 1px solid #5d432e;
+  border-bottom: 3px solid #2b1d12;
+  color: #000;
+  transition: all 0.1s;
+}
+
+.shop-item__buy-label--disabled {
+  opacity: 0.5;
+  filter: grayscale(1);
+}
+
+.shop-item__qty-control {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.shop-item__qty-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.shop-item__qty-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.shop-item__qty {
+  width: 36px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--clr-accent);
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.shop-item__buy-btn {
+  background-image:
+    radial-gradient(
+      ellipse at center,
+      rgba(255, 253, 230, 0.8) 0%,
+      transparent 90%
+    ),
+    url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+  background-color: #4a3424;
+  border: 1px solid #5d432e;
+  border-bottom: 3px solid #2b1d12;
+  border-radius: 8px;
+  color: #000;
+  font-weight: 700;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  flex: 1;
+}
+
+.shop-item__buy-btn:disabled {
+  opacity: 0.5;
+  filter: grayscale(1);
+}

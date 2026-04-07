@@ -1,0 +1,97 @@
+.authBox {
+  width: 100%;
+  max-width: none;
+  background: var(--clr-surface);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.authButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--clr-muted);
+  font-size: 0.85rem;
+  margin: 4px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--clr-border);
+}
+
+.divider span {
+  padding: 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.googleIcon {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+}
+
+.animateContainer {
+  animation: slideContent 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes slideContent {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.successBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 10px 0;
+}
+
+.successMessage {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--clr-text-secondary);
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .authBox {
+    padding: 22px 16px;
+    gap: 16px;
+  }
+}

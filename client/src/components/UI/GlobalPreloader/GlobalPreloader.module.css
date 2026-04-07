@@ -1,0 +1,37 @@
+.globalPreloader {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100svh;
+  background-color: #070a1a;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+
+.visible {
+  opacity: 1;
+}
+
+.text {
+  position: relative;
+  color: #fff;
+  font-size: 1.4rem;
+  font-family: 'Outfit';
+  z-index: 2;
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow:
+      0 0 5px #00cfff,
+      0 0 10px #00cfff;
+  }
+  to {
+    text-shadow:
+      0 0 15px #00cfff,
+      0 0 30px #00cfff;
+  }
+}

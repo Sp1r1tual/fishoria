@@ -1,0 +1,68 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+
+.dayRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dayLabel {
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 2px #000;
+  font-size: 1.1rem;
+}
+
+.hoursGrid {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  gap: 2px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 4px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hourCell {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+.currentHour {
+  border: 2px solid #fff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  transform: scale(1.2);
+  z-index: 2;
+  border-radius: 4px;
+}
+
+.timelineLabels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0 4px;
+  font-weight: 500;
+  text-shadow: 1px 1px 2px #000;
+}
+
+.clear {
+  background-color: #87ceeb;
+}
+
+.cloudy {
+  background-color: #a9a9a9;
+}
+
+.rain {
+  background-color: #4682b4;
+}

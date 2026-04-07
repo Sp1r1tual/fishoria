@@ -1,0 +1,80 @@
+.companySection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px;
+}
+
+.developedBy {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--clr-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  opacity: 0.5;
+  margin-bottom: -10px;
+  animation: float-soft 3s ease-in-out infinite;
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.companyLogo {
+  height: 300px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 32px rgba(0, 0, 0, 0.5));
+  opacity: 0;
+  transform: translateY(80px) scale(1.1) rotate(5deg);
+  transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  will-change: transform, opacity;
+}
+
+.companySection.visible .companyLogo {
+  opacity: 1;
+  transform: translateY(0) scale(1) rotate(0deg);
+}
+
+.companySection.visible .companyLogo:hover {
+  transform: scale(1.1) rotate(2deg);
+}
+
+@media (max-width: 768px) {
+  .companySection {
+    padding: 30px 20px;
+  }
+
+  .companyLogo {
+    height: 180px;
+  }
+
+  .developedBy {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+  }
+}
+
+@media (max-width: 480px) {
+  .companySection {
+    padding: 20px 15px;
+    gap: 12px;
+  }
+
+  .companyLogo {
+    height: 140px;
+  }
+
+  .developedBy {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+  }
+}

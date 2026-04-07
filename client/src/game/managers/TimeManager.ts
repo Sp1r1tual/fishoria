@@ -1,0 +1,106 @@
+import { TIME_SYSTEM } from '@/common/configs/game';
+
+let realStartTime = Date.now();
+const date = new Date();
+date.setHours(TIME_SYSTEM.gameStartHour, 0, 0, 0);
+let virtualStartTime = date.getTime();
+
+// Try to auto-load saved session on initialization
+const saved = localStorage.getItem('fishing_session_data');
+if (saved) {
+  try {
+    const data = JSON.parse(saved);
+    if (data.virtualTime && data.savedAt) {
+      const elapsedRealMs = Date.now() - data.savedAt;
+      const elapsedVirtualMs =
+        elapsedRealMs * TIME_SYSTEM.gameTimeSpeedMultiplier;
+      virtualStartTime = data.virtualTime + elapsedVirtualMs;
+    }
+  } catch (e) {
+    console.error('Failed to parse saved session time', e);
+  }
+}
+
+export const TimeManager = {
+  getTime(mode: 'real' | 'game' = 'game'): Date {
+    if (mode === 'real') {
+      return new Date();
+    }
+
+    // game mode: speed multiplier from config
+    const now = Date.now();
+    const elapsedReal = now - realStartTime;
+    const elapsedVirtual = elapsedReal * TIME_SYSTEM.gameTimeSpeedMultiplier;
+
+    return new Date(virtualStartTime + elapsedVirtual);
+  },
+
+  // Re-sync game time to starting hour if resetting
+  resetGameTime() {
+    realStartTime = Date.now();
+    const date = new Date();
+    date.setHours(TIME_SYSTEM.gameStartHour, 0, 0, 0);
+    virtualStartTime = date.getTime();
+  },
+
+  setGameTime(hour: number) {
+    realStartTime = Date.now();
+    const date = new Date();
+    date.setHours(hour, 0, 0, 0);
+    virtualStartTime = date.getTime();
+  },
+
+  getGameTimeHours(): number {
+    const d = this.getTime('game');
+    return d.getTime() / (1000 * 60 * 60);
+  },
+
+  saveSessionData(
+    weather: string,
+    forecast: string[],
+    lastUpdate: number | null,
+  ) {
+    const data = {
+      virtualTime: this.getTime('game').getTime(),
+      weather,
+      weatherForecast: forecast,
+      lastWeatherUpdateHour: lastUpdate,
+      savedAt: Date.now(),
+    };
+    localStorage.setItem('fishing_session_data', JSON.stringify(data));
+  },
+
+  loadSessionData(): {
+    virtualTime: number;
+    weather: string;
+    weatherForecast?: string[];
+    lastWeatherUpdateHour?: number | null;
+  } | null {
+    const saved = localStorage.getItem('fishing_session_data');
+    if (!saved) return null;
+    try {
+      const data = JSON.parse(saved);
+      return data;
+    } catch {
+      return null;
+    }
+  },
+
+  restoreSession(virtualTime: number) {
+    realStartTime = Date.now();
+    virtualStartTime = virtualTime;
+  },
+
+  formatTimeRemaining(targetHours: number): string {
+    const current = this.getGameTimeHours();
+    const diffHours = targetHours - current;
+    if (diffHours <= 0) return '0:00';
+
+    const totalMinutes = Math.floor(diffHours * 60);
+    const mins = totalMinutes % 60;
+    const hrs = Math.floor(totalMinutes / 60);
+
+    if (hrs > 0) return `${hrs}:${mins.toString().padStart(2, '0')}`;
+    return `${mins}m`;
+  },
+};

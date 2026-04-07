@@ -1,0 +1,6 @@
+.panel {
+  padding: 6px;
+  overflow-x: auto;
+  white-space: nowrap;
+  margin-bottom: 4px;
+}

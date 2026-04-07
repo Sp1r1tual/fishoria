@@ -1,0 +1,247 @@
+.woody-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 12px 15px 10px 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  text-align: center;
+  outline: none;
+  text-decoration: none;
+  font-family: var(--font-display);
+  overflow: hidden;
+}
+
+.woody-button * {
+  pointer-events: none;
+}
+
+.woody-button:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.woody-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: -1;
+  pointer-events: none !important;
+}
+
+.variant-green {
+  background-image:
+    radial-gradient(
+      circle at center,
+      rgba(255, 253, 230, 0.45) 0%,
+      rgba(255, 253, 230, 0) 75%
+    ),
+    url('https://www.transparenttextures.com/patterns/wood-pattern.png'),
+    linear-gradient(#386641, #386641);
+  border-bottom: 5px solid #1a3a1f;
+  border-right: 2px solid #2b4d2d;
+  color: #000;
+  text-shadow:
+    0.5px 0.5px 0 rgba(255, 255, 255, 0.4),
+    -0.5px -0.5px 0 rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.variant-brown {
+  background-image:
+    radial-gradient(
+      circle at center,
+      rgba(255, 253, 230, 0.4) 0%,
+      rgba(255, 253, 230, 0) 75%
+    ),
+    url('https://www.transparenttextures.com/patterns/wood-pattern.png'),
+    linear-gradient(#4a3424, #4a3424);
+  border-bottom: 5px solid #2b1d12;
+  border-right: 2px solid #3d2b1f;
+  color: #fff;
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 10px rgba(0, 0, 0, 0.5),
+    1px 1px 0 rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+.variant-red {
+  background-image:
+    radial-gradient(
+      circle at center,
+      rgba(255, 253, 230, 0.3) 0%,
+      rgba(255, 253, 230, 0) 75%
+    ),
+    url('https://www.transparenttextures.com/patterns/wood-pattern.png'),
+    linear-gradient(#7f1d1d, #7f1d1d);
+  border-bottom: 5px solid #450a0a;
+  border-right: 2px solid #500707;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    0 4px 0 rgba(0, 0, 0, 0.4);
+}
+
+.size-sm {
+  padding: 6px 12px;
+  font-size: 0.68rem;
+  min-height: 32px;
+}
+
+.size-md {
+  padding: 10px 20px;
+  font-size: 0.75rem;
+  min-height: 44px;
+}
+
+.size-lg {
+  padding: 14px 28px;
+  font-size: 1.1rem;
+  min-height: 60px;
+}
+
+@media (hover: hover) {
+  .woody-button:not(:disabled):hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+  }
+
+  .variant-green:not(:disabled):hover {
+    box-shadow:
+      inset 0 1px 2px rgba(255, 255, 255, 0.3),
+      0 8px 0 rgba(0, 0, 0, 0.4);
+  }
+
+  .variant-brown:not(:disabled):hover,
+  .variant-red:not(:disabled):hover {
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.2),
+      0 7px 15px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.woody-button:not(:disabled):active {
+  transform: translateY(2px);
+  filter: brightness(0.95);
+}
+
+.woody-button:not(:disabled).variant-green:active {
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, 0.5),
+    0 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.woody-button:not(:disabled).variant-brown:active,
+.woody-button:not(:disabled).variant-red:active {
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.4),
+    0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.label {
+  line-height: 1.2;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.3));
+}
+
+.tile-style {
+  flex-direction: row;
+  justify-content: flex-start;
+  text-align: center;
+}
+
+.tile-style .label {
+  flex: 1;
+}
+
+.tile-style .icon {
+  width: 32px;
+  height: 32px;
+}
+
+@media (min-width: 768px) {
+  .tile-style .icon {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+.back-nav-btn {
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+  .back-nav-btn {
+    align-self: flex-start;
+  }
+}
+
+.mobile-only {
+  display: inline-flex;
+}
+
+.desktop-only {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none;
+  }
+  .desktop-only {
+    display: inline-flex;
+  }
+}
+
+.badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background-color: #ef4444;
+  color: white;
+  width: 14px;
+  height: 14px;
+  border-radius: 9px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  font-weight: 800;
+  pointer-events: none;
+  z-index: 5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  padding: 0 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

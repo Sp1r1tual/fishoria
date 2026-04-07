@@ -1,0 +1,13 @@
+.lostItems {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  opacity: 0.85;
+  font-weight: 500;
+}
+
+.lostLineDetails {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  font-style: italic;
+  margin-top: 2px;
+}

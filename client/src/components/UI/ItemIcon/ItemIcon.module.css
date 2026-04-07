@@ -1,0 +1,17 @@
+.item_icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item_icon__image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.item_icon__text {
+  font-size: 1.5rem;
+}

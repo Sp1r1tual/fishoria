@@ -1,0 +1,128 @@
+.hud-slot {
+  position: relative;
+}
+
+.hud-slot__circle {
+  width: 58px;
+  height: 58px;
+  background: #d4b08c;
+  background-image: radial-gradient(circle at 50% 30%, #e5c9a8, #d4b08c);
+  border-radius: 50%;
+  border: 3px solid #6b4d32;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.3),
+    0 4px 8px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  transition: transform 0.1s;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.hud-slot__circle * {
+  pointer-events: none;
+}
+
+@media (max-width: 1044px) {
+  .hud-slot__circle {
+    width: 42px;
+    height: 42px;
+    border-width: 2px;
+  }
+}
+
+@media (hover: hover) {
+  .hud-slot__circle:hover {
+    filter: brightness(0.8);
+  }
+}
+
+.hud-slot__circle:active {
+  transform: scale(0.95);
+  filter: brightness(0.7);
+}
+
+.hud-slot__circle--active {
+  border-color: #fbbf24;
+  background: rgba(30, 41, 59, 0.9);
+  transform: scale(1.05);
+}
+
+.hud-slot__circle--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+  pointer-events: auto;
+}
+
+.hud-slot__circle--attention {
+  animation: hud-slot-pulse 2s ease-in-out infinite;
+  border-color: #ef4444;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+}
+
+@keyframes hud-slot-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.hud-slot__badge {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  background: #453222;
+  color: #fbbf24;
+  font-size: 0.85rem;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 10px;
+  min-width: 72px;
+  max-width: 90px;
+  text-align: center;
+  border: 1.5px solid #6b4d32;
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 1044px) {
+  .hud-slot__badge {
+    min-width: 48px;
+    font-size: 0.65rem;
+    padding: 1px 3px;
+    bottom: 2px;
+  }
+}
+
+.hud-slot__attention-marker {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ef4444;
+  color: white;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 900;
+  border: 2px solid white;
+  pointer-events: none;
+  z-index: 10;
+}

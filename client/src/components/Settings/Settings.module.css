@@ -1,0 +1,102 @@
+.settings {
+  padding: 12px;
+  position: relative;
+  display: block;
+}
+
+.settings__section {
+  padding: 20px;
+  margin-bottom: 20px;
+  background: #0f172a;
+  backdrop-filter: none;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.settings__section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--clr-accent);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 8px;
+}
+
+.settings__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.settings__field:last-child {
+  margin-bottom: 0;
+}
+
+.settings__label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.settings__select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(0, 0, 0, 0.3)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")
+    no-repeat right 16px center;
+  background-size: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 10px 44px 10px 14px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.settings__select:focus {
+  border-color: var(--clr-primary);
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.settings__field + .settings__field {
+  margin-top: 12px;
+}
+
+.settings__toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.settings__slider {
+  width: 100%;
+  cursor: pointer;
+  accent-color: var(--clr-primary);
+  height: 6px;
+  border-radius: 3px;
+}
+
+.settings__danger-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.settings__warning {
+  color: #ef4444;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 8px;
+  opacity: 0.9;
+}
+
+.settings__logout-container {
+  display: flex;
+  justify-content: center;
+}

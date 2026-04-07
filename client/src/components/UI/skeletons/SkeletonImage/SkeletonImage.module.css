@@ -1,0 +1,49 @@
+.wrapper {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.skeletonWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.skeletonWrapper .skeleton {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.imageHidden {
+  opacity: 0;
+  position: absolute;
+}
+
+.imageVisible {
+  opacity: 1;
+  position: relative;
+}
+
+.errorPlaceholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: #6b7280;
+  font-size: 2rem;
+}

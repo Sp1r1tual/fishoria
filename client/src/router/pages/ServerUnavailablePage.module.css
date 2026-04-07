@@ -1,0 +1,85 @@
+.container {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #070a1a;
+}
+
+.background {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.background::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(46, 204, 113, 0.15),
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at bottom left,
+      rgba(30, 74, 110, 0.4),
+      transparent 50%
+    );
+  opacity: 0.8;
+  filter: blur(2px) contrast(1.1);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  padding: 40px;
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.errorCode {
+  color: #ff4d4d;
+  font-size: 4rem;
+  margin: 0;
+  text-shadow: 0 0 20px rgba(255, 77, 77, 0.4);
+  font-weight: 800;
+}
+
+.title {
+  margin: 0;
+  color: white;
+  font-size: 1.8rem;
+}
+
+.description {
+  margin: 0;
+  opacity: 0.8;
+  color: white;
+  line-height: 1.5;
+  font-size: 1.1rem;
+}
+
+.buttonWrapper {
+  margin-top: 10px;
+}

@@ -1,0 +1,113 @@
+﻿.fishImageContainer {
+  width: 100%;
+  max-width: 260px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fishImage {
+  width: 100%;
+  height: auto;
+  max-height: 160px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+.statsRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.dot {
+  opacity: 0.4;
+  font-size: 0.8rem;
+}
+
+.fishBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fishDesc {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.meta {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.metaRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.metaRow span:last-child {
+  color: #fff;
+  font-weight: 600;
+}
+
+@media (max-width: 500px) {
+  .statsRow {
+    font-size: 0.95rem;
+  }
+  .metaRow {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-height: 500px) {
+  .fishImageContainer {
+    max-width: 170px;
+    padding: 4px;
+  }
+  .fishImage {
+    max-height: 100px;
+  }
+  .fishBody {
+    gap: 6px;
+  }
+  .statsRow {
+    font-size: 0.75rem;
+  }
+  .fishDesc {
+    font-size: 0.65rem;
+    display: block;
+  }
+  .meta {
+    margin-top: 8px;
+    padding: 6px;
+    gap: 4px;
+  }
+  .metaRow {
+    font-size: 0.6rem;
+  }
+}
+
+.trashIcon {
+  font-size: 4rem;
+  margin-bottom: 5px;
+}
+
+.trashDesc {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+}

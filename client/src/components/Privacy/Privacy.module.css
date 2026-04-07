@@ -1,0 +1,71 @@
+.pageWrapper {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  background-color: var(--clr-bg);
+  isolation: isolate;
+}
+
+.privacy {
+  position: relative;
+  z-index: 1;
+}
+
+.backgroundGradients {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(46, 204, 113, 0.15),
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at bottom left,
+      rgba(30, 74, 110, 0.4),
+      transparent 50%
+    );
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bubbles {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.privacy__content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  animation: fade-in 0.5s ease-out;
+  position: relative;
+  z-index: 2;
+}
+
+.privacy__text-block {
+  padding: 30px;
+  line-height: 1.8;
+  font-size: 1.1rem;
+  color: #f1f5f9;
+  text-align: justify;
+}
+
+.privacy__text {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

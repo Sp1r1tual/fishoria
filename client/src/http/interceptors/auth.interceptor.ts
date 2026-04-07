@@ -1,0 +1,228 @@
+import axios, { AxiosError } from 'axios';
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+
+import type { IUser } from '@/common/types';
+
+import { store } from '@/store';
+import { setUser, clearAuth } from '@/store/slices/authSlice';
+
+const PUBLIC_PATHS = [
+  '/auth/google',
+  '/auth/refresh',
+  '/auth/logout',
+  '/auth/login',
+  '/auth/register',
+];
+
+let refreshPromise: Promise<IUser> | null = null;
+let isLoggedOut = false;
+
+export const setLoggedOut = () => {
+  isLoggedOut = true;
+};
+
+export const clearLoggedOut = () => {
+  isLoggedOut = false;
+};
+
+/**
+ * Performs a token refresh via httpOnly cookie.
+ * The server sets new Authentication + Refresh cookies automatically.
+ * After refresh, fetches the user profile to update Redux state.
+ */
+const refreshToken = async (): Promise<IUser> => {
+  if (isLoggedOut) {
+    throw new Error('User has logged out');
+  }
+
+  if (!refreshPromise) {
+    refreshPromise = (async () => {
+      try {
+        let headers = {};
+        const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]*)/);
+        if (match && match[1]) {
+          headers = { 'x-xsrf-token': decodeURIComponent(match[1]) };
+        }
+
+        // 1. Refresh tokens — server sets new cookies automatically
+        const refreshResponse = await axios.post<{
+          user: IUser;
+          expiresIn: number;
+        }>(
+          `${import.meta.env.VITE_API_URL}/auth/refresh`,
+          {},
+          { withCredentials: true, headers },
+        );
+
+        console.log('[Auth] Token successfully refreshed');
+
+        const user = refreshResponse.data.user;
+
+        // Extract role from cookie since server doesn't return it in body
+        const roleMatch = document.cookie.match(/(?:^|;\s*)Role=([^;]*)/);
+        if (roleMatch && roleMatch[1]) {
+          user.role = decodeURIComponent(roleMatch[1]) as IUser['role'];
+        }
+
+        store.dispatch(setUser(user));
+
+        if (
+          refreshResponse.data &&
+          typeof refreshResponse.data === 'object' &&
+          'expiresIn' in refreshResponse.data
+        ) {
+          const expiresAt =
+            Date.now() + (refreshResponse.data.expiresIn as number);
+          localStorage.setItem('authExpiry', expiresAt.toString());
+        }
+
+        return user;
+      } catch (error) {
+        const isAxiosError = axios.isAxiosError(error);
+        const status = isAxiosError ? error.response?.status : null;
+
+        // ONLY clear auth if it's definitely an authentication failure (401, 403).
+        // If it's a 500 or network error, we keep the auth state so the user isn't
+        // kicked to the login page prematurely.
+        if (status === 401 || status === 403) {
+          localStorage.removeItem('hasSession');
+          localStorage.removeItem('authExpiry');
+          store.dispatch(clearAuth());
+        } else {
+          console.error(
+            '[Auth] Token refresh failed with non-auth error:',
+            error,
+          );
+        }
+
+        throw error;
+      } finally {
+        refreshPromise = null;
+      }
+    })();
+  }
+
+  return refreshPromise;
+};
+
+const authInterceptors = (axiosInstance: AxiosInstance) => {
+  // Proactive Token Refresh Interceptor
+  // This checks the client-calculated expiration time before sending each request.
+  axiosInstance.interceptors.request.use(
+    async (config) => {
+      if (
+        config.url &&
+        PUBLIC_PATHS.some((path) => config.url?.includes(path))
+      ) {
+        return config;
+      }
+
+      const authExpiry = localStorage.getItem('authExpiry');
+      const expiry = authExpiry ? parseInt(authExpiry, 10) : null;
+      const hasSession = localStorage.getItem('hasSession');
+
+      if (!expiry && !hasSession) {
+        return config;
+      }
+
+      // If we have a session but no expiry tracking, refresh proactively
+      // to establish a valid authExpiry (e.g. after Google OAuth redirect).
+      const shouldRefresh = !expiry || Date.now() > expiry - 60000;
+
+      if (shouldRefresh) {
+        try {
+          const timeLeft = expiry
+            ? Math.round((expiry - Date.now()) / 1000)
+            : 'unknown';
+          console.log(
+            `[Auth] Proactive token refresh (expires in ${timeLeft}s)`,
+          );
+          await refreshToken();
+        } catch {
+          // If refresh fails proactively, the request will fail with 401 later.
+        }
+      }
+
+      return config;
+    },
+    (error) => Promise.reject(error),
+  );
+
+  axiosInstance.interceptors.response.use(
+    (response: AxiosResponse) => {
+      // Automatically keep the auth expiry entry in sync
+      if (
+        response.data &&
+        typeof response.data === 'object' &&
+        'expiresIn' in response.data
+      ) {
+        const expiresAt = Date.now() + (response.data.expiresIn as number);
+        localStorage.setItem('authExpiry', expiresAt.toString());
+        localStorage.setItem('hasSession', 'true');
+      }
+      return response;
+    },
+    async (
+      error: AxiosError & {
+        config?: AxiosRequestConfig & { _retry?: boolean };
+      },
+    ) => {
+      const originalRequest = error.config;
+
+      if (
+        originalRequest &&
+        PUBLIC_PATHS.some((path) => originalRequest.url?.includes(path))
+      ) {
+        return Promise.reject(error);
+      }
+
+      if (isLoggedOut) {
+        return Promise.reject(error);
+      }
+
+      if (
+        originalRequest &&
+        error.response?.status === 404 &&
+        (originalRequest.url?.includes('/auth/profile') ||
+          originalRequest.url?.includes('/player/profile'))
+      ) {
+        localStorage.removeItem('hasSession');
+        localStorage.removeItem('authExpiry');
+        store.dispatch(clearAuth());
+        return Promise.reject(error);
+      }
+
+      if (
+        originalRequest &&
+        error.response?.status === 401 &&
+        !originalRequest._retry
+      ) {
+        originalRequest._retry = true;
+
+        try {
+          await refreshToken();
+
+          // Retry the original request — new cookie is already set
+          return axiosInstance(originalRequest);
+        } catch (refreshError) {
+          if (
+            axios.isAxiosError(refreshError) &&
+            refreshError.response?.status !== 401 &&
+            refreshError.response?.status !== 403
+          ) {
+            console.error(
+              '[Auth] Token refresh failed in response interceptor:',
+              refreshError,
+            );
+          }
+
+          return Promise.reject(refreshError);
+        }
+      }
+
+      return Promise.reject(error);
+    },
+  );
+};
+
+export { authInterceptors, refreshToken };
