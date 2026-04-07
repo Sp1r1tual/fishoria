@@ -12,6 +12,9 @@
   cursor: pointer;
   border: 1px solid rgba(0, 0, 0, 0.2);
   transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   box-sizing: border-box;
@@ -19,7 +22,7 @@
   outline: none;
   text-decoration: none;
   font-family: var(--font-display);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .woody-button * {

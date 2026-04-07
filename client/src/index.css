@@ -47,6 +47,13 @@ body {
   background-color: #000;
   color: var(--clr-text);
   font-family: var(--font-sans);
+
+  /* Render Quality improvements */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  image-rendering: -webkit-optimize-contrast;
+
   -webkit-overflow-scrolling: touch;
   touch-action: manipulation;
 }

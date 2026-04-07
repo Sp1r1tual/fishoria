@@ -2,6 +2,10 @@
   font-family: 'Inter', sans-serif;
   z-index: 100;
   pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 
 .hud--top-only {
@@ -68,6 +72,10 @@
   border-top: 4px solid #2b1d12;
   padding: 8px 12px 12px 12px;
   box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 
 @media (max-width: 1044px) {

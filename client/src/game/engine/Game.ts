@@ -17,8 +17,10 @@ export class Game {
       /iPad|iPhone|iPod/.test(navigator.userAgent) ||
       (/Macintosh|Mac OS X/.test(navigator.userAgent) &&
         navigator.maxTouchPoints > 1);
-    // Cap resolution to max 1.5, or 1 for standard devices, improving FPS
-    const maxResolution = isIOS ? 1.5 : window.devicePixelRatio || 1;
+    // Increase resolution for better quality on iOS (Retina), but cap at 2.5 for performance balance
+    const maxResolution = isIOS
+      ? Math.min(window.devicePixelRatio || 2, 2.5)
+      : window.devicePixelRatio || 1;
 
     await this.app.init({
       width: W,
