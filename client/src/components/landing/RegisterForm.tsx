@@ -60,7 +60,7 @@ export const RegisterForm = ({ onBack, onSuccess }: RegisterFormProps) => {
     formState: { errors },
     getValues,
   } = useForm<IAuthForm>({
-    mode: 'all',
+    mode: 'onSubmit',
   });
 
   const { mutate, isPending } = useRegisterMutation(

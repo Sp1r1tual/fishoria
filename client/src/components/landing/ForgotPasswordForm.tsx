@@ -27,7 +27,7 @@ export const ForgotPasswordForm = ({
     handleSubmit,
     formState: { errors },
   } = useForm<{ email: string }>({
-    mode: 'all',
+    mode: 'onSubmit',
   });
 
   const { mutate, isPending } = useMutation({

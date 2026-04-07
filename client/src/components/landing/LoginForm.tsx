@@ -67,7 +67,7 @@ export const LoginForm = ({
     handleSubmit,
     formState: { errors },
   } = useForm<IAuthForm>({
-    mode: 'all',
+    mode: 'onSubmit',
   });
 
   const { mutate, isPending } = useLoginMutation(

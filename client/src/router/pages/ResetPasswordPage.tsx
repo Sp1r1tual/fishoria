@@ -62,7 +62,7 @@ export const ResetPasswordPage = () => {
     formState: { errors },
     getValues,
   } = useForm({
-    mode: 'all',
+    mode: 'onSubmit',
     defaultValues: {
       password: '',
       confirmPassword: '',
