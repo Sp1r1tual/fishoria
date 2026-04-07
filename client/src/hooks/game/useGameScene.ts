@@ -155,8 +155,8 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
           },
           onLineBroke: async (lostMeters, type = 'line') => {
             audioRef.current.onLineBroke();
-            const baitId = playerRef.current?.activeBait || 'worm';
-            const baitName = BAITS[baitId]?.name || baitId;
+            const activeBait = playerRef.current?.activeBait || 'worm';
+            const isLure = activeBait.startsWith('lure_');
 
             // Get hook name from current player state
             const currentHookUid = playerRef.current?.equippedHookUid;
@@ -168,10 +168,14 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
                 'Hook'
               : 'Hook';
 
+            const baitName = isLure
+              ? hookName
+              : BAITS[activeBait]?.name || activeBait;
+
             try {
               await breakMutationRef.current.mutateAsync({
                 type,
-                baitId,
+                baitId: activeBait,
                 lostMeters,
                 rodDamage: rodDamageRef.current,
                 reelDamage: reelDamageRef.current,
@@ -183,7 +187,7 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
             dispatch(
               setLossEvent({
                 reason: 'tension',
-                itemNames: [baitName, hookName],
+                itemNames: isLure ? [hookName] : [baitName, hookName],
                 lostMeters,
               }),
             );
@@ -270,8 +274,6 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
                 rodDamageRef.current > 0 ||
                 reelDamageRef.current > 0
               ) {
-                const baitName = BAITS[activeBait]?.name || activeBait;
-
                 const currentHookUid = playerRef.current?.equippedHookUid;
                 const hookInstance = playerRef.current?.gearItems.find(
                   (g: IOwnedGearItem) => g.uid === currentHookUid,
@@ -280,6 +282,10 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
                   ? SHOP_HOOKS.find((h) => h.id === hookInstance.itemId)
                       ?.name || 'Hook'
                   : 'Hook';
+
+                const baitName = isLure
+                  ? hookName
+                  : BAITS[activeBait]?.name || activeBait;
 
                 // Send mutation to sync gear damage and potentially lost hooks/baits
                 breakMutationRef.current.mutate({
@@ -296,7 +302,7 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
                       reason: 'escape',
                       itemNames: shouldLoseHook
                         ? isLure
-                          ? [baitName]
+                          ? [hookName]
                           : [baitName, hookName]
                         : [baitName],
                     }),
@@ -340,8 +346,8 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
             GameEvents.emit('snagEnd', success);
             if (!success) {
               audioRef.current.onLineBroke();
-              const baitId = playerRef.current?.activeBait || 'worm';
-              const baitName = BAITS[baitId]?.name || baitId;
+              const activeBait = playerRef.current?.activeBait || 'worm';
+              const isLure = activeBait.startsWith('lure_');
 
               const currentHookUid = playerRef.current?.equippedHookUid;
               const hookInstance = playerRef.current?.gearItems.find(
@@ -352,10 +358,14 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
                   'Hook'
                 : 'Hook';
 
+              const baitName = isLure
+                ? hookName
+                : BAITS[activeBait]?.name || activeBait;
+
               try {
                 await breakMutationRef.current.mutateAsync({
                   type: 'line',
-                  baitId,
+                  baitId: activeBait,
                   lostMeters: 10,
                   rodDamage: rodDamageRef.current,
                   reelDamage: reelDamageRef.current,
@@ -367,7 +377,7 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
               dispatch(
                 setLossEvent({
                   reason: 'snag',
-                  itemNames: [baitName, hookName],
+                  itemNames: isLure ? [hookName] : [baitName, hookName],
                   lostMeters: 10,
                 }),
               );
