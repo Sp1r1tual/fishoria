@@ -7,6 +7,8 @@ import { playerKeys } from './player.queries';
 import { GameService } from '../services/game.service';
 import { FISH_SPECIES } from '@/common/configs/game/fish.config';
 
+import { getXpNeededForLevel } from '@/common/utils/experience.util';
+
 const calculateOptimisticLevel = (
   currentLevel: number,
   currentXp: number,
@@ -18,9 +20,11 @@ const calculateOptimisticLevel = (
   let newXp = currentXp + xpGain;
   let newLevel = currentLevel;
 
-  while (newXp >= newLevel * 100) {
-    newXp -= newLevel * 100;
+  let xpNeeded = getXpNeededForLevel(newLevel);
+  while (newXp >= xpNeeded) {
+    newXp -= xpNeeded;
     newLevel += 1;
+    xpNeeded = getXpNeededForLevel(newLevel);
   }
 
   return { newLevel, newXp };

@@ -127,6 +127,8 @@ export async function unlockAudio() {
     src.start(0);
 
     // 2. Unlock HTMLAudioElement pipeline
+    // On iOS Safari, we must play/pause each audio element during the first user interaction
+    // to allow them to be played later by non-user events (like weather changes).
     const silentURI =
       'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
     const silent = new Audio(silentURI);
@@ -135,6 +137,19 @@ export async function unlockAudio() {
       .play()
       .then(() => silent.pause())
       .catch(() => {});
+
+    Object.values(AMBIENT).forEach((bgAudio) => {
+      bgAudio.volume = 0; // Mute it initially just in case
+      bgAudio
+        .play()
+        .then(() => {
+          bgAudio.pause();
+          bgAudio.volume = 1; // Restore volume
+        })
+        .catch(() => {
+          bgAudio.volume = 1; // Restore volume if it failed
+        });
+    });
 
     // Resume multiple times to be absolutely sure
     const resumeOnAnyInteraction = () => {
@@ -201,7 +216,6 @@ export function useGameAudio(manageAmbient = true) {
         if (AMBIENT.rain.paused) AMBIENT.rain.play().catch(() => {});
       } else {
         AMBIENT.rain.pause();
-        AMBIENT.rain.currentTime = 0;
       }
     }
   }, [
@@ -415,7 +429,6 @@ export function useGameAudio(manageAmbient = true) {
         currentAmbientRef.current = null;
       }
       AMBIENT.rain.pause();
-      AMBIENT.rain.currentTime = 0;
     };
   }, [stopAllLoops]);
 
