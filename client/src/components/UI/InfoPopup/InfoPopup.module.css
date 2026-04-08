@@ -1,6 +1,4 @@
 .iconWrapper {
-  font-size: 3rem;
-  margin-bottom: 4px;
   filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.2));
 }
 
@@ -14,15 +12,4 @@
 .message strong {
   color: #fff;
   font-weight: 700;
-}
-
-@media (max-height: 500px) {
-  .iconWrapper {
-    font-size: 2rem;
-    margin-bottom: 2px;
-  }
-  .message {
-    font-size: 0.9rem;
-    line-height: 1.3;
-  }
 }
