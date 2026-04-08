@@ -21,8 +21,10 @@ import {
   resetGame,
   setGroundbaitExpiry,
   setCurrentLake,
+  clearPendingEquips,
 } from '@/store/slices/gameSlice';
 
+import { InventoryService } from '@/services/inventory.service';
 import { GameEvents } from '@/game/engine/GameEvents';
 import { TimeManager } from '@/game/managers/TimeManager';
 import type { LakeScene } from '@/game/engine/scenes/LakeScene';
@@ -126,6 +128,14 @@ export function HUD({
       state.game.weatherForecast,
       state.game.lastWeatherUpdateHour,
     );
+
+    const pendingEquips = state.game.pendingEquips;
+    if (pendingEquips && pendingEquips.length > 0) {
+      InventoryService.equip({ equips: pendingEquips }).catch((e) =>
+        console.error('Failed to flush gears on exit', e),
+      );
+      dispatch(clearPendingEquips());
+    }
 
     sceneRef.current?.resetCast();
     dispatch(setGroundbaitExpiry(null));

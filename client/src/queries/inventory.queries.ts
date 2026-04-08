@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import type { IPlayerProfile, IOwnedGearItem } from '@/common/types';
 
+import { store } from '@/store';
+import { addPendingEquips } from '@/store/slices/gameSlice';
 import { playerKeys } from './player.queries';
 
 import { InventoryService } from '../services/inventory.service';
@@ -28,7 +30,15 @@ export const useEquipMutation = () => {
     EquipPayload,
     { previousProfile: IPlayerProfile | undefined }
   >({
-    mutationFn: InventoryService.equip,
+    mutationFn: async (payload) => {
+      const state = store.getState();
+      if (state.game.currentLakeId) {
+        const equips = 'equips' in payload ? payload.equips : [payload];
+        store.dispatch(addPendingEquips(equips));
+        return queryClient.getQueryData<IPlayerProfile>(playerKeys.profile());
+      }
+      return InventoryService.equip(payload);
+    },
     onMutate: async (payload) => {
       const previousProfile = queryClient.getQueryData<IPlayerProfile>(
         playerKeys.profile(),
@@ -56,8 +66,6 @@ export const useEquipMutation = () => {
         }
 
         queryClient.setQueryData(playerKeys.profile(), updatedProfile);
-
-        // Cancel in background to avoid blocking the synchronous UI update
         queryClient.cancelQueries({ queryKey: playerKeys.profile() });
       }
 

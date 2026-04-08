@@ -3,6 +3,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { IPlayerProfile } from '@/common/types';
 
 import { playerKeys } from './player.queries';
+import { InventoryService } from '../services/inventory.service';
+import { store } from '@/store';
+import { clearPendingEquips } from '@/store/slices/gameSlice';
 
 import { GameService } from '../services/game.service';
 import { FISH_SPECIES } from '@/common/configs/game/fish.config';
@@ -34,7 +37,21 @@ export const useCatchFishMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: GameService.catchFish,
+    mutationFn: async (
+      payload: Parameters<typeof GameService.catchFish>[0],
+    ) => {
+      const state = store.getState();
+      const pendingEquips = state.game.pendingEquips;
+      if (pendingEquips && pendingEquips.length > 0) {
+        try {
+          await InventoryService.equip({ equips: pendingEquips });
+        } catch (e) {
+          console.error('Failed to flush gears before catch:', e);
+        }
+        store.dispatch(clearPendingEquips());
+      }
+      return GameService.catchFish(payload);
+    },
     onMutate: async (newCatch) => {
       await queryClient.cancelQueries({ queryKey: playerKeys.profile() });
       const previousPlayer = queryClient.getQueryData<IPlayerProfile>(
@@ -86,7 +103,21 @@ export const useCatchFishMutation = () => {
 export const useBreakGearMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: GameService.breakGear,
+    mutationFn: async (
+      payload: Parameters<typeof GameService.breakGear>[0],
+    ) => {
+      const state = store.getState();
+      const pendingEquips = state.game.pendingEquips;
+      if (pendingEquips && pendingEquips.length > 0) {
+        try {
+          await InventoryService.equip({ equips: pendingEquips });
+        } catch (e) {
+          console.error('Failed to flush gears before break:', e);
+        }
+        store.dispatch(clearPendingEquips());
+      }
+      return GameService.breakGear(payload);
+    },
     onMutate: async (variables) => {
       await queryClient.cancelQueries({ queryKey: playerKeys.profile() });
       const previousPlayer = queryClient.getQueryData<IPlayerProfile>(

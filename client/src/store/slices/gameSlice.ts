@@ -7,7 +7,13 @@ import type {
   ILossEvent,
 } from '@/common/types';
 
-const INITIAL: IGameState = {
+export interface IGearAction {
+  targetType: 'rod' | 'reel' | 'line' | 'hook' | 'bait' | 'groundbait';
+  uid?: string | null;
+  targetId?: string | null;
+}
+
+const INITIAL: IGameState & { pendingEquips: IGearAction[] } = {
   currentLakeId: null,
   phase: 'idle',
   tension: 0,
@@ -20,12 +26,19 @@ const INITIAL: IGameState = {
   weatherForecast: [],
   lastWeatherUpdateHour: null,
   baseDepth: 100,
+  pendingEquips: [],
 };
 
 const gameSlice = createSlice({
   name: 'game',
   initialState: INITIAL,
   reducers: {
+    addPendingEquips(state, action: PayloadAction<IGearAction[]>) {
+      state.pendingEquips.push(...action.payload);
+    },
+    clearPendingEquips(state) {
+      state.pendingEquips = [];
+    },
     setCurrentLake(state, action: PayloadAction<string | null>) {
       state.currentLakeId = action.payload;
     },
@@ -81,15 +94,14 @@ const gameSlice = createSlice({
       state.isBroken = false;
       state.lastCatch = null;
       state.lossEvent = null;
-      // NOTE: currentLakeId is intentionally NOT reset here.
-      // Resetting it would destroy the Pixi scene (dark screen after catching fish).
-      // The lake is cleared when the user explicitly leaves to the main menu.
       state.groundbaitExpiresAt = null;
     },
   },
 });
 
 export const {
+  addPendingEquips,
+  clearPendingEquips,
   setCurrentLake,
   setPhase,
   setTension,
