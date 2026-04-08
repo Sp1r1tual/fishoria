@@ -179,6 +179,7 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
 
           if (
             canInstantStrike &&
+            (!isSpinning || params.isMoving) &&
             Math.random() <
               BITE_DETECTION.instantStrikeChance * params.deltaTime &&
             (!isSpinning ||
@@ -208,9 +209,9 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
         const attackChance =
           0.4 * baitScore * timeScore * fish.config.baseCatchChance;
 
-        const finalChance = Math.min(attackChance, 0.6);
+        const finalChance = Math.min(attackChance, 0.3);
 
-        if (Math.random() < finalChance) {
+        if (Math.random() < finalChance && (!isSpinning || params.isMoving)) {
           fish.setState(FishState.Biting);
           return { biter: fish, progress: 0 };
         }
@@ -378,7 +379,7 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
           lossChance = STRIKE_CHANCES.playful.lossChance * params.deltaTime;
         }
 
-        if (Math.random() < strikeChance) {
+        if (Math.random() < strikeChance && (!isSpinning || params.isMoving)) {
           fish.setState(FishState.Biting);
           return { biter: fish, progress: 0 };
         }

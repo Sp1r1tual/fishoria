@@ -213,7 +213,7 @@ export const BITE_DETECTION = {
   depthPenaltyFactor: 1.8,
 
   /** Vertical gap penalty factor */
-  verticalGapPenaltyFactor: 2,
+  verticalGapPenaltyFactor: 1.67,
 
   /** Minimum depth score to trigger interest */
   minDepthScoreForInterest: 0.2,
@@ -296,7 +296,7 @@ export const INTEREST_RATES = {
     /** Active attraction when moving */
     activeAttractMoving: 8.0,
     /** Active decay when NOT moving */
-    activeAttractIdle: 0.4,
+    activeAttractIdle: -2.0,
     /** Retrieval technique bonuses by time/weather */
     techniques: {
       steady: {
@@ -509,7 +509,7 @@ export const EARLY_HOOK = {
 
 export const CATCH_RESULT = {
   /** Weight distribution power: higher = more small fish, rarer trophies */
-  weightDistributionPower: 2.4,
+  weightDistributionPower: 4.5,
 
   /** Length calculation: length = max(minLength, weight * lengthPerKg + random * lengthJitter) */
   minLength: 5,
@@ -545,9 +545,9 @@ export const SPINNING_LURE = {
   shoreBoundaryFraction: 0.96,
 
   /** Wobbler dive speed when reeling (depth per second multiplier) */
-  wobblerDiveSpeed: 0.8,
+  wobblerDiveSpeed: 0.6,
   /** Wobbler float speed when idle (depth per second) */
-  wobblerFloatSpeed: 0.4,
+  wobblerFloatSpeed: 0.075,
 
   /** Vibrotail sink speed when idle (depth per second) */
   vibrotailSinkSpeed: 0.25,
@@ -556,13 +556,13 @@ export const SPINNING_LURE = {
   spoonSinkSpeed: 0.3,
 
   /** General rise speed when reeling (non-wobbler, depth per second multiplier) */
-  generalRiseSpeed: 1,
+  generalRiseSpeed: 1.3,
 
   /** Minimum depth (meters) */
   minDepth: 0.1,
 
   /** Reeling pull speed multiplier (visual movement) */
-  reelingPullSpeedBase: 80,
+  reelingPullSpeedBase: 70,
 } as const;
 
 // ─── TIME SYSTEM ─────────────────────────────────────────────────────────────

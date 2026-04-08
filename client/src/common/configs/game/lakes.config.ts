@@ -40,17 +40,17 @@ export const LAKES: ILakeConfig[] = [
         {
           speciesId: 'roach',
           weight: 33,
-          preferredDepthRange: { min: 0.5, max: 1.45 },
+          preferredDepthRange: { min: 0.3, max: 1.45 },
         },
         {
           speciesId: 'perch',
           weight: 15,
-          preferredDepthRange: { min: 0.5, max: 2.2 },
+          preferredDepthRange: { min: 0.2, max: 2.2 },
         },
         {
           speciesId: 'pike',
           weight: 17,
-          preferredDepthRange: { min: 0.5, max: 2.5 },
+          preferredDepthRange: { min: 0.2, max: 2.5 },
         },
         {
           speciesId: 'ruffle',

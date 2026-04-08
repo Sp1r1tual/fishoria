@@ -48,8 +48,41 @@ export class SteeringBehavior implements IFishBehavior {
     // The total floor depth at this (x, y) point on the screen
     const floorDepthAtPoint = ctx.getDepthAt(nx, ny);
 
-    // The fish's actual depth is its progression between the surface (0) and the floor
-    fish.depth = floorDepthAtPoint;
+    // --- VERTICAL DEPTH LOGIC ---
+    // The fish's ideal depth oscillates slowly within its preferred depth range
+    const bob =
+      (this.noise2D(
+        this.noiseTime * 0.2,
+        fish.id.charCodeAt(fish.id.length - 1),
+      ) +
+        1) /
+      2; // 0.0 to 1.0
+    let targetD =
+      fish.preferredDepthRange.min +
+      (fish.preferredDepthRange.max - fish.preferredDepthRange.min) * bob;
+
+    // If interested, try to match bait depth
+    if (
+      fish.state === FishState.Interested &&
+      ctx.baitPosition &&
+      ctx.baitDepth !== undefined
+    ) {
+      targetD = ctx.baitDepth;
+    }
+
+    // Clamp target depth so fish doesn't dig into the floor or breach the surface
+    targetD = Math.max(0.05, Math.min(targetD, floorDepthAtPoint));
+
+    // Initialize depth if it's 0 (freshly spawned)
+    if (fish.depth === 0) {
+      fish.depth = targetD;
+    }
+
+    // Smoothly adjust current depth towards target
+    fish.depth += (targetD - fish.depth) * 0.05;
+
+    // Hard clamp to actual floor depth in case the floor rises abruptly
+    fish.depth = Math.max(0.05, Math.min(fish.depth, floorDepthAtPoint));
 
     // Safety clamp (not used since we moved towards map-based depth, but keeps the fish within world bounds)
     if (fish.position.y < horizonY) {
