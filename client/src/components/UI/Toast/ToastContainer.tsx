@@ -107,24 +107,24 @@ export function ToastContainer() {
   );
 }
 
-import achievementSound from '@/assets/music/achievements.mp3';
+import { useAchievementSound } from '@/hooks/audio/useAchievementSound';
 
 function ToastItem({ id, message, type, duration = 3000, imageUrl }: IToast) {
   const dispatch = useAppDispatch();
   const playDing = useDingSound();
+  const playAchievement = useAchievementSound();
   const isFirstMount = useRef(true);
 
   useEffect(() => {
     if (isFirstMount.current) {
       if (type === 'achievement' || type === 'quest') {
-        const audio = new Audio(achievementSound);
-        audio.play().catch((err) => console.log('Audio playback failed:', err));
+        playAchievement();
       } else {
         playDing();
       }
       isFirstMount.current = false;
     }
-  }, [playDing, type]);
+  }, [playAchievement, playDing, type]);
 
   useEffect(() => {
     if (!duration) return;

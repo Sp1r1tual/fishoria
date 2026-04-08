@@ -144,3 +144,31 @@
   overflow: hidden;
   padding: 2px;
 }
+
+@media (max-width: 768px) {
+  .container {
+    top: 16px;
+    gap: 8px;
+  }
+
+  .toast {
+    min-width: 260px;
+    padding: 8px 12px;
+    gap: 8px;
+    border-radius: var(--radius-md);
+  }
+
+  .toast__icon {
+    width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
+  }
+
+  .toast__message {
+    font-size: 0.85rem;
+  }
+
+  .toast__close {
+    font-size: 1.2rem;
+  }
+}
