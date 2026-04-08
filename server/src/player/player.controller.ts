@@ -39,8 +39,11 @@ export class PlayerController {
   @ApiOperation({ summary: 'Add money to player (Moderator only)' })
   @ApiResponse({ status: 201, description: 'Money added successfully.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  addMoney(@Body(new ZodValidationPipe(AddMoneyDto)) body: AddMoneyDto) {
-    return this.playerService.addMoney(body.targetUserId, body.amount);
+  addMoney(
+    @GetUserId() modId: string,
+    @Body(new ZodValidationPipe(AddMoneyDto)) body: AddMoneyDto,
+  ) {
+    return this.playerService.addMoney(body.targetUserId || modId, body.amount);
   }
 
   @UseGuards(JwtAuthGuard)

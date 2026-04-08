@@ -72,7 +72,7 @@ export class AuthController {
       req.ip,
     );
 
-    this.setCookies(res, access_token, refresh_token, internalUser.role);
+    this.setCookies(res, access_token, refresh_token);
 
     res.redirect(
       this.configService.get<string>('CLIENT_URL') || 'http://localhost:5173',
@@ -104,12 +104,7 @@ export class AuthController {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    this.setCookies(
-      res,
-      tokens.access_token,
-      tokens.refresh_token,
-      tokens.role,
-    );
+    this.setCookies(res, tokens.access_token, tokens.refresh_token);
 
     const jwtExp = this.configService.get<string>(
       'JWT_ACCESS_TOKEN_EXPIRATION',
@@ -148,8 +143,7 @@ export class AuthController {
     )!;
     const expiresIn = ms(jwtExp as ms.StringValue);
 
-    const { role: _role, ...userWithoutRole } = req.user;
-    return { ...userWithoutRole, userId, expiresIn };
+    return { ...req.user, userId, expiresIn };
   }
 
   @Post('forgot-password')
@@ -219,15 +213,14 @@ export class AuthController {
       req.ip,
     );
 
-    this.setCookies(res, tokens.access_token, tokens.refresh_token, user.role);
+    this.setCookies(res, tokens.access_token, tokens.refresh_token);
 
     const jwtExp = this.configService.get<string>(
       'JWT_ACCESS_TOKEN_EXPIRATION',
     )!;
     const expiresIn = ms(jwtExp as ms.StringValue);
 
-    const { role: _role, ...userWithoutRole } = user;
-    return res.json({ user: userWithoutRole, success: true, expiresIn });
+    return res.json({ user, success: true, expiresIn });
   }
 
   @Get('activate/:link')
@@ -250,12 +243,7 @@ export class AuthController {
     }
   }
 
-  private setCookies(
-    res: Response,
-    accessToken: string,
-    refreshToken: string,
-    role: string,
-  ) {
+  private setCookies(res: Response, accessToken: string, refreshToken: string) {
     const isProd = this.configService.get('NODE_ENV') === 'production';
     const cookieDomain = this.configService.get<string>('COOKIE_DOMAIN');
     const jwtExp = this.configService.get<string>(
@@ -269,13 +257,6 @@ export class AuthController {
 
     res.cookie('Authentication', accessToken, {
       httpOnly: true,
-      secure: isProd,
-      maxAge: jwtMs,
-      sameSite: isProd ? 'none' : 'lax',
-      ...(cookieDomain && { domain: cookieDomain }),
-    });
-
-    res.cookie('Role', role, {
       secure: isProd,
       maxAge: jwtMs,
       sameSite: isProd ? 'none' : 'lax',
@@ -301,11 +282,7 @@ export class AuthController {
       sameSite: isProd ? 'none' : 'lax',
       ...(cookieDomain && { domain: cookieDomain }),
     });
-    res.clearCookie('Role', {
-      secure: isProd,
-      sameSite: isProd ? 'none' : 'lax',
-      ...(cookieDomain && { domain: cookieDomain }),
-    });
+
     res.clearCookie('Refresh', {
       httpOnly: true,
       secure: isProd,
