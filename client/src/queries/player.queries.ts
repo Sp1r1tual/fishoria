@@ -48,7 +48,11 @@ export const useUpdateLanguageMutation = () => {
       // 1. Manually trigger a token refresh to update the JWT embedded with the new language
       await refreshToken().catch(() => null);
 
+      // 2. Invalidate all queries that depend on language
       queryClient.invalidateQueries({ queryKey: playerKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['achievements'] });
+      queryClient.invalidateQueries({ queryKey: ['quests'] });
+      queryClient.invalidateQueries({ queryKey: ['inventory'] });
     },
   });
 };

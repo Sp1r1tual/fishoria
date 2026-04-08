@@ -8,14 +8,11 @@ import {
 } from '@/i18n';
 
 import { updateSettings } from '@/store/slices/settingsSlice';
-import {
-  usePlayerQuery,
-  useUpdateLanguageMutation,
-} from '@/queries/player.queries';
+import { usePlayerQuery } from '@/queries/player.queries';
 
 export function LanguageSync() {
   const { data: player } = usePlayerQuery();
-  const { mutate: updateServerLang } = useUpdateLanguageMutation();
+
   const { i18n } = useTranslation();
   const syncedRef = useRef(false);
   const dispatch = useDispatch();
@@ -25,7 +22,7 @@ export function LanguageSync() {
   }, [i18n.language]);
 
   useEffect(() => {
-    if (!player || !player.user) return;
+    if (!player?.user || !i18n.isInitialized) return;
 
     if (syncedRef.current) return;
 
@@ -37,17 +34,14 @@ export function LanguageSync() {
       return;
     }
 
-    if (serverLang === 'en' && localLang === 'uk') {
-      updateServerLang('uk');
-      syncedRef.current = true;
-    } else if (serverLang === 'en' || serverLang === 'uk') {
+    if (serverLang === 'en' || serverLang === 'uk') {
       loadTranslations(serverLang).then(() => {
         localStorage.setItem(I18N_STORAGE_KEY, serverLang);
         dispatch(updateSettings({ language: serverLang }));
         syncedRef.current = true;
       });
     }
-  }, [player, i18n, updateServerLang, dispatch]);
+  }, [player, i18n, dispatch]);
 
   return null;
 }
