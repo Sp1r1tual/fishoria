@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
 
 import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 
@@ -79,7 +80,7 @@ export function DebugTerminal({ onClose }: IDebugTerminalProps) {
         addLog('  WEATHER <clear|cloudy|rain> - Update climate');
         addLog('  TIME <hour> - Set game hour (0-23) or show current');
         if (isModerator) {
-          addLog('  ADD-COINS <amount> - [MOD] Add currency');
+          addLog('  ADD-MONEY [targetUserId] <amount> - [MOD] Add currency');
         }
         addLog('  CLEAR - Wipe terminal session');
         addLog('  EXIT - Close debug shell');
@@ -119,16 +120,32 @@ export function DebugTerminal({ onClose }: IDebugTerminalProps) {
           addLog('ERROR: PERMISSION DENIED. MODERATOR ONLY.', 'error');
           break;
         }
-        const amount = parseInt(args[0]);
+
+        let targetId: string | undefined;
+        let amount: number;
+
+        if (args.length >= 2) {
+          targetId = args[0];
+          amount = parseInt(args[1]);
+        } else {
+          amount = parseInt(args[0]);
+        }
+
         if (!isNaN(amount) && amount > 0) {
           try {
-            await addMoneyAsync(amount);
+            await addMoneyAsync({ amount, targetUserId: targetId });
             addLog(`WALLET UPDATED: +${amount} COINS`, 'success');
-          } catch {
-            addLog('API ERROR: FAILED TO UPDATE BALANCE', 'error');
+          } catch (err: unknown) {
+            let logMsg = 'FAILED TO UPDATE BALANCE';
+            if (axios.isAxiosError(err)) {
+              const apiMsg = err.response?.data?.message;
+              const extracted = Array.isArray(apiMsg) ? apiMsg[0] : apiMsg;
+              logMsg = extracted || logMsg;
+            }
+            addLog(`API ERROR: ${logMsg.toUpperCase()}`, 'error');
           }
         } else {
-          addLog('USAGE: ADD-COINS <AMOUNT>', 'error');
+          addLog('USAGE: ADD-MONEY [TARGET_USER_ID] <AMOUNT>', 'error');
         }
         break;
       }

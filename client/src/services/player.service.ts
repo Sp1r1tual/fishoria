@@ -5,8 +5,8 @@ export const PlayerService = {
     const { data } = await $mainApi.get('/player/profile');
     return data;
   },
-  addMoney: async (amount: number) => {
-    const { data } = await $mainApi.post('/player/add-money', { amount });
+  addMoney: async (payload: { amount: number; targetUserId?: string }) => {
+    const { data } = await $mainApi.post('/player/add-money', payload);
     return data;
   },
   resetProfile: async () => {

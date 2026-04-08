@@ -58,12 +58,6 @@ const refreshToken = async (): Promise<IUser> => {
 
         const user = refreshResponse.data.user;
 
-        // Extract role from cookie since server doesn't return it in body
-        const roleMatch = document.cookie.match(/(?:^|;\s*)Role=([^;]*)/);
-        if (roleMatch && roleMatch[1]) {
-          user.role = decodeURIComponent(roleMatch[1]) as IUser['role'];
-        }
-
         store.dispatch(setUser(user));
 
         if (

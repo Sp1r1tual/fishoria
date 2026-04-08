@@ -20,7 +20,8 @@ export const useAddMoneyMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (amount: number) => PlayerService.addMoney(amount),
+    mutationFn: (payload: { amount: number; targetUserId?: string }) =>
+      PlayerService.addMoney(payload),
     onSuccess: (data) => {
       queryClient.setQueryData(playerKeys.profile(), data);
     },
