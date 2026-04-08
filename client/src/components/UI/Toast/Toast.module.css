@@ -23,18 +23,22 @@
   align-items: center;
   gap: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  animation: toast-slide-in 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+
+  /* Start state */
+  opacity: 0;
+  transform: translateY(-20px) scale(0.9);
+  transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
 
-@keyframes toast-slide-in {
-  from {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+.toastVisible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.toastExiting {
+  opacity: 0;
+  transform: translateY(-20px) scale(0.9);
+  transition: all 0.3s cubic-bezier(0.89, 0.18, 1.28, 0.32);
 }
 
 .toast__icon {

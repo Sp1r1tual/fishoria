@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
@@ -115,6 +115,9 @@ function ToastItem({ id, message, type, duration = 3000, imageUrl }: IToast) {
   const playAchievement = useAchievementSound();
   const isFirstMount = useRef(true);
 
+  const [isVisible, setIsVisible] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
+
   useEffect(() => {
     if (isFirstMount.current) {
       if (type === 'achievement' || type === 'quest') {
@@ -123,21 +126,36 @@ function ToastItem({ id, message, type, duration = 3000, imageUrl }: IToast) {
         playDing();
       }
       isFirstMount.current = false;
+      requestAnimationFrame(() => {
+        setIsVisible(true);
+      });
     }
   }, [playAchievement, playDing, type]);
 
   useEffect(() => {
     if (!duration) return;
     const timer = setTimeout(() => {
-      dispatch(removeToast(id));
+      setIsExiting(true);
     }, duration);
     return () => clearTimeout(timer);
-  }, [id, duration, dispatch]);
+  }, [duration]);
+
+  const handleTransitionEnd = () => {
+    if (isExiting) {
+      dispatch(removeToast(id));
+    }
+  };
 
   const typeClass = styles[`toast--${type}`] || styles['toast--info'];
+  let stateClass = '';
+  if (isExiting) stateClass = styles.toastExiting;
+  else if (isVisible) stateClass = styles.toastVisible;
 
   return (
-    <div className={`${styles.toast} ${typeClass} slide-in-top`}>
+    <div
+      className={`${styles.toast} ${typeClass} ${stateClass}`}
+      onTransitionEnd={handleTransitionEnd}
+    >
       <div className={styles.toast__icon}>
         {type === 'success' && '✓'}
         {type === 'error' && '⚠️'}
@@ -155,7 +173,7 @@ function ToastItem({ id, message, type, duration = 3000, imageUrl }: IToast) {
       <div className={styles.toast__message}>{message}</div>
       <button
         className={styles.toast__close}
-        onClick={() => dispatch(removeToast(id))}
+        onClick={() => setIsExiting(true)}
       >
         ×
       </button>
