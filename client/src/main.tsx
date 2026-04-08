@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router';
 import { Provider } from 'react-redux';
+import { Analytics } from '@vercel/analytics/react';
 import './i18n';
 
 import { ReactQueryProvider } from './providers/ReactQueryProvider';
@@ -45,6 +46,7 @@ loadTranslations(initialLang).then(() => {
           <GlobalErrorOverlay />
           <ReactQueryProvider>
             <RouterProvider router={router} />
+            <Analytics />
           </ReactQueryProvider>
         </ErrorBoundary>
       </Provider>
