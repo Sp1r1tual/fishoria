@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-# Sitemap link (change to your real domain)
-Sitemap: https://fishoria.com/sitemap.xml
+# Sitemap link
+Sitemap: https://www.fishoria.online/sitemap.xml
