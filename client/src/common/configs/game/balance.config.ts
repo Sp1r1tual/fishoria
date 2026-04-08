@@ -140,8 +140,8 @@ export const FISH_STATE_SPEEDS = {
     /** Flee direction force */
     fleeForce: 0.35,
     wanderForce: 1.0,
-    verticalWanderForce: 0.45,
-    verticalBias: -0.22,
+    verticalWanderForce: 0.25,
+    verticalBias: -0.05,
     /** Speed when player is reeling */
     reelingSpeedMultiplier: 0.05,
     /** Speed when player is NOT reeling (fish tries to escape) */
@@ -547,13 +547,13 @@ export const SPINNING_LURE = {
   spoonSinkSpeed: 0.6,
 
   /** General rise speed when reeling (non-wobbler, depth per second multiplier) */
-  generalRiseSpeed: 0.5,
+  generalRiseSpeed: 0.7,
 
   /** Minimum depth (meters) */
   minDepth: 0.1,
 
   /** Reeling pull speed multiplier (visual movement) */
-  reelingPullSpeedBase: 60,
+  reelingPullSpeedBase: 70,
 } as const;
 
 // ─── TIME SYSTEM ─────────────────────────────────────────────────────────────

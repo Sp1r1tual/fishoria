@@ -372,7 +372,13 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
             dispatch(addToast({ type: 'warning', message: t(msgId) }));
           },
           onResetCast: (prevPhase) => {
-            if (prevPhase === 'idle') return;
+            // Bait falling off logic should only apply when manually extracting before a catch/loss result
+            if (
+              ['idle', 'caught', 'escaped', 'broken', 'snagged'].includes(
+                prevPhase,
+              )
+            )
+              return;
 
             const player = playerRef.current;
             if (!player) return;

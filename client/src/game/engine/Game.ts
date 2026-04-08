@@ -17,20 +17,21 @@ export class Game {
       /iPad|iPhone|iPod/.test(navigator.userAgent) ||
       (/Macintosh|Mac OS X/.test(navigator.userAgent) &&
         navigator.maxTouchPoints > 1);
-    // Increase resolution for better quality on iOS (Retina), but cap at 2.5 for performance balance
+    // Increase resolution for better quality on iOS (Retina), capped at 3.0
     const maxResolution = isIOS
-      ? Math.min(window.devicePixelRatio || 2, 2.5)
+      ? Math.min(window.devicePixelRatio || 2, 3)
       : window.devicePixelRatio || 1;
 
     await this.app.init({
       width: W,
       height: H,
       backgroundColor: 0x0d1b2a,
-      antialias: true, // Re-enable for smooth edges
+      antialias: true,
       resolution: maxResolution,
       autoDensity: true,
-      roundPixels: false, // OFF to allow sub-pixel smoothing for curves
+      roundPixels: false,
       powerPreference: 'high-performance',
+      preference: isIOS ? 'webgl' : undefined,
     });
 
     if (this.isDestroyed) {

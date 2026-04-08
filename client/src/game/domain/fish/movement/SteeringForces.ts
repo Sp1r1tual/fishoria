@@ -167,7 +167,7 @@ export function getAvoidanceForce(
   if (fish.position.y < horizonY + margin) {
     fy += ((horizonY + margin - fish.position.y) / margin) * 0.5;
   }
-  if (fish.position.y > ctx.canvasHeight - margin) {
+  if (fish.position.y > ctx.canvasHeight - margin && fish.state !== 'Hooked') {
     fy -= ((fish.position.y - (ctx.canvasHeight - margin)) / margin) * 0.5;
   }
 
