@@ -169,7 +169,7 @@ export const CAST_SPLASH = {
   duration: 2.5,
 
   /** Radius (pixels, pre-scale) for splash influence */
-  radius: 50,
+  radius: 80,
 
   /** Fear threshold — fish with fear <= this are "predatory" */
   predatorFearThreshold: 0.4,
@@ -201,13 +201,13 @@ export const BITE_DETECTION = {
   chanceOfBiteAtDeadHour: 0.3,
 
   /** Radius (pixels, pre-scale) for fish to notice the bait/lure */
-  attractRadiusPx: 40,
+  attractRadiusPx: 50,
 
   /** Radius (pixels, pre-scale) for a bite to occur */
   biteRadiusPx: 10,
 
   /** Spinning predator vision radius (overrides attractRadiusPx for predators) */
-  spinningPredatorVisionPx: 40,
+  spinningPredatorVisionPx: 55,
 
   /** Depth penalty multiplier (how harshly out-of-range depth is penalized) */
   depthPenaltyFactor: 1.8,
@@ -283,9 +283,9 @@ export const INTEREST_RATES = {
   maxInterestDuration: 18,
 
   /** Max distance to remain interested (float/feeder, pre-scale) */
-  maxInterestDistFloat: 110,
+  maxInterestDistFloat: 140,
   /** Max distance for spinning predators (pre-scale) */
-  maxInterestDistSpinningPredator: 80,
+  maxInterestDistSpinningPredator: 110,
 
   /** Spinning-specific multipliers */
   spinning: {
@@ -379,7 +379,7 @@ export const STRIKE_CHANCES = {
 
 export const ATTRACTION = {
   /** Groundbait attraction range base (pixels, pre-scale, divided by distance) */
-  baseAttractionRange: 25,
+  baseAttractionRange: 100,
 
   /** Jitter threshold: interestLevel above which tugging jitter kicks in */
   jitterInterestThreshold: 0.7,
