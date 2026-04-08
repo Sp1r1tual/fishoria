@@ -750,6 +750,7 @@ export class LakeScene implements IScene {
     this.updateCtx.timeSinceCast = this.timeSinceCast;
     this.updateCtx.activeGroundbait = GROUNDBAITS[this.activeGroundbaitType];
     this.updateCtx.allowedCastArea = this.config.allowedCastArea;
+    this.updateCtx.rigType = this.hookConfig?.rigType;
 
     this.timeSinceCast += deltaTime / 60;
 

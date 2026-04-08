@@ -169,13 +169,13 @@ export const CAST_SPLASH = {
   duration: 2.5,
 
   /** Radius (pixels, pre-scale) for splash influence */
-  radius: 80,
+  radius: 120,
 
   /** Fear threshold — fish with fear <= this are "predatory" */
   predatorFearThreshold: 0.4,
 
   /** Predator attraction force multiplier */
-  predatorAttractionForce: 0.4,
+  predatorAttractionForce: 0.7,
   /** Predator speed boost during splash */
   predatorSpeedBoost: 1.1,
 
@@ -185,7 +185,7 @@ export const CAST_SPLASH = {
   preySpeedBoost: 1.2,
 
   /** Predator interest (curiosity) chance on splash */
-  predatorInterestChance: 0.3,
+  predatorInterestChance: 0.5,
 
   /** Avoidance force weight */
   avoidanceWeight: 1.5,
@@ -207,7 +207,7 @@ export const BITE_DETECTION = {
   biteRadiusPx: 10,
 
   /** Spinning predator vision radius (overrides attractRadiusPx for predators) */
-  spinningPredatorVisionPx: 55,
+  spinningPredatorVisionPx: 100,
 
   /** Depth penalty multiplier (how harshly out-of-range depth is penalized) */
   depthPenaltyFactor: 1.8,
@@ -224,7 +224,7 @@ export const BITE_DETECTION = {
   /** Chance per tick for fish to become interested (normalized to 60fps) */
   attractChanceFloat: 0.15,
   /** Chance per tick for predators (normalized to 60fps) */
-  attractChanceSpinningPredator: 0.2,
+  attractChanceSpinningPredator: 0.35,
   /** Chance per tick for non-predators (normalized to 60fps) */
   attractChanceSpinningNonPredator: 0.25,
 
@@ -285,7 +285,7 @@ export const INTEREST_RATES = {
   /** Max distance to remain interested (float/feeder, pre-scale) */
   maxInterestDistFloat: 140,
   /** Max distance for spinning predators (pre-scale) */
-  maxInterestDistSpinningPredator: 110,
+  maxInterestDistSpinningPredator: 180,
 
   /** Spinning-specific multipliers */
   spinning: {
@@ -294,9 +294,9 @@ export const INTEREST_RATES = {
     /** Passive focus: fish in water = 1.0 * depthScore * verticalGapScore */
     passiveFocusInWater: 1.0,
     /** Active attraction when moving */
-    activeAttractMoving: 8.0,
+    activeAttractMoving: 12.0,
     /** Active decay when NOT moving */
-    activeAttractIdle: -2.0,
+    activeAttractIdle: -1.0,
     /** Retrieval technique bonuses by time/weather */
     techniques: {
       steady: {

@@ -65,7 +65,8 @@ export class SteeringBehavior implements IFishBehavior {
     if (
       fish.state === FishState.Interested &&
       ctx.baitPosition &&
-      ctx.baitDepth !== undefined
+      ctx.baitDepth !== undefined &&
+      ctx.rigType !== 'spinning'
     ) {
       targetD = ctx.baitDepth;
     }
@@ -448,6 +449,24 @@ export class SteeringBehavior implements IFishBehavior {
     ) {
       fish.position.y = ctx.canvasHeight - 5 * scaleY;
       fish.velocity.y *= -0.5;
+    }
+
+    if (fish.state === FishState.Interested && ctx.baitDepth !== undefined) {
+      const realNx = Math.max(
+        0,
+        Math.min(1, fish.position.x / ctx.canvasWidth),
+      );
+      const realNy = Math.max(
+        0,
+        Math.min(1, (fish.position.y - horizonY) / waterHeight),
+      );
+      const realDepthAtPos = ctx.getDepthAt(realNx, realNy);
+
+      fish.depth = Math.min(
+        realDepthAtPos,
+        fish.depth + (ctx.baitDepth - fish.depth) * 0.12,
+      );
+      fish.depth = Math.max(0.05, fish.depth);
     }
   }
 

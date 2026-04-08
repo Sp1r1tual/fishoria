@@ -168,11 +168,12 @@ export class RodEntity {
 
     this.lineGfx.moveTo(this.guidePoints[0].x, this.guidePoints[0].y);
 
+    // Draw line through guides
     for (let i = 1; i < this.guidePoints.length; i++) {
       const p1 = this.guidePoints[i - 1];
       const p2 = this.guidePoints[i];
       const mx = (p1.x + p2.x) / 2;
-      const my = (p1.y + p2.y) / 2 + this.lineSlack * 25 * this.scale;
+      const my = (p1.y + p2.y) / 2 + this.lineSlack * 20 * this.scale;
       this.lineGfx.quadraticCurveTo(mx, my, p2.x, p2.y);
     }
     this.lineGfx.stroke({ width: 0.7 * this.scale, color, alpha: alpha });
@@ -183,17 +184,51 @@ export class RodEntity {
     const dist = Math.sqrt(dx * dx + dy * dy);
 
     if (dist > 1) {
-      const nx = -dy / dist;
-      const ny = dx / dist;
-      const finalSlack = this.lineSlack * 80 * this.scale;
-
-      const cpX = tip.x + dx * 0.45 + nx * finalSlack;
-      const cpY = tip.y + dy * 0.45 + ny * finalSlack;
+      const finalSlack = this.lineSlack * 90 * this.scale;
 
       this.lineGfx.moveTo(tip.x, tip.y);
-      this.lineGfx.quadraticCurveTo(cpX, cpY, this.hookX, this.hookY);
+
+      const segments = 12; // Use more segments for more natural catenary/noise deformation
+      const points: { x: number; y: number }[] = [];
+      points.push({ x: tip.x, y: tip.y });
+
+      for (let i = 1; i <= segments; i++) {
+        const t = i / segments;
+        // Basic linear interpolation
+        let px = tip.x + dx * t;
+        let py = tip.y + dy * t;
+
+        // Add catenary-like sag (parabolic)
+        const sag = Math.sin(t * Math.PI) * finalSlack;
+
+        // Perpendicular vector for sag
+        let nx = -dy / dist;
+        let ny = dx / dist;
+
+        // Ensure the sag always points downwards (positive Y)
+        if (ny < 0) {
+          nx = -nx;
+          ny = -ny;
+        }
+
+        px += nx * sag;
+        py += ny * sag;
+
+        points.push({ x: px, y: py });
+      }
+
+      // Draw through the generated points using smoothing
+      for (let i = 1; i < points.length; i++) {
+        const p0 = points[i - 1];
+        const p1 = points[i];
+        const mx = (p0.x + p1.x) / 2;
+        const my = (p0.y + p1.y) / 2;
+        this.lineGfx.quadraticCurveTo(p0.x, p0.y, mx, my);
+      }
+      this.lineGfx.lineTo(this.hookX, this.hookY);
+
       this.lineGfx.stroke({
-        width: 0.8,
+        width: 0.8 * this.scale,
         color,
         alpha: isCritical ? 0.95 : 0.6,
       });

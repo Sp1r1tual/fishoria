@@ -141,26 +141,36 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
       rodTension = 0.08;
     } else {
       const depthRatio = currentLureDepthM / Math.max(0.1, groundDepthM);
-      lineSlack = Math.min(1.0, depthRatio * 1.2);
+      // Починається майже натягнута (0.1), плавно зростає з глибиною до 0.85
+      const baseSlack = 0.1 + Math.pow(depthRatio, 1.2) * 0.75;
+      const subtleWave = Math.sin(time * 1.5) * 0.02 * depthRatio;
+      lineSlack = Math.max(0, Math.min(1.0, baseSlack + subtleWave));
       rodTension = 0;
     }
   } else if (isCast && phase === 'waiting') {
-    const isOnBottom = hookDepthM > groundDepthM;
-    lineSlack = isOnBottom ? 1.0 : 0.4;
+    // Float is always relaxed, Feeder (donka) is always tight
+    const baseSlack = rigType === 'feeder' ? 0.04 : 0.85;
 
-    // Splash bounce effect (e.g. for the first 1.5 seconds)
-    if (!isOnBottom && timeSinceCast < 1.5) {
-      const bounce =
-        Math.exp(-timeSinceCast * 4) * Math.cos(timeSinceCast * 18);
-      lineSlack += bounce * 0.3; // Spring the line physics
-    }
+    // Add subtle water current and fish-nibble micro-movements
+    const currentWave = Math.sin(time * 1.2) * 0.015;
+    const nibbleJitter =
+      maxInterest > 0.4 ? Math.sin(time * 15) * (maxInterest - 0.4) * 0.04 : 0;
 
-    if (rigType === 'feeder' && maxInterest > 0.3) {
-      const shakeRate = 0.15 + Math.sin(time * 0.05) * 0.05;
+    lineSlack = Math.max(
+      0.01,
+      baseSlack + currentWave - (rigType === 'feeder' ? 0 : nibbleJitter),
+    );
+
+    if (rigType === 'feeder') {
+      // Feeder tension reacts to fish nibbles more sharply
       const shakeAmount =
-        (maxInterest - 0.3) * 0.12 * (1 + Math.sin(time * shakeRate));
+        maxInterest > 0.3
+          ? (maxInterest - 0.3) *
+            0.15 *
+            (1 + Math.sin(time * (10 + maxInterest * 20)))
+          : 0;
       rodTension = shakeAmount;
-      lineSlack = Math.max(0, lineSlack - shakeAmount * 0.5);
+      lineSlack = Math.max(0, lineSlack - shakeAmount * 0.2);
     }
   }
 

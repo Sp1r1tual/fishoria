@@ -52,9 +52,15 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
       baitScore *= lureMultiplier;
     }
 
-    const timeScore =
+    let timeScore =
       fish.config.activityByTimeOfDay[params.timeOfDay] ??
       BITE_DETECTION.activityScoreDefault;
+
+    // Predators become more active in rain or cloudy weather, effectively waking up even at "dead" hours.
+    if (fish.config.isPredator && params.weather !== 'clear') {
+      const weatherBoost = params.weather === 'rain' ? 0.35 : 0.15;
+      timeScore = Math.min(1.0, timeScore + weatherBoost);
+    }
 
     if (timeScore < BITE_DETECTION.minTimeScoreForInterest) {
       if (Math.random() < BITE_DETECTION.chanceOfBiteAtDeadHour) {
@@ -299,7 +305,9 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
           (passiveFocus + activeAttract) *
           proximityMultiplier *
           techniqueBonus *
-          speedBonus;
+          speedBonus *
+          depthScore *
+          verticalGapScore;
       } else {
         // Penalty for rigs on the bottom
         if (params.isOnBottom) {
@@ -324,8 +332,8 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
       }
 
       // "Magnet" effect
-      if (fish.interestLevel > INTEREST_RATES.magnetThreshold) {
-        rate = Math.max(rate, 0) + INTEREST_RATES.magnetRate * params.deltaTime;
+      if (fish.interestLevel > INTEREST_RATES.magnetThreshold && rate > 0) {
+        rate += INTEREST_RATES.magnetRate * params.deltaTime;
       }
 
       fish.interestLevel = Math.max(0, Math.min(1, fish.interestLevel + rate));

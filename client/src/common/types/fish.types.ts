@@ -50,6 +50,7 @@ export interface IUpdateContext {
   getDepthAt: (nx: number, ny: number) => number;
   timeSinceCast: number;
   baitType?: string;
+  rigType?: string;
   activeGroundbait?: {
     id: string;
     attractionRadiusScale: number;
