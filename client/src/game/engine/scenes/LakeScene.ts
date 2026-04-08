@@ -144,6 +144,7 @@ export class LakeScene implements IScene {
 
   private resetDelayTimer: ReturnType<typeof setTimeout> | null = null;
   private schoolUpdateTimer = 0;
+  private biteUpdateTimer = 0;
 
   private cachedObstacles: { x: number; y: number; radius: number }[] = [];
   private updateCtx: Partial<IUpdateContext> = {}; // Reusable context object to avoid GC
@@ -708,8 +709,8 @@ export class LakeScene implements IScene {
   update(deltaTime: number): void {
     // 1. Throttled school density update
     this.schoolUpdateTimer += deltaTime;
-    if (this.schoolUpdateTimer >= 20) {
-      // Approx once per 0.3s
+    if (this.schoolUpdateTimer >= 60) {
+      // Approx once per 1s
       this.schoolUpdateTimer = 0;
       this.updateSchoolDensity();
     }
@@ -1044,37 +1045,44 @@ export class LakeScene implements IScene {
       if (lureState.reachedShore) {
         this.resetCast();
       }
-
-      // Lure depth info is no longer shown on the tension bar.
     }
 
-    const { biter, progress } = detectBite({
-      fish: this.spawnSystem.fish,
-      baitType: this.activeBait,
-      hookPixelX: this.hookX,
-      hookPixelY: this.hookY,
-      canvasHeight: H,
-      timeOfDay: this.timeOfDay,
-      visibility: this.config.environment.visibility,
-      deltaTime,
-      hookDepthM:
-        this.hookConfig?.rigType === 'spinning'
-          ? this.currentLureDepthM
-          : Math.min(this.hookDepthM, this.groundDepthM),
-      isAnyFishHooked: false,
-      timeSinceCast: this.timeSinceCast,
-      weather: this.weather,
-      rigType: this.hookConfig?.rigType,
-      isMoving: this.playerReeling && this.hookConfig?.rigType === 'spinning',
-      isOnBottom: this.isBaitOnBottom(),
-      pullCount: this.pullCount,
-      retrieveType: this.currentRetrieveType,
-      retrieveSpeed: this.currentRetrieveSpeed,
-    });
-    const maxInterest = 1 - progress;
-    const lerpT = 1 - Math.pow(0.001, deltaTime / 60);
-    this.smoothedInterest +=
-      (maxInterest - this.smoothedInterest) * Math.min(1, lerpT * 10.0);
+    // Throttled bite detection
+    this.biteUpdateTimer += deltaTime;
+    let biter: Fish | null = null;
+
+    if (this.biteUpdateTimer >= 5) {
+      // Every 5 frames (~12 times/sec)
+      this.biteUpdateTimer = 0;
+      const biteResult = detectBite({
+        fish: this.spawnSystem.fish,
+        baitType: this.activeBait,
+        hookPixelX: this.hookX,
+        hookPixelY: this.hookY,
+        canvasHeight: H,
+        timeOfDay: this.timeOfDay,
+        visibility: this.config.environment.visibility,
+        deltaTime: deltaTime * 5, // Account for skipped frames in AI logic
+        hookDepthM:
+          this.hookConfig?.rigType === 'spinning'
+            ? this.currentLureDepthM
+            : Math.min(this.hookDepthM, this.groundDepthM),
+        isAnyFishHooked: false,
+        timeSinceCast: this.timeSinceCast,
+        weather: this.weather,
+        rigType: this.hookConfig?.rigType,
+        isMoving: this.playerReeling && this.hookConfig?.rigType === 'spinning',
+        isOnBottom: this.isBaitOnBottom(),
+        pullCount: this.pullCount,
+        retrieveType: this.currentRetrieveType,
+        retrieveSpeed: this.currentRetrieveSpeed,
+      });
+      biter = biteResult.biter;
+      const maxInterest = 1 - biteResult.progress;
+      const lerpT = 1 - Math.pow(0.001, (deltaTime * 5) / 60);
+      this.smoothedInterest +=
+        (maxInterest - this.smoothedInterest) * Math.min(1, lerpT * 10.0);
+    }
 
     this.callbacks.onBiteProgress(this.smoothedInterest);
 

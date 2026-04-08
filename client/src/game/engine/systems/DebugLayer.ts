@@ -14,6 +14,7 @@ export class DebugLayer {
   private snagLabel: Text;
   private config: ILakeConfig;
   private app: Application;
+  private lastFpsUpdateTime = 0;
 
   constructor(
     parent: Container,
@@ -72,36 +73,18 @@ export class DebugLayer {
     return this.container.visible;
   }
 
-  private fpsHistory: { fps: number; time: number }[] = [];
-
   public update(): void {
-    this.dynamicGfx.clear();
     if (this.container.visible) {
+      this.dynamicGfx.clear();
       const now = performance.now();
-      const currentFps = this.app.ticker.FPS;
-
-      // Store current FPS and timestamp
-      this.fpsHistory.push({ fps: currentFps, time: now });
-
-      // Prune history older than 1 second (1000ms)
-      const oneSecondAgo = now - 1000;
-      while (
-        this.fpsHistory.length > 0 &&
-        this.fpsHistory[0].time < oneSecondAgo
-      ) {
-        this.fpsHistory.shift();
+      // Throttle text update to 4 times per second (approx every 15 frames)
+      if (now - this.lastFpsUpdateTime > 250) {
+        // app.ticker.FPS is already a 10-frame smoothed value in Pixi.
+        // Using it directly makes the UI more responsive to spikes.
+        const currentFps = Math.round(this.app.ticker.FPS);
+        this.fpsLabel.text = `FPS: ${currentFps}`;
+        this.lastFpsUpdateTime = now;
       }
-
-      // Calculate average
-      const avgFps =
-        this.fpsHistory.length > 0
-          ? Math.round(
-              this.fpsHistory.reduce((sum, item) => sum + item.fps, 0) /
-                this.fpsHistory.length,
-            )
-          : 0;
-
-      this.fpsLabel.text = `FPS: ${avgFps}`;
     }
   }
 
@@ -149,10 +132,16 @@ export class DebugLayer {
       H = this.app.renderer.height;
     const gfx = this.terrainGfx;
     gfx.clear();
-    const rows = 40,
-      cols = 60;
+    // Adaptive density: high resolution for PC, optimized for mobile (landscape)
+    const isSmallScreen = this.app.renderer.width < 1000;
+    const rows = isSmallScreen ? 30 : 50;
+    const cols = isSmallScreen ? 45 : 75;
     const waterBoundaryY = this.config.environment.waterBoundaryY;
     const horizonY = H * waterBoundaryY;
+
+    // Group draws by depth range to reduce state changes if possible
+    // though in Pixi 8, each circle(...) call already adds to the current batch.
+    // The main bottleneck is often the number of geometries.
 
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
@@ -161,7 +150,6 @@ export class DebugLayer {
         const px = nx * W;
         const py = horizonY + ny * (H - horizonY);
 
-        // Global normalized position for polygon check
         const globalNY = waterBoundaryY + ny * (1.0 - waterBoundaryY);
 
         if (

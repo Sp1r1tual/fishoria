@@ -171,26 +171,28 @@ export class FishEntity {
       // Labels only appear if indicator is fairly strong and update less frequently
       this.debugLabel.alpha = Math.max(0, (this.indicatorAlpha - 0.4) * 1.6);
 
-      if (this.debugLabel.alpha > 0) {
+      if (this.debugLabel.alpha > 0.3) {
         this.labelUpdateCounter += deltaTime;
-        if (this.labelUpdateCounter >= 10) {
-          // Update every 10 frames approx
+        if (this.labelUpdateCounter >= 25) {
+          // Update every ~25 frames (~0.4s) instead of 10
           this.labelUpdateCounter = 0;
           let newText = '';
           if (visibility.debug) {
-            const weightStr =
-              this.fish.weight > 0
-                ? `\nWt: ${this.fish.weight.toFixed(2)}kg`
-                : '';
             const isEngaged =
               this.fish.state === FishState.Biting ||
               this.fish.state === FishState.Hooked ||
               this.fish.state === FishState.Escaping;
             const showInterest = !isEngaged && visibility.isCast;
-            const interestStr = showInterest
-              ? `\nInt: ${this.fish.interestLevel.toFixed(2)}`
+
+            // Use simplified rounding to keep strings stable
+            const intStr = showInterest
+              ? `\nInt: ${Math.round(this.fish.interestLevel * 100) / 100}`
               : '';
-            newText = `${this.fish.config.name}${interestStr}\nDep: ${this.fish.depth.toFixed(2)}m${weightStr}`;
+            const weightStr =
+              this.fish.weight > 0
+                ? `\nWt: ${Math.round(this.fish.weight * 100) / 100}kg`
+                : '';
+            newText = `${this.fish.config.name}${intStr}\nDep: ${this.fish.depth.toFixed(1)}m${weightStr}`;
           } else {
             newText = `${this.fish.depth.toFixed(1)}m`;
           }
