@@ -14,9 +14,13 @@ import styles from './DebugTerminal.module.css';
 
 interface IDebugTerminalProps {
   onClose: () => void;
+  isVisible?: boolean;
 }
 
-export function DebugTerminal({ onClose }: IDebugTerminalProps) {
+export function DebugTerminal({
+  onClose,
+  isVisible = true,
+}: IDebugTerminalProps) {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
   const isModerator = user?.role === 'MODERATOR' || user?.role === 'ADMIN';
@@ -209,10 +213,10 @@ export function DebugTerminal({ onClose }: IDebugTerminalProps) {
 
   return (
     <div
-      className={`${styles.terminal} ${!isExpanded ? styles['terminal--collapsed'] : ''}`}
+      className={`${styles.terminal} ${!isExpanded ? styles['terminal--collapsed'] : ''} ${!isVisible ? styles['terminal--hidden'] : ''}`}
     >
       <div className={styles.header} onClick={() => setIsExpanded(!isExpanded)}>
-        <span className={styles.title}>WFG DEBUG SHELL v1.05</span>
+        <span className={styles.title}>DEBUG SHELL v0.1.7</span>
         <WoodyButton
           variant="brown"
           size="sm"

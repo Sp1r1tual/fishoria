@@ -42,15 +42,21 @@
   overflow: hidden;
 }
 
-@media (max-width: 640px) and (orientation: landscape) {
+@media (max-width: 1024px) {
   .lake-card__preview {
-    height: 100px;
+    height: 120px;
   }
 }
 
-@media (max-width: 640px) and (orientation: portrait) {
+@media (max-width: 768px) and (orientation: landscape) {
   .lake-card__preview {
-    height: 160px;
+    height: 110px;
+  }
+}
+
+@media (max-width: 768px) and (orientation: portrait) {
+  .lake-card__preview {
+    height: 140px;
   }
 }
 

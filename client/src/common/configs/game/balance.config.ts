@@ -102,6 +102,9 @@ export const FISH_AI = {
     /** Force strength of separation */
     forceMultiplier: 0.2,
   },
+
+  /** Frequency of surface indicators (ripples/bubbles) for fish groups */
+  surfaceRippleChance: 0.00018,
 } as const;
 
 // ─── FISH STATE-SPECIFIC SPEEDS ──────────────────────────────────────────────

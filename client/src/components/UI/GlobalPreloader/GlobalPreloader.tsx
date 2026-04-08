@@ -12,7 +12,7 @@ export const GlobalPreloader = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setVisible(true);
-    }, 700);
+    }, 1000);
     return () => clearTimeout(timer);
   }, []);
 

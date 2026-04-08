@@ -29,36 +29,12 @@ export function ScreenHeader({
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.top_row}>
-        {showBack && onBack && (
-          <WoodyButton
-            variant="brown"
-            size="sm"
-            isBackBtn
-            mobileOnly
-            onClick={onBack}
-            label={t('nav.back')}
-          />
-        )}
-        <div className={styles.mobile_extra}>
-          {headerExtra}
-          {infoText && (
-            <InfoButton
-              title={infoText}
-              onClick={onInfo || (() => {})}
-              className={styles.info_btn}
-            />
-          )}
-        </div>
-      </div>
-
       <header className={`glass ${styles.header}`}>
         {showBack && onBack && (
           <WoodyButton
             variant="brown"
             size="sm"
             isBackBtn
-            desktopOnly
             onClick={onBack}
             label={t('nav.back')}
           />
@@ -71,7 +47,7 @@ export function ScreenHeader({
           <h2 className={styles.title}>{title}</h2>
         </div>
 
-        <div className={styles.desktop_extra}>
+        <div className={styles.header_extra}>
           {headerExtra}
           {infoText && (
             <InfoButton

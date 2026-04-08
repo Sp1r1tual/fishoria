@@ -1,4 +1,4 @@
-﻿.fishImageContainer {
+.fishImageContainer {
   width: 100%;
   max-width: 260px;
   padding: 10px;
@@ -65,12 +65,41 @@
   font-weight: 600;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 1024px) {
+  .fishImageContainer {
+    max-width: 120px;
+    padding: 2px;
+  }
+  .fishImage {
+    max-height: 50px;
+  }
   .statsRow {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
+    gap: 4px;
+  }
+  .fishBody {
+    gap: 4px;
+  }
+  .fishDesc {
+    font-size: 0.72rem;
+    line-height: 1.3;
+  }
+  .meta {
+    margin-top: 4px;
+    padding: 4px;
+    gap: 2px;
   }
   .metaRow {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .fishImageContainer {
+    max-width: 140px;
+  }
+  .statsRow {
+    font-size: 0.8rem;
   }
 }
 
@@ -80,7 +109,7 @@
     padding: 4px;
   }
   .fishImage {
-    max-height: 100px;
+    max-height: 50px;
   }
   .fishBody {
     gap: 6px;

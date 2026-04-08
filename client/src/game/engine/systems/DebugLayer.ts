@@ -84,6 +84,18 @@ export class DebugLayer {
         const currentFps = Math.round(this.app.ticker.FPS);
         this.fpsLabel.text = `FPS: ${currentFps}`;
         this.lastFpsUpdateTime = now;
+
+        const isSmall = this.app.renderer.width < 768;
+        const targetFpsSize = isSmall ? 10 : 13;
+        if (this.fpsLabel.style.fontSize !== targetFpsSize) {
+          this.fpsLabel.style.fontSize = targetFpsSize;
+        }
+      }
+
+      const isSmall = this.app.renderer.width < 768;
+      const targetSnagSize = isSmall ? 9 : 11;
+      if (this.snagLabel.style.fontSize !== targetSnagSize) {
+        this.snagLabel.style.fontSize = targetSnagSize;
       }
     }
   }

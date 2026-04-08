@@ -868,6 +868,7 @@ export class LakeScene implements IScene {
         echo: isFishHookedOrBiting ? false : this.echoSounderActive,
         isCast,
         intensity,
+        isSmall: W < 768,
       });
     }
 
@@ -906,6 +907,7 @@ export class LakeScene implements IScene {
           : Math.min(this.hookDepthM, this.groundDepthM),
       debugActive: this.debugActive,
       escapeProgress: this.tension.escapeProgress,
+      isSmall: W < 768,
     });
 
     const rodVisuals = computeRodVisuals({

@@ -18,6 +18,7 @@ interface IHookRenderState {
   currentDepthM?: number;
   debugActive?: boolean;
   escapeProgress?: number;
+  isSmall?: boolean;
 }
 
 export class HookEntity {
@@ -81,6 +82,7 @@ export class HookEntity {
       currentDepthM = 0.0,
       debugActive = false,
       escapeProgress = 0,
+      isSmall = false,
     } = state;
 
     this.x = x;
@@ -104,6 +106,14 @@ export class HookEntity {
     );
 
     if (debugActive && isCast) {
+      const targetSize = isSmall ? 9 : 11;
+      if (this.debugDepthLabel.style.fontSize !== targetSize) {
+        this.debugDepthLabel.style.fontSize = targetSize;
+      }
+      if (this.debugEscapeLabel.style.fontSize !== targetSize) {
+        this.debugEscapeLabel.style.fontSize = targetSize;
+      }
+
       if (phase === 'waiting' || phase === 'bite') {
         this.debugDepthLabel.visible = true;
         this.debugDepthLabel.text = `${currentDepthM.toFixed(2)}m / ${groundDepthM.toFixed(2)}m`;

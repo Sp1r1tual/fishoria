@@ -5,32 +5,16 @@
   width: 100%;
 }
 
-.top_row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.mobile_extra {
-  display: none;
-  align-items: center;
-  gap: 12px;
-}
-
-.desktop_extra {
+.header_extra {
   display: flex;
   align-items: center;
   gap: 12px;
+  z-index: 2;
 }
 
 @media (max-width: 768px) {
-  .mobile_extra {
-    display: flex;
-    margin-left: auto;
-  }
-  .desktop_extra {
-    display: none;
+  .header_extra {
+    gap: 8px;
   }
 }
 

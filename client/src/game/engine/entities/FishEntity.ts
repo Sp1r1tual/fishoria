@@ -2,6 +2,7 @@ import { Container, Graphics, Sprite, Text, Assets, Texture } from 'pixi.js';
 
 import { FishState } from '../../domain/fish/FishState';
 import type { Fish } from '../../domain/fish/Fish';
+import { FISH_AI } from '@/common/configs/game';
 
 export class FishEntity {
   fish: Fish;
@@ -72,6 +73,7 @@ export class FishEntity {
       echo: boolean;
       isCast?: boolean;
       intensity?: number;
+      isSmall?: boolean;
     },
   ): void {
     this.container.x = this.fish.position.x;
@@ -89,7 +91,7 @@ export class FishEntity {
       !this.activeRipple &&
       this.fish.state === FishState.Idle &&
       this.fish.nearbyFishCount >= 3 &&
-      Math.random() < 0.0006 * deltaTime
+      Math.random() < FISH_AI.surfaceRippleChance * deltaTime
     ) {
       this.activeRipple = {
         age: 0,
@@ -168,6 +170,17 @@ export class FishEntity {
       this.debugGfx.alpha = this.indicatorAlpha;
       this.debugGfx.tint = visibility.debug ? 0xffffff : 0x00ff00; // Efficient way to change color if it's white or colored
 
+      // Scale dot and font for small screens
+      const targetSize = visibility.isSmall ? 8 : 10;
+      const targetDotScale = visibility.isSmall ? 0.66 : 1.0;
+
+      if (this.debugLabel.style.fontSize !== targetSize) {
+        this.debugLabel.style.fontSize = targetSize;
+      }
+      if (this.debugGfx.scale.x !== targetDotScale) {
+        this.debugGfx.scale.set(targetDotScale);
+      }
+
       // Labels only appear if indicator is fairly strong and update less frequently
       this.debugLabel.alpha = Math.max(0, (this.indicatorAlpha - 0.4) * 1.6);
 
@@ -182,7 +195,10 @@ export class FishEntity {
               this.fish.state === FishState.Biting ||
               this.fish.state === FishState.Hooked ||
               this.fish.state === FishState.Escaping;
-            const showInterest = !isEngaged && visibility.isCast;
+            const showInterest =
+              !isEngaged &&
+              visibility.isCast &&
+              this.fish.interestLevel > 0.005;
 
             // Use simplified rounding to keep strings stable
             const intStr = showInterest

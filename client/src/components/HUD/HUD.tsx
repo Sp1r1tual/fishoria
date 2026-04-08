@@ -167,13 +167,19 @@ export function HUD({
     <div className={hudClass}>
       {showTop && (
         <div className={styles['hud__top']}>
-          <LakeInfo sceneRef={sceneRef} isDebugActive={localDebugActive} />
+          <div className={styles['hud__top-left']}>
+            <LakeInfo sceneRef={sceneRef} isDebugActive={localDebugActive} />
+          </div>
 
           <div className={styles['hud__top-center']}>
             <LevelBar />
           </div>
 
           <div className={styles['hud__top-right']}>
+            <DebugTerminal
+              isVisible={localDebugActive}
+              onClose={() => sceneRef.current?.toggleDebug()}
+            />
             <WoodyButton
               id="hud-exit"
               variant="brown"
@@ -188,10 +194,6 @@ export function HUD({
               />
             </WoodyButton>
           </div>
-
-          {localDebugActive && (
-            <DebugTerminal onClose={() => sceneRef.current?.toggleDebug()} />
-          )}
         </div>
       )}
 

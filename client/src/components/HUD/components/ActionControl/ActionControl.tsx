@@ -151,8 +151,8 @@ export const ActionControl = React.memo(function ActionControl({
             .filter(Boolean)
             .join(' ')}
           style={{ '--pulse-speed': '2s' } as React.CSSProperties}
-          onMouseDown={(e) => {
-            if (e.button !== 0) return;
+          onPointerDown={(e) => {
+            if (e.pointerType === 'mouse' && e.button !== 0) return;
             if (phase === 'reeling') handleReel(true);
             else if (phase === 'bite') {
               handleHookFish();
@@ -162,23 +162,10 @@ export const ActionControl = React.memo(function ActionControl({
               else handleHookFish();
             }
           }}
-          onMouseUp={() => handleReel(false)}
-          onMouseLeave={() => handleReel(false)}
-          onTouchStart={(e) => {
-            e.preventDefault();
-            if (phase === 'reeling') handleReel(true);
-            else if (phase === 'bite') {
-              handleHookFish();
-              handleReel(true);
-            } else if (phase === 'waiting') {
-              if (isSpinningRod) handleReel(true);
-              else handleHookFish();
-            }
-          }}
-          onTouchEnd={(e) => {
-            e.preventDefault();
-            handleReel(false);
-          }}
+          onPointerUp={() => handleReel(false)}
+          onPointerLeave={() => handleReel(false)}
+          onPointerCancel={() => handleReel(false)}
+          onContextMenu={(e) => e.preventDefault()}
         >
           <img
             src={reelIcon}

@@ -52,6 +52,7 @@
   transition:
     transform 0.1s,
     background-color 0.25s ease-out;
+  touch-action: none;
 }
 
 @media (max-width: 1044px) {
