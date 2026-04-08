@@ -1,4 +1,8 @@
-import type { IBiteDetectionParams, IBiteResult } from '@/common/types';
+import type {
+  IBiteDetectionParams,
+  IBiteResult,
+  LureTypeType,
+} from '@/common/types';
 
 import { FishState } from '../fish/FishState';
 import type { Fish } from '../fish/Fish';
@@ -43,10 +47,7 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
         : BITE_DETECTION.noBaitScore;
 
     if (isSpinning && fish.config.isPredator && fish.config.lureMultipliers) {
-      const lureType = params.baitType.replace(
-        'lure_',
-        '',
-      ) as import('@/common/types').LureTypeType;
+      const lureType = params.baitType.replace('lure_', '') as LureTypeType;
       const lureMultiplier = fish.config.lureMultipliers[lureType] ?? 1.0;
       baitScore *= lureMultiplier;
     }
@@ -54,6 +55,14 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
     const timeScore =
       fish.config.activityByTimeOfDay[params.timeOfDay] ??
       BITE_DETECTION.activityScoreDefault;
+
+    if (timeScore < BITE_DETECTION.minTimeScoreForInterest) {
+      if (Math.random() < BITE_DETECTION.chanceOfBiteAtDeadHour) {
+        fish.setState(FishState.Idle);
+        fish.hasLostInterest = true;
+        continue;
+      }
+    }
 
     const minD = fish.preferredDepthRange.min;
     const maxD = fish.preferredDepthRange.max;
@@ -88,6 +97,7 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
       dist < visionRadius &&
       fish.state === FishState.Idle &&
       baitScore > 0 &&
+      timeScore > BITE_DETECTION.minTimeScoreForInterest &&
       depthScore > BITE_DETECTION.minDepthScoreForInterest &&
       verticalGapScore > BITE_DETECTION.minVerticalGapScore &&
       (movementScore > 0.5 ||
@@ -106,10 +116,7 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
         : BITE_DETECTION.attractChanceFloat;
 
       if (isSpinning && fish.config.isPredator && fish.config.lureMultipliers) {
-        const lureType = params.baitType.replace(
-          'lure_',
-          '',
-        ) as import('@/common/types').LureTypeType;
+        const lureType = params.baitType.replace('lure_', '') as LureTypeType;
         const lureMultiplier = fish.config.lureMultipliers[lureType] ?? 1.0;
         attractChance *= lureMultiplier;
       }
@@ -291,7 +298,9 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
         const minStationaryRate =
           (isFloatOnBottom
             ? INTEREST_RATES.minStationaryRateFloatBottom
-            : INTEREST_RATES.minStationaryRateNormal) * params.deltaTime;
+            : INTEREST_RATES.minStationaryRateNormal) *
+          params.deltaTime *
+          timeScore;
         rate = Math.max(minStationaryRate, rate);
       }
 

@@ -194,6 +194,12 @@ export const CAST_SPLASH = {
 // ─── BITE DETECTION ──────────────────────────────────────────────────────────
 
 export const BITE_DETECTION = {
+  /**he effect of time on fish*/
+  minTimeScoreForInterest: 0.25,
+
+  /** Chance of a bite at a dead hour */
+  chanceOfBiteAtDeadHour: 0.3,
+
   /** Radius (pixels, pre-scale) for fish to notice the bait/lure */
   attractRadiusPx: 40,
 
