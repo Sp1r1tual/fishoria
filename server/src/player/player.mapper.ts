@@ -1,23 +1,12 @@
-interface AchievementTranslation {
-  language: string;
-  title: string;
-  description: string;
-}
-
 interface RawAchievement {
   id: string;
   code: string;
   imageUrl: string | null;
-  translations?: AchievementTranslation[];
+  translations?: { title: string; description: string }[];
 }
 
 interface RawPlayerAchievement {
   achievement: RawAchievement;
-}
-
-interface RawProfile {
-  id: string;
-  playerAchievements: RawPlayerAchievement[];
 }
 
 export const mapPlayerProfile = <
@@ -32,24 +21,15 @@ export const mapPlayerProfile = <
     playerAchievements: (
       (profile.playerAchievements as RawPlayerAchievement[]) || []
     ).map((pa) => {
-      const { translations, ...achievement } = pa.achievement || {};
-
-      const title: Record<string, string> = {};
-      const description: Record<string, string> = {};
-
-      if (translations) {
-        translations.forEach((t: AchievementTranslation) => {
-          title[t.language] = t.title;
-          description[t.language] = t.description;
-        });
-      }
+      const achievement = pa.achievement || {};
+      const translation = achievement.translations?.[0];
 
       return {
         ...pa,
         achievement: {
           ...achievement,
-          title,
-          description,
+          title: translation?.title || '',
+          description: translation?.description || '',
         },
       };
     }),
@@ -59,7 +39,7 @@ export const mapPlayerProfile = <
       }[]) || []
     ).map((pq) => {
       const quest = pq.quest || {};
-      const translation = quest.translations?.[0]; // Server now filters this for us
+      const translation = quest.translations?.[0];
       const title = translation?.title || 'Quest';
 
       return {

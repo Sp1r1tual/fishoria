@@ -85,7 +85,7 @@ export class PlayerService {
 
     await this.syncQuests(profile.id, profile.playerQuests?.length ?? 0);
 
-    return mapPlayerProfile(profile) as unknown as PlayerProfileResponseDto;
+    return profile;
   }
 
   private async syncQuests(profileId: string, currentCount: number) {
@@ -117,7 +117,7 @@ export class PlayerService {
 
   async updateLanguage(userId: string, language: string) {
     await this.playerEntity.updateLanguage(userId, language);
-    return this.getProfile(userId);
+    return { success: true, language };
   }
 
   async resetProfile(userId: string) {

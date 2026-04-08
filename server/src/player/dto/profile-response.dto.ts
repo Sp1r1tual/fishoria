@@ -91,8 +91,8 @@ const PlayerAchievementSchema = z.object({
     id: z.string(),
     code: z.string(),
     imageUrl: z.string().nullable(),
-    title: z.record(z.string(), z.string()),
-    description: z.record(z.string(), z.string()),
+    title: z.string(),
+    description: z.string(),
   }),
 });
 

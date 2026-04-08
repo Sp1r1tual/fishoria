@@ -16,6 +16,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUserId } from '../auth/decorators/get-user-id.decorator';
 import { AddMoneyDto } from './dto/player.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { UpdateLanguageDto } from './dto/update-language.dto';
 
 @ApiTags('player')
 @ApiCookieAuth('Authentication')
@@ -60,16 +61,13 @@ export class PlayerController {
   @Post('language')
   @ApiSecurity('XSRF')
   @ApiOperation({ summary: 'Update player language' })
-  @ApiBody({
-    schema: { type: 'object', properties: { language: { type: 'string' } } },
-  })
   @ApiResponse({ status: 201, description: 'Language updated successfully.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   updateLanguage(
     @GetUserId() userId: string,
-    @Body('language') language: string,
+    @Body(new ZodValidationPipe(UpdateLanguageDto)) body: UpdateLanguageDto,
   ) {
-    return this.playerService.updateLanguage(userId, language);
+    return this.playerService.updateLanguage(userId, body.language);
   }
 
   @UseGuards(JwtAuthGuard)

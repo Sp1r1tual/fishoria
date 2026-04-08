@@ -24,6 +24,17 @@ export class PlayerEntity {
             },
           },
         },
+        playerAchievements: {
+          include: {
+            achievement: {
+              include: {
+                translations: {
+                  where: { language },
+                },
+              },
+            },
+          },
+        },
       },
     });
   }
@@ -54,6 +65,17 @@ export class PlayerEntity {
             },
           },
         },
+        playerAchievements: {
+          include: {
+            achievement: {
+              include: {
+                translations: {
+                  where: { language },
+                },
+              },
+            },
+          },
+        },
       },
     });
   }
@@ -71,6 +93,17 @@ export class PlayerEntity {
         playerQuests: {
           include: {
             quest: {
+              include: {
+                translations: {
+                  where: { language },
+                },
+              },
+            },
+          },
+        },
+        playerAchievements: {
+          include: {
+            achievement: {
               include: {
                 translations: {
                   where: { language },
