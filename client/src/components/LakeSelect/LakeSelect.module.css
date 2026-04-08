@@ -40,6 +40,7 @@
   background-position: center;
   position: relative;
   overflow: hidden;
+  transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (max-width: 1024px) {
@@ -89,6 +90,13 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.lake-card__content {
+  display: flex;
+  flex-direction: column;
   gap: 4px;
 }
 
@@ -104,12 +112,13 @@
   color: var(--clr-muted);
   line-height: 1.4;
   margin: 0;
-  flex: 1;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  cursor: pointer;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .lake-card__stats {
