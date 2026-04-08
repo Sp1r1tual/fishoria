@@ -44,7 +44,7 @@ const GearItemSchema = z.object({
   condition: z.number().nullable(),
   meters: z.number().nullable(),
   isBroken: z.boolean(),
-  createdAt: z.date().or(z.string()),
+  createdAt: z.iso.datetime().or(z.any()).optional(),
 });
 
 const ConsumableItemSchema = z.object({
@@ -67,7 +67,7 @@ const FishCatchSchema = z.object({
   baitUsed: z.string(),
   method: z.string(),
   isReleased: z.boolean(),
-  caughtAt: z.date().or(z.string()),
+  caughtAt: z.iso.datetime().or(z.any()).optional(),
 });
 
 const LakeStatisticSchema = z.object({
@@ -86,7 +86,7 @@ const PlayerAchievementSchema = z.object({
   id: z.string(),
   profileId: z.string(),
   achievementId: z.string(),
-  createdAt: z.date().or(z.string()),
+  createdAt: z.iso.datetime().or(z.any()).optional(),
   achievement: z.object({
     id: z.string(),
     code: z.string(),
@@ -115,8 +115,8 @@ const PlayerProfileResponseSchema = z.object({
   lakeStats: z.array(LakeStatisticSchema),
   playerQuests: z.array(PlayerQuestSchema),
   playerAchievements: z.array(PlayerAchievementSchema),
-  createdAt: z.date().or(z.string()),
-  updatedAt: z.date().or(z.string()),
+  createdAt: z.iso.datetime().or(z.any()).optional(),
+  updatedAt: z.iso.datetime().or(z.any()).optional(),
   user: z.object({
     username: z.string().nullable(),
     avatar: z.string().nullable(),

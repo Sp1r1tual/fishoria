@@ -19,6 +19,6 @@ export const PlayerQuestSchema = z.object({
   progress: z.any(),
   isCompleted: z.boolean(),
   isClaimed: z.boolean(),
-  createdAt: z.date().or(z.string()),
-  updatedAt: z.date().or(z.string()),
+  createdAt: z.iso.datetime().or(z.any()).optional(),
+  updatedAt: z.iso.datetime().or(z.any()).optional(),
 });

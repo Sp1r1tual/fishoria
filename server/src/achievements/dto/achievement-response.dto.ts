@@ -8,8 +8,8 @@ export const AchievementResponseSchema = z.object({
   order: z.number(),
   title: z.string(),
   description: z.string(),
-  createdAt: z.date().or(z.string()),
-  updatedAt: z.date().or(z.string()),
+  createdAt: z.iso.datetime().or(z.any()).optional(),
+  updatedAt: z.iso.datetime().or(z.any()).optional(),
 });
 
 export class AchievementResponseDto extends createZodDto(
