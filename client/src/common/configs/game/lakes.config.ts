@@ -30,17 +30,17 @@ export const LAKES: ILakeConfig[] = [
     },
     fishSpawns: {
       spawnRatePerSecond: 0.4,
-      maxFishCount: 80,
+      maxFishCount: 70,
       species: [
         {
           speciesId: 'crucian',
-          weight: 40, // ~40% (Predominant in such lakes)
-          preferredDepthRange: { min: 1.5, max: 2.7 },
+          weight: 37, // ~37% (Predominant in such lakes)
+          preferredDepthRange: { min: 1, max: 2.3 },
         },
         {
           speciesId: 'roach',
           weight: 33,
-          preferredDepthRange: { min: 0.5, max: 1.8 },
+          preferredDepthRange: { min: 0.5, max: 1.45 },
         },
         {
           speciesId: 'perch',
@@ -50,12 +50,12 @@ export const LAKES: ILakeConfig[] = [
         {
           speciesId: 'pike',
           weight: 17,
-          preferredDepthRange: { min: 0.5, max: 2.7 },
+          preferredDepthRange: { min: 0.5, max: 2.5 },
         },
         {
           speciesId: 'ruffle',
-          weight: 5,
-          preferredDepthRange: { min: 1, max: 2.7 },
+          weight: 8,
+          preferredDepthRange: { min: 0.75, max: 2.7 },
         },
       ],
     },
@@ -128,7 +128,7 @@ export const LAKES: ILakeConfig[] = [
     },
     fishSpawns: {
       spawnRatePerSecond: 0.45,
-      maxFishCount: 110,
+      maxFishCount: 90,
       species: [
         {
           speciesId: 'carp',
@@ -142,7 +142,7 @@ export const LAKES: ILakeConfig[] = [
         },
         {
           speciesId: 'crucian',
-          weight: 11,
+          weight: 12,
           preferredDepthRange: { min: 0.5, max: 1.5 },
         },
         {
@@ -152,7 +152,7 @@ export const LAKES: ILakeConfig[] = [
         },
         {
           speciesId: 'catfish',
-          weight: 8,
+          weight: 7,
           preferredDepthRange: { min: 3, max: 4.0 },
         },
         {

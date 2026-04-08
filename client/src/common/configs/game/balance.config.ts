@@ -210,10 +210,10 @@ export const BITE_DETECTION = {
   spinningPredatorVisionPx: 40,
 
   /** Depth penalty multiplier (how harshly out-of-range depth is penalized) */
-  depthPenaltyFactor: 2.2,
+  depthPenaltyFactor: 1.8,
 
   /** Vertical gap penalty factor */
-  verticalGapPenaltyFactor: 2.5,
+  verticalGapPenaltyFactor: 2,
 
   /** Minimum depth score to trigger interest */
   minDepthScoreForInterest: 0.2,
@@ -265,7 +265,7 @@ export const BITE_DETECTION = {
 
 export const INTEREST_RATES = {
   /** Base interest fill rate multiplier */
-  baseFillRate: 0.008,
+  baseFillRate: 0.12,
 
   /** Weather bonuses */
   weather: {
@@ -275,12 +275,12 @@ export const INTEREST_RATES = {
   },
 
   /** "Magnet" effect threshold: if interest > this, slowly pull to 100% */
-  magnetThreshold: 0.9,
+  magnetThreshold: 0.75,
   /** Magnet bonus fill rate */
-  magnetRate: 0.0025,
+  magnetRate: 0.012,
 
   /** Max interest timer: if fish is interested for longer than this (seconds), give up */
-  maxInterestDuration: 25.0,
+  maxInterestDuration: 18,
 
   /** Max distance to remain interested (float/feeder, pre-scale) */
   maxInterestDistFloat: 110,
@@ -290,13 +290,13 @@ export const INTEREST_RATES = {
   /** Spinning-specific multipliers */
   spinning: {
     /** Passive focus: fish on bottom = decay */
-    passiveFocusOnBottom: -0.5,
+    passiveFocusOnBottom: -0.4,
     /** Passive focus: fish in water = 1.0 * depthScore * verticalGapScore */
     passiveFocusInWater: 1.0,
     /** Active attraction when moving */
-    activeAttractMoving: 12.0,
+    activeAttractMoving: 8.0,
     /** Active decay when NOT moving */
-    activeAttractIdle: -1.0,
+    activeAttractIdle: 0.4,
     /** Retrieval technique bonuses by time/weather */
     techniques: {
       steady: {
@@ -336,9 +336,9 @@ export const INTEREST_RATES = {
   },
 
   /** Float rig on bottom penalty (multiplier for interest fill rate) */
-  floatOnBottomPenalty: 0.08,
+  floatOnBottomPenalty: 0.35,
   /** Additional predator penalty on float at bottom */
-  floatOnBottomPredatorPenalty: 0.35,
+  floatOnBottomPredatorPenalty: 0.6,
 
   /** Minimum stationary fill rate */
   minStationaryRateNormal: 0.005,
@@ -553,16 +553,16 @@ export const SPINNING_LURE = {
   vibrotailSinkSpeed: 0.25,
 
   /** Spoon sink speed when idle (depth per second) */
-  spoonSinkSpeed: 0.6,
+  spoonSinkSpeed: 0.3,
 
   /** General rise speed when reeling (non-wobbler, depth per second multiplier) */
-  generalRiseSpeed: 0.7,
+  generalRiseSpeed: 1,
 
   /** Minimum depth (meters) */
   minDepth: 0.1,
 
   /** Reeling pull speed multiplier (visual movement) */
-  reelingPullSpeedBase: 70,
+  reelingPullSpeedBase: 80,
 } as const;
 
 // ─── TIME SYSTEM ─────────────────────────────────────────────────────────────

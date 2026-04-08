@@ -253,9 +253,7 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
         // Passive focus
         const passiveFocus = params.isOnBottom
           ? INTEREST_RATES.spinning.passiveFocusOnBottom
-          : INTEREST_RATES.spinning.passiveFocusInWater *
-            depthScore *
-            verticalGapScore;
+          : INTEREST_RATES.spinning.passiveFocusInWater;
 
         // Active attraction
         const activeAttract = params.isMoving
