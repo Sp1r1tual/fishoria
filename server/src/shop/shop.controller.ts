@@ -1,4 +1,5 @@
 import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import {
   ApiCookieAuth,
   ApiOperation,
@@ -16,6 +17,7 @@ import { BuyDto } from './dto/shop.dto';
 @ApiTags('shop')
 @ApiCookieAuth('Authentication')
 @ApiSecurity('XSRF')
+@Throttle({ default: { limit: 100, ttl: 60000 } })
 @Controller('shop')
 export class ShopController {
   constructor(private readonly shopService: ShopService) {}

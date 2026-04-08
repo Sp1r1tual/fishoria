@@ -1,4 +1,5 @@
 import { Controller, Get, Logger, UseGuards } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import {
   ApiCookieAuth,
   ApiOperation,
@@ -14,6 +15,7 @@ import { AchievementResponseDto } from './dto/achievement-response.dto';
 
 @ApiTags('achievements')
 @ApiCookieAuth('Authentication')
+@Throttle({ default: { limit: 120, ttl: 60000 } })
 @Controller('achievements')
 export class AchievementsController {
   private readonly logger = new Logger(AchievementsController.name);

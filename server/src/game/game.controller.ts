@@ -1,4 +1,5 @@
 import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import {
   ApiCookieAuth,
   ApiOperation,
@@ -17,6 +18,7 @@ import { BreakDto } from './dto/break-gear.dto';
 @ApiTags('game')
 @ApiCookieAuth('Authentication')
 @ApiSecurity('XSRF')
+@Throttle({ default: { limit: 100, ttl: 60000 } })
 @Controller('game')
 export class GameController {
   constructor(private readonly gameService: GameService) {}

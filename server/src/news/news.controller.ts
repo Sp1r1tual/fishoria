@@ -7,6 +7,7 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import {
   ApiCookieAuth,
   ApiOperation,
@@ -21,6 +22,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 
 @ApiTags('news')
+@Throttle({ default: { limit: 120, ttl: 60000 } })
 @Controller('news')
 export class NewsController {
   constructor(private readonly newsService: NewsService) {}

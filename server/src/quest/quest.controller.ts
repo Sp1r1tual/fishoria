@@ -1,4 +1,5 @@
 import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import {
   ApiBody,
   ApiCookieAuth,
@@ -15,6 +16,7 @@ import { QuestService } from './quest.service';
 
 @ApiTags('quests')
 @ApiCookieAuth('Authentication')
+@Throttle({ default: { limit: 120, ttl: 60000 } })
 @Controller('quests')
 @UseGuards(JwtAuthGuard)
 export class QuestController {

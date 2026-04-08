@@ -1,4 +1,5 @@
 import { Controller, Get, Post, UseGuards, Body } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import {
   ApiBody,
   ApiCookieAuth,
@@ -20,6 +21,7 @@ import { UpdateLanguageDto } from './dto/update-language.dto';
 
 @ApiTags('player')
 @ApiCookieAuth('Authentication')
+@Throttle({ default: { limit: 100, ttl: 60000 } })
 @Controller('player')
 export class PlayerController {
   constructor(private readonly playerService: PlayerService) {}
