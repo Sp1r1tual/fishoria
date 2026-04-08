@@ -3,6 +3,7 @@
  * This ensures we don't hit browser limits and makes unlocking easier on iOS.
  */
 let sharedCtx: AudioContext | null = null;
+let sharedSfxGainNode: GainNode | null = null;
 
 export function getSharedAudioContext(): AudioContext {
   if (!sharedCtx) {
@@ -13,6 +14,26 @@ export function getSharedAudioContext(): AudioContext {
     sharedCtx = new Ctor();
   }
   return sharedCtx;
+}
+
+/**
+ * Returns a global GainNode meant for all SFX.
+ * Changing the volume on this node immediately affects all playing short SFX.
+ */
+export function getSharedSfxGainNode(): GainNode {
+  const ctx = getSharedAudioContext();
+  if (!sharedSfxGainNode) {
+    sharedSfxGainNode = ctx.createGain();
+    sharedSfxGainNode.connect(ctx.destination);
+  }
+  return sharedSfxGainNode;
+}
+
+export function syncSharedSfxVolume(enabled: boolean, volumeLevel: number) {
+  const gainNode = getSharedSfxGainNode();
+  gainNode.gain.value = enabled
+    ? Math.max(0, Math.min(1, volumeLevel / 100))
+    : 0;
 }
 
 /**

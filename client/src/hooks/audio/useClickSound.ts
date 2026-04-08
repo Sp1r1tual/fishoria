@@ -4,6 +4,8 @@ import { useAppSelector } from '@/hooks/core/useAppStore';
 import {
   getSharedAudioContext,
   resumeSharedAudioContext,
+  getSharedSfxGainNode,
+  syncSharedSfxVolume,
 } from '@/common/media/audio-context';
 
 // ---------------------------------------------------------------------------
@@ -38,6 +40,7 @@ export function useClickSound() {
   useEffect(() => {
     sfxEnabledRef.current = sfxEnabled;
     sfxVolumeRef.current = sfxVolume;
+    syncSharedSfxVolume(sfxEnabled, sfxVolume);
   }, [sfxEnabled, sfxVolume]);
 
   const playClick = useCallback(() => {
@@ -48,11 +51,9 @@ export function useClickSound() {
 
     const ctx = getSharedAudioContext();
     const source = ctx.createBufferSource();
-    const gain = ctx.createGain();
+    const destNode = getSharedSfxGainNode();
     source.buffer = clickBuffer;
-    gain.gain.value = sfxVolumeRef.current / 100;
-    source.connect(gain);
-    gain.connect(ctx.destination);
+    source.connect(destNode);
     source.start(0);
   }, []);
 

@@ -10,6 +10,8 @@ import type { GamePhaseType, TimeOfDayType } from '@/common/types';
 import {
   getSharedAudioContext,
   resumeSharedAudioContext,
+  getSharedSfxGainNode,
+  syncSharedSfxVolume,
 } from '@/common/media/audio-context';
 
 // ---------------------------------------------------------------------------
@@ -79,7 +81,29 @@ const AMBIENT: Record<string, HTMLAudioElement> = {
 Object.values(AMBIENT).forEach((a) => {
   a.loop = true;
   a.preload = 'auto';
+  a.crossOrigin = 'anonymous';
 });
+
+let ambientGainNode: GainNode | null = null;
+const connectedAmbients = new Set<HTMLAudioElement>();
+
+function ensureAmbientConnected(audio: HTMLAudioElement) {
+  try {
+    const ctx = getSharedAudioContext();
+    if (!ambientGainNode) {
+      ambientGainNode = ctx.createGain();
+      ambientGainNode.connect(ctx.destination);
+    }
+    if (!connectedAmbients.has(audio)) {
+      const source = ctx.createMediaElementSource(audio);
+      source.connect(ambientGainNode);
+      connectedAmbients.add(audio);
+    }
+  } catch (e) {
+    console.warn('Failed to connect ambient to AudioContext:', e);
+  }
+  return ambientGainNode;
+}
 
 // ---------------------------------------------------------------------------
 // iOS/Safari Autoplay & Latency Fix
@@ -153,16 +177,15 @@ export function useGameAudio(manageAmbient = true) {
     ambientEnabledRef.current = ambientEnabled !== false;
     ambientVolumeRef.current = ambientVolume ?? 60;
 
-    // Sync gain on active loops
-    const v = sfxEnabled ? sfxVolume / 100 : 0;
-    if (activeLoops.winding) activeLoops.winding.gain.gain.value = v;
-    if (activeLoops.unwinding) activeLoops.unwinding.gain.gain.value = v;
+    syncSharedSfxVolume(sfxEnabled, sfxVolume);
 
     if (manageAmbient) {
       // Sync ambient
       if (currentAmbientRef.current) {
+        const gainNode = ensureAmbientConnected(currentAmbientRef.current);
         if (ambientEnabled !== false && weather !== 'rain') {
-          currentAmbientRef.current.volume = (ambientVolume ?? 60) / 100;
+          if (gainNode) gainNode.gain.value = (ambientVolume ?? 60) / 100;
+          currentAmbientRef.current.volume = 1;
           if (currentAmbientRef.current.paused)
             currentAmbientRef.current.play().catch(() => {});
         } else {
@@ -172,7 +195,9 @@ export function useGameAudio(manageAmbient = true) {
 
       // Rain
       if (currentLakeId && weather === 'rain' && ambientEnabled !== false) {
-        AMBIENT.rain.volume = (ambientVolume ?? 60) / 100;
+        const gainNode = ensureAmbientConnected(AMBIENT.rain);
+        if (gainNode) gainNode.gain.value = (ambientVolume ?? 60) / 100;
+        AMBIENT.rain.volume = 1;
         if (AMBIENT.rain.paused) AMBIENT.rain.play().catch(() => {});
       } else {
         AMBIENT.rain.pause();
@@ -189,8 +214,6 @@ export function useGameAudio(manageAmbient = true) {
     manageAmbient,
   ]);
 
-  const vol = () => (sfxEnabledRef.current ? sfxVolumeRef.current / 100 : 0);
-
   // -------------------------------------------------------------------------
   // Web Audio playback helpers
   // -------------------------------------------------------------------------
@@ -205,11 +228,10 @@ export function useGameAudio(manageAmbient = true) {
 
     const ctx = getSharedAudioContext();
     const source = ctx.createBufferSource();
-    const gain = ctx.createGain();
+    const destNode = getSharedSfxGainNode();
+
     source.buffer = buffer;
-    gain.gain.value = vol();
-    source.connect(gain);
-    gain.connect(ctx.destination);
+    source.connect(destNode);
     source.start(0);
   }, []);
 
@@ -225,12 +247,13 @@ export function useGameAudio(manageAmbient = true) {
 
     const ctx = getSharedAudioContext();
     const source = ctx.createBufferSource();
-    const gain = ctx.createGain();
+    const gain = ctx.createGain(); // Keep local gain just for easy stopping/disconnecting if needed, or mute
+    const destNode = getSharedSfxGainNode();
+
     source.buffer = buffer;
     source.loop = true;
-    gain.gain.value = vol();
     source.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(destNode);
     source.start(0);
 
     activeLoops[key] = { source, gain };
@@ -361,9 +384,13 @@ export function useGameAudio(manageAmbient = true) {
       }
 
       if (targetAudio) {
-        targetAudio.volume = ambientEnabledRef.current
-          ? ambientVolumeRef.current / 100
-          : 0;
+        const gainNode = ensureAmbientConnected(targetAudio);
+        if (gainNode)
+          gainNode.gain.value = ambientEnabledRef.current
+            ? ambientVolumeRef.current / 100
+            : 0;
+
+        targetAudio.volume = 1;
 
         if (
           ambientEnabledRef.current &&

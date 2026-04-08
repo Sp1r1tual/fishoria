@@ -5,7 +5,7 @@ import type { IPlayerQuest, IPlayerProfile } from '@/common/types/player.types';
 import { playerKeys } from './player.queries';
 
 import { QuestService } from '@/services/quest.service';
-import metalCoinRattle from '@/assets/music/metal_coin_rattle.mp3';
+import { useGameAudio } from '@/hooks/audio/useGameAudio';
 
 const QUEST_KEYS = {
   all: ['quests'] as const,
@@ -20,6 +20,7 @@ export const useQuests = () => {
 
 export const useClaimQuestReward = () => {
   const queryClient = useQueryClient();
+  const { onPurchase } = useGameAudio(false);
 
   return useMutation<
     IPlayerProfile,
@@ -52,9 +53,7 @@ export const useClaimQuestReward = () => {
       }
     },
     onSuccess: (updatedProfile) => {
-      new Audio(metalCoinRattle)
-        .play()
-        .catch((err) => console.log('Audio playback failed:', err));
+      onPurchase();
 
       queryClient.setQueryData(playerKeys.profile(), updatedProfile);
 
