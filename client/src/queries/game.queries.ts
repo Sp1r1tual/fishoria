@@ -110,6 +110,28 @@ export const useBreakGearMutation = () => {
           newPlayer.equippedHookUid = null;
         }
 
+        if (variables.type === 'rod' && previousPlayer.equippedRodUid) {
+          const newGearItems = previousPlayer.gearItems.map((g) =>
+            g.uid === previousPlayer.equippedRodUid
+              ? { ...g, isBroken: true, condition: 0 }
+              : g,
+          );
+          newPlayer.gearItems = newGearItems;
+          newPlayer.equippedRodUid = null;
+        }
+
+        if (variables.type === 'reel' && previousPlayer.equippedReelUid) {
+          const newGearItems = (
+            newPlayer.gearItems || previousPlayer.gearItems
+          ).map((g) =>
+            g.uid === previousPlayer.equippedReelUid
+              ? { ...g, isBroken: true, condition: 0 }
+              : g,
+          );
+          newPlayer.gearItems = newGearItems;
+          newPlayer.equippedReelUid = null;
+        }
+
         queryClient.setQueryData(playerKeys.profile(), newPlayer);
       }
 

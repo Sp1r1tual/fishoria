@@ -153,13 +153,12 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
 
             dispatch(setCatch(result));
           },
-          onLineBroke: async (meters, type = 'line') => {
+          onLineBroke: (meters, type = 'line') => {
             const lostMeters = Math.round(meters);
             audioRef.current.onLineBroke();
             const activeBait = playerRef.current?.activeBait || 'worm';
             const isLure = activeBait.startsWith('lure_');
 
-            // Get hook name from current player state
             const currentHookUid = playerRef.current?.equippedHookUid;
             const hookInstance = playerRef.current?.gearItems.find(
               (g: IOwnedGearItem) => g.uid === currentHookUid,
@@ -170,18 +169,6 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
 
             const baitName = isLure ? hookName : t(`baits.${activeBait}.name`);
 
-            try {
-              await breakMutationRef.current.mutateAsync({
-                type,
-                baitId: activeBait,
-                lostMeters,
-                rodDamage: rodDamageRef.current,
-                reelDamage: reelDamageRef.current,
-              });
-            } catch {
-              console.error('Failed to sync line break');
-            }
-
             dispatch(
               setLossEvent({
                 reason: 'tension',
@@ -189,8 +176,16 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
                 lostMeters,
               }),
             );
+
+            breakMutationRef.current.mutate({
+              type,
+              baitId: activeBait,
+              lostMeters,
+              rodDamage: rodDamageRef.current,
+              reelDamage: reelDamageRef.current,
+            });
           },
-          onGearBroke: async (type?: 'rod' | 'reel') => {
+          onGearBroke: (type?: 'rod' | 'reel') => {
             audioRef.current.onLineBroke();
 
             const rodInstance = playerRef.current?.gearItems.find(
@@ -205,7 +200,6 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
             const rodCondition = rodInstance?.condition ?? Infinity;
             const reelCondition = reelInstance?.condition ?? Infinity;
 
-            // Deterministic fallback: exactly what broke isn't provided, use condition
             const targetType: 'rod' | 'reel' =
               type ?? (rodCondition <= reelCondition ? 'rod' : 'reel');
 
@@ -215,22 +209,18 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
               ? t(`gear_items.${brokenInstance.itemId}.name`)
               : 'Fishing Gear';
 
-            try {
-              await breakMutationRef.current.mutateAsync({
-                type: targetType,
-                rodDamage: rodDamageRef.current,
-                reelDamage: reelDamageRef.current,
-              });
-            } catch {
-              console.error('Failed to sync gear break');
-            }
-
             dispatch(
               setLossEvent({
                 reason: 'tension',
                 itemNames: [brokenName],
               }),
             );
+
+            breakMutationRef.current.mutate({
+              type: targetType,
+              rodDamage: rodDamageRef.current,
+              reelDamage: reelDamageRef.current,
+            });
           },
           onPhaseChange: (phase, wasHooked, isScaredAway) => {
             audioRef.current.onPhaseChange(phase);
@@ -238,7 +228,6 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
               const activeBait = playerRef.current?.activeBait || 'worm';
               const isLure = activeBait.startsWith('lure_');
 
-              // Determine if we should lose items
               let shouldLoseHook = false;
               let shouldLoseBait = false;
 
@@ -273,7 +262,6 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
                   ? hookName
                   : t(`baits.${activeBait}.name`);
 
-                // Send mutation to sync gear damage and potentially lost hooks/baits
                 breakMutationRef.current.mutate({
                   type: shouldLoseHook ? 'hook' : 'bait',
                   baitId:
@@ -304,7 +292,7 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
           },
           onCast: () => {
             audioRef.current.onCast();
-            // Reset damage on new cast
+
             rodDamageRef.current = 0;
             reelDamageRef.current = 0;
           },
@@ -319,7 +307,6 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
           onDebugToggle: (visible) => setDebugActive(visible),
           onEchoSounderToggle: (visible) => setIsEchoSounderActive(visible),
           onGearDamaged: (rodDamage, reelDamage) => {
-            // Accumulate damage to send at the end of the catch/break
             rodDamageRef.current += rodDamage;
             reelDamageRef.current += reelDamage;
           },
@@ -327,7 +314,7 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
             setIsSnagActive(true);
             GameEvents.emit('snagStart', null);
           },
-          onSnagEnd: async (success) => {
+          onSnagEnd: (success) => {
             setIsSnagActive(false);
             GameEvents.emit('snagEnd', success);
             if (!success) {
@@ -347,18 +334,6 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
                 ? hookName
                 : t(`baits.${activeBait}.name`);
 
-              try {
-                await breakMutationRef.current.mutateAsync({
-                  type: 'line',
-                  baitId: activeBait,
-                  lostMeters: 10,
-                  rodDamage: rodDamageRef.current,
-                  reelDamage: reelDamageRef.current,
-                });
-              } catch {
-                console.error('Failed to sync snag loss');
-              }
-
               dispatch(
                 setLossEvent({
                   reason: 'snag',
@@ -366,6 +341,14 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
                   lostMeters: 10,
                 }),
               );
+
+              breakMutationRef.current.mutate({
+                type: 'line',
+                baitId: activeBait,
+                lostMeters: 10,
+                rodDamage: rodDamageRef.current,
+                reelDamage: reelDamageRef.current,
+              });
             }
           },
           onCastError: (msgId) => {
@@ -412,7 +395,6 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
       await game.loadScene(scene);
       sceneRef.current = scene;
 
-      // Initial sync with server data
       const p = playerRef.current;
       if (p) {
         const rodInst = p.gearItems.find(
@@ -501,7 +483,7 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
       dispatch(setGroundbaitExpiry(null));
       sceneRef.current?.setActiveGroundbait('none', null);
       dispatch(resetGame());
-      dispatch(setCurrentLake(null)); // Clear lake so scene tears down
+      dispatch(setCurrentLake(null));
       dispatch(navigateTo('mainMenu'));
     };
 

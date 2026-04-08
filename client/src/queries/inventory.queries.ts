@@ -106,6 +106,7 @@ export const useRepairMutation = () => {
           const repairAmount = Math.min(kitCond, needed);
 
           target.condition = targetCond + repairAmount;
+          target.isBroken = false;
           kit.condition = kitCond - repairAmount;
         }
 
