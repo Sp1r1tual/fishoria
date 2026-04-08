@@ -202,6 +202,20 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
     }
 
     if (fish.state === FishState.Interested && !fish.hasLostInterest) {
+      if (!fish.hasAttemptedAttack) {
+        fish.hasAttemptedAttack = true;
+
+        const attackChance =
+          0.4 * baitScore * timeScore * fish.config.baseCatchChance;
+
+        const finalChance = Math.min(attackChance, 0.6);
+
+        if (Math.random() < finalChance) {
+          fish.setState(FishState.Biting);
+          return { biter: fish, progress: 0 };
+        }
+      }
+
       const weatherScore =
         params.weather === 'rain'
           ? INTEREST_RATES.weather.rain
@@ -220,6 +234,12 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
         fish.config.baseCatchChance *
         INTEREST_RATES.baseFillRate *
         params.deltaTime;
+
+      if (params.rigType === 'float' || params.rigType === 'feeder') {
+        if (fish.config.isPredator) {
+          rate *= 1.35;
+        }
+      }
 
       if (isSpinning) {
         // High distance falloff for interest

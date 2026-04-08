@@ -26,6 +26,7 @@ export class Fish {
   stateTimer: number = 0;
   nearbyFishCount: number = 0;
   separationForce: { x: number; y: number } = { x: 0, y: 0 };
+  hasAttemptedAttack: boolean = false;
 
   // Splash interaction tracking
   lastSplashSeenTime: number = -1;
@@ -94,6 +95,10 @@ export class Fish {
   setState(state: FishStateType): void {
     this.state = state;
     this.stateTimer = 0;
+
+    if (state === FishState.Idle) {
+      this.hasAttemptedAttack = false;
+    }
   }
 
   update(context: IUpdateContext): void {
@@ -129,5 +134,6 @@ export class Fish {
     this.depthProbeCounter = Math.floor(
       Math.random() * this.depthProbeInterval,
     );
+    this.hasAttemptedAttack = false;
   }
 }
