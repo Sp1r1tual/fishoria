@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 
 import { Bubbles } from '../Bubbles/Bubbles';
 
+import mainLoading from '@/assets/global/main_loading.webp';
+
 import styles from './GlobalPreloader.module.css';
 
 export const GlobalPreloader = () => {
@@ -12,7 +14,7 @@ export const GlobalPreloader = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setVisible(true);
-    }, 1000);
+    }, 700);
     return () => clearTimeout(timer);
   }, []);
 
@@ -21,7 +23,13 @@ export const GlobalPreloader = () => {
       className={`${styles.globalPreloader} ${visible ? styles.visible : ''}`}
     >
       <Bubbles />
-      <div className={styles.text}>{t('common.loading')}</div>
+      <div className={styles.loaderContent}>
+        <img
+          src={mainLoading}
+          alt={t('common.loading')}
+          className={styles.loaderImage}
+        />
+      </div>
     </div>
   );
 };

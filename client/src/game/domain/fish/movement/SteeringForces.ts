@@ -55,9 +55,14 @@ export function getDepthBiasForce(
     }
   }
 
-  // Apply strong force to return to the preferred depth zone
-  fish.cachedDepthBias[0] = bestDir.dx * FISH_AI.depthBiasForceStrength;
-  fish.cachedDepthBias[1] = bestDir.dy * FISH_AI.depthBiasForceStrength;
+  // Apply return force with slight randomized jitter to ensure fish don't all follow exactly same paths
+  const jitterX = (Math.random() - 0.5) * 0.15;
+  const jitterY = (Math.random() - 0.5) * 0.15;
+
+  fish.cachedDepthBias[0] =
+    (bestDir.dx + jitterX) * FISH_AI.depthBiasForceStrength;
+  fish.cachedDepthBias[1] =
+    (bestDir.dy + jitterY) * FISH_AI.depthBiasForceStrength;
 
   // HURRY UP if way outside the zone
   const discomfortDist = currentD < minD ? minD - currentD : currentD - maxD;

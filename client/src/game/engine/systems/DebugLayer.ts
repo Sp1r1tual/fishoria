@@ -120,15 +120,13 @@ export class DebugLayer {
     x: number,
     y: number,
     radius: number,
-    isCast: boolean,
+    isVisible: boolean,
   ): void {
-    if (!this.container.visible || !isCast || radius <= 0) return;
+    if (!this.container.visible || !isVisible || radius <= 0) return;
 
     this.dynamicGfx.circle(x, y, radius);
     this.dynamicGfx.stroke({ color: 0x60a5fa, width: 1.5, alpha: 0.35 });
     this.dynamicGfx.fill({ color: 0x60a5fa, alpha: 0.1 });
-
-    // Optional: add a small label "Groundbait"
   }
 
   public resize(): void {

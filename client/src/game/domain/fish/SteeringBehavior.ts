@@ -211,9 +211,21 @@ export class SteeringBehavior implements IFishBehavior {
       if (!fish.isResting) {
         fish.migrationTimer -= dt;
         if (fish.migrationTimer <= 0 && fish.state === FishState.Idle) {
-          const tx = 50 + Math.random() * (ctx.canvasWidth - 100);
-          const ty =
-            horizonY + Math.random() * (ctx.canvasHeight - horizonY - 10);
+          // Use an S-curve distribution to push random targets away from the center towards the edges
+          const normX = Math.random();
+          const biasedX =
+            normX < 0.5
+              ? Math.pow(normX * 2, 1.2) / 2
+              : 1 - Math.pow((1 - normX) * 2, 1.2) / 2;
+
+          const normY = Math.random();
+          const biasedY =
+            normY < 0.5
+              ? Math.pow(normY * 2, 1.2) / 2
+              : 1 - Math.pow((1 - normY) * 2, 1.2) / 2;
+
+          const tx = 50 + biasedX * (ctx.canvasWidth - 100);
+          const ty = horizonY + biasedY * (ctx.canvasHeight - horizonY - 10);
           const nx = tx / ctx.canvasWidth;
           const ny = Math.max(0, Math.min(1, (ty - horizonY) / waterHeight));
           const d = ctx.getDepthAt(nx, ny);
@@ -254,6 +266,15 @@ export class SteeringBehavior implements IFishBehavior {
       const migrationBiasModifier = fish.migrationTarget ? 0.3 : 1.0;
       forceX += bx * FISH_AI.idleDepthBiasForce * migrationBiasModifier;
       forceY += by * FISH_AI.idleDepthBiasForce * migrationBiasModifier;
+
+      // --- GROUNDBAIT ATTRACTION for IDLE fish ---
+      // If groundbait is active, IDLE fish should slowly drift towards the bait cluster
+      if (ctx.activeGroundbait && ctx.baitPosition && !fish.migrationTarget) {
+        const [sax, say] = getAttractionForce(fish, ctx);
+        // We use a significant but not overpowering multiplier for idle attraction
+        forceX = forceX * 0.7 + sax * 0.8;
+        forceY = forceY * 0.7 + say * 0.8;
+      }
 
       speed = FISH_STATE_SPEEDS.idle.multiplier * fish.config.behavior.mobility;
       if (fish.migrationTarget) {
@@ -307,9 +328,16 @@ export class SteeringBehavior implements IFishBehavior {
       }
 
       if (!isInside) {
-        // If outside, steer towards the middle of the lake area (roughly 0.5, 0.75)
-        const targetX = 0.5 * ctx.canvasWidth;
-        const targetY = 0.75 * ctx.canvasHeight;
+        // If outside, steer towards a randomized "safe spot" within the lake to avoid clustering
+        // We use fish.id to generate a stable, unique target for each fish
+        const hashX =
+          ((fish.id.charCodeAt(0) * 13 + fish.id.charCodeAt(5)) % 100) / 100;
+        const hashY =
+          ((fish.id.charCodeAt(1) * 17 + fish.id.charCodeAt(4)) % 100) / 100;
+
+        const targetX = (0.3 + hashX * 0.4) * ctx.canvasWidth;
+        const targetY = (0.65 + hashY * 0.25) * ctx.canvasHeight;
+
         const [dx, dy] = normalize(
           targetX - fish.position.x,
           targetY - fish.position.y,
@@ -392,23 +420,24 @@ export class SteeringBehavior implements IFishBehavior {
     // --- Day/Night and Weather Activity Penalty/Bonus ---
     if (fish.state !== FishState.Hooked && fish.state !== FishState.Escaping) {
       if (ctx.timeOfDay === 'night') {
-        // Decrease mobility heavily for diurnal fish, but keep nocturnal predators fast.
+        // Decrease mobility for diurnal fish, but keep nocturnal specialists at full speed.
+        // Using a more linear scaling 0.2 + 0.8 * activity to avoid extreme slowdowns.
         const nightActivity = fish.config.activityByTimeOfDay['night'] ?? 1.0;
-        const penalty = Math.pow(nightActivity, 1.5);
-        speed *= Math.max(0.1, penalty);
+        const penalty = 0.2 + 0.8 * nightActivity;
+        speed *= penalty;
       }
 
       if (ctx.weather === 'rain') {
         if (fish.config.isPredator) {
           speed *= 1.3; // Predators are highly active hunting in the rain
         } else {
-          speed *= 0.6; // Prey fish hide and become less active
+          speed *= 1.15; // Non-predators (Carp, Crucian) also love rain due to oxygen boost
         }
       } else if (ctx.weather === 'cloudy') {
         if (fish.config.isPredator) {
           speed *= 1.1; // Slightly more active due to lower light
         } else {
-          speed *= 0.85; // Slightly less active
+          speed *= 0.95; // Slightly less active
         }
       }
     }

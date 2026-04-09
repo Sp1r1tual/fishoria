@@ -50,7 +50,10 @@ export function discoverAssets(): string[] {
         import: 'default',
       }),
     ) as string[]
-  ).filter((path) => !path.includes('/assets/landing/'));
+  ).filter(
+    (path) =>
+      !path.includes('/assets/landing/') && !path.includes('/assets/global/'),
+  );
 
   const audioAssets = (
     Object.values(
@@ -60,7 +63,10 @@ export function discoverAssets(): string[] {
         import: 'default',
       }),
     ) as string[]
-  ).filter((path) => !path.includes('/assets/landing/'));
+  ).filter(
+    (path) =>
+      !path.includes('/assets/landing/') && !path.includes('/assets/global/'),
+  );
 
   const externalAssets = [
     'https://www.transparenttextures.com/patterns/wood-pattern.png',

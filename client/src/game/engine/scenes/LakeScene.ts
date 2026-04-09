@@ -820,17 +820,25 @@ export class LakeScene implements IScene {
     // Update Groundbait Debug Visualization
     if (
       this.activeGroundbaitType !== 'none' &&
+      this.groundbaitExpiresAt !== null &&
+      TimeManager.getGameTimeHours() < this.groundbaitExpiresAt &&
       this.hookConfig?.rigType !== 'spinning'
     ) {
       const gbCfg = GROUNDBAITS[this.activeGroundbaitType];
       if (gbCfg) {
         const baseRadius = 25; // Matching ATTRACTION.baseAttractionRange
         const radiusM = baseRadius * (gbCfg.attractionRadiusScale || 1.0);
+        const isVisibleInPhase = ![
+          'idle',
+          'caught',
+          'broken',
+          'escaped',
+        ].includes(this.phase);
         this.debugLayer.updateGroundbait(
           this.hookX,
           this.hookY,
           radiusM,
-          isCast,
+          isVisibleInPhase,
         );
       }
     }

@@ -59,7 +59,7 @@ export const FISH_SPAWN = {
   initialSpawnFraction: 0.7,
 
   /** Spawn depth tolerance (additional meters beyond preferred range) */
-  spawnDepthTolerance: 0.3,
+  spawnDepthTolerance: 0.5,
 
   /** Max spawn placement attempts per fish */
   maxSpawnAttempts: 30,

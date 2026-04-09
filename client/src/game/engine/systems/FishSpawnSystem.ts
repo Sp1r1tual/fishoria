@@ -132,7 +132,15 @@ export class FishSpawnSystem {
   }
 
   private spawnOne(): void {
-    if (this.spawned.length >= this.config.maxFishCount) return;
+    if (this.spawned.length >= this.config.maxFishCount) {
+      // Rotation logic: remove the oldest fish to make room for a new one
+      const oldest = this.spawned[0];
+      if (oldest) {
+        this.removeFish(oldest.fish);
+      } else {
+        return; // Should not happen
+      }
+    }
 
     const zone = this.pickZone();
     const speciesList = zone ? zone.species : this.config.species;
@@ -198,16 +206,19 @@ export class FishSpawnSystem {
 
       if (
         isInside &&
-        floorDepth >= prefDepth.min - FISH_SPAWN.spawnDepthTolerance &&
-        floorDepth <= prefDepth.max + FISH_SPAWN.spawnDepthTolerance
+        ((floorDepth >= prefDepth.min - FISH_SPAWN.spawnDepthTolerance &&
+          floorDepth <= prefDepth.max + FISH_SPAWN.spawnDepthTolerance) ||
+          attempts > FISH_SPAWN.maxSpawnAttempts * 0.8) // Become more lenient in very late attempts
       ) {
         bestX = pos.x;
         bestY = pos.y;
         break;
       }
 
+      // If we haven't found a perfect spot, keep track of the one with best depth,
+      // BUT ONLY if it is inside the allowed area.
       const diff = Math.abs(floorDepth - targetDepth);
-      if (diff < minDifference) {
+      if (isInside && diff < minDifference) {
         minDifference = diff;
         bestX = pos.x;
         bestY = pos.y;
@@ -215,9 +226,26 @@ export class FishSpawnSystem {
     }
 
     if (bestX === 0 && bestY === 0) {
-      const fallback = this.randomPosInZone(zone);
-      bestX = fallback.x;
-      bestY = fallback.y;
+      // Last resort: find ANY position inside the zone that is also inside allowedCastArea
+      for (let i = 0; i < 20; i++) {
+        const fallback = this.randomPosInZone(zone);
+        const pt = {
+          x: fallback.x / this.canvasWidth,
+          y: fallback.y / this.canvasHeight,
+        };
+        if (pointInPolygon(pt, this.allowedCastArea.points || [])) {
+          bestX = fallback.x;
+          bestY = fallback.y;
+          break;
+        }
+      }
+
+      // If still nothing, use pure fallback (should be rare)
+      if (bestX === 0) {
+        const fallback = this.randomPosInZone(zone);
+        bestX = fallback.x;
+        bestY = fallback.y;
+      }
     }
 
     let fish: Fish;
@@ -238,6 +266,14 @@ export class FishSpawnSystem {
     this.fishCache.push(fish); // Keep cache in sync
   }
 
+  /** Biased random that pushes values towards 0 and 1 (S-curve) */
+  private biasedRandom(power = 1.2): number {
+    const r = Math.random();
+    return r < 0.5
+      ? Math.pow(r * 2, power) / 2
+      : 1 - Math.pow((1 - r) * 2, power) / 2;
+  }
+
   /**
    * Returns a random position inside the zone.
    * Uses pre-cached bounding boxes for polygon zones instead of recomputing min/max each call.
@@ -251,7 +287,8 @@ export class FishSpawnSystem {
 
     if (zone && zone.type === 'circle' && zone.center && zone.radius != null) {
       const angle = Math.random() * Math.PI * 2;
-      const r = Math.random() * zone.radius;
+      // Pushing radius towards edges as well for circles
+      const r = Math.pow(Math.random(), 0.7) * zone.radius;
       return {
         x: (zone.center.x + Math.cos(angle) * r) * W,
         y: (zone.center.y + Math.sin(angle) * r) * H,
@@ -268,26 +305,32 @@ export class FishSpawnSystem {
       const bounds = this.zoneBoundsCache.get(zone.id);
       if (bounds) {
         return {
-          x: bounds.minX + Math.random() * (bounds.maxX - bounds.minX),
-          y: bounds.minY + Math.random() * (bounds.maxY - bounds.minY),
+          x: bounds.minX + this.biasedRandom() * (bounds.maxX - bounds.minX),
+          y: bounds.minY + this.biasedRandom() * (bounds.maxY - bounds.minY),
         };
       }
 
       // Fallback: compute on the fly (should not happen after prebuildZoneBounds)
       const xs = zone.points.map((p) => p.x * W);
       const ys = zone.points.map((p) => p.y * H);
+      const minX = Math.min(...xs);
+      const maxX = Math.max(...xs);
+      const minY = Math.min(...ys);
+      const maxY = Math.max(...ys);
+
       return {
-        x:
-          Math.min(...xs) + Math.random() * (Math.max(...xs) - Math.min(...xs)),
-        y:
-          Math.min(...ys) + Math.random() * (Math.max(...ys) - Math.min(...ys)),
+        x: minX + this.biasedRandom() * (maxX - minX),
+        y: minY + this.biasedRandom() * (maxY - minY),
       };
     }
 
     // Default: random anywhere in the lake (below waterBoundaryY)
     return {
-      x: Math.random() * W,
-      y: (this.waterBoundaryY + Math.random() * (1 - this.waterBoundaryY)) * H,
+      x: this.biasedRandom() * W,
+      y:
+        (this.waterBoundaryY +
+          this.biasedRandom() * (1 - this.waterBoundaryY)) *
+        H,
     };
   }
 

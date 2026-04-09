@@ -94,7 +94,6 @@ const gameSlice = createSlice({
       state.isBroken = false;
       state.lastCatch = null;
       state.lossEvent = null;
-      state.groundbaitExpiresAt = null;
     },
   },
 });

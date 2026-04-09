@@ -28,15 +28,15 @@ export const FISH_AI = {
   energyRandom: 0.3,
 
   /** Bite strategy: probability of "direct" strategy (rest = "playful") */
-  directBiteChance: 0.45,
+  directBiteChance: 0.2,
 
   /** Bite timeout: base + random * range (seconds) — fish gives up if not hooked */
   biteTimeoutBase: 3.0,
   biteTimeoutRange: 4.5,
 
   /** Migration timer: base + random * range (seconds between long-distance swims) */
-  migrationTimerBase: 10,
-  migrationTimerRange: 25,
+  migrationTimerBase: 8,
+  migrationTimerRange: 20,
 
   /** Migration retry interval when destination has bad depth */
   migrationRetryInterval: 5.0,
@@ -48,7 +48,7 @@ export const FISH_AI = {
   migrationSpeedMultiplier: 1.8,
 
   /** Migration depth tolerance (meters) for accepting a destination */
-  migrationDepthTolerance: 0.15,
+  migrationDepthTolerance: 0.3,
 
   /** Rest timer: base + random * range (seconds) */
   restTimerBase: 15,
@@ -62,7 +62,7 @@ export const FISH_AI = {
   restInterruptInterest: 15,
 
   /** Depth bias comfort tolerance (meters) before seeking new depth */
-  depthBiasComfortTolerance: 0.1,
+  depthBiasComfortTolerance: 0.2,
 
   /** Depth bias steering force strength */
   depthBiasForceStrength: 0.25,
@@ -83,7 +83,7 @@ export const FISH_AI = {
   /** Migration steering force power */
   migrationForce: 2.0,
   /** Global depth bias force multiplier (idle only) */
-  idleDepthBiasForce: 1.5,
+  idleDepthBiasForce: 1.0,
 
   /** Fish struggle aggression multipliers for tension: aggression * Weight + Base */
   struggleAggressionWeight: 0.8,

@@ -225,6 +225,15 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
           onPhaseChange: (phase, wasHooked, isScaredAway) => {
             audioRef.current.onPhaseChange(phase);
             if (phase === 'escaped') {
+              if (!isScaredAway) {
+                dispatch(
+                  addToast({
+                    message: t('hud.escaped'),
+                    type: 'warning',
+                  }),
+                );
+              }
+
               const activeBait = playerRef.current?.activeBait || 'worm';
               const isLure = activeBait.startsWith('lure_');
 

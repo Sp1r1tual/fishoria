@@ -95,7 +95,8 @@
     "claim": "Claim Reward",
     "inProgress": "In Progress",
     "noAvailable": "No quests available at the moment.",
-    "notification": "Quest completed!"
+    "notification": "Quest completed!",
+    "rewardClaimed": "Reward claimed!"
   },
   "help": {
     "title": "Help & FAQ",
