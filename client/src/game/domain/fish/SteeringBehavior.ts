@@ -1,6 +1,11 @@
 import { createNoise2D } from 'simplex-noise';
 
-import type { IVec2, IUpdateContext, IFishBehavior } from '@/common/types';
+import type {
+  IVec2,
+  IUpdateContext,
+  IFishBehavior,
+  IActivityByTimeOfDay,
+} from '@/common/types';
 
 import { FishState } from './FishState';
 import type { Fish } from './Fish';
@@ -419,13 +424,14 @@ export class SteeringBehavior implements IFishBehavior {
 
     // --- Day/Night and Weather Activity Penalty/Bonus ---
     if (fish.state !== FishState.Hooked && fish.state !== FishState.Escaping) {
-      if (ctx.timeOfDay === 'night') {
-        // Decrease mobility for diurnal fish, but keep nocturnal specialists at full speed.
-        // Using a more linear scaling 0.2 + 0.8 * activity to avoid extreme slowdowns.
-        const nightActivity = fish.config.activityByTimeOfDay['night'] ?? 1.0;
-        const penalty = 0.2 + 0.8 * nightActivity;
-        speed *= penalty;
-      }
+      // Decrease mobility for inactive fish based on time of day.
+      // Using a more linear scaling 0.2 + 0.8 * activity to avoid extreme slowdowns.
+      const currentActivity =
+        fish.config.activityByTimeOfDay[
+          ctx.timeOfDay as keyof IActivityByTimeOfDay
+        ] ?? 1.0;
+      const timePenalty = 0.2 + 0.8 * currentActivity;
+      speed *= timePenalty;
 
       if (ctx.weather === 'rain') {
         if (fish.config.isPredator) {

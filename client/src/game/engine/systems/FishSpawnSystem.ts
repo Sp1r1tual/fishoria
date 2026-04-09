@@ -7,6 +7,7 @@ import type {
 } from '@/common/types';
 
 import { Fish } from '@/game/domain/fish/Fish';
+import { FishState } from '@/game/domain/fish/FishState';
 import { FishEntity } from '../entities/FishEntity';
 import { pointInPolygon } from '@/game/utils/MathUtils';
 import type { IAllowedCastArea, IVec2 } from '@/common/types';
@@ -133,6 +134,18 @@ export class FishSpawnSystem {
 
   private spawnOne(): void {
     if (this.spawned.length >= this.config.maxFishCount) {
+      // Pause rotation if ANY fish is currently interacting with the player
+      const isAnyFishEngaged = this.spawned.some(
+        ({ fish }) =>
+          fish.state === FishState.Interested ||
+          fish.state === FishState.Biting ||
+          fish.state === FishState.Hooked,
+      );
+
+      if (isAnyFishEngaged) {
+        return; // Pause auto-deletion to not disrupt gameplay
+      }
+
       // Rotation logic: remove the oldest fish to make room for a new one
       const oldest = this.spawned[0];
       if (oldest) {
