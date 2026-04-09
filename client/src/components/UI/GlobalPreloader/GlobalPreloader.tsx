@@ -7,16 +7,33 @@ import mainLoading from '@/assets/global/main_loading.webp';
 
 import styles from './GlobalPreloader.module.css';
 
-export const GlobalPreloader = () => {
+interface GlobalPreloaderProps {
+  children?: React.ReactNode;
+  delay?: number;
+}
+
+export const GlobalPreloader = ({
+  children,
+  delay = 700,
+}: GlobalPreloaderProps) => {
   const { t } = useTranslation();
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(delay === 0);
+  const [prevDelay, setPrevDelay] = useState(delay);
+
+  if (delay !== prevDelay) {
+    setPrevDelay(delay);
+    setVisible(delay === 0);
+  }
 
   useEffect(() => {
+    if (delay === 0 || visible) return;
+
     const timer = setTimeout(() => {
       setVisible(true);
-    }, 700);
+    }, delay);
+
     return () => clearTimeout(timer);
-  }, []);
+  }, [delay, visible]);
 
   return (
     <div
@@ -29,6 +46,7 @@ export const GlobalPreloader = () => {
           alt={t('common.loading')}
           className={styles.loaderImage}
         />
+        {children && <div className={styles.loaderText}>{children}</div>}
       </div>
     </div>
   );

@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-
 import { useAppSelector } from '@/hooks/core/useAppStore';
 import { useGameScene } from '@/hooks/game/useGameScene';
 
@@ -9,13 +7,11 @@ import { SceneSync } from './SceneSync';
 import { CatchSync } from './CatchSync';
 import { LossSync } from './LossSync';
 
-import { GameLoader } from './GameLoader';
-
+import { GlobalPreloader } from '../UI/GlobalPreloader/GlobalPreloader';
 import styles from './GameCanvas.module.css';
 
 export function GameCanvas() {
   const currentLakeId = useAppSelector((s) => s.game.currentLakeId);
-  const { t } = useTranslation();
 
   const { containerRef, sceneRef, isLoading, debugActive, isSnagActive } =
     useGameScene({ currentLakeId });
@@ -23,7 +19,7 @@ export function GameCanvas() {
   return (
     <div className={styles['game-canvas__wrapper']}>
       <div className={styles['game-canvas__viewport']}>
-        {isLoading && <GameLoader t={t} />}
+        {isLoading && <GlobalPreloader delay={700} />}
 
         <SceneSync sceneRef={sceneRef} />
         <CatchSync sceneRef={sceneRef} />
