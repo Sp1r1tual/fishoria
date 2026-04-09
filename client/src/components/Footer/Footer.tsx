@@ -11,7 +11,7 @@ export function Footer() {
     <footer className={styles.footer}>
       <div className={styles.footer__content}>
         <div className={styles.footer__info}>
-          <span className={styles.footer__version}>v0.1.0 beta</span>
+          <span className={styles.footer__version}>v0.2.0 beta</span>
           <span className={styles.footer__divider}>|</span>
           <span className={styles.footer__copyright}>
             © {currentYear} Atmosphoria Software

@@ -1,7 +1,57 @@
 import { PrismaClient } from '@prisma/client';
 
 export async function seedNews(prisma: PrismaClient) {
-  const newsItems = [
+  const newsItems: {
+    title: { en: string; uk: string };
+    content: { en: string; uk: string };
+    imageUrl?: string | null;
+  }[] = [
+    {
+      title: {
+        en: 'Update 0.2.0: Balance & Technical Improvements',
+        uk: 'Оновлення 0.2.0: Баланс та Технічні Покращення',
+      },
+      content: {
+        en: `
+### Key Changes & Features:
+* **Advanced Balance & Fish Behavior**: Deep rework of fish resistance logic and behavior in challenging conditions. Lake depth now correctly affects line tension (slack ratio), making the fight feel more dynamic and realistic.
+* **Seamless Auto-Updates**: Introduced a version tracking system. The client now automatically refreshes when a new deployment is detected, eliminating "chunk load" errors and stale cache issues.
+* **Enhanced Buffering**: Changing equipment at locations is now smoother thanks to implemented buffering logic for gear updates.
+
+### Visual & UI Improvements:
+* **Refined Interface**: Completely redesigned modal windows and notification system (toasts) with smoother animations and cleaner aesthetics.
+* **Lake Selection**: Updated visual style for the lake selection screen and fixed picker styles for a more premium look.
+* **Mobile Adaptiveness**: Fixed background icon scaling on small screens and resolved the annoying auto-zoom issue in Safari (Webkit).
+* **Optimized Debug Mode**: Improved the built-in debugger for testers with better data visualization.
+
+### Bug Fixes:
+* **Equipment Safety**: Fixed a critical issue where broken rods or reels could be unfairly "written off" during a line break or lost fish.
+* **Audio Stability**: Resolved overlapping ambient sounds and playback issues specifically on iOS devices (Webkit).
+* **Balance**: Fixed an issue where fish could get stuck in textures.
+
+Thank you for being part of our journey!
+        `,
+        uk: `
+### Основні нововведення та фічі:
+* **Просунутий Баланс та Поведінка Риби**: Глибока переробка логіку опору риби та її поведінки у складних умовах. Тепер глибина водойми коректно впливає на натяг ліски (slack ratio), що робить процес викачування більш динамічним та реалістичним.
+* **Автоматичне Оновлення**: Впроваджено систему відстеження версій. Клієнт самостійно оновлює сторінку при виявленні нового деплою, що назавжди вирішує проблему помилок завантаження через застарілий кеш.
+* **Буферизація Спорядження**: Зміна екіпірування на локаціях тепер відбувається значно плавніше завдяки впровадженню логіки буферизації запитів.
+
+### Візуальні та UI покращення:
+* **Оновлений Інтерфейс**: Повністю перероблені модальні вікна та система сповіщень (toasts). Анімації стали плавнішими, а візуальний стиль — чистішим.
+* **Вибір Озер**: Оновлено дизайн екрана вибору озер та виправлено стилі пікерів для більш "преміального" вигляду.
+* **Мобільна Адаптивність**: Виправлено масштаб фонових іконок на малих екранах та вирішено проблему з небажаним авто-зумом у Safari (Webkit).
+* **Оптимізація Debug-режиму**: Покращено вбудований дебагер для тестувальників з більш зручним відображенням даних.
+
+### Виправлення помилок:
+* **Чесна Економіка**: Виправлено критичну помилку, через яку зламане спорядження могло бути несправедливо списане при звичайному обриві ліски або втраті риби.
+* **Звук на iOS**: Вирішено проблему з накладанням амбієнтних звуків та помилками відтворення на пристроях Apple (Webkit).
+* **Баланс**: Виправлено помилку, через яку риба могла застрягати в текстурах.
+
+Дякуємо, що ви з нами!
+        `,
+      },
+    },
     {
       title: { en: 'Welcome to the Beta Version!', uk: 'Запуск Бета-версії!' },
       content: {
@@ -86,7 +136,7 @@ Progress achieved during beta will be reset upon release, but all beta participa
     if (!existing) {
       await prisma.news.create({
         data: {
-          imageUrl: item.imageUrl,
+          imageUrl: item.imageUrl || null,
           translations: {
             create: [
               {
