@@ -13,7 +13,7 @@ import { getPasswordResetTemplate } from './templates/password-reset.template';
 export class MailService {
   private transporter: Transporter;
   private readonly logger = new Logger(MailService.name);
-  private readonly projectName = 'Web Fishing Game';
+  private readonly projectName = 'Fishoria';
 
   constructor(private readonly configService: ConfigService) {
     this.transporter = nodemailer.createTransport({

@@ -158,9 +158,10 @@ export class AuthController {
       dto.email,
       req.headers['user-agent'],
       req.ip,
+      dto.language,
     );
 
-    return { message: 'If an account exists, a reset link has been sent' };
+    return { message: 'auth.resetLinkSent' };
   }
 
   @Post('verify-reset-token')
@@ -182,7 +183,7 @@ export class AuthController {
   async resetPassword(@Body() dto: ResetPasswordDto) {
     await this.authService.resetPassword(dto.token, dto.password);
 
-    return { success: true, message: 'Password updated successfully' };
+    return { success: true, message: 'auth.passwordUpdated' };
   }
 
   @Post('register')

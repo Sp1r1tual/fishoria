@@ -244,7 +244,12 @@ export class AuthService {
     await this.redis.del(`ban:${userId}`);
   }
 
-  async requestPasswordReset(email: string, userAgent?: string, ip?: string) {
+  async requestPasswordReset(
+    email: string,
+    userAgent?: string,
+    ip?: string,
+    language?: string,
+  ) {
     const user = await this.authEntity.findUserByEmail(email);
     if (!user) return;
 
@@ -270,7 +275,7 @@ export class AuthService {
     await this.mailService.sendPasswordResetMail(
       user.email,
       resetLink,
-      user.language,
+      language || user.language,
     );
   }
 
