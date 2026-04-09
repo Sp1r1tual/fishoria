@@ -66,7 +66,7 @@ export class SteeringBehavior implements IFishBehavior {
       fish.state === FishState.Interested &&
       ctx.baitPosition &&
       ctx.baitDepth !== undefined &&
-      ctx.rigType !== 'spinning'
+      (ctx.rigType !== 'spinning' || fish.interestLevel >= 0.2)
     ) {
       targetD = ctx.baitDepth;
     }

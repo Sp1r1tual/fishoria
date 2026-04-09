@@ -818,7 +818,10 @@ export class LakeScene implements IScene {
     );
 
     // Update Groundbait Debug Visualization
-    if (this.activeGroundbaitType !== 'none') {
+    if (
+      this.activeGroundbaitType !== 'none' &&
+      this.hookConfig?.rigType !== 'spinning'
+    ) {
       const gbCfg = GROUNDBAITS[this.activeGroundbaitType];
       if (gbCfg) {
         const baseRadius = 25; // Matching ATTRACTION.baseAttractionRange

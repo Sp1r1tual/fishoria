@@ -150,8 +150,7 @@ export class HookEntity {
       this.rigType !== 'spinning' &&
       phase !== 'reeling' &&
       phase !== 'caught' &&
-      phase !== 'broken' &&
-      phase !== 'escaped'
+      phase !== 'broken'
     ) {
       const bx = castX - this.container.x;
       const by = castY - this.container.y;
@@ -334,8 +333,7 @@ export class HookEntity {
       this.isCast &&
       this.rigType === 'spinning' &&
       phase !== 'caught' &&
-      phase !== 'broken' &&
-      phase !== 'escaped'
+      phase !== 'broken'
     ) {
       // No depth offset - user wants to keep things anchored to the surface for top-down view
       const depthOffset = 0;

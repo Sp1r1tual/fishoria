@@ -230,19 +230,19 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
             ? INTEREST_RATES.weather.cloudy
             : INTEREST_RATES.weather.clear;
 
-      // Base fill rate
+      // Base fill rate (environmental and bait factors)
       let rate =
         baitScore *
         timeScore *
         params.visibility *
-        depthScore *
-        verticalGapScore *
         weatherScore *
         fish.config.baseCatchChance *
         INTEREST_RATES.baseFillRate *
         params.deltaTime;
 
       if (params.rigType === 'float' || params.rigType === 'feeder') {
+        // Float/Feeder rigs strongly depend on being at the right depth to grow interest
+        rate *= depthScore * verticalGapScore;
         if (fish.config.isPredator) {
           rate *= 1.35;
         }
@@ -252,8 +252,9 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
         // High distance falloff for interest
         // High distance falloff for interest: very slow growth at edge of vision
         const distRatio = dist / visionRadius;
+        // Proximity penalty: slower growth/decay when far away, but NEVER flips the sign
         const proximityMultiplier = Math.max(
-          -2,
+          0.05,
           1.1 - Math.pow(distRatio, 1.3),
         );
 
@@ -300,14 +301,27 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
           speedBonus = sTimeBonus * sWeatherBonus;
         }
 
-        rate =
-          rate *
-          (passiveFocus + activeAttract) *
-          proximityMultiplier *
-          techniqueBonus *
-          speedBonus *
-          depthScore *
-          verticalGapScore;
+        const focusSum = passiveFocus + activeAttract;
+        const baseSpinningRate =
+          rate * proximityMultiplier * techniqueBonus * speedBonus;
+
+        if (focusSum > 0) {
+          // Interest grows: strongly depends on correct depth, UNLESS already very interested
+          const effectiveDepthScore =
+            fish.interestLevel >= 0.2 ? 1.0 : depthScore;
+          const effectiveVerticalGapScore =
+            fish.interestLevel >= 0.2 ? 1.0 : verticalGapScore;
+          rate =
+            baseSpinningRate *
+            focusSum *
+            effectiveDepthScore *
+            effectiveVerticalGapScore;
+        } else {
+          // Interest decays: happens even (or faster) if depth is wrong
+          // If depth is wrong (score < 1), we slightly accelerate the decay
+          const depthDecayMultiplier = 2.0 - depthScore * verticalGapScore;
+          rate = baseSpinningRate * focusSum * depthDecayMultiplier;
+        }
       } else {
         // Penalty for rigs on the bottom
         if (params.isOnBottom) {

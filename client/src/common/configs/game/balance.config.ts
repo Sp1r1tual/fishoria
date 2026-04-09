@@ -295,8 +295,8 @@ export const INTEREST_RATES = {
     passiveFocusInWater: 1.0,
     /** Active attraction when moving */
     activeAttractMoving: 12.0,
-    /** Active decay when NOT moving */
-    activeAttractIdle: -1.0,
+    /** Active decay when NOT moving (sinking) */
+    activeAttractIdle: -0.4,
     /** Retrieval technique bonuses by time/weather */
     techniques: {
       steady: {

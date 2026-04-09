@@ -175,6 +175,10 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
       rodTension = shakeAmount;
       lineSlack = Math.max(0, lineSlack - shakeAmount * 0.2);
     }
+  } else if (isCast && phase === 'escaped') {
+    // Relax everything when fish escapes
+    rodTension = 0;
+    lineSlack = 1.0;
   }
 
   // Add cast "whipping" effect to the rod tip immediately after casting
