@@ -1,6 +1,6 @@
 .pageWrapper {
   width: 100%;
-  min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
   background-color: var(--clr-bg);
   isolation: isolate;

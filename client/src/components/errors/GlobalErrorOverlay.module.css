@@ -8,7 +8,7 @@
   flex-direction: column;
   gap: 12px;
   padding: 12px;
-  max-height: 100vh;
+  max-height: 100dvh;
   overflow-y: auto;
   pointer-events: none;
 }
