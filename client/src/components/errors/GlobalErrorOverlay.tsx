@@ -47,6 +47,22 @@ export const GlobalErrorOverlay = () => {
       error?: Error | null,
     ) => {
       const text = typeof message === 'string' ? message : 'Unknown error';
+
+      // Detect chunk load errors (failed to fetch module) - typically happens after new deploy
+      if (
+        text
+          .toLowerCase()
+          .includes('failed to fetch dynamically imported module') ||
+        (text.toLowerCase().includes('loading chunk') &&
+          text.toLowerCase().includes('failed'))
+      ) {
+        console.warn(
+          'Chunk load error detected. Reloading to get the latest version...',
+        );
+        window.location.reload();
+        return false;
+      }
+
       pushError(text, error?.stack);
       return false;
     };
@@ -57,6 +73,22 @@ export const GlobalErrorOverlay = () => {
         typeof reason === 'string'
           ? reason
           : reason?.message || 'Promise Rejection';
+
+      // Also check unhandled rejections for the same error pattern
+      if (
+        message
+          .toLowerCase()
+          .includes('failed to fetch dynamically imported module') ||
+        (message.toLowerCase().includes('loading chunk') &&
+          message.toLowerCase().includes('failed'))
+      ) {
+        console.warn(
+          'Chunk load rejection detected. Reloading to get the latest version...',
+        );
+        window.location.reload();
+        return;
+      }
+
       const stack = reason instanceof Error ? reason.stack : undefined;
       pushError(message, stack);
     };

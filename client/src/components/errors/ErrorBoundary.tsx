@@ -22,6 +22,16 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   public static getDerivedStateFromError(error: Error): State {
+    const errorMessage = error.message.toLowerCase();
+    // If it's a chunk load error (failed to fetch module), reload the page
+    if (
+      errorMessage.includes('failed to fetch dynamically imported module') ||
+      (errorMessage.includes('loading chunk') &&
+        errorMessage.includes('failed'))
+    ) {
+      console.warn('Chunk load error caught in ErrorBoundary. Reloading...');
+      window.location.reload();
+    }
     return { hasError: true, error };
   }
 
