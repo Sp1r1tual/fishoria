@@ -83,7 +83,7 @@ export const FISH_AI = {
   /** Migration steering force power */
   migrationForce: 2.0,
   /** Global depth bias force multiplier (idle only) */
-  idleDepthBiasForce: 3.0,
+  idleDepthBiasForce: 1.5,
 
   /** Fish struggle aggression multipliers for tension: aggression * Weight + Base */
   struggleAggressionWeight: 0.8,
@@ -94,7 +94,7 @@ export const FISH_AI = {
     /** Radius (pixels) for separation force to kick in */
     radius: 45,
     /** Force strength of separation */
-    forceMultiplier: 0.2,
+    forceMultiplier: 0.35,
   },
 
   /** Frequency of surface indicators (ripples/bubbles) for fish groups */

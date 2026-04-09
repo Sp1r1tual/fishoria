@@ -218,11 +218,14 @@ export class SteeringBehavior implements IFishBehavior {
           const ny = Math.max(0, Math.min(1, (ty - horizonY) / waterHeight));
           const d = ctx.getDepthAt(nx, ny);
 
+          // Night migration: relax depth check because lethargic fish shouldn't be trapped in a single hole
+          const nightTolerance =
+            ctx.timeOfDay === 'night' ? 0.35 : FISH_AI.migrationDepthTolerance;
+
           // Only migrate if destination has suitable depth (with tolerance)
           if (
-            d >=
-              fish.preferredDepthRange.min - FISH_AI.migrationDepthTolerance &&
-            d <= fish.preferredDepthRange.max + FISH_AI.migrationDepthTolerance
+            d >= fish.preferredDepthRange.min - nightTolerance &&
+            d <= fish.preferredDepthRange.max + nightTolerance
           ) {
             fish.migrationTarget = { x: tx, y: ty };
             fish.migrationTimer =

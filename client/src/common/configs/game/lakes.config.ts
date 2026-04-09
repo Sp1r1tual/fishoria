@@ -53,7 +53,7 @@ export const LAKES: ILakeConfig[] = [
           preferredDepthRange: { min: 0.2, max: 2.5 },
         },
         {
-          speciesId: 'ruffle',
+          speciesId: 'ruffe',
           weight: 8,
           preferredDepthRange: { min: 0.75, max: 2.7 },
         },
@@ -62,8 +62,8 @@ export const LAKES: ILakeConfig[] = [
     allowedCastArea: {
       type: 'polygon',
       points: [
-        { x: 0.01, y: 0.55 },
-        { x: 0.99, y: 0.55 },
+        { x: 0.01, y: 0.54 },
+        { x: 0.99, y: 0.54 },
         { x: 0.99, y: 1.0 },
         { x: 0.01, y: 1.0 },
       ],

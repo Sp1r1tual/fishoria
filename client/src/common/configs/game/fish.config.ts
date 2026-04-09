@@ -17,7 +17,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A feisty predator with striking striped markings. Common near submerged vegetation.',
     weightRange: { min: 0.05, max: 2 },
-    activityByTimeOfDay: { morning: 0.7, day: 0.6, evening: 0.9, night: 0.2 },
+    activityByTimeOfDay: { morning: 0.9, day: 0.7, evening: 0.8, night: 0.1 },
     preferredBaits: ['worm', 'maggot'],
     preferredGroundbait: 'dried_blood',
     baseCatchChance: 0.75,
@@ -44,7 +44,12 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'Apex freshwater predator. Prefers ambush hunting in deeper, cooler water.',
     weightRange: { min: 0.5, max: 10 },
-    activityByTimeOfDay: { morning: 0.8, day: 0.4, evening: 0.9, night: 0.3 },
+    activityByTimeOfDay: {
+      morning: 0.95,
+      day: 0.5,
+      evening: 0.85,
+      night: 0.15,
+    },
     preferredBaits: ['live_bait'],
     preferredGroundbait: 'dried_blood',
     baseCatchChance: 0.28,
@@ -71,7 +76,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A powerful bottom feeder beloved for its incredible fighting spirit.',
     weightRange: { min: 1, max: 14 },
-    activityByTimeOfDay: { morning: 0.6, day: 0.4, evening: 0.9, night: 0.7 },
+    activityByTimeOfDay: { morning: 0.7, day: 0.5, evening: 0.95, night: 0.85 },
     preferredBaits: ['corn', 'dough'],
     preferredGroundbait: 'peas',
     baseCatchChance: 0.3,
@@ -92,7 +97,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A resilient little fish that survives in low-oxygen water. Bites cautiously.',
     weightRange: { min: 0.1, max: 3 },
-    activityByTimeOfDay: { morning: 0.7, day: 0.5, evening: 0.8, night: 0.2 },
+    activityByTimeOfDay: { morning: 0.9, day: 0.4, evening: 0.8, night: 0.75 },
     preferredBaits: ['worm', 'bread'],
     preferredGroundbait: 'vanillin',
     baseCatchChance: 0.8,
@@ -113,7 +118,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A shoal fish found near mid-water. Very common, great for beginners.',
     weightRange: { min: 0.05, max: 1.2 },
-    activityByTimeOfDay: { morning: 0.9, day: 0.8, evening: 0.6, night: 0.2 },
+    activityByTimeOfDay: { morning: 0.95, day: 0.8, evening: 0.5, night: 0.1 },
     preferredBaits: ['maggot', 'bread'],
     preferredGroundbait: 'vanillin',
     baseCatchChance: 0.85,
@@ -134,7 +139,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A sleek deep-water predator with excellent eyesight. Hunts in low-light.',
     weightRange: { min: 0.75, max: 12 },
-    activityByTimeOfDay: { morning: 0.3, day: 0.2, evening: 0.7, night: 0.9 },
+    activityByTimeOfDay: { morning: 0.4, day: 0.15, evening: 0.85, night: 1.0 },
     preferredBaits: ['live_bait'],
     preferredGroundbait: 'dried_blood',
     baseCatchChance: 0.3,
@@ -161,7 +166,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A small spiny fish related to the prefix. Often a nuisance bite.',
     weightRange: { min: 0.02, max: 0.4 },
-    activityByTimeOfDay: { morning: 0.5, day: 0.4, evening: 0.7, night: 0.9 },
+    activityByTimeOfDay: { morning: 0.4, day: 0.2, evening: 0.8, night: 1.0 },
     preferredBaits: ['worm', 'maggot'],
     preferredGroundbait: 'vanillin',
     baseCatchChance: 0.95,
@@ -182,7 +187,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'The king of the deep. A nocturnal monster lurking in the darkest depths.',
     weightRange: { min: 2, max: 50 },
-    activityByTimeOfDay: { morning: 0.2, day: 0.1, evening: 0.5, night: 1 },
+    activityByTimeOfDay: { morning: 0.3, day: 0.1, evening: 0.6, night: 1.0 },
     preferredBaits: ['live_bait'],
     preferredGroundbait: 'dried_blood',
     baseCatchChance: 0.1,
@@ -209,7 +214,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A large herbivore that feeds on aquatic plants. Fights energetically when hooked.',
     weightRange: { min: 1, max: 25 },
-    activityByTimeOfDay: { morning: 0.7, day: 0.6, evening: 0.8, night: 0.3 },
+    activityByTimeOfDay: { morning: 0.6, day: 0.85, evening: 0.9, night: 0.4 },
     preferredBaits: ['corn', 'dough', 'bread'],
     preferredGroundbait: 'peas',
     baseCatchChance: 0.28,
