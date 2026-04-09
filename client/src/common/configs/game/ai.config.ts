@@ -35,8 +35,8 @@ export const FISH_AI = {
   biteTimeoutRange: 4.5,
 
   /** Migration timer: base + random * range (seconds between long-distance swims) */
-  migrationTimerBase: 8,
-  migrationTimerRange: 20,
+  migrationTimerBase: 5,
+  migrationTimerRange: 25,
 
   /** Migration retry interval when destination has bad depth */
   migrationRetryInterval: 5.0,
@@ -48,7 +48,7 @@ export const FISH_AI = {
   migrationSpeedMultiplier: 1.8,
 
   /** Migration depth tolerance (meters) for accepting a destination */
-  migrationDepthTolerance: 0.3,
+  migrationDepthTolerance: 0.15,
 
   /** Rest timer: base + random * range (seconds) */
   restTimerBase: 15,

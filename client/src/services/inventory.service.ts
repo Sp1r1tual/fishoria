@@ -1,27 +1,9 @@
 import { $mainApi } from '@/http/axios';
 
+import type { IGearAction } from '@/common/types';
+
 export const InventoryService = {
-  equip: async (
-    payload:
-      | {
-          targetType: 'rod' | 'reel' | 'line' | 'hook' | 'bait' | 'groundbait';
-          uid?: string | null;
-          targetId?: string | null;
-        }
-      | {
-          equips: {
-            targetType:
-              | 'rod'
-              | 'reel'
-              | 'line'
-              | 'hook'
-              | 'bait'
-              | 'groundbait';
-            uid?: string | null;
-            targetId?: string | null;
-          }[];
-        },
-  ) => {
+  equip: async (payload: IGearAction | { equips: IGearAction[] }) => {
     const { data } = await $mainApi.post('/inventory/equip', payload);
     return data;
   },

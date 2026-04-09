@@ -168,8 +168,8 @@ export function Shop() {
                             </WoodyButton>
                           </div>
                           <WoodyButton
-                            variant="green"
-                            size="md"
+                            variant="brown"
+                            size="sm"
                             className={styles['shop-item__buy-btn']}
                             onClick={() => handleBuyBait(id)}
                             disabled={money < bait.price * qty}
@@ -251,8 +251,8 @@ export function Shop() {
                             </WoodyButton>
                           </div>
                           <WoodyButton
-                            variant="green"
-                            size="md"
+                            variant="brown"
+                            size="sm"
                             className={styles['shop-item__buy-btn']}
                             onClick={() => handleBuyGroundbait(id)}
                             disabled={money < gb.price * qty}

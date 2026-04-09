@@ -12,13 +12,13 @@ export const BITE_DETECTION = {
   chanceOfBiteAtDeadHour: 0.3,
 
   /** Radius (pixels, pre-scale) for fish to notice the bait/lure */
-  attractRadiusPx: 40,
+  attractRadiusPx: 65,
 
   /** Radius (pixels, pre-scale) for a bite to occur */
   biteRadiusPx: 10,
 
   /** Spinning predator vision radius (overrides attractRadiusPx for predators) */
-  spinningPredatorVisionPx: 70,
+  spinningPredatorVisionPx: 90,
 
   /** Depth penalty multiplier (how harshly out-of-range depth is penalized) */
   depthPenaltyFactor: 2.0,

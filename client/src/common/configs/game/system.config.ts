@@ -20,13 +20,6 @@ export const GEAR_WEAR = {
   wearFlushThreshold: 0.3,
 } as const;
 
-export const HOOK_QUALITY = {
-  /** Minimum hookChance at quality 0 */
-  baseHookChance: 0.82,
-  /** Additional hookChance scaled by quality (0 → 1.0) */
-  qualityBonus: 0.18,
-} as const;
-
 export const CATCH_RESULT = {
   /** Weight distribution power: higher = more small fish, rarer trophies */
   weightDistributionPower: 5.5,

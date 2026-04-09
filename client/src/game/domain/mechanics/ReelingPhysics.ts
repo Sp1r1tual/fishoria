@@ -34,9 +34,12 @@ export function pullFishToShore(
   let effectivePull = reelSpeed * REELING_PHYSICS.basePull - resistance;
 
   // Limit how fast an energetic fish can pull line *out* while reeling
+  // We normalize the reelSpeed (scaled around 1.0-5.0 now) for the slip formula
+  const slipNormalizationBaseline = 4.0;
+  const slipFactor = Math.max(0, 1.0 - reelSpeed / slipNormalizationBaseline);
   const maxSlip =
-    REELING_PHYSICS.maxSlipBase -
-    (1.0 - reelSpeed) * REELING_PHYSICS.maxSlipReelBonus;
+    REELING_PHYSICS.maxSlipBase - slipFactor * REELING_PHYSICS.maxSlipReelBonus;
+
   effectivePull = Math.max(maxSlip, effectivePull);
 
   // Heavier fish are always slower to drag through the water

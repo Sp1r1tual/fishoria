@@ -9,6 +9,7 @@ import { SteeringBehavior } from './SteeringBehavior';
 import { FishState } from './FishState';
 
 import { FISH_AI, CATCH_RESULT } from '@/common/configs/game';
+import { MigrationRegistry } from './MigrationRegistry';
 
 let _counter = 0;
 
@@ -131,9 +132,14 @@ export class Fish {
     this.nearbyFishCount = 0;
     this.preferredDepthRange = preferredDepthRange;
     this.weightRange = weightRange ?? config.weightRange;
+    if (this.migrationTarget) {
+      MigrationRegistry.activeMigrations = Math.max(
+        0,
+        MigrationRegistry.activeMigrations - 1,
+      );
+    }
     this.migrationTarget = null;
-    this.migrationTimer =
-      FISH_AI.migrationTimerBase + Math.random() * FISH_AI.migrationTimerRange;
+    this.migrationTimer = 5 + Math.random() * 25;
     this.isResting = false;
     this.restTimer =
       FISH_AI.restTimerBase + Math.random() * FISH_AI.restTimerRange;

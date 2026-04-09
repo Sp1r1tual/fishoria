@@ -20,15 +20,16 @@ export const ATTRACTION = {
 } as const;
 
 export const REELING_PHYSICS = {
-  /** Base pull force when reeling a hooked fish */
-  basePull: 3.8,
+  /** Base pull force when reeling a hooked fish (now 1.0, speed in config is absolute) */
+  basePull: 1.0,
 
   /** Fish resistance multiplier: resistance = energy * stamina * maxWeight * resistanceFactor */
   resistanceFactor: 0.72,
 
   /** Maximum line slip (negative = line goes out) */
-  maxSlipBase: -0.15,
-  maxSlipReelBonus: 1.1,
+  maxSlipBase: -0.1,
+  /** Slip penalty for lower speeds (higher value = more slip for slow reels) */
+  maxSlipReelBonus: 1.8,
 
   /** Weight penalty: sqrt(maxWeight) * weightPenaltyFactor */
   weightPenaltyFactor: 1.25,

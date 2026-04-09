@@ -337,6 +337,7 @@
     "confirmMessage": "Купити {{qty}}× {{name}}?",
     "purchaseGear": "Купити спорядження",
     "free": "Безкоштовно",
+    "starter": "Стартовий",
     "buyButton": "Купити ×{{qty}}",
     "boughtSuccess": "Куплено {{qty}}× {{name}}",
     "buyItem": "Купити",
@@ -371,6 +372,12 @@
       "empty": "Все спорядження повністю справне!",
       "durability": "Остаток міцності: {{value}}%",
       "success": "Спорядження відремонтовано"
+    },
+    "stats": {
+      "maxWeight": "Макс. вага",
+      "speed": "Ефективність",
+      "quality": "Надійність",
+      "kg": "кг"
     }
   },
   "profile": {

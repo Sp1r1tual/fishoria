@@ -5,12 +5,13 @@ import type {
   IFishSpawnsConfig,
   ISpawnedFish,
 } from '@/common/types';
+import type { IAllowedCastArea, IVec2 } from '@/common/types';
 
 import { Fish } from '@/game/domain/fish/Fish';
+import { MigrationRegistry } from '@/game/domain/fish/MigrationRegistry';
 import { FishState } from '@/game/domain/fish/FishState';
 import { FishEntity } from '../entities/FishEntity';
 import { pointInPolygon } from '@/game/utils/MathUtils';
-import type { IAllowedCastArea, IVec2 } from '@/common/types';
 
 import { FISH_SPECIES, FISH_SPAWN } from '@/common/configs/game';
 
@@ -378,6 +379,14 @@ export class FishSpawnSystem {
       const removed = this.spawned.splice(idx, 1)[0];
       this.fishCache.splice(idx, 1); // Keep cache in sync
       if (removed) {
+        // Important: ensure migration counter is decremented if removed while migrating
+        if (removed.fish.migrationTarget) {
+          MigrationRegistry.activeMigrations = Math.max(
+            0,
+            MigrationRegistry.activeMigrations - 1,
+          );
+          removed.fish.migrationTarget = null;
+        }
         this.pool.push(removed);
       }
     }

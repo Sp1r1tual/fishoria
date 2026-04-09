@@ -1,6 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import type { IPlayerProfile, IOwnedGearItem } from '@/common/types';
+import type {
+  IPlayerProfile,
+  IOwnedGearItem,
+  IGearAction,
+} from '@/common/types';
 
 import { store } from '@/store';
 import { addPendingEquips } from '@/store/slices/gameSlice';
@@ -8,19 +12,9 @@ import { playerKeys } from './player.queries';
 
 import { InventoryService } from '../services/inventory.service';
 
-type EquipPayload =
-  | {
-      targetType: 'rod' | 'reel' | 'line' | 'hook' | 'bait' | 'groundbait';
-      uid?: string | null;
-      targetId?: string | null;
-    }
-  | {
-      equips: {
-        targetType: 'rod' | 'reel' | 'line' | 'hook' | 'bait' | 'groundbait';
-        uid?: string | null;
-        targetId?: string | null;
-      }[];
-    };
+type EquipPayload = (IGearAction | { equips: IGearAction[] }) & {
+  buffer?: boolean;
+};
 
 export const useEquipMutation = () => {
   const queryClient = useQueryClient();
@@ -31,13 +25,19 @@ export const useEquipMutation = () => {
     { previousProfile: IPlayerProfile | undefined }
   >({
     mutationFn: async (payload) => {
-      const state = store.getState();
-      if (state.game.currentLakeId) {
-        const equips = 'equips' in payload ? payload.equips : [payload];
-        store.dispatch(addPendingEquips(equips));
+      const { buffer, ...data } = payload;
+      if (buffer) {
         return queryClient.getQueryData<IPlayerProfile>(playerKeys.profile());
       }
-      return InventoryService.equip(payload);
+      const state = store.getState();
+      if (state.game.currentLakeId) {
+        const equips = 'equips' in data ? data.equips : [data];
+        store.dispatch(addPendingEquips(equips));
+        return null;
+      }
+      return InventoryService.equip(
+        data as Parameters<typeof InventoryService.equip>[0],
+      );
     },
     onMutate: async (payload) => {
       const previousProfile = queryClient.getQueryData<IPlayerProfile>(
@@ -77,7 +77,9 @@ export const useEquipMutation = () => {
       }
     },
     onSuccess: (updatedProfile) => {
-      queryClient.setQueryData(playerKeys.profile(), updatedProfile);
+      if (updatedProfile != null) {
+        queryClient.setQueryData(playerKeys.profile(), updatedProfile);
+      }
     },
   });
 };

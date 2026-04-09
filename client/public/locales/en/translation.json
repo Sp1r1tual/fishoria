@@ -337,6 +337,7 @@
     "confirmMessage": "Buy {{qty}}× {{name}}?",
     "purchaseGear": "Purchase gear",
     "free": "Free",
+    "starter": "Starter",
     "buyButton": "Buy for ×{{qty}}",
     "boughtSuccess": "Bought {{qty}}× {{name}}",
     "buyItem": "Purchase Item",
@@ -371,6 +372,12 @@
       "empty": "All your gear is in perfect condition!",
       "durability": "Durability left: {{value}}%",
       "success": "Gear item repaired"
+    },
+    "stats": {
+      "maxWeight": "Max weight",
+      "speed": "Efficiency",
+      "quality": "Reliability",
+      "kg": "kg"
     }
   },
   "profile": {

@@ -1,14 +1,17 @@
 import { createNoise2D } from 'simplex-noise';
 
 import type {
-  IVec2,
   IUpdateContext,
+  IVec2,
   IFishBehavior,
   IActivityByTimeOfDay,
 } from '@/common/types';
 
 import { FishState } from './FishState';
 import type { Fish } from './Fish';
+import { MigrationRegistry } from './MigrationRegistry';
+
+const _tmpPt: IVec2 = { x: 0, y: 0 };
 
 import {
   getDepthBiasForce,
@@ -215,19 +218,23 @@ export class SteeringBehavior implements IFishBehavior {
       // Distant explorer logic
       if (!fish.isResting) {
         fish.migrationTimer -= dt;
-        if (fish.migrationTimer <= 0 && fish.state === FishState.Idle) {
-          // Use an S-curve distribution to push random targets away from the center towards the edges
+        if (
+          fish.migrationTimer <= 0 &&
+          fish.state === FishState.Idle &&
+          MigrationRegistry.activeMigrations < MigrationRegistry.maxMigrations
+        ) {
+          // Use an aggressive S-curve distribution to push targets away from the center
           const normX = Math.random();
           const biasedX =
             normX < 0.5
-              ? Math.pow(normX * 2, 1.2) / 2
-              : 1 - Math.pow((1 - normX) * 2, 1.2) / 2;
+              ? Math.pow(normX * 2, 2.6) / 2
+              : 1 - Math.pow((1 - normX) * 2, 2.6) / 2;
 
           const normY = Math.random();
           const biasedY =
             normY < 0.5
-              ? Math.pow(normY * 2, 1.2) / 2
-              : 1 - Math.pow((1 - normY) * 2, 1.2) / 2;
+              ? Math.pow(normY * 2, 2.2) / 2
+              : 1 - Math.pow((1 - normY) * 2, 2.2) / 2;
 
           const tx = 50 + biasedX * (ctx.canvasWidth - 100);
           const ty = horizonY + biasedY * (ctx.canvasHeight - horizonY - 10);
@@ -245,9 +252,8 @@ export class SteeringBehavior implements IFishBehavior {
             d <= fish.preferredDepthRange.max + nightTolerance
           ) {
             fish.migrationTarget = { x: tx, y: ty };
-            fish.migrationTimer =
-              FISH_AI.migrationTimerBase +
-              Math.random() * FISH_AI.migrationTimerRange;
+            MigrationRegistry.activeMigrations++;
+            fish.migrationTimer = 5 + Math.random() * 25;
           } else {
             fish.migrationTimer = FISH_AI.migrationRetryInterval; // Try again soon
           }
@@ -260,6 +266,10 @@ export class SteeringBehavior implements IFishBehavior {
         const dist = vecLen(dx, dy);
         if (dist < FISH_AI.migrationArrivalDist * avgScale) {
           fish.migrationTarget = null;
+          MigrationRegistry.activeMigrations = Math.max(
+            0,
+            MigrationRegistry.activeMigrations - 1,
+          );
         } else {
           const [nx, ny] = normalize(dx, dy);
           forceX += nx * FISH_AI.migrationForce;
@@ -276,9 +286,9 @@ export class SteeringBehavior implements IFishBehavior {
       // If groundbait is active, IDLE fish should slowly drift towards the bait cluster
       if (ctx.activeGroundbait && ctx.baitPosition && !fish.migrationTarget) {
         const [sax, say] = getAttractionForce(fish, ctx);
-        // We use a significant but not overpowering multiplier for idle attraction
-        forceX = forceX * 0.7 + sax * 0.8;
-        forceY = forceY * 0.7 + say * 0.8;
+        // Additive attraction instead of overriding to let fish still wander naturally
+        forceX += sax * 0.4;
+        forceY += say * 0.4;
       }
 
       speed = FISH_STATE_SPEEDS.idle.multiplier * fish.config.behavior.mobility;
@@ -304,29 +314,32 @@ export class SteeringBehavior implements IFishBehavior {
     }
 
     // --- BOUNDARY STEERING (stay within allowedCastArea) ---
+    // Throttle boundary check to every 4 frames per fish to save CPU
+    const checkBoundary =
+      (fish.id.charCodeAt(0) + Math.floor(performance.now() / 16)) % 4 === 0;
+
     if (
+      checkBoundary &&
       ctx.allowedCastArea &&
       (ctx.allowedCastArea.type === 'polygon' ||
         ctx.allowedCastArea.type === 'circle')
     ) {
-      const pt: IVec2 = {
-        x: fish.position.x / ctx.canvasWidth,
-        y: fish.position.y / ctx.canvasHeight,
-      };
+      _tmpPt.x = fish.position.x / ctx.canvasWidth;
+      _tmpPt.y = fish.position.y / ctx.canvasHeight;
 
       let isInside = false;
       if (
         ctx.allowedCastArea.type === 'polygon' &&
         ctx.allowedCastArea.points
       ) {
-        isInside = pointInPolygon(pt, ctx.allowedCastArea.points);
+        isInside = pointInPolygon(_tmpPt, ctx.allowedCastArea.points);
       } else if (
         ctx.allowedCastArea.type === 'circle' &&
         ctx.allowedCastArea.center &&
         ctx.allowedCastArea.radius != null
       ) {
-        const dx = pt.x - ctx.allowedCastArea.center.x;
-        const dy = pt.y - ctx.allowedCastArea.center.y;
+        const dx = _tmpPt.x - ctx.allowedCastArea.center.x;
+        const dy = _tmpPt.y - ctx.allowedCastArea.center.y;
         isInside = dx * dx + dy * dy <= ctx.allowedCastArea.radius ** 2;
       } else {
         isInside = true;
@@ -356,6 +369,12 @@ export class SteeringBehavior implements IFishBehavior {
     }
 
     if (fish.state === FishState.Hooked || fish.state === FishState.Escaping) {
+      if (fish.migrationTarget) {
+        MigrationRegistry.activeMigrations = Math.max(
+          0,
+          MigrationRegistry.activeMigrations - 1,
+        );
+      }
       fish.migrationTarget = null;
       fish.isResting = false;
     }

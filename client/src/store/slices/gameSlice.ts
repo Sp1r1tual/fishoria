@@ -5,13 +5,8 @@ import type {
   CatchResultType,
   IGameState,
   ILossEvent,
+  IGearAction,
 } from '@/common/types';
-
-export interface IGearAction {
-  targetType: 'rod' | 'reel' | 'line' | 'hook' | 'bait' | 'groundbait';
-  uid?: string | null;
-  targetId?: string | null;
-}
 
 const INITIAL: IGameState & { pendingEquips: IGearAction[] } = {
   currentLakeId: null,

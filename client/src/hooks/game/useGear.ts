@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
@@ -7,11 +7,20 @@ import type {
   GearTypeType,
   IGearItemBase,
   IOwnedGearItem,
+  IGearAction,
 } from '@/common/types';
 
 import { useAppSelector, useAppDispatch } from '@/hooks/core/useAppStore';
+import { usePlayerQuery } from '@/queries/player.queries';
+import {
+  useEquipMutation,
+  useRepairMutation,
+  useDeleteMutation,
+} from '@/queries/inventory.queries';
+import { addToast } from '@/store/slices/uiSlice';
 import { useClickSound } from '@/hooks/audio/useClickSound';
 
+import { InventoryService } from '@/services/inventory.service';
 import {
   SHOP_RODS,
   SHOP_REELS,
@@ -21,14 +30,6 @@ import {
   BAITS,
   SHOP_GADGETS,
 } from '@/common/configs/game';
-
-import { usePlayerQuery } from '@/queries/player.queries';
-import {
-  useEquipMutation,
-  useRepairMutation,
-  useDeleteMutation,
-} from '@/queries/inventory.queries';
-import { addToast } from '@/store/slices/uiSlice';
 
 interface IDeleteModal {
   isOpen: boolean;
@@ -47,7 +48,27 @@ export function useGear() {
   const playClick = useClickSound();
   const dispatch = useAppDispatch();
   const { data: player } = usePlayerQuery();
-  const { phase } = useAppSelector((s) => s.game);
+  const { phase, currentLakeId } = useAppSelector((s) => s.game);
+  const [bufferedEquips, setBufferedEquips] = useState<
+    Record<string, IGearAction>
+  >({});
+  const bufferedRef = useRef(bufferedEquips);
+  const flushedRef = useRef(false);
+
+  useEffect(() => {
+    bufferedRef.current = bufferedEquips;
+  }, [bufferedEquips]);
+
+  useEffect(() => {
+    return () => {
+      if (flushedRef.current) return;
+      const bufferArr = Object.values(bufferedRef.current);
+      if (bufferArr.length > 0) {
+        InventoryService.equip({ equips: bufferArr }).catch(console.error);
+        flushedRef.current = true;
+      }
+    };
+  }, []);
   const activeBait = player?.activeBait || 'worm';
   const activeGroundbait = player?.activeGroundbait || 'none';
   const { t } = useTranslation();
@@ -76,26 +97,49 @@ export function useGear() {
 
       if (type === 'bait') {
         const baitId = _item.id as BaitTypeType;
+        let equips: IGearAction[] = [];
         if (baitId.startsWith('lure_')) {
           const inst = player?.gearItems.find(
             (h: IOwnedGearItem) => h.itemId === baitId,
           );
           if (inst) {
-            equipMutation.mutate({
-              equips: [
-                { targetType: 'hook', uid: inst.uid },
-                { targetType: 'bait', targetId: baitId },
-              ],
-            });
+            equips = [
+              { targetType: 'hook', uid: inst.uid },
+              { targetType: 'bait', targetId: baitId },
+            ];
           }
         } else {
-          equipMutation.mutate({ targetType: 'bait', targetId: baitId });
+          equips = [{ targetType: 'bait', targetId: baitId }];
+        }
+
+        if (equips.length > 0) {
+          if (!currentLakeId) {
+            equipMutation.mutate({ equips, buffer: true });
+            setBufferedEquips((prev) => {
+              const next = { ...prev };
+              equips.forEach((eq) => {
+                next[eq.targetType] = eq;
+              });
+              return next;
+            });
+          } else {
+            equipMutation.mutate({ equips });
+          }
         }
         return;
       }
 
       if (type === 'groundbait') {
-        equipMutation.mutate({ targetType: 'groundbait', targetId: _item.id });
+        const payload = {
+          targetType: 'groundbait' as const,
+          targetId: _item.id,
+        };
+        if (!currentLakeId) {
+          equipMutation.mutate({ ...payload, buffer: true });
+          setBufferedEquips((prev) => ({ ...prev, groundbait: payload }));
+        } else {
+          equipMutation.mutate(payload);
+        }
         return;
       }
 
@@ -185,12 +229,23 @@ export function useGear() {
           }
         }
 
-        equipMutation.mutate({ equips });
+        if (!currentLakeId) {
+          equipMutation.mutate({ equips, buffer: true });
+          setBufferedEquips((prev) => {
+            const next = { ...prev };
+            equips.forEach((eq) => {
+              next[eq.targetType] = eq;
+            });
+            return next;
+          });
+        } else {
+          equipMutation.mutate({ equips });
+        }
       } catch (e) {
         console.error('Failed to equip', e);
       }
     },
-    [player, phase, activeBait, equipMutation, playClick],
+    [player, phase, activeBait, currentLakeId, equipMutation, playClick],
   );
 
   const handleDelete = useCallback(
@@ -232,10 +287,16 @@ export function useGear() {
 
   const handleBack = useCallback(
     (onClose?: () => void) => {
+      const bufferArr = Object.values(bufferedEquips);
+      if (bufferArr.length > 0 && !flushedRef.current) {
+        equipMutation.mutate({ equips: bufferArr });
+        flushedRef.current = true;
+      }
+
       if (onClose) onClose();
       else navigate('/');
     },
-    [navigate],
+    [navigate, bufferedEquips, equipMutation],
   );
 
   // ── Memoized Inventory lists ────────────────────────────────────────────────────

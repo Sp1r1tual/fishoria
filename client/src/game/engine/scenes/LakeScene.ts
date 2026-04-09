@@ -40,7 +40,6 @@ import {
   FISH_SPECIES,
   GROUNDBAITS,
   TIME_SYSTEM,
-  HOOK_QUALITY,
   EARLY_HOOK,
   SCENE_TIMING,
   INTEREST_RATES,
@@ -452,10 +451,8 @@ export class LakeScene implements IScene {
   private hookFish(): void {
     if (!this.hookedFish) return;
 
-    // Better hooks increase the chance of successfully setting the hook when the player reacts
-    const hookQuality = this.hookConfig?.quality ?? 0.1;
-    const hookChance =
-      HOOK_QUALITY.baseHookChance + hookQuality * HOOK_QUALITY.qualityBonus;
+    // Reliability is now the direct probability of a successful strike
+    const hookChance = this.hookConfig?.quality ?? 0.5;
 
     if (Math.random() > hookChance) {
       // Failed to set the hook due to dull hook or bad luck

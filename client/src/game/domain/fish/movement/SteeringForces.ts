@@ -90,8 +90,11 @@ export function getAttractionForce(
     gbRadiusScale = ctx.activeGroundbait.attractionRadiusScale || 1.0;
     gbStrBonus = ctx.activeGroundbait.intensityMultiplier || 1.0;
     const speciesMult =
-      ctx.activeGroundbait.fishedSpeciesMultiplier?.[fish.config.id] || 1.0;
+      ctx.activeGroundbait.fishedSpeciesMultiplier?.[fish.config.id] || 0.0;
     gbStrBonus *= speciesMult;
+
+    // If species is not interested at all, early exit
+    if (speciesMult <= 0) return [0, 0];
   }
 
   // Base attraction calculation

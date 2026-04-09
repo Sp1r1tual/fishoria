@@ -62,7 +62,6 @@ export interface ILineConfig {
   description: string;
   price: number;
   maxWeight: number;
-  visibility: number;
   totalLength: number; // meters per spool
   icon?: string;
 }
@@ -116,4 +115,10 @@ export interface IGearItemBase {
   itemType?: 'rod' | 'reel' | 'line' | 'hook' | 'gadget';
   rigType?: RigTypeType;
   rodCategory?: 'float' | 'feeder' | 'spinning';
+}
+
+export interface IGearAction {
+  targetType: 'rod' | 'reel' | 'line' | 'hook' | 'bait' | 'groundbait';
+  uid?: string | null;
+  targetId?: string | null;
 }
