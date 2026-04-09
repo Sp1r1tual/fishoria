@@ -92,6 +92,7 @@ function ensureAmbientConnected(audio: HTMLAudioElement) {
     const ctx = getSharedAudioContext();
     if (!ambientGainNode) {
       ambientGainNode = ctx.createGain();
+      ambientGainNode.gain.value = 0; // Default to silent to prevent leaks during unlock
       ambientGainNode.connect(ctx.destination);
     }
     if (!connectedAmbients.has(audio)) {
@@ -132,22 +133,26 @@ export async function unlockAudio() {
     const silentURI =
       'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
     const silent = new Audio(silentURI);
-    silent.volume = 0;
+    silent.muted = true;
     silent
       .play()
       .then(() => silent.pause())
       .catch(() => {});
 
     Object.values(AMBIENT).forEach((bgAudio) => {
-      bgAudio.volume = 0; // Mute it initially just in case
+      // Connect to AudioContext immediately so we can control volume via GainNode
+      ensureAmbientConnected(bgAudio);
+
+      bgAudio.muted = true; // Use muted (volume is read-only on iOS)
       bgAudio
         .play()
         .then(() => {
           bgAudio.pause();
-          bgAudio.volume = 1; // Restore volume
+          bgAudio.muted = false;
+          bgAudio.currentTime = 0;
         })
         .catch(() => {
-          bgAudio.volume = 1; // Restore volume if it failed
+          bgAudio.muted = false;
         });
     });
 
