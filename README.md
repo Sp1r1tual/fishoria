@@ -6,7 +6,9 @@ Feel the adrenaline rush of fighting a trophy catch, carefully select your tackl
 
 ---
 
-![Fishoria](https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/marketing/fishoria_collage.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL21hcmtldGluZy9maXNob3JpYV9jb2xsYWdlLnBuZyIsImlhdCI6MTc3NTU5MDQ5NSwiZXhwIjo0ODk3NjU0NDk1fQ.aMFBQtMbMo_aVJi9cA8ZKxtbAdVYF1DOJMrAlsuDkPs)
+<p align="center">
+  <img src="https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/marketing/fishoria_collage.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL21hcmtldGluZy9maXNob3JpYV9jb2xsYWdlLnBuZyIsImlhdCI6MTc3NTU5MDQ5NSwiZXhwIjo0ODk3NjU0NDk1fQ.aMFBQtMbMo_aVJi9cA8ZKxtbAdVYF1DOJMrAlsuDkPs" alt="Fishoria" />
+</p>
 
 ---
 
@@ -71,4 +73,4 @@ Fishoria is also a technical masterpiece. We've combined the latest cutting-edge
 
 ## License
 
-This project is licensed under the MIT License – see the [LICENCE.md](./LICENCE.md) file for details.
+This project is licensed under the MIT License – see the [LICENCE](./LICENCE) file for details.
