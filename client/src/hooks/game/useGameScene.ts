@@ -140,7 +140,12 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
               dispatch(setDepth(depthM));
             }
           },
-          onBite: () => audioRef.current.onBite(),
+          onBite: () => {
+            audioRef.current.onBite();
+            if (typeof navigator !== 'undefined' && navigator.vibrate) {
+              navigator.vibrate([200, 100, 200]);
+            }
+          },
           onCatch: (result) => {
             audioRef.current.onCatch();
 
