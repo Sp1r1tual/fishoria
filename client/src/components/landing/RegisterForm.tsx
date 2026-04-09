@@ -49,7 +49,7 @@ interface RegisterFormProps {
 }
 
 export const RegisterForm = ({ onBack, onSuccess }: RegisterFormProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
@@ -77,7 +77,9 @@ export const RegisterForm = ({ onBack, onSuccess }: RegisterFormProps) => {
   return (
     <form
       className={styles.authForm}
-      onSubmit={handleSubmit((data) => mutate(data))}
+      onSubmit={handleSubmit((data) => {
+        mutate({ ...data, language: i18n.language });
+      })}
       noValidate
       autoComplete="off"
       aria-label={t('landing.register.title')}

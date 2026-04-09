@@ -19,7 +19,7 @@ export const ForgotPasswordForm = ({
   onBack,
   onSuccess,
 }: ForgotPasswordFormProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [serverError, setServerError] = useState<string | null>(null);
 
   const {
@@ -32,9 +32,9 @@ export const ForgotPasswordForm = ({
 
   const { mutate, isPending } = useMutation({
     mutationFn: (data: { email: string }) =>
-      AuthService.forgotPassword(data.email),
+      AuthService.forgotPassword(data.email, i18n.language),
     onSuccess: (response) => {
-      onSuccess(response.data.message || t('landing.forgotPassword.success'));
+      onSuccess(response.data.message || 'landing.forgotPassword.success');
     },
     onError: (error: AxiosError<{ message: string }>) => {
       setServerError(

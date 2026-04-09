@@ -72,12 +72,7 @@ export const AuthBox = ({ onModeChange }: AuthBoxProps) => {
   };
 
   const handleRegisterSuccess = () => {
-    setSuccessMessage(
-      t(
-        'landing.register.success',
-        'Registration successful! Please check your email to activate your account.',
-      ),
-    );
+    setSuccessMessage('landing.register.success');
     handleModeChange('success');
   };
 
@@ -156,7 +151,7 @@ export const AuthBox = ({ onModeChange }: AuthBoxProps) => {
 
       {authMode === 'success' && (
         <div className={styles.successBox} role="status" aria-live="polite">
-          <p className={styles.successMessage}>{successMessage}</p>
+          <p className={styles.successMessage}>{t(successMessage)}</p>
           <DefaultButton size="lg" onClick={() => handleModeChange('login')}>
             {t('landing.auth.backToLogin')}
           </DefaultButton>

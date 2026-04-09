@@ -19,4 +19,5 @@ export interface IAuthForm {
   password: string;
   confirmPassword?: string;
   username?: string;
+  language?: string;
 }

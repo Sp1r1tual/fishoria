@@ -137,7 +137,12 @@ export function useShop() {
         closeModal();
         try {
           await buyMutation.mutateAsync(payload);
-          notifySuccess(t('shop.boughtSuccess', { qty, name: config.name }));
+          notifySuccess(
+            t('shop.boughtSuccess', {
+              qty,
+              name: t(`${translationNs}.${id}.name`),
+            }),
+          );
           onPurchase();
         } catch (e: unknown) {
           const err = e as { response?: { data?: { message?: string } } };
@@ -182,7 +187,12 @@ export function useShop() {
             itemType: type,
             quantity: 1,
           });
-          notifySuccess(t('shop.boughtSuccess', { qty: 1, name: item.name }));
+          notifySuccess(
+            t('shop.boughtSuccess', {
+              qty: 1,
+              name: t(`gear_items.${item.id}.name`),
+            }),
+          );
           onPurchase();
         } catch (e: unknown) {
           const err = e as { response?: { data?: { message?: string } } };
@@ -222,7 +232,12 @@ export function useShop() {
             itemType: item.id === 'repair_kit' ? 'repair_kit' : 'gadget',
             quantity: 1,
           });
-          notifySuccess(t('shop.boughtSuccess', { qty: 1, name: item.name }));
+          notifySuccess(
+            t('shop.boughtSuccess', {
+              qty: 1,
+              name: t(`gear_items.${item.id}.name`),
+            }),
+          );
           onPurchase();
         } catch (e: unknown) {
           const err = e as { response?: { data?: { message?: string } } };

@@ -35,10 +35,10 @@ export class AuthService {
     return response;
   }
 
-  static async forgotPassword(email: string) {
+  static async forgotPassword(email: string, language?: string) {
     const response = await $mainApi.post<{ message: string }>(
       '/auth/forgot-password',
-      { email },
+      { email, language },
     );
     return response;
   }
