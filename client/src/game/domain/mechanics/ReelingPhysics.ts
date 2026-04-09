@@ -17,7 +17,9 @@ export function pullFishToShore(
   canvasWidth: number,
 ): void {
   const dtSec = deltaTime / 60; // Pixi frame scalar to seconds
-  const fishWeight = fish.weight || fish.config.weightRange.max; // fallback for safety
+  const fishWeight =
+    fish.weight ||
+    (fish.config.weightRange.min + fish.config.weightRange.max) / 2; // fallback to midpoint for safety
 
   // Fish resists strongly if it has energy
   const resistance =

@@ -22,7 +22,7 @@ export class SnagMechanic {
         const snagProb =
           (this.snagChanceCounter - SNAG.spinningSnagGracePeriod) *
           SNAG.spinningSnagProbMultiplier *
-          params.deltaTime;
+          (params.deltaTime / 60);
         if (Math.random() < snagProb) {
           this.snagChanceCounter = 0;
           return true;

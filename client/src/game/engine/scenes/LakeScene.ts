@@ -984,7 +984,7 @@ export class LakeScene implements IScene {
     this.debugLayer.resize();
     this.weatherLayer.resize();
 
-    this.bgRenderer.drawBackground(newW, newH, this.timeOfDay);
+    this.bgRenderer.drawBackground(newW, newH, this.timeOfDay, this.weather);
     this.bgRenderer.drawObstacles(newW, newH);
     this.updateCachedObstacles(newW, newH);
 
@@ -1162,6 +1162,10 @@ export class LakeScene implements IScene {
     this.syncEnvironmentDepth();
 
     if (this.hookedFish.stateTimer > this.hookedFish.biteTimeout) {
+      this.hookedFish.setState(FishState.Idle);
+      this.hookedFish.interestLevel = 0;
+      this.hookedFish.hasLostInterest = true;
+      this.hookedFish = null;
       this.phase = 'escaped';
       this.callbacks.onPhaseChange(this.phase, false);
       this.scheduleReset(SCENE_TIMING.escapedResetDelay);

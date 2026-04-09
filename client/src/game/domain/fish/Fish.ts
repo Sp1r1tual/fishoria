@@ -125,15 +125,28 @@ export class Fish {
     this.hasLostInterest = false;
     this.energy = FISH_AI.energyBase + Math.random() * FISH_AI.energyRandom;
     this.weight = 0; // Reset weight; will be regenerated on next bite
+    this.depth = 0; // Will be re-initialized to target in SteeringBehavior
     this.separationForce.x = 0;
     this.separationForce.y = 0;
+    this.nearbyFishCount = 0;
     this.preferredDepthRange = preferredDepthRange;
     this.weightRange = weightRange ?? config.weightRange;
     this.migrationTarget = null;
+    this.migrationTimer =
+      FISH_AI.migrationTimerBase + Math.random() * FISH_AI.migrationTimerRange;
     this.isResting = false;
+    this.restTimer =
+      FISH_AI.restTimerBase + Math.random() * FISH_AI.restTimerRange;
+    this.restDuration = 0;
     this.depthProbeCounter = Math.floor(
       Math.random() * this.depthProbeInterval,
     );
     this.hasAttemptedAttack = false;
+    this.biteStrategy =
+      Math.random() < FISH_AI.directBiteChance ? 'direct' : 'playful';
+    this.biteTimeout =
+      FISH_AI.biteTimeoutBase + Math.random() * FISH_AI.biteTimeoutRange;
+    this.lastSplashSeenTime = -1;
+    this.isSplashCurious = false;
   }
 }

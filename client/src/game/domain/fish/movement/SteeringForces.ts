@@ -128,7 +128,7 @@ export function getAttractionForce(
     dist < ATTRACTION.jitterMaxDist
   ) {
     const jitter =
-      Math.sin(Date.now() * 0.03) *
+      Math.sin(performance.now() * 0.03) *
       (fish.interestLevel - ATTRACTION.jitterInterestThreshold) *
       ATTRACTION.jitterAmplitude;
     return [

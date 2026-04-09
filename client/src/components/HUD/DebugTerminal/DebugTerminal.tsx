@@ -7,6 +7,7 @@ import { WoodyButton } from '@/components/UI/buttons/WoodyButton/WoodyButton';
 
 import { setWeather } from '@/store/slices/gameSlice';
 import { useAddMoneyMutation } from '@/queries/player.queries';
+import { store } from '@/store';
 
 import { TimeManager } from '@/game/managers/TimeManager';
 
@@ -106,6 +107,12 @@ export function DebugTerminal({
           const hour = parseInt(args[0]);
           if (!isNaN(hour) && hour >= 0 && hour <= 23) {
             TimeManager.setGameTime(hour);
+            const state = store.getState();
+            TimeManager.saveSessionData(
+              state.game.weather,
+              state.game.weatherForecast,
+              state.game.lastWeatherUpdateHour,
+            );
             addLog(`TIME TRAVEL SUCCESSFUL: ${hour}:00`, 'success');
           } else {
             addLog('USAGE: TIME <0-23>', 'error');

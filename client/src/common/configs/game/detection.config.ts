@@ -109,15 +109,15 @@ export const INTEREST_RATES = {
     /** Retrieval technique bonuses by time/weather */
     techniques: {
       steady: {
-        time: { dawn: 1.1, day: 1.0, dusk: 1.1, night: 0.9 },
+        time: { morning: 1.1, day: 1.0, evening: 1.1, night: 0.9 },
         weather: { clear: 1.0, cloudy: 1.05, rain: 1.15 },
       },
       'stop-and-go': {
-        time: { dawn: 1.0, day: 1.1, dusk: 1.0, night: 1.2 },
+        time: { morning: 1.0, day: 1.1, evening: 1.0, night: 1.2 },
         weather: { clear: 1.1, cloudy: 1.1, rain: 1.0 },
       },
       jigging: {
-        time: { dawn: 1.15, day: 0.9, dusk: 1.2, night: 1.1 },
+        time: { morning: 1.15, day: 0.9, evening: 1.2, night: 1.1 },
         weather: { clear: 1.0, cloudy: 1.15, rain: 1.3 },
       },
     },
@@ -130,15 +130,15 @@ export const INTEREST_RATES = {
     /** Retrieval speed bonuses by time/weather */
     speedBonuses: {
       slow: {
-        time: { dawn: 1.2, day: 0.8, dusk: 1.1, night: 1.3 },
+        time: { morning: 1.2, day: 0.8, evening: 1.1, night: 1.3 },
         weather: { clear: 0.9, cloudy: 1.1, rain: 1.4 },
       },
       normal: {
-        time: { dawn: 1.0, day: 1.0, dusk: 1.0, night: 1.0 },
+        time: { morning: 1.0, day: 1.0, evening: 1.0, night: 1.0 },
         weather: { clear: 1.0, cloudy: 1.0, rain: 1.0 },
       },
       fast: {
-        time: { dawn: 0.8, day: 1.2, dusk: 0.9, night: 0.6 },
+        time: { morning: 0.8, day: 1.2, evening: 0.9, night: 0.6 },
         weather: { clear: 1.3, cloudy: 1.1, rain: 0.7 },
       },
     },
