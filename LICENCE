@@ -1,16 +1,58 @@
-MIT License
+Business Source License 1.1 (BSL 1.1) -- Modified by Atmosphoria Software
 
 Copyright (c) 2026 Atmosphoria Software
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+1. GRANT OF RIGHTS
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Subject to the terms and conditions of this License, Atmosphoria Software
+hereby grants you a non-exclusive, worldwide, royalty-free license to:
+
+- View, copy, modify, and distribute the source code of this software for
+  non-commercial purposes only.
+- Use this software for personal, educational, or research purposes at no cost.
+
+2. COMMERCIAL USE RESTRICTION
+
+Commercial use of this software, in whole or in part, is strictly prohibited
+without prior written permission from Atmosphoria Software.
+
+"Commercial use" includes, but is not limited to:
+
+- Selling, licensing, or sublicensing this software or any derivative thereof
+- Using this software in a product or service for which you charge a fee
+- Incorporating this software into a commercial product or SaaS offering
+- Running this software to generate revenue, directly or indirectly
+- Distributing this software as part of a commercial bundle or package
+- Using this software to provide paid services to third parties
+
+To obtain a commercial license, contact: atmosphoria.software@gmail.com
+
+3. CONTRIBUTIONS
+
+By submitting a contribution (pull request, patch, issue, or otherwise) to this
+project, you agree that:
+
+- You grant Atmosphoria Software a perpetual, irrevocable, royalty-free
+  license to use, modify, and distribute your contribution as part of the
+  Software, including in commercial versions.
+- You confirm that you have the legal right to make such a contribution and
+  that it does not infringe on any third-party intellectual property rights.
+- Contributing to this project does not grant you any commercial rights.
+
+4. MODIFICATIONS & FORKS
+
+You are free to fork and modify the source code for non-commercial purposes.
+However:
+
+- Forks and modified versions must clearly state that they are not affiliated
+  with Atmosphoria Software or the official Fishoria project.
+- Modified versions may not be sold, monetized, or used commercially without
+  written permission from Atmosphoria Software.
+- Modified versions may not use the name "Fishoria" or any Atmosphoria
+  branding without written permission.
+- Redistributed source code must retain this license file in its entirety.
+
+5. NO WARRANTY
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -19,3 +61,24 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+6. ENFORCEMENT & CONTACT
+
+Atmosphoria Software reserves the right to enforce this License to the fullest
+extent permitted by applicable law. Unauthorized commercial use may result in
+legal action, including claims for damages and injunctive relief.
+
+For commercial licensing, permissions, or inquiries, contact:
+
+Atmosphoria Software
+atmosphoria.software@gmail.com
+
+7. SEVERABILITY
+
+If any provision of this License is found to be unenforceable or invalid under
+applicable law, that provision shall be modified to the minimum extent necessary
+to make it enforceable, or severed if modification is not possible. The
+remaining provisions shall continue in full force and effect.
+
+This License is subject to change. The version in effect at the time of your
+use of this software governs your rights and obligations.
