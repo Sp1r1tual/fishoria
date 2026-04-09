@@ -2,7 +2,6 @@ import { useTranslation } from 'react-i18next';
 
 import { useAppSelector } from '@/hooks/core/useAppStore';
 import { useGameScene } from '@/hooks/game/useGameScene';
-import { useIsPortrait } from '@/hooks/ui/useIsPortrait';
 
 import { HUD } from '@/components/HUD/HUD';
 import { SnagMinigame } from '../UI/SnagMinigame/SnagMinigame';
@@ -11,13 +10,11 @@ import { CatchSync } from './CatchSync';
 import { LossSync } from './LossSync';
 
 import { GameLoader } from './GameLoader';
-import { PortraitOverlay } from './PortraitOverlay';
 
 import styles from './GameCanvas.module.css';
 
 export function GameCanvas() {
   const currentLakeId = useAppSelector((s) => s.game.currentLakeId);
-  const isPortrait = useIsPortrait();
   const { t } = useTranslation();
 
   const { containerRef, sceneRef, isLoading, debugActive, isSnagActive } =
@@ -25,8 +22,6 @@ export function GameCanvas() {
 
   return (
     <div className={styles['game-canvas__wrapper']}>
-      {isPortrait && <PortraitOverlay t={t} />}
-
       <div className={styles['game-canvas__viewport']}>
         {isLoading && <GameLoader t={t} />}
 
