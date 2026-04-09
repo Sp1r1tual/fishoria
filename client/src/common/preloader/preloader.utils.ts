@@ -41,6 +41,7 @@ export class ProgressTracker {
 /**
  * Handles discovery of all assets in the project.
  */
+
 export function discoverAssets(): string[] {
   const imageAssets = (
     Object.values(
@@ -52,7 +53,8 @@ export function discoverAssets(): string[] {
     ) as string[]
   ).filter(
     (path) =>
-      !path.includes('/assets/landing/') && !path.includes('/assets/global/'),
+      !path.toLowerCase().includes('global') &&
+      !path.toLowerCase().includes('landing'),
   );
 
   const audioAssets = (
@@ -65,7 +67,8 @@ export function discoverAssets(): string[] {
     ) as string[]
   ).filter(
     (path) =>
-      !path.includes('/assets/landing/') && !path.includes('/assets/global/'),
+      !path.toLowerCase().includes('global') &&
+      !path.toLowerCase().includes('landing'),
   );
 
   const externalAssets = [

@@ -29,7 +29,7 @@ export const HOOK_QUALITY = {
 
 export const CATCH_RESULT = {
   /** Weight distribution power: higher = more small fish, rarer trophies */
-  weightDistributionPower: 4.5,
+  weightDistributionPower: 5.5,
 
   /** Length calculation: length = max(minLength, weight * lengthPerKg + random * lengthJitter) */
   minLength: 5,

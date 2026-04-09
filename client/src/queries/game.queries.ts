@@ -95,7 +95,23 @@ export const useCatchFishMutation = () => {
       }
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(playerKeys.profile(), data);
+      queryClient.setQueryData(
+        playerKeys.profile(),
+        (old: IPlayerProfile | undefined) => {
+          if (!old) return data;
+          // Merge server data but preserve local selections to avoid race conditions
+          // if user changed bait or gear while catch mutation was in flight
+          return {
+            ...data,
+            activeBait: old.activeBait,
+            activeGroundbait: old.activeGroundbait,
+            equippedRodUid: old.equippedRodUid,
+            equippedReelUid: old.equippedReelUid,
+            equippedLineUid: old.equippedLineUid,
+            equippedHookUid: old.equippedHookUid,
+          };
+        },
+      );
     },
   });
 };
@@ -178,7 +194,21 @@ export const useBreakGearMutation = () => {
       }
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(playerKeys.profile(), data);
+      queryClient.setQueryData(
+        playerKeys.profile(),
+        (old: IPlayerProfile | undefined) => {
+          if (!old) return data;
+          return {
+            ...data,
+            activeBait: old.activeBait,
+            activeGroundbait: old.activeGroundbait,
+            equippedRodUid: old.equippedRodUid,
+            equippedReelUid: old.equippedReelUid,
+            equippedLineUid: old.equippedLineUid,
+            equippedHookUid: old.equippedHookUid,
+          };
+        },
+      );
     },
   });
 };

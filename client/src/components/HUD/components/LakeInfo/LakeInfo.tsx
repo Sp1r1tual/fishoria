@@ -3,7 +3,6 @@ import { useRef, useState } from 'react';
 
 import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 
-import { WoodyButton } from '@/components/UI/buttons/WoodyButton/WoodyButton';
 import { GameClock } from '@/components/UI/GameClock/GameClock';
 
 import { setGroundbaitExpiry } from '@/store/slices/gameSlice';
@@ -112,17 +111,15 @@ export function LakeInfo({ sceneRef, isDebugActive }: ILakeInfoProps) {
         ) : (
           <div className={styles['lake-info__groundbait-timer-wrap']}>
             <div className={styles['lake-info__groundbait-timer']}>
-              🍱 {t('hud.groundbait')}:{' '}
-              {TimeManager.formatTimeRemaining(groundbaitExpiresAt)}
+              {t('hud.groundbait')}:{' '}
+              {TimeManager.formatTimeRemaining(groundbaitExpiresAt, t)}
             </div>
-            <WoodyButton
-              variant="red"
-              size="sm"
+            <button
               className={styles['lake-info__cancel-gb']}
               onClick={() => dispatch(setGroundbaitExpiry(null))}
             >
               ×
-            </WoodyButton>
+            </button>
           </div>
         )}
       </div>
@@ -134,6 +131,9 @@ export function LakeInfo({ sceneRef, isDebugActive }: ILakeInfoProps) {
       className={[
         styles['lake-info'],
         isDebugActive ? styles['lake-info--debug'] : '',
+        player?.activeGroundbait && player.activeGroundbait !== 'none'
+          ? styles['lake-info--has-gb']
+          : '',
       ]
         .filter(Boolean)
         .join(' ')}

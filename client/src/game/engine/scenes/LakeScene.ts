@@ -516,6 +516,12 @@ export class LakeScene implements IScene {
     if (data.hookConfig !== undefined) this.hookConfig = data.hookConfig;
 
     if (data.activeBait) {
+      if (this.phase !== 'idle' && this.activeBait !== data.activeBait) {
+        console.warn(
+          `Bait changed mid-phase from ${this.activeBait} to ${data.activeBait}. Resetting cast.`,
+        );
+        this.resetCast();
+      }
       this.activeBait = data.activeBait;
       this.activeBaitName = data.baitName || data.activeBait;
       this.baitAvailable = data.hasBait ?? true;
@@ -819,6 +825,7 @@ export class LakeScene implements IScene {
 
     // Update Groundbait Debug Visualization
     if (
+      this.debugActive &&
       this.activeGroundbaitType !== 'none' &&
       this.groundbaitExpiresAt !== null &&
       TimeManager.getGameTimeHours() < this.groundbaitExpiresAt &&

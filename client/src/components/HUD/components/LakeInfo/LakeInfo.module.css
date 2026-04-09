@@ -8,11 +8,34 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  min-width: 140px;
+  width: 180px;
+  min-width: 180px;
+  max-width: 600px;
   position: relative;
   pointer-events: all;
   transform: scale(0.9);
   transform-origin: top left;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.lake-info--has-gb {
+  width: 250px;
+  min-width: 250px;
+}
+
+@media (min-width: 1045px) {
+  .lake-info {
+    width: 210px;
+    min-width: 210px;
+    padding: 12px 18px;
+  }
+  .lake-info--has-gb {
+    width: 300px;
+    min-width: 300px;
+  }
 }
 
 .lake-info--debug {
@@ -24,11 +47,18 @@
 
 @media (max-width: 1044px) {
   .lake-info {
-    min-width: 120px;
-    padding: 7px 10px;
-    transform: scale(0.85);
+    width: 155px;
+    min-width: 155px;
+    max-width: 450px;
+    padding: 6px 8px;
+    transform: scale(0.75);
     transform-origin: top left;
-    gap: 3px;
+    gap: 2px;
+  }
+
+  .lake-info--has-gb {
+    width: 220px;
+    min-width: 220px;
   }
 
   .lake-info__name {
@@ -106,8 +136,8 @@
 }
 
 .lake-info__clock-icon {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   object-fit: contain;
 }
 
@@ -116,11 +146,27 @@
   padding-top: 4px;
   border-top: 1px solid rgba(251, 191, 36, 0.2);
   margin-top: 4px;
+  animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  transform-origin: top;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scaleY(0.8);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+    max-height: 100px;
+  }
 }
 
 .lake-info__activate-gb {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   background: rgba(251, 191, 36, 0.1);
   border: 1px solid rgba(251, 191, 36, 0.3);
@@ -156,10 +202,10 @@
 
 @media (max-width: 1044px) {
   .lake-info__activate-gb {
-    height: 26px;
-    padding: 0 8px;
+    height: 22px;
+    padding: 0 6px;
     gap: 4px;
-    border-radius: 6px;
+    border-radius: 5px;
   }
   .lake-info__activate-gb span {
     font-size: 0.7rem;
@@ -170,23 +216,22 @@
     height: 13px;
   }
   .lake-info__groundbait-timer {
-    padding: 0 8px;
-    font-size: 0.7rem;
-    border-radius: 6px;
-    height: 26px;
-    min-height: 26px;
+    padding: 0 6px;
+    font-size: 0.65rem;
+    border-radius: 5px;
+    height: 22px;
+    min-height: 22px;
   }
   .lake-info__cancel-gb {
-    width: 26px;
-    height: 26px;
-    font-size: 0.85rem;
-    border-radius: 6px;
-    padding: 0;
+    width: 22px;
+    height: 22px;
+    font-size: 0.9rem;
+    border-radius: 5px;
   }
   .lake-info__groundbait-timer-wrap {
-    gap: 4px;
+    gap: 3px;
     margin-top: 2px;
-    height: 26px;
+    height: 22px;
   }
 }
 
@@ -219,12 +264,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 1.2rem;
   font-weight: 900;
   cursor: pointer;
   pointer-events: all;
   transition: all 0.1s;
+  padding: 0;
+  margin: 0;
+  outline: none;
 }
 
 .lake-info__cancel-gb:hover {

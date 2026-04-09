@@ -6,7 +6,7 @@
 
 export const ATTRACTION = {
   /** Groundbait attraction range base (pixels, pre-scale, divided by distance) */
-  baseAttractionRange: 100,
+  baseAttractionRange: 80,
 
   /** Jitter threshold: interestLevel above which tugging jitter kicks in */
   jitterInterestThreshold: 0.7,

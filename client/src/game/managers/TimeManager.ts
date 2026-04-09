@@ -91,16 +91,24 @@ export const TimeManager = {
     virtualStartTime = virtualTime;
   },
 
-  formatTimeRemaining(targetHours: number): string {
+  formatTimeRemaining(
+    targetHours: number,
+    t?: (key: string) => string,
+  ): string {
     const current = this.getGameTimeHours();
     const diffHours = targetHours - current;
-    if (diffHours <= 0) return '0:00';
+    if (diffHours <= 0) return '0';
 
     const totalMinutes = Math.floor(diffHours * 60);
-    const mins = totalMinutes % 60;
-    const hrs = Math.floor(totalMinutes / 60);
 
-    if (hrs > 0) return `${hrs}:${mins.toString().padStart(2, '0')}`;
-    return `${mins}m`;
+    if (diffHours >= 1) {
+      const hrs = Math.ceil(diffHours);
+      const hourLabel = t ? t('units.hour') : 'h';
+      return `${hrs} ${hourLabel}`;
+    }
+
+    const mins = Math.max(1, totalMinutes);
+    const minLabel = t ? t('units.min') : 'm';
+    return `${mins} ${minLabel}`;
   },
 };

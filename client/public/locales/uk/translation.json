@@ -5,6 +5,10 @@
     "ok": "ОК",
     "and": " та "
   },
+  "units": {
+    "min": "хв.",
+    "hour": "год."
+  },
   "mainMenu": {
     "startFishing": "Почати рибалку",
     "shop": "Магазин",

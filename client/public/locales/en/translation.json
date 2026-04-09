@@ -5,6 +5,10 @@
     "ok": "OK",
     "and": " and "
   },
+  "units": {
+    "min": "m",
+    "hour": "h"
+  },
   "mainMenu": {
     "startFishing": "Start Fishing",
     "shop": "Shop",
