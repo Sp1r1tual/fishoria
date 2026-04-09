@@ -1124,12 +1124,31 @@ export class LakeScene implements IScene {
     return this.smoothedInterest;
   }
 
+  private syncEnvironmentDepth(): void {
+    const W = this.app.renderer.width;
+    const H = this.app.renderer.height;
+    const waterY = H * this.config.environment.waterBoundaryY;
+    const waterHeight = Math.max(1, H - waterY);
+
+    const normX = this.hookX / W;
+    const normY = Math.max(0, Math.min(1, (this.hookY - waterY) / waterHeight));
+
+    this.groundDepthM = this.depthSystem.getDepthAt(normX, normY);
+
+    // If fish is hooked, lure/hook depth follows the fish
+    if (this.hookedFish) {
+      this.currentLureDepthM = this.hookedFish.depth;
+    }
+  }
+
   private updateBitePhase(): void {
     if (!this.hookedFish) return;
     this.hookX = this.hookedFish.position.x;
     this.hookY = this.hookedFish.position.y;
     this.castX = this.hookX;
     this.castY = this.hookY;
+
+    this.syncEnvironmentDepth();
 
     if (this.hookedFish.stateTimer > this.hookedFish.biteTimeout) {
       this.phase = 'escaped';
@@ -1177,6 +1196,8 @@ export class LakeScene implements IScene {
     this.accumReelWear = reelingResult.accumReelWear;
     this.hookX = reelingResult.hookX;
     this.hookY = reelingResult.hookY;
+
+    this.syncEnvironmentDepth();
 
     if (reelingResult.newPhase) {
       this.phase = reelingResult.newPhase;

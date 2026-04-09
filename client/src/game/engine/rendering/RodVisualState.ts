@@ -141,15 +141,18 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
       rodTension = 0.08;
     } else {
       const depthRatio = currentLureDepthM / Math.max(0.1, groundDepthM);
-      // Починається майже натягнута (0.1), плавно зростає з глибиною до 0.85
-      const baseSlack = 0.1 + Math.pow(depthRatio, 1.2) * 0.75;
+      // Slack increases with depth ratio, but is capped by absolute depth
+      // Shallow water (e.g. 1m) should have less visual slack than deep water (e.g. 5m)
+      const depthFactor = Math.min(1.0, 0.3 + (groundDepthM / 4.0) * 0.7);
+      const baseSlack = (0.1 + Math.pow(depthRatio, 1.2) * 0.75) * depthFactor;
       const subtleWave = Math.sin(time * 1.5) * 0.02 * depthRatio;
       lineSlack = Math.max(0, Math.min(1.0, baseSlack + subtleWave));
       rodTension = 0;
     }
   } else if (isCast && phase === 'waiting') {
     // Float is always relaxed, Feeder (donka) is always tight
-    const baseSlack = rigType === 'feeder' ? 0.04 : 0.85;
+    const depthFactor = Math.min(1.0, 0.3 + (groundDepthM / 4.0) * 0.7);
+    const baseSlack = rigType === 'feeder' ? 0.04 : 0.85 * depthFactor;
 
     // Add subtle water current and fish-nibble micro-movements
     const currentWave = Math.sin(time * 1.2) * 0.015;
