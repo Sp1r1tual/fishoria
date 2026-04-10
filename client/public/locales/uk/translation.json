@@ -100,7 +100,8 @@
     "inProgress": "У процесі",
     "noAvailable": "Наразі немає доступних завдань.",
     "notification": "Завдання виконано!",
-    "rewardClaimed": "Нагороду отримано!"
+    "rewardClaimed": "Нагороду отримано!",
+    "progress": "Прогрес"
   },
   "help": {
     "title": "Допомога та FAQ",

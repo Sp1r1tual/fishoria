@@ -100,7 +100,8 @@
     "inProgress": "In Progress",
     "noAvailable": "No quests available at the moment.",
     "notification": "Quest completed!",
-    "rewardClaimed": "Reward claimed!"
+    "rewardClaimed": "Reward claimed!",
+    "progress": "Progress"
   },
   "help": {
     "title": "Help & FAQ",

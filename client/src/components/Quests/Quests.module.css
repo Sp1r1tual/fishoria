@@ -108,6 +108,9 @@
 .quest_condition__target {
   font-weight: 700;
   color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .progress_bar {
@@ -172,4 +175,49 @@
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.quest_card__subconditions {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 12px;
+  border-left: 2px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease-out;
+}
+
+.quest_card__subconditions--open {
+  max-height: 1000px;
+  opacity: 1;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.quest_subcondition {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.quest_condition__chevron {
+  margin-left: 8px;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.progress_bar_sm {
+  height: 4px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress_fill_sm {
+  height: 100%;
+  background: linear-gradient(90deg, #3182ce, #63b3ed);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
