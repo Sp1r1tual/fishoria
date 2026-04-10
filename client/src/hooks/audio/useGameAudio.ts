@@ -266,7 +266,26 @@ export function useGameAudio(manageAmbient = true) {
       }, 20);
     }
 
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        Object.values(AMBIENT).forEach((a) => a.pause());
+      } else if (manageAmbient && ambientEnabledRef.current) {
+        const activeLakeAmbient =
+          weatherRef.current !== 'rain' ? currentAmbientRef.current : null;
+        const activeRainAmbient =
+          weatherRef.current === 'rain' ? AMBIENT.rain : null;
+        if (activeLakeAmbient && activeLakeAmbient.paused) {
+          activeLakeAmbient.play().catch(() => {});
+        }
+        if (activeRainAmbient && activeRainAmbient.paused) {
+          activeRainAmbient.play().catch(() => {});
+        }
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (ambientFadeInterval) {
         clearInterval(ambientFadeInterval);
         ambientFadeInterval = null;
@@ -476,11 +495,10 @@ export function useGameAudio(manageAmbient = true) {
   useEffect(() => {
     return () => {
       stopAllLoops();
-      if (currentAmbientRef.current) {
-        currentAmbientRef.current.pause();
-        currentAmbientRef.current = null;
-      }
-      AMBIENT.rain.pause();
+      Object.values(AMBIENT).forEach((a) => {
+        a.pause();
+      });
+      currentAmbientRef.current = null;
     };
   }, [stopAllLoops]);
 

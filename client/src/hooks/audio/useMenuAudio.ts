@@ -163,7 +163,18 @@ export function useMenuAudio(musicActive = true) {
       }, 20);
     }
 
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        pauseAllTracks();
+      } else if (musicActive && musicEnabled) {
+        const track = getCurrentTrack();
+        if (track.paused) track.play().catch(() => {});
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (fadeInterval) {
         clearInterval(fadeInterval);
         fadeInterval = null;
