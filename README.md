@@ -1,4 +1,4 @@
-# Fishoria: a fishing simulator
+# Fishoria: a fishing simulator in your browser
 
 **Fishoria** is not just another browser game. It is a highly interactive, state-of-the-art web-based fishing simulator, blending mesmerizing WebGL graphics with uncompromised gameplay realism.
 
@@ -73,4 +73,4 @@ Fishoria is also a technical masterpiece. We've combined the latest cutting-edge
 
 ## License
 
-This project is licensed under the MIT License – see the [LICENCE](./LICENCE) file for details.
+This project is licensed under the License – see the [LICENCE](./LICENCE) file for details.
