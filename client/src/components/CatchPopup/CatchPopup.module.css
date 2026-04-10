@@ -131,12 +131,38 @@
   }
 }
 
-.trashIcon {
-  font-size: 4rem;
-  margin-bottom: 5px;
+.trashImageContainer {
+  width: 100%;
+  max-width: 180px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.trashImage {
+  width: 100%;
+  height: auto;
+  max-height: 120px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
 }
 
 .trashDesc {
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+  margin: 10px 0 0;
+}
+
+@media (max-width: 1024px) {
+  .trashImageContainer {
+    max-width: 100px;
+  }
+  .trashImage {
+    max-height: 80px;
+  }
+  .trashDesc {
+    font-size: 0.85rem;
+  }
 }

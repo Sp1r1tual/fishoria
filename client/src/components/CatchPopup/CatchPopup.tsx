@@ -21,6 +21,7 @@ import {
   getFishQualityLabel,
 } from '../../common/utils/fish.utils';
 
+import trashIcon from '@/assets/ui/trash_icon.webp';
 import styles from './CatchPopup.module.css';
 
 interface Props {
@@ -102,7 +103,11 @@ export function CatchPopup({ result, sceneRef }: Props) {
         isOpen={true}
         type="default"
         title={t(`trash.${result.name}.name`)}
-        header={<div className={styles.trashIcon}>🗑️</div>}
+        header={
+          <div className={styles.trashImageContainer}>
+            <img src={trashIcon} alt="Trash" className={styles.trashImage} />
+          </div>
+        }
         actions={
           <WoodyButton
             id="catch-discard"

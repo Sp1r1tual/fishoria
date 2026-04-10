@@ -16,8 +16,8 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 20px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
-  width: 100%;
-  max-width: fit-content;
+  width: 440px;
+  max-width: 95vw;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -25,7 +25,7 @@
 }
 
 .modalLarge {
-  max-width: 580px;
+  width: 580px;
 }
 
 .glow {
