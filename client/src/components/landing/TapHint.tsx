@@ -6,23 +6,32 @@ interface TapHintProps {
   hidden?: boolean;
   hideOnHover?: boolean;
   text?: string;
+  top?: string | number;
 }
 
-export const TapHint = ({ hidden, hideOnHover, text }: TapHintProps) => {
+export const TapHint = ({
+  hidden,
+  hideOnHover,
+  text,
+  top = '50%',
+}: TapHintProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const hintRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const parent = hintRef.current?.parentElement;
+    if (!parent) return;
+
     const handleInteraction = () => {
       setIsVisible(false);
     };
 
-    window.addEventListener('touchstart', handleInteraction, { once: true });
-    window.addEventListener('mousedown', handleInteraction, { once: true });
+    parent.addEventListener('touchstart', handleInteraction, { once: true });
+    parent.addEventListener('mousedown', handleInteraction, { once: true });
 
     return () => {
-      window.removeEventListener('touchstart', handleInteraction);
-      window.removeEventListener('mousedown', handleInteraction);
+      parent.removeEventListener('touchstart', handleInteraction);
+      parent.removeEventListener('mousedown', handleInteraction);
     };
   }, []);
 
@@ -43,7 +52,12 @@ export const TapHint = ({ hidden, hideOnHover, text }: TapHintProps) => {
   if (!isVisible || hidden) return null;
 
   return (
-    <div ref={hintRef} className={styles.tapHint} aria-hidden="true">
+    <div
+      ref={hintRef}
+      className={styles.tapHint}
+      style={{ top }}
+      aria-hidden="true"
+    >
       <div className={styles.ripple}>
         <svg
           className={styles.handIcon}

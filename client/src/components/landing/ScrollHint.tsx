@@ -11,7 +11,7 @@ export const ScrollHint = ({ hidden }: ScrollHintProps) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 150) {
+      if (window.scrollY > 75) {
         setIsVisible(false);
       }
     };

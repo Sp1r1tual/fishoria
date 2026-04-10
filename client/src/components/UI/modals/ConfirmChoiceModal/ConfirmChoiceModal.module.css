@@ -126,7 +126,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 680px) {
   .modal__inner {
     max-width: 95%;
   }

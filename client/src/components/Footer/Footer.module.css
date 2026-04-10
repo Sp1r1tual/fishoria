@@ -101,7 +101,7 @@
   width: 100%;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 680px) {
   .footer {
     padding: 18px 32px;
   }
@@ -150,4 +150,17 @@
 
 .footer__link_btn:hover::after {
   width: 100%;
+}
+@media (max-height: 480px) {
+  .footer {
+    padding: 10px 12px;
+  }
+  .footer__info,
+  .footer__link,
+  .footer__link_btn {
+    font-size: 0.7rem;
+  }
+  .footer__content {
+    gap: 4px;
+  }
 }

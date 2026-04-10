@@ -59,9 +59,8 @@ export function QuestItem({ pq }: { pq: IPlayerQuest }) {
         {multipleConditions ? (
           <>
             <div
-              className={styles.quest_condition}
+              className={`${styles.quest_condition} ${styles['quest_condition--toggle']}`}
               onClick={() => setIsExpanded(!isExpanded)}
-              style={{ cursor: 'pointer' }}
             >
               <div className={styles.quest_condition__label}>
                 <span>{t('quests.progress', 'Progress')}</span>

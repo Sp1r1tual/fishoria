@@ -41,18 +41,26 @@ export const Fireflies = ({
       {fireflies.map((f: Firefly) => (
         <div
           key={f.id}
-          className={styles.firefly}
+          className={styles['firefly-wrapper']}
           style={
             {
-              '--size': `${f.size}px`,
               '--left': `${f.left}%`,
               '--top': `${f.top}%`,
               '--duration': `${f.duration}s`,
               '--delay': `${f.delay}s`,
-              '--opacity': f.opacity,
             } as React.CSSProperties
           }
-        />
+        >
+          <div
+            className={styles.firefly}
+            style={
+              {
+                '--size': `${f.size}px`,
+                '--opacity': f.opacity,
+              } as React.CSSProperties
+            }
+          />
+        </div>
       ))}
     </div>
   );

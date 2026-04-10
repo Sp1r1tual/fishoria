@@ -40,6 +40,7 @@
   text-align: left;
   position: relative;
   transition:
+    all 0.3s ease,
     transform 0.2s ease,
     border-color 0.2s ease;
 }
@@ -96,6 +97,18 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  transition: background 0.2s ease;
+}
+
+.quest_condition--toggle {
+  padding: 6px 8px;
+  margin: -6px -8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.quest_condition--toggle:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .quest_condition__label {
@@ -184,16 +197,18 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding-left: 12px;
-  border-left: 2px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease-out;
+  padding: 0 0 0 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
 .quest_card__subconditions--open {
-  max-height: 1000px;
+  max-height: 600px;
   opacity: 1;
+  padding: 12px;
   margin-top: 8px;
-  margin-bottom: 8px;
+  overflow-y: auto;
 }
 
 .quest_subcondition {

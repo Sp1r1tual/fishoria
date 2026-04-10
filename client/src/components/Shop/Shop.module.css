@@ -83,6 +83,7 @@
 .shop__grid {
   display: grid;
   grid-template-columns: 1fr;
+  grid-auto-rows: 1fr;
   gap: 16px;
 }
 
@@ -175,6 +176,7 @@
   font-weight: 700;
   color: var(--clr-muted);
   text-transform: uppercase;
+  margin-top: auto;
 }
 
 .shop-item__owned span {
@@ -189,6 +191,7 @@
   padding: 8px 12px;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: auto;
 }
 
 .shop-item__stat {
@@ -210,7 +213,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-top: auto;
 }
 
 .shop-item__status {
@@ -274,4 +276,85 @@ button.shop-item__buy-btn {
 .shop-item__buy-btn:disabled {
   opacity: 0.5;
   filter: grayscale(1);
+}
+@media (max-height: 480px) {
+  .shop__section {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .shop__section-title {
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+  }
+
+  .shop__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .shop-item {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .shop-item__top {
+    gap: 8px;
+  }
+
+  .shop-item__icon {
+    font-size: 1.5rem;
+    width: 36px;
+    height: 36px;
+  }
+
+  .shop-item__name {
+    font-size: 0.85rem;
+  }
+
+  .shop-item__price {
+    font-size: 0.75rem;
+  }
+
+  .shop-item__desc {
+    font-size: 0.7rem;
+    line-height: 1.3;
+    min-height: auto;
+  }
+
+  .shop-item__owned {
+    font-size: 0.65rem;
+  }
+
+  .shop-item__stats {
+    padding: 4px 8px;
+    gap: 4px 8px;
+  }
+
+  .shop-item__stat {
+    font-size: 0.65rem;
+  }
+
+  .shop-item__qty-btn,
+  .shop-item__qty {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+    line-height: 28px;
+  }
+
+  button.shop-item__buy-btn {
+    font-size: 0.6rem;
+    min-width: 80px;
+    padding: 6px 4px;
+  }
+
+  .shop__tabs {
+    gap: 6px;
+  }
+
+  .shop__tab {
+    font-size: 0.65rem;
+  }
 }

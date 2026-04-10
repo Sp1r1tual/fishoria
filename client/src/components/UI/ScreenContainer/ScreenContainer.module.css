@@ -36,3 +36,10 @@
   gap: 16px;
   flex: 1;
 }
+@media (max-height: 480px) {
+  .container__inner {
+    max-width: 1100px;
+    padding: 8px 12px;
+    gap: 12px;
+  }
+}

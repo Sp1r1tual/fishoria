@@ -87,7 +87,11 @@ export const LandingPage = () => {
             </div>
             <div className={styles.bottomInfoWrapper}>
               <BottomInfo />
-              <TapHint hidden={isFormOpen} hideOnHover />
+              <TapHint
+                hidden={isFormOpen}
+                hideOnHover
+                top={isSmallScreen ? '25%' : '50%'}
+              />
             </div>
           </div>
 

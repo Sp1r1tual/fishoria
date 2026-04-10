@@ -17,7 +17,7 @@
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 680px) {
   .lake-select__grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
@@ -45,17 +45,17 @@
 
 @media (max-width: 1024px) {
   .lake-card__preview {
-    height: 120px;
+    height: 95px;
   }
 }
 
-@media (max-width: 768px) and (orientation: landscape) {
+@media (max-width: 680px) and (orientation: landscape) {
   .lake-card__preview {
     height: 110px;
   }
 }
 
-@media (max-width: 768px) and (orientation: portrait) {
+@media (max-width: 680px) and (orientation: portrait) {
   .lake-card__preview {
     height: 140px;
   }
