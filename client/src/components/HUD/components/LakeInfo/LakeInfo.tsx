@@ -78,6 +78,7 @@ export function LakeInfo({ sceneRef, isDebugActive }: ILakeInfoProps) {
       itemType: 'groundbait',
     });
     dispatch(setGroundbaitExpiry(expiry));
+    sceneRef.current?.throwGroundbait();
     sceneRef.current?.setActiveGroundbait(activeGroundbait, expiry);
   };
 

@@ -23,6 +23,7 @@ import { RodEntity } from '../entities/RodEntity';
 import { HookEntity } from '../entities/HookEntity';
 import { DebugLayer } from '../systems/DebugLayer';
 import { BackgroundRenderer } from '../rendering/BackgroundRenderer';
+import { GroundbaitEffect } from '../systems/GroundbaitEffect';
 import { InputHandler } from '../input/InputHandler';
 import { validateCast } from '@/game/domain/mechanics/CastingSystem';
 import { detectBite } from '@/game/domain/mechanics/BiteDetection';
@@ -113,6 +114,7 @@ export class LakeScene implements IScene {
   private lastH = 0;
   private weatherLayer!: WeatherLayer;
   private weather: 'clear' | 'cloudy' | 'rain' = 'clear';
+  private groundbaitEffect!: GroundbaitEffect;
 
   private config: ILakeConfig;
   private callbacks: ILakeSceneCallbacks;
@@ -228,6 +230,7 @@ export class LakeScene implements IScene {
     );
 
     this.weatherLayer = new WeatherLayer(this.stage, app);
+    this.groundbaitEffect = new GroundbaitEffect(this.stage);
 
     this.hookX = W / 2;
     this.hookY = H / 2;
@@ -497,6 +500,12 @@ export class LakeScene implements IScene {
   setActiveGroundbait(gb: GroundbaitTypeType, expiresAt?: number | null): void {
     this.activeGroundbaitType = gb;
     this.groundbaitExpiresAt = expiresAt ?? null;
+  }
+
+  public throwGroundbait(): void {
+    const W = this.app.renderer.width;
+    const H = this.app.renderer.height;
+    this.groundbaitEffect.spawn(W, H);
   }
 
   setBaseDepth(depth: number): void {
@@ -901,6 +910,9 @@ export class LakeScene implements IScene {
 
     this.totalTime += deltaTime;
 
+    // Update Groundbait Effect
+    this.groundbaitEffect.update(deltaTime);
+
     // ── Visual updates ──
     const renderScale = W < 768 ? 0.5 : W < 1045 ? 0.7 : 1.0;
 
@@ -1016,6 +1028,7 @@ export class LakeScene implements IScene {
     this.hook.destroy();
     this.debugLayer.destroy();
     this.weatherLayer.destroy();
+    this.groundbaitEffect.destroy();
   }
 
   setDebugVisible(visible: boolean): void {
