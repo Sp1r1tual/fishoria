@@ -678,6 +678,7 @@
   "error": {
     "gear_incomplete": "Your equipment is incomplete or broken!",
     "no_bait": "You must select bait first!",
+    "low_line": "Low fishing line remaining!",
     "tooManyRequests": "Too many requests. Please try again later."
   },
   "errorPage": {

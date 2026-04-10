@@ -389,6 +389,10 @@ export class LakeScene implements IScene {
       return;
     }
 
+    if (this.availableLineM < 100) {
+      this.callbacks.onCastError?.('error.low_line');
+    }
+
     if (this.phase !== 'idle') {
       this.callbacks.onResetCast?.(this.phase);
     }
