@@ -712,6 +712,7 @@
     "auth": {
       "login": "Увійти",
       "register": "Зареєструватися",
+      "noAccount": "Немає акаунта? Зареєструватися тут",
       "or": "або",
       "google": "Увійти через Google",
       "google_short": "Google",

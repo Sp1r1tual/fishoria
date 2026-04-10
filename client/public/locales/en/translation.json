@@ -717,6 +717,7 @@
     "auth": {
       "login": "Login",
       "register": "Register",
+      "noAccount": "No account? Register here",
       "or": "or",
       "google": "Login with Google",
       "google_short": "Google",

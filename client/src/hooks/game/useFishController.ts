@@ -58,13 +58,10 @@ export function useFishController() {
   const update = useCallback(
     (deltaTime: number, W: number, H: number) => {
       const fish = fishRef.current;
-      // timeScale normalizes updates so that 60fps = 1.0
-      // This ensures identical speeds on 60hz, 120hz, or 144hz monitors
       const timeScale = deltaTime * 60;
       fish.t += deltaTime;
 
       const isSmall = W < 640;
-      // Balanced speed limits (slower on mobile due to smaller screen area, fast on desktop)
       const speedLimit = isSmall ? 2.2 : 3.5;
 
       if (isHovered) {
@@ -122,6 +119,11 @@ export function useFishController() {
 
         const turnSpeed = isSmall ? 0.14 : 0.2;
         fish.angle += diff * turnSpeed * timeScale;
+
+        // Keep angle in [-PI, PI] range to prevent "upside down" rendering bugs
+        // that occur when cumulative angle exceeds standard bounds.
+        while (fish.angle < -Math.PI) fish.angle += Math.PI * 2;
+        while (fish.angle > Math.PI) fish.angle -= Math.PI * 2;
       }
 
       return fish;

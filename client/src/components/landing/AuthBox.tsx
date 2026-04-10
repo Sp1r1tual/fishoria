@@ -126,6 +126,7 @@ export const AuthBox = ({ onModeChange }: AuthBoxProps) => {
           <LoginForm
             onSuccess={handleLoginSuccess}
             onForgotPassword={() => handleModeChange('forgot')}
+            onRegister={() => handleModeChange('register')}
             onBack={() => handleModeChange('selection')}
           />
         </div>

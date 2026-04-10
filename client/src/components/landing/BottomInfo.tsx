@@ -2,11 +2,9 @@ import { useEffect, useRef, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { prepareWithSegments, layout } from '@chenglou/pretext';
 
-import { useBottomInfoAnimation } from './useBottomInfoAnimation';
+import { useBottomInfoAnimation } from '../../hooks/ui/useBottomInfoAnimation';
 import { useFishController } from '@/hooks/game/useFishController';
 import { useScrollReveal } from '@/hooks/ui/useScrollReveal';
-
-import { FishSVG } from './FishSVG';
 
 import styles from './BottomInfo.module.css';
 
@@ -15,7 +13,6 @@ const MAX_FONT_SIZE = 18;
 const MIN_WIDTH = 320;
 const MAX_WIDTH = 1600;
 const FISH_SIZE = 36;
-const MIN_SLOT = 50;
 const MAX_LINES = 100;
 
 export const BottomInfo = () => {
@@ -23,7 +20,6 @@ export const BottomInfo = () => {
   const { elementRef, isVisible } = useScrollReveal({ threshold: 0.05 });
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const fishRef = useRef<SVGSVGElement>(null);
 
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== 'undefined' ? window.innerWidth : 1200,
@@ -77,7 +73,7 @@ export const BottomInfo = () => {
 
   const availableWidth = Math.max(
     280,
-    (containerWidth || windowWidth - outerPad) - horizontalPad * 2 - 16,
+    (containerWidth || windowWidth - outerPad) - horizontalPad * 2,
   );
 
   const totalHeight = useMemo(() => {
@@ -99,7 +95,6 @@ export const BottomInfo = () => {
     fontsLoaded,
     canvasRef,
     wrapRef,
-    fishRef,
     updateFishLogic,
     containerWidth,
     horizontalPad,
@@ -110,14 +105,12 @@ export const BottomInfo = () => {
     padY,
     fontSize,
     maxLines: MAX_LINES,
-    minSlot: MIN_SLOT,
   });
 
   return (
     <section
       ref={elementRef}
       className={`${styles.bottomSection} ${isVisible ? styles.visible : ''}`}
-      style={{ padding: `${outerPad / 2}px` }}
       aria-label="Interactive fish animation"
     >
       <div
@@ -128,6 +121,8 @@ export const BottomInfo = () => {
             height: totalHeight,
             '--font-size': `${fontSize}px`,
             '--line-height': `${lineH}px`,
+            '--horizontal-pad': `${horizontalPad}px`,
+            '--pad-y': `${padY}px`,
           } as React.CSSProperties
         }
         onMouseMove={(e) => {
@@ -159,7 +154,8 @@ export const BottomInfo = () => {
             pointerEvents: 'none',
           }}
         />
-        <FishSVG ref={fishRef} idPrefix="bottom_" aria-hidden="true" />
+
+        <div className={styles.selectableText}>{textContent}</div>
       </div>
     </section>
   );

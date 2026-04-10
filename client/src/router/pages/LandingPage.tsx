@@ -12,6 +12,7 @@ import { BottomInfo } from '@/components/landing/BottomInfo';
 import { CompanyBranding } from '@/components/landing/CompanyBranding';
 import { Bubbles } from '@/components/UI/Bubbles/Bubbles';
 import { AuthBox } from '@/components/landing/AuthBox';
+import { ScrollHint } from '@/components/landing/ScrollHint';
 
 import styles from './LandingPage.module.css';
 
@@ -43,9 +44,6 @@ export const LandingPage = () => {
     };
   }, []);
 
-  // minAllowedHeight ensures topSection never shrinks below auth form height.
-  // useScrollCssVar sets --scroll-y on container so ALL descendants can use it in CSS.
-  // dynamicMinHeight shrinks topSection as user scrolls → bottomReveal rises naturally
   const minAllowedHeight = useDynamicBounds(leftColumnRef, 60, 500, []);
   useScrollCssVar(containerRef, containerRef, '--scroll-y');
   const dynamicMinHeight = `max(${minAllowedHeight}px, calc(100svh - calc(var(--scroll-y, 0px) * 1.5)))`;
@@ -73,7 +71,7 @@ export const LandingPage = () => {
             />
           </div>
 
-          {!isSmallScreen && <Masonry />}
+          {!isSmallScreen ? <Masonry /> : <ScrollHint />}
         </section>
 
         <section

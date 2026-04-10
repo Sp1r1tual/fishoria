@@ -48,12 +48,14 @@ interface LoginFormProps {
   onBack: () => void;
   onForgotPassword: () => void;
   onSuccess: (data: ILoginResponse) => void;
+  onRegister: () => void;
 }
 
 export const LoginForm = ({
   onBack,
   onForgotPassword,
   onSuccess,
+  onRegister,
 }: LoginFormProps) => {
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
@@ -198,6 +200,14 @@ export const LoginForm = ({
           onClick={onForgotPassword}
         >
           {t('landing.login.forgot')}
+        </button>
+
+        <button
+          type="button"
+          className={styles.forgotPassword}
+          onClick={onRegister}
+        >
+          {t('landing.auth.noAccount')}
         </button>
 
         <button
