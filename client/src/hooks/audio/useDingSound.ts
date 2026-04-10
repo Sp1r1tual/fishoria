@@ -5,7 +5,6 @@ import {
   getSharedAudioContext,
   resumeSharedAudioContext,
   getSharedSfxGainNode,
-  syncSharedSfxVolume,
 } from '@/common/media/audio-context';
 
 // ---------------------------------------------------------------------------
@@ -13,10 +12,11 @@ import {
 // ---------------------------------------------------------------------------
 let dingBuffer: AudioBuffer | null = null;
 
-// Pre-decode ding sound on first import
 const dingUrl = new URL('../../assets/music/ding.mp3', import.meta.url).href;
 
-(async () => {
+/** Pre-decode ding sound. Must be called after AudioContext is unlocked (e.g. from unlockAudio). */
+export async function preloadDingBuffer() {
+  if (dingBuffer) return;
   try {
     const ctx = getSharedAudioContext();
     const res = await fetch(dingUrl);
@@ -25,23 +25,21 @@ const dingUrl = new URL('../../assets/music/ding.mp3', import.meta.url).href;
   } catch (e) {
     console.error('Failed to pre-decode ding sound', e);
   }
-})();
+}
 
 /**
  * useDingSound – returns a `playDing` callback that respects sfx settings.
  * Uses Web Audio API for zero latency.
+ * Volume is controlled centrally via the shared SFX GainNode (synced in AudioController).
  */
 export function useDingSound() {
-  const { sfxEnabled, sfxVolume } = useAppSelector((s) => s.settings);
+  const sfxEnabled = useAppSelector((s) => s.settings.sfxEnabled);
 
   const sfxEnabledRef = useRef(sfxEnabled);
-  const sfxVolumeRef = useRef(sfxVolume);
 
   useEffect(() => {
     sfxEnabledRef.current = sfxEnabled;
-    sfxVolumeRef.current = sfxVolume;
-    syncSharedSfxVolume(sfxEnabled, sfxVolume);
-  }, [sfxEnabled, sfxVolume]);
+  }, [sfxEnabled]);
 
   const playDing = useCallback(() => {
     if (!sfxEnabledRef.current || !dingBuffer) return;

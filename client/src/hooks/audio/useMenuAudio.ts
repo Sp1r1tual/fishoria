@@ -4,34 +4,78 @@ import { useAppSelector } from '@/hooks/core/useAppStore';
 import { getSharedAudioContext } from '@/common/media/audio-context';
 import { useClickSound } from './useClickSound';
 
-// Module-level singletons — created once, never GC'd
-const musicAudio = new Audio(
-  new URL(
-    'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/sounds/ui/main_theme.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL3NvdW5kcy91aS9tYWluX3RoZW1lLm1wMyIsImlhdCI6MTc3NTQ2Njg5MywiZXhwIjo0ODk3NTMwODkzfQ.B190Q3cZ7C-vIA9tU4CMIurT73cZjYINZJbz2vfDv9A',
-  ).href,
-);
-musicAudio.loop = true;
-musicAudio.crossOrigin = 'anonymous'; // Required for Web Audio API if URL is cross-origin
+// ---------------------------------------------------------------------------
+// Music playlist — tracks rotate after each one finishes
+// ---------------------------------------------------------------------------
+const MUSIC_URLS = [
+  'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/sounds/ui/main_theme_1.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL3NvdW5kcy91aS9tYWluX3RoZW1lXzEubXAzIiwiaWF0IjoxNzc1ODU4NTQyLCJleHAiOjQ4OTc5MjI1NDJ9.4tO1WzKsLCqgTiQbVwZOKzyLjNIq4ETa1l18rca89Co',
+  'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/sounds/ui/main_theme_2.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL3NvdW5kcy91aS9tYWluX3RoZW1lXzIubXAzIiwiaWF0IjoxNzc1ODU3NDQ0LCJleHAiOjQ4OTc5MjE0NDR9.x3vBk9_neLPBfJflTYV992DyNQi08snn4A0FDXQY9fY',
+  'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/sounds/ui/main_theme_3.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL3NvdW5kcy91aS9tYWluX3RoZW1lXzMubXAzIiwiaWF0IjoxNzc1ODU4MTc5LCJleHAiOjQ4OTc5MjIxNzl9.iP_8KHf9ImXdX4eachOgDvErWGcF9R4oFjgCtUMZTg4',
+];
+
+const musicTracks = MUSIC_URLS.map((url) => {
+  const audio = new Audio(new URL(url).href);
+  audio.crossOrigin = 'anonymous';
+  audio.preload = 'auto';
+  return audio;
+});
+
+// Start from a random track each session for variety
+let currentTrackIndex = Math.floor(Math.random() * musicTracks.length);
 
 let musicGainNode: GainNode | null = null;
-let musicSourceNode: MediaElementAudioSourceNode | null = null;
+const connectedTracks = new Set<HTMLAudioElement>();
 
-function ensureMusicConnected() {
-  if (musicGainNode) return musicGainNode;
-  try {
-    const ctx = getSharedAudioContext();
-    musicGainNode = ctx.createGain();
-    musicSourceNode = ctx.createMediaElementSource(musicAudio);
-    musicSourceNode.connect(musicGainNode);
-    musicGainNode.connect(ctx.destination);
-  } catch (e) {
-    console.warn('Failed to connect music to AudioContext:', e);
+function ensureAllTracksConnected() {
+  if (!musicGainNode) {
+    try {
+      const ctx = getSharedAudioContext();
+      musicGainNode = ctx.createGain();
+      musicGainNode.connect(ctx.destination);
+    } catch (e) {
+      console.warn('Failed to create music GainNode:', e);
+      return null;
+    }
   }
+
+  for (const track of musicTracks) {
+    if (!connectedTracks.has(track)) {
+      try {
+        const ctx = getSharedAudioContext();
+        const source = ctx.createMediaElementSource(track);
+        source.connect(musicGainNode);
+        connectedTracks.add(track);
+      } catch (e) {
+        console.warn('Failed to connect music track:', e);
+      }
+    }
+  }
+
   return musicGainNode;
 }
 
+function getCurrentTrack() {
+  return musicTracks[currentTrackIndex];
+}
+
+function pauseAllTracks() {
+  musicTracks.forEach((t) => t.pause());
+}
+
+// ---------------------------------------------------------------------------
+// HMR cleanup — stop old Audio elements when module is replaced
+// ---------------------------------------------------------------------------
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    pauseAllTracks();
+    musicTracks.forEach((t) => {
+      t.src = '';
+    });
+  });
+}
+
 /**
- * useMenuAudio – App-level hook that manages menu music and click SFX.
+ * useMenuAudio – App-level hook that manages menu music playlist and click SFX.
  *
  * @param musicActive  Pass `false` to pause music (e.g. while in-game).
  *                     Pass `true` (default) to let settings decide.
@@ -42,6 +86,30 @@ let currentMenuVolume = 0;
 export function useMenuAudio(musicActive = true) {
   const playClick = useClickSound();
   const { musicEnabled, musicVolume } = useAppSelector((s) => s.settings);
+
+  // ------------------------------------------------------------------
+  // Track rotation — when current track ends, play the next one
+  // ------------------------------------------------------------------
+  useEffect(() => {
+    const handlers = musicTracks.map((track) => {
+      const handler = () => {
+        if (track !== getCurrentTrack()) return;
+        currentTrackIndex = (currentTrackIndex + 1) % musicTracks.length;
+        const next = getCurrentTrack();
+        next.currentTime = 0;
+        next.volume = 1;
+        next.play().catch(() => {});
+      };
+      track.addEventListener('ended', handler);
+      return { track, handler };
+    });
+
+    return () => {
+      handlers.forEach(({ track, handler }) =>
+        track.removeEventListener('ended', handler),
+      );
+    };
+  }, []);
 
   // ------------------------------------------------------------------
   // Music – smooth fade in/out based on settings AND the musicActive flag
@@ -56,12 +124,15 @@ export function useMenuAudio(musicActive = true) {
     }
 
     if (shouldPlay) {
-      const gainNode = ensureMusicConnected();
-      if (musicAudio.paused) {
+      const gainNode = ensureAllTracksConnected();
+      const track = getCurrentTrack();
+
+      if (track.paused) {
         currentMenuVolume = 0;
         if (gainNode) gainNode.gain.value = 0;
-        musicAudio.volume = 1; // Keep HTML volume at max, use GainNode for control
-        musicAudio.play().catch(() => {});
+        track.volume = 1; // Keep HTML volume at max, use GainNode for control
+        track.currentTime = 0;
+        track.play().catch(() => {});
       }
 
       fadeInterval = setInterval(() => {
@@ -73,24 +144,31 @@ export function useMenuAudio(musicActive = true) {
           if (fadeInterval) clearInterval(fadeInterval);
           fadeInterval = null;
         } else {
-          currentMenuVolume += diff > 0 ? 0.02 : -0.02;
+          currentMenuVolume += diff > 0 ? 0.01 : -0.015;
           if (gainNode)
             gainNode.gain.value = Math.max(0, Math.min(1, currentMenuVolume));
         }
       }, 20);
     } else {
-      const gainNode = ensureMusicConnected();
+      const gainNode = ensureAllTracksConnected();
       fadeInterval = setInterval(() => {
-        currentMenuVolume = Math.max(0, currentMenuVolume - 0.03);
+        currentMenuVolume = Math.max(0, currentMenuVolume - 0.015);
         if (gainNode)
           gainNode.gain.value = Math.max(0, Math.min(1, currentMenuVolume));
         if (currentMenuVolume <= 0) {
-          musicAudio.pause();
+          pauseAllTracks();
           if (fadeInterval) clearInterval(fadeInterval);
           fadeInterval = null;
         }
       }, 20);
     }
+
+    return () => {
+      if (fadeInterval) {
+        clearInterval(fadeInterval);
+        fadeInterval = null;
+      }
+    };
   }, [musicActive, musicEnabled, musicVolume]);
 
   return { playClick };

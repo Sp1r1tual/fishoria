@@ -1,7 +1,9 @@
+import { useEffect } from 'react';
 import { useLocation } from 'react-router';
 
 import { useAppSelector } from '@/hooks/core/useAppStore';
 import { useMenuAudio } from '@/hooks/audio/useMenuAudio';
+import { syncSharedSfxVolume } from '@/common/media/audio-context';
 
 export function AudioController() {
   const location = useLocation();
@@ -11,6 +13,14 @@ export function AudioController() {
     (screen === 'game' || screen === 'inventory' || screen === 'gear');
 
   useMenuAudio(!isInGame);
+
+  // Centralized SFX volume sync — single source of truth for all SFX hooks
+  const sfxEnabled = useAppSelector((s) => s.settings.sfxEnabled);
+  const sfxVolume = useAppSelector((s) => s.settings.sfxVolume);
+
+  useEffect(() => {
+    syncSharedSfxVolume(sfxEnabled, sfxVolume);
+  }, [sfxEnabled, sfxVolume]);
 
   return null;
 }

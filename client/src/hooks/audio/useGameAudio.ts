@@ -11,8 +11,10 @@ import {
   getSharedAudioContext,
   resumeSharedAudioContext,
   getSharedSfxGainNode,
-  syncSharedSfxVolume,
 } from '@/common/media/audio-context';
+import { preloadClickBuffer } from './useClickSound';
+import { preloadDingBuffer } from './useDingSound';
+import { preloadAchievementBuffer } from './useAchievementSound';
 
 // ---------------------------------------------------------------------------
 // SFX source URLs (resolved at build time by Vite)
@@ -86,6 +88,8 @@ Object.values(AMBIENT).forEach((a) => {
 
 let ambientGainNode: GainNode | null = null;
 const connectedAmbients = new Set<HTMLAudioElement>();
+let ambientFadeInterval: ReturnType<typeof setInterval> | null = null;
+let currentAmbientLevel = 0;
 
 function ensureAmbientConnected(audio: HTMLAudioElement) {
   try {
@@ -170,6 +174,9 @@ export async function unlockAudio() {
 
   // 3. Pre-decode all SFX in the background (non-blocking)
   loadSfxBuffers();
+  preloadClickBuffer();
+  preloadDingBuffer();
+  preloadAchievementBuffer();
 }
 
 // ---------------------------------------------------------------------------
@@ -182,9 +189,9 @@ export function useGameAudio(manageAmbient = true) {
   const currentLakeId = useAppSelector((s) => s.game.currentLakeId);
 
   const sfxEnabledRef = useRef(sfxEnabled);
-  const sfxVolumeRef = useRef(sfxVolume);
   const ambientEnabledRef = useRef(ambientEnabled !== false);
   const ambientVolumeRef = useRef(ambientVolume ?? 60);
+  const weatherRef = useRef(weather);
 
   const currentPhaseRef = useRef<GamePhaseType>('idle');
   const unwindingTimeoutRef = useRef<number | null>(null);
@@ -193,36 +200,78 @@ export function useGameAudio(manageAmbient = true) {
   // Keep refs in sync & update active loop volumes
   useEffect(() => {
     sfxEnabledRef.current = sfxEnabled;
-    sfxVolumeRef.current = sfxVolume;
     ambientEnabledRef.current = ambientEnabled !== false;
     ambientVolumeRef.current = ambientVolume ?? 60;
-
-    syncSharedSfxVolume(sfxEnabled, sfxVolume);
+    weatherRef.current = weather;
 
     if (manageAmbient) {
-      // Sync ambient
-      if (currentAmbientRef.current) {
-        const gainNode = ensureAmbientConnected(currentAmbientRef.current);
-        if (ambientEnabled !== false && weather !== 'rain') {
-          if (gainNode) gainNode.gain.value = (ambientVolume ?? 60) / 100;
-          currentAmbientRef.current.volume = 1;
-          if (currentAmbientRef.current.paused)
-            currentAmbientRef.current.play().catch(() => {});
-        } else {
-          currentAmbientRef.current.pause();
-        }
+      const shouldPlayAny = ambientEnabled !== false;
+      const targetVolume = shouldPlayAny ? (ambientVolume ?? 60) / 100 : 0;
+
+      if (ambientFadeInterval) {
+        clearInterval(ambientFadeInterval);
+        ambientFadeInterval = null;
       }
 
-      // Rain
-      if (currentLakeId && weather === 'rain' && ambientEnabled !== false) {
-        const gainNode = ensureAmbientConnected(AMBIENT.rain);
-        if (gainNode) gainNode.gain.value = (ambientVolume ?? 60) / 100;
-        AMBIENT.rain.volume = 1;
-        if (AMBIENT.rain.paused) AMBIENT.rain.play().catch(() => {});
-      } else {
-        AMBIENT.rain.pause();
+      // Sync tracks visibility (play/pause)
+      const activeLakeAmbient =
+        weather !== 'rain' ? currentAmbientRef.current : null;
+      const activeRainAmbient = weather === 'rain' ? AMBIENT.rain : null;
+
+      // Ensure connected
+      const gainNode =
+        ambientGainNode ||
+        (activeLakeAmbient
+          ? ensureAmbientConnected(activeLakeAmbient)
+          : activeRainAmbient
+            ? ensureAmbientConnected(activeRainAmbient)
+            : null);
+
+      if (activeLakeAmbient) {
+        if (activeLakeAmbient.paused) {
+          activeLakeAmbient.currentTime = 0;
+          activeLakeAmbient.play().catch(() => {});
+        }
+        activeLakeAmbient.volume = 1;
       }
+      if (activeRainAmbient) {
+        if (activeRainAmbient.paused) {
+          activeRainAmbient.currentTime = 0;
+          activeRainAmbient.play().catch(() => {});
+        }
+        activeRainAmbient.volume = 1;
+      }
+
+      // Pause others
+      Object.keys(AMBIENT).forEach((key) => {
+        const a = AMBIENT[key];
+        if (a !== activeLakeAmbient && a !== activeRainAmbient) {
+          a.pause();
+        }
+      });
+
+      // RAMP VOLUME
+      ambientFadeInterval = setInterval(() => {
+        const diff = targetVolume - currentAmbientLevel;
+        if (Math.abs(diff) < 0.01) {
+          currentAmbientLevel = targetVolume;
+          if (gainNode) gainNode.gain.value = currentAmbientLevel;
+          if (ambientFadeInterval) clearInterval(ambientFadeInterval);
+          ambientFadeInterval = null;
+        } else {
+          currentAmbientLevel += diff > 0 ? 0.01 : -0.015;
+          if (gainNode)
+            gainNode.gain.value = Math.max(0, Math.min(1, currentAmbientLevel));
+        }
+      }, 20);
     }
+
+    return () => {
+      if (ambientFadeInterval) {
+        clearInterval(ambientFadeInterval);
+        ambientFadeInterval = null;
+      }
+    };
   }, [
     sfxEnabled,
     sfxVolume,
@@ -403,26 +452,24 @@ export function useGameAudio(manageAmbient = true) {
       }
 
       if (targetAudio) {
-        const gainNode = ensureAmbientConnected(targetAudio);
-        if (gainNode)
-          gainNode.gain.value = ambientEnabledRef.current
-            ? ambientVolumeRef.current / 100
-            : 0;
-
-        targetAudio.volume = 1;
+        ensureAmbientConnected(targetAudio);
 
         if (
           ambientEnabledRef.current &&
-          weather !== 'rain' &&
+          weatherRef.current !== 'rain' &&
           targetAudio.paused
         ) {
+          targetAudio.currentTime = 0;
           targetAudio.play().catch(() => {});
-        } else if (weather === 'rain') {
+        } else if (
+          weatherRef.current === 'rain' ||
+          !ambientEnabledRef.current
+        ) {
           targetAudio.pause();
         }
       }
     },
-    [weather],
+    [],
   );
 
   // Cleanup
