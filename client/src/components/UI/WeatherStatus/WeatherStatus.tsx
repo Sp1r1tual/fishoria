@@ -1,8 +1,10 @@
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useAppSelector } from '@/hooks/core/useAppStore';
 
 import { TimeManager } from '@/game/managers/TimeManager';
+import { GameEvents } from '@/game/engine/GameEvents';
 
 interface IWeatherStatusProps {
   className?: string;
@@ -18,8 +20,22 @@ export function WeatherStatus({
   const { t } = useTranslation();
   const weather = useAppSelector((s) => s.game.weather);
 
-  const time = TimeManager.getTime('game');
-  const currentHour = time.getHours();
+  const [currentHour, setCurrentHour] = useState(() =>
+    TimeManager.getTime('game').getHours(),
+  );
+
+  useEffect(() => {
+    const unsubscribe = GameEvents.on('timeUpdate', (data) => {
+      if (data.mode === 'game') {
+        setCurrentHour(data.hour);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   const isNight = currentHour >= 21 || currentHour < 5;
 
   const weatherLabel = (() => {

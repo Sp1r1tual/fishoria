@@ -68,4 +68,5 @@ export type GameUiEventMap = {
   snagEnd: boolean;
   retrieveSpeed: 'slow' | 'normal' | 'fast';
   phase: GamePhaseType;
+  timeUpdate: { hour: number; mode: 'real' | 'game' };
 };

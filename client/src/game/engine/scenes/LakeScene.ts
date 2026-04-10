@@ -847,6 +847,7 @@ export class LakeScene implements IScene {
       }
     }
     this.weatherLayer.update(deltaTime, this.timeOfDay);
+    this.bgRenderer.update(deltaTime);
 
     for (const { fish, entity } of this.spawnSystem.entities) {
       fish.update(this.updateCtx as IUpdateContext);

@@ -51,6 +51,7 @@ export class WeatherLayer {
   private meteors: IMeteor[] = [];
   private ambientGfx: Graphics;
   private weatherType: 'clear' | 'cloudy' | 'rain' = 'clear';
+  private currentTintAlpha = 0;
 
   private readonly MAX_RAIN_DROPS = 180;
   private readonly MAX_SCREEN_DROPLETS = 12;
@@ -235,14 +236,22 @@ export class WeatherLayer {
     }
 
     // 3. Update Gloomy Overlay
-    this.overlayGfx.clear();
-    let tintAlpha = 0;
-    if (this.weatherType === 'rain') tintAlpha = 0.08;
-    else if (this.weatherType === 'cloudy') tintAlpha = 0.08;
+    let targetTintAlpha = 0;
+    if (this.weatherType === 'rain' || this.weatherType === 'cloudy') {
+      targetTintAlpha = 0.12; // Slightly more pronounced for better effect
+    }
 
-    if (tintAlpha > 0) {
+    // Smooth transition (lerp) for the tint
+    const lerpSpeed = 0.02;
+    this.currentTintAlpha +=
+      (targetTintAlpha - this.currentTintAlpha) * lerpSpeed * dt;
+
+    if (this.currentTintAlpha > 0.001) {
+      this.overlayGfx.clear();
       this.overlayGfx.rect(0, 0, W, H);
-      this.overlayGfx.fill({ color: 0x0f172a, alpha: tintAlpha });
+      this.overlayGfx.fill({ color: 0x0f172a, alpha: this.currentTintAlpha });
+    } else {
+      this.overlayGfx.clear();
     }
 
     // 4. Update Ambient Sky Entities

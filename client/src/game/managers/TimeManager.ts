@@ -1,4 +1,5 @@
 import { TIME_SYSTEM } from '@/common/configs/game';
+import { GameEvents } from '@/game/engine/GameEvents';
 
 let realStartTime = Date.now();
 const date = new Date();
@@ -48,6 +49,8 @@ export const TimeManager = {
     const date = new Date();
     date.setHours(hour, 0, 0, 0);
     virtualStartTime = date.getTime();
+
+    GameEvents.emit('timeUpdate', { hour, mode: 'game' });
   },
 
   getGameTimeHours(): number {
@@ -89,6 +92,9 @@ export const TimeManager = {
   restoreSession(virtualTime: number) {
     realStartTime = Date.now();
     virtualStartTime = virtualTime;
+
+    const h = new Date(virtualTime).getHours();
+    GameEvents.emit('timeUpdate', { hour: h, mode: 'game' });
   },
 
   formatTimeRemaining(

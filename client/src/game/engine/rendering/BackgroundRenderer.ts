@@ -7,6 +7,8 @@ export class BackgroundRenderer {
   private waterGfx: Graphics;
   private obstacleGfx: Graphics;
   private config: ILakeConfig;
+  private currentTintFactor = 1.0;
+  private targetTintFactor = 1.0;
 
   constructor(bgLayer: Container, config: ILakeConfig) {
     this.config = config;
@@ -35,14 +37,13 @@ export class BackgroundRenderer {
     this.bgSprite.width = W;
     this.bgSprite.height = H;
 
-    // Apply weather tint
-    if (weather === 'rain') {
-      this.bgSprite.tint = 0xbbbbbb;
-    } else if (weather === 'cloudy') {
-      this.bgSprite.tint = 0xeeeeee;
-    } else {
-      this.bgSprite.tint = 0xffffff;
-    }
+    // Set target tint factor based on weather
+    if (weather === 'rain') this.targetTintFactor = 0.75;
+    else if (weather === 'cloudy') this.targetTintFactor = 0.85;
+    else this.targetTintFactor = 1.0;
+
+    // We don't apply the tint immediately here, it's done in update()
+    this.applyCurrentTint();
 
     this.waterGfx.clear();
     const area = this.config.allowedCastArea;
@@ -59,6 +60,23 @@ export class BackgroundRenderer {
     const waterAlpha =
       weather === 'rain' ? 0.5 : weather === 'cloudy' ? 0.4 : 0.3;
     this.waterGfx.fill({ color: tod.waterColor, alpha: waterAlpha });
+  }
+
+  private applyCurrentTint(): void {
+    const val = Math.floor(255 * this.currentTintFactor);
+    this.bgSprite.tint = (val << 16) | (val << 8) | val;
+
+    // Also update water if it's visible or depends on weather
+    // (Note: we already draw water in drawBackground, but we might want it to respond to lerp too)
+  }
+
+  public update(dt: number): void {
+    const lerpSpeed = 0.02;
+    if (Math.abs(this.currentTintFactor - this.targetTintFactor) > 0.001) {
+      this.currentTintFactor +=
+        (this.targetTintFactor - this.currentTintFactor) * lerpSpeed * dt;
+      this.applyCurrentTint();
+    }
   }
 
   drawObstacles(W: number, H: number): void {
