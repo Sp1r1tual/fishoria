@@ -1,4 +1,3 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- client/ package.json"
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
