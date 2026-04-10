@@ -12,7 +12,8 @@ interface QuestCondition {
   type: string;
   value: string;
   target: number;
-  label: string;
+  label: string | { uk: string; en: string };
+  lakeId?: string;
 }
 
 @Injectable()
@@ -112,6 +113,15 @@ export class GameEntity {
           }
 
           if (cond.type === 'CATCH_SPECIES' && cond.value === body.speciesId) {
+            currentProgress[cond.id] = (currentProgress[cond.id] || 0) + 1;
+            updated = true;
+          }
+
+          if (
+            cond.type === 'CATCH_SPECIES_ON_LAKE' &&
+            cond.value === body.speciesId &&
+            cond.lakeId === body.lakeId
+          ) {
             currentProgress[cond.id] = (currentProgress[cond.id] || 0) + 1;
             updated = true;
           }

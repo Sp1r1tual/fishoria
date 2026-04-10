@@ -2,6 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { FULL_PROFILE_INCLUDE } from '../../player/dto/profile-response.dto';
+import { getXpNeededForLevel } from '../../common/utils/experience.util';
 
 @Injectable()
 export class QuestEntity {
@@ -76,9 +77,11 @@ export class QuestEntity {
 
       let newXp = currentProfile.xp + playerQuest.quest.xpReward;
       let newLevel = currentProfile.level;
-      while (newXp >= newLevel * 100) {
-        newXp -= newLevel * 100;
+      let xpNeeded = getXpNeededForLevel(newLevel);
+      while (newXp >= xpNeeded) {
+        newXp -= xpNeeded;
         newLevel += 1;
+        xpNeeded = getXpNeededForLevel(newLevel);
       }
 
       await tx.playerQuest.update({

@@ -1,11 +1,20 @@
 import { z } from 'zod';
 
+const ConditionSchema = z.object({
+  id: z.string(),
+  type: z.string(),
+  value: z.string(),
+  target: z.number(),
+  label: z.string(),
+  lakeId: z.string().optional(),
+});
+
 const QuestSchema = z.object({
   id: z.string(),
-  title: z.any(),
-  description: z.any(),
+  title: z.string(),
+  description: z.string(),
   imageUrl: z.string().nullable(),
-  conditions: z.any(),
+  conditions: z.array(ConditionSchema),
   xpReward: z.number(),
   moneyReward: z.number(),
   order: z.number(),

@@ -10,7 +10,7 @@ export async function seedAchievements(prisma: PrismaClient) {
         uk: 'Зламати щось зі спорядження вперше.',
       },
       imageUrl:
-        'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/achievements_icons/achievement_reckless.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL2FjaGlldmVtZW50c19pY29ucy9hY2hpZXZlbWVudF9yZWNrbGVzcy5wbmciLCJpYXQiOjE3NzUzMDMyMDUsImV4cCI6NDg5NzM2NzIwNX0.2s_UzpvkTRi6IY36d0WyWRNOBIAQSywd7f247hoQ-O0',
+        'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/achievements_icons/achievement_reckless.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL2FjaGlldmVtZW50c19pY29ucy9hY2hpZXZlbWVudF9yZWNrbGVzcy53ZWJwIiwiaWF0IjoxNzc1ODIwOTY5LCJleHAiOjQ4OTc4ODQ5Njl9.iKyiIo0vbPZUclAOGobWX8Cv1bnKS1iaJFbCC8wG4hw',
       order: 1,
     },
     {
@@ -24,7 +24,7 @@ export async function seedAchievements(prisma: PrismaClient) {
         uk: 'Витягти трофейну рибу.',
       },
       imageUrl:
-        'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/achievements_icons/achievement_sportsman_fisher.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL2FjaGlldmVtZW50c19pY29ucy9hY2hpZXZlbWVudF9zcG9ydHNtYW5fZmlzaGVyLnBuZyIsImlhdCI6MTc3NTMwMzI1MywiZXhwIjoxNzgzODU2ODUzfQ.r5WcTNUEUlmEwfkPA8HHohgcpHWnyEHhDZo96e_0IdI',
+        'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/achievements_icons/achievement_sportsman_fisher.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL2FjaGlldmVtZW50c19pY29ucy9hY2hpZXZlbWVudF9zcG9ydHNtYW5fZmlzaGVyLndlYnAiLCJpYXQiOjE3NzU4MjEwMTUsImV4cCI6NDg5Nzg4NTAxNX0.H3EPE-8Kfb7mkPG9tiqNb4pjoR-8cibHvHKw4ZcuxxY',
       order: 2,
     },
   ];
