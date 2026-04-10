@@ -49,7 +49,7 @@ export function News() {
               return (
                 <article
                   key={item.id}
-                  className={`${styles.newsItem} ${isRead ? styles['newsItem--read'] : ''}`}
+                  className={`${styles.newsItem} ${isRead ? styles['newsItem--read'] : styles['newsItem--unread']} ${!item.imageUrl ? styles['newsItem--no-image'] : ''}`}
                 >
                   {!isRead && (
                     <div className={styles.newsItem__unreadBadge}>

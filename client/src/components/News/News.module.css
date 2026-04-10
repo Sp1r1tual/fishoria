@@ -73,6 +73,10 @@
   cursor: pointer;
 }
 
+.newsItem--unread.newsItem--no-image .newsItem__body {
+  padding-top: 52px;
+}
+
 .newsItem__body {
   padding: 20px 24px;
   display: flex;

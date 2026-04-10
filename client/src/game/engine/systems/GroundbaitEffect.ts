@@ -32,18 +32,20 @@ export class GroundbaitEffect {
    * Spawns a burst of groundbait particles
    */
   public spawn(W: number, H: number): void {
-    // Spawn large burst of particles with wide horizontal spread
+    const scale = W < 1000 ? 0.75 : 1.0;
+
+    // Spawn burst of particles with scaled horizontal spread and vertical arc
     for (let i = 0; i < 75; i++) {
       const color =
         this.PALETTE[Math.floor(Math.random() * this.PALETTE.length)];
 
       this.particles.push({
-        x: W / 2 + (Math.random() - 0.5) * 40,
+        x: W / 2 + (Math.random() - 0.5) * (40 * scale),
         y: H + 10,
-        vx: (Math.random() - 0.5) * 55, // Wide horizontal spread
-        vy: -8 - Math.random() * 40, // Much lower vertical arc
+        vx: (Math.random() - 0.5) * (55 * scale),
+        vy: (-8 - Math.random() * 40) * scale,
         life: 1.0,
-        size: 1.0 + Math.random() * 3.5,
+        size: (1.0 + Math.random() * 3.5) * scale,
         alpha: 1.0,
         color,
       });

@@ -34,18 +34,20 @@
   background: #0f172a;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-lg);
-  padding: 2px 8px;
+  padding: 10px 4px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  min-height: 32px;
+  gap: 4px;
+  min-height: 52px;
+  text-align: center;
 }
 
 @media (max-width: 380px) {
   .inventory__stat {
-    padding: 10px 4px;
+    padding: 8px 2px;
+    min-height: 48px;
   }
 }
 
@@ -75,6 +77,8 @@
   text-transform: uppercase;
   letter-spacing: 0.01em;
   opacity: 0.7;
+  text-align: center;
+  line-height: 1.2;
 }
 
 .inventory__table-container {

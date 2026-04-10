@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useLayoutEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
@@ -148,6 +148,29 @@ export function MainMenu() {
     bannerRef.current.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
   };
 
+  const footerRef = useRef<HTMLDivElement>(null);
+  const [spawnRangeY, setSpawnRangeY] = useState<[number, number]>([80, 88]);
+
+  useLayoutEffect(() => {
+    const updateRange = () => {
+      if (footerRef.current) {
+        const fHeight = footerRef.current.offsetHeight;
+        const vHeight = window.innerHeight;
+        const footerStartPct = ((vHeight - fHeight) / vHeight) * 100;
+
+        // Fireflies should spawn in a 8% band just above the footer
+        const buffer = 2; // 2% buffer from footer
+        const maxSpawn = Math.max(0, footerStartPct - buffer);
+        const minSpawn = Math.max(0, maxSpawn - 8);
+        setSpawnRangeY([minSpawn, maxSpawn]);
+      }
+    };
+
+    updateRange();
+    window.addEventListener('resize', updateRange);
+    return () => window.removeEventListener('resize', updateRange);
+  }, []);
+
   if (isLoading)
     return (
       <div
@@ -174,7 +197,11 @@ export function MainMenu() {
         }}
       />
       <div className={styles['main-menu__bg-overlay']} />
-      <Fireflies count={20} />
+      <Fireflies
+        key={`${20}-${spawnRangeY.join(',')}`}
+        count={20}
+        spawnRangeY={spawnRangeY}
+      />
 
       <WoodyButton
         variant="brown"
@@ -296,7 +323,9 @@ export function MainMenu() {
           <div className={styles['main-menu__footer-actions']}></div>
         </nav>
       </div>
-      <Footer />
+      <div ref={footerRef} className={styles['main-menu__footer-wrapper']}>
+        <Footer />
+      </div>
 
       <Modal
         isOpen={isProfileModalOpen}
