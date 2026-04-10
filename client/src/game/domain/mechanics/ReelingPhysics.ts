@@ -33,11 +33,14 @@ export function pullFishToShore(
 
   // Scale to actual on-screen pixels-per-second movement
   const scale = targetY / 800;
-  const pullSpeed =
-    (effectivePull / weightPenalty) *
-    REELING_PHYSICS.pullSpeedScale *
-    dtSec *
-    scale;
+  let pullSpeedRaw =
+    (effectivePull / weightPenalty) * REELING_PHYSICS.pullSpeedScale;
+
+  // Guarantee a minimum pull speed so the fish doesn't out-swim the reel with bad gear
+  const minSpeed = REELING_PHYSICS.minPullSpeed ?? 15.0;
+  pullSpeedRaw = Math.max(minSpeed, pullSpeedRaw);
+
+  const pullSpeed = pullSpeedRaw * dtSec * scale;
 
   const dx = targetX - fish.position.x;
   const dy = targetY - fish.position.y;

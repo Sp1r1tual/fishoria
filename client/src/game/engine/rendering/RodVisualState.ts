@@ -168,8 +168,8 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
       const shakeAmount =
         maxInterest > 0.3
           ? (maxInterest - 0.3) *
-            0.125 *
-            (1 + Math.sin(time * (7.5 + maxInterest * 15)))
+            0.04 *
+            (1 + Math.sin(time * (0.1 + maxInterest * 0.15)))
           : 0;
       rodTension = shakeAmount;
       lineSlack = Math.max(0, lineSlack - shakeAmount * 0.1);
