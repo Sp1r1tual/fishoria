@@ -85,6 +85,11 @@
   align-items: flex-start;
 }
 
+.bottomInfoWrapper {
+  position: relative;
+  width: 100%;
+}
+
 .bottomInfoHeader {
   width: 100%;
   text-align: center;

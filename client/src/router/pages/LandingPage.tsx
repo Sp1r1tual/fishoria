@@ -13,6 +13,7 @@ import { CompanyBranding } from '@/components/landing/CompanyBranding';
 import { Bubbles } from '@/components/UI/Bubbles/Bubbles';
 import { AuthBox } from '@/components/landing/AuthBox';
 import { ScrollHint } from '@/components/landing/ScrollHint';
+import { TapHint } from '@/components/landing/TapHint';
 
 import styles from './LandingPage.module.css';
 
@@ -71,7 +72,7 @@ export const LandingPage = () => {
             />
           </div>
 
-          {!isSmallScreen ? <Masonry /> : <ScrollHint />}
+          {!isSmallScreen ? <Masonry /> : <ScrollHint hidden={isFormOpen} />}
         </section>
 
         <section
@@ -84,7 +85,10 @@ export const LandingPage = () => {
             <div className={styles.bottomInfoHeader}>
               <h2>- {t('bottomInfo.title')} -</h2>
             </div>
-            <BottomInfo />
+            <div className={styles.bottomInfoWrapper}>
+              <BottomInfo />
+              <TapHint hidden={isFormOpen} hideOnHover />
+            </div>
           </div>
 
           <CompanyBranding />

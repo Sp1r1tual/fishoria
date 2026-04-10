@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react';
 
 import styles from './ScrollHint.module.css';
 
-export const ScrollHint = () => {
+interface ScrollHintProps {
+  hidden?: boolean;
+}
+
+export const ScrollHint = ({ hidden }: ScrollHintProps) => {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
@@ -16,7 +20,7 @@ export const ScrollHint = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  if (!isVisible) return null;
+  if (!isVisible || hidden) return null;
 
   return (
     <div className={styles.scrollHint}>
