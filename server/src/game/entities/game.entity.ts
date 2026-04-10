@@ -164,10 +164,17 @@ export class GameEntity {
           where: { uid: profile.equippedRodUid },
         });
         if (rodItem?.condition !== null && rodItem?.condition !== undefined) {
+          const newCondition = Math.max(0, rodItem.condition - rodDamage);
           await tx.gearItem.update({
             where: { uid: profile.equippedRodUid },
-            data: { condition: Math.max(0, rodItem.condition - rodDamage) },
+            data: { condition: newCondition, isBroken: newCondition === 0 },
           });
+          if (newCondition === 0) {
+            await tx.playerProfile.update({
+              where: { id: profile.id },
+              data: { equippedRodUid: null },
+            });
+          }
         }
       }
 
@@ -176,10 +183,17 @@ export class GameEntity {
           where: { uid: profile.equippedReelUid },
         });
         if (reelItem?.condition !== null && reelItem?.condition !== undefined) {
+          const newCondition = Math.max(0, reelItem.condition - reelDamage);
           await tx.gearItem.update({
             where: { uid: profile.equippedReelUid },
-            data: { condition: Math.max(0, reelItem.condition - reelDamage) },
+            data: { condition: newCondition, isBroken: newCondition === 0 },
           });
+          if (newCondition === 0) {
+            await tx.playerProfile.update({
+              where: { id: profile.id },
+              data: { equippedReelUid: null },
+            });
+          }
         }
       }
 
@@ -295,10 +309,19 @@ export class GameEntity {
           where: { uid: currentProfile.equippedRodUid },
         });
         if (rodItem?.condition !== null && rodItem?.condition !== undefined) {
+          const newCondition = Math.max(0, rodItem.condition - rodDamage);
           await tx.gearItem.update({
             where: { uid: currentProfile.equippedRodUid },
-            data: { condition: Math.max(0, rodItem.condition - rodDamage) },
+            data: { condition: newCondition, isBroken: newCondition === 0 },
           });
+          if (newCondition === 0) {
+            await tx.playerProfile.update({
+              where: { id: profile.id },
+              data: { equippedRodUid: null },
+            });
+            // Update currentProfile so subseq. code knows
+            currentProfile.equippedRodUid = null;
+          }
         }
       }
 
@@ -311,10 +334,18 @@ export class GameEntity {
           where: { uid: currentProfile.equippedReelUid },
         });
         if (reelItem?.condition !== null && reelItem?.condition !== undefined) {
+          const newCondition = Math.max(0, reelItem.condition - reelDamage);
           await tx.gearItem.update({
             where: { uid: currentProfile.equippedReelUid },
-            data: { condition: Math.max(0, reelItem.condition - reelDamage) },
+            data: { condition: newCondition, isBroken: newCondition === 0 },
           });
+          if (newCondition === 0) {
+            await tx.playerProfile.update({
+              where: { id: profile.id },
+              data: { equippedReelUid: null },
+            });
+            currentProfile.equippedReelUid = null;
+          }
         }
       }
 
