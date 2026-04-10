@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import type { IPlayerProfile } from '@/common/types';
+import type { IPlayerProfile, IOwnedGearItem } from '@/common/types';
 
 import { playerKeys } from './player.queries';
 import { InventoryService } from '../services/inventory.service';
@@ -101,14 +101,41 @@ export const useCatchFishMutation = () => {
           if (!old) return data;
           // Merge server data but preserve local selections to avoid race conditions
           // if user changed bait or gear while catch mutation was in flight
+          // Helper to get local item if it's still valid, otherwise use server's selection
+          const preserveValid = (
+            localUid: string | null,
+            serverUid: string | null,
+          ) => {
+            if (!localUid) return serverUid;
+            const g = data.gearItems.find(
+              (gi: IOwnedGearItem) => gi.uid === localUid,
+            );
+            if (g && !g.isBroken && (g.condition === null || g.condition > 0)) {
+              return localUid;
+            }
+            return serverUid;
+          };
+
           return {
             ...data,
             activeBait: old.activeBait,
             activeGroundbait: old.activeGroundbait,
-            equippedRodUid: old.equippedRodUid,
-            equippedReelUid: old.equippedReelUid,
-            equippedLineUid: old.equippedLineUid,
-            equippedHookUid: old.equippedHookUid,
+            equippedRodUid: preserveValid(
+              old.equippedRodUid,
+              data.equippedRodUid,
+            ),
+            equippedReelUid: preserveValid(
+              old.equippedReelUid,
+              data.equippedReelUid,
+            ),
+            equippedLineUid: preserveValid(
+              old.equippedLineUid,
+              data.equippedLineUid,
+            ),
+            equippedHookUid: preserveValid(
+              old.equippedHookUid,
+              data.equippedHookUid,
+            ),
           };
         },
       );
@@ -198,14 +225,41 @@ export const useBreakGearMutation = () => {
         playerKeys.profile(),
         (old: IPlayerProfile | undefined) => {
           if (!old) return data;
+          // Helper to get local item if it's still valid, otherwise use server's selection
+          const preserveValid = (
+            localUid: string | null,
+            serverUid: string | null,
+          ) => {
+            if (!localUid) return serverUid;
+            const g = data.gearItems.find(
+              (gi: IOwnedGearItem) => gi.uid === localUid,
+            );
+            if (g && !g.isBroken && (g.condition === null || g.condition > 0)) {
+              return localUid;
+            }
+            return serverUid;
+          };
+
           return {
             ...data,
             activeBait: old.activeBait,
             activeGroundbait: old.activeGroundbait,
-            equippedRodUid: old.equippedRodUid,
-            equippedReelUid: old.equippedReelUid,
-            equippedLineUid: old.equippedLineUid,
-            equippedHookUid: old.equippedHookUid,
+            equippedRodUid: preserveValid(
+              old.equippedRodUid,
+              data.equippedRodUid,
+            ),
+            equippedReelUid: preserveValid(
+              old.equippedReelUid,
+              data.equippedReelUid,
+            ),
+            equippedLineUid: preserveValid(
+              old.equippedLineUid,
+              data.equippedLineUid,
+            ),
+            equippedHookUid: preserveValid(
+              old.equippedHookUid,
+              data.equippedHookUid,
+            ),
           };
         },
       );

@@ -165,18 +165,16 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
     );
 
     if (rigType === 'feeder') {
-      // Feeder tension reacts to fish nibbles more sharply
       const shakeAmount =
         maxInterest > 0.3
           ? (maxInterest - 0.3) *
-            0.15 *
-            (1 + Math.sin(time * (10 + maxInterest * 20)))
+            0.125 *
+            (1 + Math.sin(time * (7.5 + maxInterest * 15)))
           : 0;
       rodTension = shakeAmount;
-      lineSlack = Math.max(0, lineSlack - shakeAmount * 0.2);
+      lineSlack = Math.max(0, lineSlack - shakeAmount * 0.1);
     }
   } else if (isCast && phase === 'escaped') {
-    // Relax everything when fish escapes
     rodTension = 0;
     lineSlack = 1.0;
   }

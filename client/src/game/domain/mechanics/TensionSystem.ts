@@ -1,6 +1,6 @@
 import type { ITensionState, ITensionUpdateParams } from '@/common/types';
 
-import { TENSION, ENERGY_DRAIN, FISH_AI } from '@/common/configs/game';
+import { TENSION, FISH_AI } from '@/common/configs/game';
 
 export class TensionSystem {
   static update(params: ITensionUpdateParams): ITensionState {
@@ -40,30 +40,17 @@ export class TensionSystem {
     // Struggle force of the fish: aggressive fish exert more force, heavier fish exert more absolute force
     const baseForce =
       params.fishWeight *
-      (params.fishEnergy > 0
-        ? params.fishAggression * FISH_AI.struggleAggressionWeight +
-          FISH_AI.struggleAggressionBase
-        : TENSION.exhaustedForceFloor);
+      (params.fishAggression * FISH_AI.struggleAggressionWeight +
+        FISH_AI.struggleAggressionBase);
 
     // Normalized force depends on how weak the tackle is.
     const normalizedForce =
       baseForce / TENSION.forceNormalizer / tackleStrength;
 
     if (params.playerReeling) {
-      if (params.fishEnergy > 0) {
-        // Pulling while fish is fighting creates massive tension
-        tension +=
-          (normalizedForce + TENSION.reelingFightingBase) *
-          dtSec *
-          TENSION.reelingFightingRate;
-      } else {
-        // Reeling a tired fish is easier, but still builds tension depending on weight
-        tension +=
-          (normalizedForce * TENSION.reelingTiredForceMultiplier +
-            TENSION.reelingTiredBase) *
-          dtSec *
-          TENSION.reelingTiredRate;
-      }
+      // Single unified tension formula — no fighting/tired distinction
+      tension +=
+        (normalizedForce + TENSION.reelingBase) * dtSec * TENSION.reelingRate;
     } else if (params.playerRelaxing) {
       // Quickly drop tension, giving fish a chance to run
       tension -= dtSec * TENSION.relaxRate;
@@ -123,16 +110,5 @@ export class TensionSystem {
       isBroken: false,
       escapeProgress,
     };
-  }
-
-  static drainFishEnergy(
-    energy: number,
-    isReeling: boolean,
-    deltaTime: number,
-  ): number {
-    const dtSec = deltaTime / 60;
-    let drain = dtSec * ENERGY_DRAIN.baseDrainPerSecond;
-    if (isReeling) drain *= ENERGY_DRAIN.reelingDrainMultiplier;
-    return Math.max(0, energy - drain);
   }
 }

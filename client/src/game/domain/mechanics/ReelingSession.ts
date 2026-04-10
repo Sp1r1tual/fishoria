@@ -69,9 +69,7 @@ export function updateReelingPhase(
 
   const tension = TensionSystem.update({
     current: params.tension,
-    fishStamina: hookedFish.config.behavior.stamina,
     fishAggression: hookedFish.config.behavior.aggression,
-    fishEnergy: hookedFish.energy,
     fishWeight: hookedFish.weight,
     rodMaxWeight: rodConfig?.maxWeight ?? 1,
     reelMaxWeight: reelConfig?.maxWeight ?? 1,
@@ -84,11 +82,6 @@ export function updateReelingPhase(
     deltaTime,
   });
 
-  hookedFish.energy = TensionSystem.drainFishEnergy(
-    hookedFish.energy,
-    playerReeling,
-    deltaTime,
-  );
   callbacks.onTensionChange(tension.value, tension.isBroken);
 
   // Accumulate gear wear

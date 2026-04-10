@@ -1,4 +1,5 @@
 import { $mainApi } from '@/http/axios';
+import type { IPlayerProfile } from '@/common/types';
 
 export const GameService = {
   catchFish: async (payload: {
@@ -16,8 +17,11 @@ export const GameService = {
     maxWeight?: number;
     sizeRank?: 'small' | 'good' | 'trophy';
     isReleased?: boolean;
-  }) => {
-    const { data } = await $mainApi.post('/game/catch', payload);
+  }): Promise<IPlayerProfile> => {
+    const { data } = await $mainApi.post<IPlayerProfile>(
+      '/game/catch',
+      payload,
+    );
     return data;
   },
   breakGear: async (payload: {
@@ -26,8 +30,11 @@ export const GameService = {
     lostMeters?: number;
     rodDamage?: number;
     reelDamage?: number;
-  }) => {
-    const { data } = await $mainApi.post('/game/break', payload);
+  }): Promise<IPlayerProfile> => {
+    const { data } = await $mainApi.post<IPlayerProfile>(
+      '/game/break',
+      payload,
+    );
     return data;
   },
 };

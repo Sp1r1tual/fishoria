@@ -13,6 +13,7 @@ import { GameClock } from '../UI/GameClock/GameClock';
 import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
 import { EditButton } from '../UI/buttons/EditButton/EditButton';
 import { WeatherStatus } from '../UI/WeatherStatus/WeatherStatus';
+import { Fireflies } from '../Effects/Fireflies/Fireflies';
 
 import { navigateTo } from '@/store/slices/uiSlice';
 import { usePlayerQuery } from '@/queries/player.queries';
@@ -173,6 +174,7 @@ export function MainMenu() {
         }}
       />
       <div className={styles['main-menu__bg-overlay']} />
+      <Fireflies count={20} />
 
       <WoodyButton
         variant="brown"

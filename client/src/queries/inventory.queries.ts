@@ -129,8 +129,22 @@ export const useRepairMutation = () => {
         queryClient.setQueryData(playerKeys.profile(), context.previousProfile);
       }
     },
-    onSuccess: (updatedProfile) => {
-      queryClient.setQueryData(playerKeys.profile(), updatedProfile);
+    onSuccess: (data) => {
+      queryClient.setQueryData(
+        playerKeys.profile(),
+        (old: IPlayerProfile | undefined) => {
+          if (!old) return data;
+          return {
+            ...(data as IPlayerProfile),
+            activeBait: old.activeBait,
+            activeGroundbait: old.activeGroundbait,
+            equippedRodUid: old.equippedRodUid,
+            equippedReelUid: old.equippedReelUid,
+            equippedLineUid: old.equippedLineUid,
+            equippedHookUid: old.equippedHookUid,
+          };
+        },
+      );
     },
   });
 };
@@ -172,8 +186,22 @@ export const useConsumeMutation = () => {
         queryClient.setQueryData(playerKeys.profile(), context.previousProfile);
       }
     },
-    onSuccess: (updatedProfile) => {
-      queryClient.setQueryData(playerKeys.profile(), updatedProfile);
+    onSuccess: (data) => {
+      queryClient.setQueryData(
+        playerKeys.profile(),
+        (old: IPlayerProfile | undefined) => {
+          if (!old) return data;
+          return {
+            ...(data as IPlayerProfile),
+            activeBait: old.activeBait,
+            activeGroundbait: old.activeGroundbait,
+            equippedRodUid: old.equippedRodUid,
+            equippedReelUid: old.equippedReelUid,
+            equippedLineUid: old.equippedLineUid,
+            equippedHookUid: old.equippedHookUid,
+          };
+        },
+      );
     },
   });
 };
@@ -214,8 +242,22 @@ export const useDeleteMutation = () => {
         queryClient.setQueryData(playerKeys.profile(), context.previousProfile);
       }
     },
-    onSuccess: (updatedProfile) => {
-      queryClient.setQueryData(playerKeys.profile(), updatedProfile);
+    onSuccess: (data) => {
+      queryClient.setQueryData(
+        playerKeys.profile(),
+        (old: IPlayerProfile | undefined) => {
+          if (!old) return data;
+          return {
+            ...(data as IPlayerProfile),
+            activeBait: old.activeBait,
+            activeGroundbait: old.activeGroundbait,
+            equippedRodUid: old.equippedRodUid,
+            equippedReelUid: old.equippedReelUid,
+            equippedLineUid: old.equippedLineUid,
+            equippedHookUid: old.equippedHookUid,
+          };
+        },
+      );
     },
   });
 };

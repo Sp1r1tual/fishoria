@@ -16,7 +16,7 @@ interface ISpinningLureUpdateParams {
   playerReeling: boolean;
   deltaTime: number;
   hookConfig: IHookConfig;
-  reelSpeed: number;
+  retrieveSpeedMult: number;
   depthSystem: DepthSystem;
 }
 
@@ -56,7 +56,10 @@ export function updateSpinningLure(
   if (playerReeling) {
     // Move strictly downward toward screen bottom (shore)
     const pullSpeed =
-      SPINNING_LURE.reelingPullSpeedBase * dtSec * params.reelSpeed * (H / 800);
+      SPINNING_LURE.reelingPullSpeedBase *
+      dtSec *
+      params.retrieveSpeedMult *
+      (H / 800);
 
     const shoreBoundary = H * SPINNING_LURE.shoreBoundaryFraction;
 
@@ -74,14 +77,14 @@ export function updateSpinningLure(
       currentLureDepthM = Math.min(
         groundDepthM,
         currentLureDepthM +
-          params.reelSpeed * SPINNING_LURE.wobblerDiveSpeed * dtSec,
+          params.retrieveSpeedMult * SPINNING_LURE.wobblerDiveSpeed * dtSec,
       );
     } else {
       // Rises when pulled
       currentLureDepthM = Math.max(
         SPINNING_LURE.minDepth,
         currentLureDepthM -
-          params.reelSpeed * SPINNING_LURE.generalRiseSpeed * dtSec,
+          params.retrieveSpeedMult * SPINNING_LURE.generalRiseSpeed * dtSec,
       );
     }
   } else {

@@ -4,7 +4,6 @@ export interface IFishBehaviorTraits {
   aggression: number;
   curiosity: number;
   fear: number;
-  stamina: number;
   mobility: number;
 }
 

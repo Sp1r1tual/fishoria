@@ -12,9 +12,7 @@ export interface ITensionState {
 
 export interface ITensionUpdateParams {
   current: ITensionState;
-  fishStamina: number;
   fishAggression: number;
-  fishEnergy: number;
   fishWeight: number;
   rodMaxWeight: number;
   reelMaxWeight: number;
@@ -100,6 +98,5 @@ export interface ISpinningLureState {
   castY: number;
   currentLureDepthM: number;
   groundDepthM: number;
-  /** True if lure reached shore and cast should reset */
   reachedShore: boolean;
 }

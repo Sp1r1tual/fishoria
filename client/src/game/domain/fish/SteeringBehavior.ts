@@ -30,6 +30,7 @@ import {
   FISH_STATE_SPEEDS,
   CAST_SPLASH,
   GLOBAL_CONSTANTS,
+  ATTRACTION,
 } from '@/common/configs/game';
 
 export class SteeringBehavior implements IFishBehavior {
@@ -126,11 +127,11 @@ export class SteeringBehavior implements IFishBehavior {
       if (ctx.playerReeling) {
         speed =
           FISH_STATE_SPEEDS.hooked.reelingSpeedMultiplier *
-          fish.config.behavior.stamina;
+          fish.config.behavior.mobility;
       } else {
         speed =
           FISH_STATE_SPEEDS.hooked.freeSpeedMultiplier *
-          fish.config.behavior.stamina;
+          fish.config.behavior.mobility;
       }
     } else if (fish.state === FishState.Escaping && ctx.baitPosition) {
       // Flee
@@ -159,6 +160,14 @@ export class SteeringBehavior implements IFishBehavior {
       ctx.baitPosition &&
       !ctx.isAnyFishHooked
     ) {
+      if (fish.migrationTarget) {
+        MigrationRegistry.activeMigrations = Math.max(
+          0,
+          MigrationRegistry.activeMigrations - 1,
+        );
+        fish.migrationTarget = null;
+      }
+
       const [ax, ay] = getAttractionForce(fish, ctx);
       const [bx, by] = getDepthBiasForce(fish, ctx);
       const dx = ctx.baitPosition.x - fish.position.x;
@@ -282,13 +291,36 @@ export class SteeringBehavior implements IFishBehavior {
       forceX += bx * FISH_AI.idleDepthBiasForce * migrationBiasModifier;
       forceY += by * FISH_AI.idleDepthBiasForce * migrationBiasModifier;
 
-      // --- GROUNDBAIT ATTRACTION for IDLE fish ---
+      // --- GROUNDBAIT ATTRACTION for IDLE/MIGRATING fish ---
       // If groundbait is active, IDLE fish should slowly drift towards the bait cluster
-      if (ctx.activeGroundbait && ctx.baitPosition && !fish.migrationTarget) {
-        const [sax, say] = getAttractionForce(fish, ctx);
-        // Additive attraction instead of overriding to let fish still wander naturally
-        forceX += sax * 0.4;
-        forceY += say * 0.4;
+      if (ctx.activeGroundbait && ctx.baitPosition) {
+        if (fish.migrationTarget) {
+          const dx = ctx.baitPosition.x - fish.position.x;
+          const dy = ctx.baitPosition.y - fish.position.y;
+          const dist = vecLen(dx, dy);
+
+          const speciesMult =
+            ctx.activeGroundbait.fishedSpeciesMultiplier?.[fish.config.id] ||
+            0.0;
+          const gbRadius =
+            ATTRACTION.baseAttractionRange *
+            (ctx.activeGroundbait.attractionRadiusScale || 1.0);
+
+          if (speciesMult > 0 && dist < gbRadius * 1.5) {
+            MigrationRegistry.activeMigrations = Math.max(
+              0,
+              MigrationRegistry.activeMigrations - 1,
+            );
+            fish.migrationTarget = null;
+          }
+        }
+
+        if (!fish.migrationTarget) {
+          const [sax, say] = getAttractionForce(fish, ctx);
+          // Additive attraction instead of overriding to let fish still wander naturally
+          forceX += sax * 0.4;
+          forceY += say * 0.4;
+        }
       }
 
       speed = FISH_STATE_SPEEDS.idle.multiplier * fish.config.behavior.mobility;

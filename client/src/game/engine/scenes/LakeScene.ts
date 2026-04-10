@@ -1033,10 +1033,6 @@ export class LakeScene implements IScene {
     this.lastPlayerReeling = this.playerReeling;
 
     if (this.hookConfig?.rigType === 'spinning') {
-      const speedMult =
-        INTEREST_RATES.spinning.speedMultipliers[this.currentRetrieveSpeed] ??
-        1.0;
-
       const lureState = updateSpinningLure({
         hookX: this.hookX,
         hookY: this.hookY,
@@ -1050,7 +1046,8 @@ export class LakeScene implements IScene {
         playerReeling: this.playerReeling,
         deltaTime,
         hookConfig: this.hookConfig,
-        reelSpeed: (this.reelConfig?.speed ?? 0.5) * speedMult,
+        retrieveSpeedMult:
+          INTEREST_RATES.spinning.speedMultipliers[this.currentRetrieveSpeed],
         depthSystem: this.depthSystem,
       });
 

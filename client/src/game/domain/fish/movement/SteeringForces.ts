@@ -85,23 +85,25 @@ export function getAttractionForce(
   if (dist < 1) return [0, 0];
   let gbRadiusScale = 1.0;
   let gbStrBonus = 1.0;
+  let isInfluencedByGroundbait = false;
 
   if (ctx.activeGroundbait) {
-    gbRadiusScale = ctx.activeGroundbait.attractionRadiusScale || 1.0;
-    gbStrBonus = ctx.activeGroundbait.intensityMultiplier || 1.0;
     const speciesMult =
       ctx.activeGroundbait.fishedSpeciesMultiplier?.[fish.config.id] || 0.0;
-    gbStrBonus *= speciesMult;
 
-    // If species is not interested at all, early exit
-    if (speciesMult <= 0) return [0, 0];
+    if (speciesMult > 0) {
+      gbRadiusScale = ctx.activeGroundbait.attractionRadiusScale || 1.0;
+      gbStrBonus =
+        (ctx.activeGroundbait.intensityMultiplier || 1.0) * speciesMult;
+      isInfluencedByGroundbait = true;
+    }
   }
 
   // Base attraction calculation
   let str = 0;
   const baseRange = ATTRACTION.baseAttractionRange * gbRadiusScale;
 
-  if (ctx.activeGroundbait) {
+  if (isInfluencedByGroundbait) {
     // Groundbait Logic: Create a "gathering zone" around the bait.
     const comfortZone = baseRange * 0.45;
 

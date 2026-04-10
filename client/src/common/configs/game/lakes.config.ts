@@ -30,7 +30,7 @@ export const LAKES: ILakeConfig[] = [
     },
     fishSpawns: {
       spawnRatePerSecond: 0.4,
-      maxFishCount: 70,
+      maxFishCount: 80,
       species: [
         {
           speciesId: 'crucian',
@@ -128,7 +128,7 @@ export const LAKES: ILakeConfig[] = [
     },
     fishSpawns: {
       spawnRatePerSecond: 0.45,
-      maxFishCount: 90,
+      maxFishCount: 100,
       species: [
         {
           speciesId: 'carp',

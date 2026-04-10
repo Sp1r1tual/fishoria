@@ -39,6 +39,7 @@ export const GROUNDBAITS: Record<string, IGroundbaitConfig> = {
       perch: 1.3,
       catfish: 1.2,
       zander: 1.4,
+      pike: 1.5,
     },
   },
 };

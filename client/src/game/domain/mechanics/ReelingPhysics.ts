@@ -21,31 +21,14 @@ export function pullFishToShore(
     fish.weight ||
     (fish.config.weightRange.min + fish.config.weightRange.max) / 2; // fallback to midpoint for safety
 
-  // Fish resists strongly if it has energy
-  const resistance =
-    fish.energy > 0
-      ? fish.energy *
-        fish.config.behavior.stamina *
-        fishWeight *
-        REELING_PHYSICS.resistanceFactor
-      : 0;
+  // Base mechanical pull is directly equal to gear speed.
+  const effectivePull = reelSpeed;
 
-  // Effective mechanical pull: gear speed minus the fish's active resistance
-  let effectivePull = reelSpeed * REELING_PHYSICS.basePull - resistance;
-
-  // Limit how fast an energetic fish can pull line *out* while reeling
-  // We normalize the reelSpeed (scaled around 1.0-5.0 now) for the slip formula
-  const slipNormalizationBaseline = 4.0;
-  const slipFactor = Math.max(0, 1.0 - reelSpeed / slipNormalizationBaseline);
-  const maxSlip =
-    REELING_PHYSICS.maxSlipBase - slipFactor * REELING_PHYSICS.maxSlipReelBonus;
-
-  effectivePull = Math.max(maxSlip, effectivePull);
-
-  // Heavier fish are always slower to drag through the water
+  // We gently soften the weight penalty for very heavy fish so it doesn't become impossible.
+  // A 5kg fish shouldn't be 10x harder than a 0.5kg fish, just considerably slower.
   const weightPenalty = Math.max(
     1,
-    Math.sqrt(fishWeight) * REELING_PHYSICS.weightPenaltyFactor,
+    Math.pow(fishWeight, 0.6) * REELING_PHYSICS.weightPenaltyFactor,
   );
 
   // Scale to actual on-screen pixels-per-second movement

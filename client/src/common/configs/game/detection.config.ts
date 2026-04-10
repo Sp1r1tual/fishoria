@@ -12,13 +12,13 @@ export const BITE_DETECTION = {
   chanceOfBiteAtDeadHour: 0.3,
 
   /** Radius (pixels, pre-scale) for fish to notice the bait/lure */
-  attractRadiusPx: 65,
+  attractRadiusPx: 75,
 
   /** Radius (pixels, pre-scale) for a bite to occur */
   biteRadiusPx: 10,
 
   /** Spinning predator vision radius (overrides attractRadiusPx for predators) */
-  spinningPredatorVisionPx: 90,
+  spinningPredatorVisionPx: 110,
 
   /** Depth penalty multiplier (how harshly out-of-range depth is penalized) */
   depthPenaltyFactor: 2.0,
@@ -84,7 +84,7 @@ export const INTEREST_RATES = {
   },
 
   /** "Magnet" effect threshold: if interest > this, slowly pull to 100% */
-  magnetThreshold: 0.75,
+  magnetThreshold: 0.8,
   /** Magnet bonus fill rate */
   magnetRate: 0.012,
 

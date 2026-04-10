@@ -22,7 +22,6 @@ export class Fish {
   behavior: IFishBehavior;
   interestLevel: number = 0;
   depth: number = 0; // meters from surface
-  energy: number;
   weight: number = 0; // actual weight in kg, generated at bite time
   stateTimer: number = 0;
   nearbyFishCount: number = 0;
@@ -73,7 +72,6 @@ export class Fish {
     };
     this.state = FishState.Idle;
     this.behavior = behavior ?? new SteeringBehavior();
-    this.energy = FISH_AI.energyBase + Math.random() * FISH_AI.energyRandom;
     this.preferredDepthRange = preferredDepthRange;
     this.weightRange = weightRange ?? config.weightRange;
     // Stagger probes across fish so they don't all probe on the same frame
@@ -124,7 +122,6 @@ export class Fish {
     this.stateTimer = 0;
     this.interestLevel = 0;
     this.hasLostInterest = false;
-    this.energy = FISH_AI.energyBase + Math.random() * FISH_AI.energyRandom;
     this.weight = 0; // Reset weight; will be regenerated on next bite
     this.depth = 0; // Will be re-initialized to target in SteeringBehavior
     this.separationForce.x = 0;

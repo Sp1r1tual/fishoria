@@ -20,45 +20,22 @@ export const ATTRACTION = {
 } as const;
 
 export const REELING_PHYSICS = {
-  /** Base pull force when reeling a hooked fish (now 1.0, speed in config is absolute) */
-  basePull: 1.0,
-
-  /** Fish resistance multiplier: resistance = energy * stamina * maxWeight * resistanceFactor */
-  resistanceFactor: 0.72,
-
-  /** Maximum line slip (negative = line goes out) */
-  maxSlipBase: -0.1,
-  /** Slip penalty for lower speeds (higher value = more slip for slow reels) */
-  maxSlipReelBonus: 1.8,
-
-  /** Weight penalty: sqrt(maxWeight) * weightPenaltyFactor */
-  weightPenaltyFactor: 1.25,
+  /** Weight penalty: Math.pow(maxWeight, 0.6) * weightPenaltyFactor */
+  weightPenaltyFactor: 0.95,
 
   /** Pixels-per-second base scale */
-  pullSpeedScale: 105.0,
-
-  /** Shore detection: fish is "landed" when within this many pixels of bottom */
+  pullSpeedScale: 75.0,
   shoreBoundaryPx: 4,
 } as const;
 
 export const TENSION = {
   /** Fish base force normalizer (divides weight to normalize force) */
-  forceNormalizer: 32,
+  forceNormalizer: 16,
 
-  /** Fish's minimum force when exhausted */
-  exhaustedForceFloor: 0.1,
-
-  /** Tension build rate while reeling a fighting fish */
-  reelingFightingRate: 0.75,
-  /** Extra base tension added while reeling + fighting */
-  reelingFightingBase: 0.7,
-
-  /** Tension build rate while reeling a tired fish */
-  reelingTiredRate: 0.65,
-  /** Extra base tension for tired-but-still-moving fish */
-  reelingTiredBase: 0.35,
-  /** Tired fish force multiplier */
-  reelingTiredForceMultiplier: 0.45,
+  /** Tension build rate while reeling */
+  reelingRate: 0.55,
+  /** Base tension added while reeling (minimal mechanical friction) */
+  reelingBase: 0.05,
 
   /** Tension drop rate when player is relaxing */
   relaxRate: 2.2,
@@ -83,14 +60,6 @@ export const TENSION = {
   escapeThreshold: 100,
 } as const;
 
-export const ENERGY_DRAIN = {
-  /** Base energy drain per second (fish tires out over time) */
-  baseDrainPerSecond: 1.5,
-
-  /** Reeling multiplier — how much faster fish tires when being reeled */
-  reelingDrainMultiplier: 2.2,
-} as const;
-
 export const SNAG = {
   /** Spinning snag: accumulation speed when dragging on the bottom */
   spinningAccumulationRate: 1.5,
@@ -112,7 +81,7 @@ export const SPINNING_LURE = {
   shoreBoundaryFraction: 0.96,
 
   /** Wobbler dive speed when reeling (depth per second multiplier) */
-  wobblerDiveSpeed: 0.6,
+  wobblerDiveSpeed: 0.15,
   /** Wobbler float speed when idle (depth per second) */
   wobblerFloatSpeed: 0.075,
 
@@ -123,11 +92,11 @@ export const SPINNING_LURE = {
   spoonSinkSpeed: 0.3,
 
   /** General rise speed when reeling (non-wobbler, depth per second multiplier) */
-  generalRiseSpeed: 1.3,
+  generalRiseSpeed: 0.2,
 
   /** Minimum depth (meters) */
   minDepth: 0.1,
 
   /** Reeling pull speed multiplier (visual movement) */
-  reelingPullSpeedBase: 70,
+  reelingPullSpeedBase: 10,
 } as const;
