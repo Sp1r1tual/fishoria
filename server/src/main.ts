@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import cookieParser from 'cookie-parser';
 
@@ -7,7 +8,9 @@ import { setupSwagger } from './common/configs/swagger.config';
 import { getCorsConfig } from './common/configs/cors.config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  app.set('trust proxy', true);
 
   const configService = app.get(ConfigService);
   app.enableCors(getCorsConfig(configService));
