@@ -225,6 +225,14 @@ export function HUD({
             isSpinningRod={isSpinningRod}
             localDebugActive={localDebugActive}
           />
+
+          <div
+            className={styles['hud__debug-btn']}
+            onClick={() => sceneRef.current?.toggleDebug()}
+            title="Toggle Debug"
+          >
+            &lt;/&gt;
+          </div>
         </div>
       )}
 
