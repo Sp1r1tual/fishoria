@@ -11,12 +11,15 @@ import {
 } from '../../store/slices/authSlice';
 
 import { setLoggedOut as setInterceptorLoggedOut } from '../../http/interceptors/auth.interceptor';
-import { AuthService } from '../../services/auth.service';
+import { useQueryClient } from '@tanstack/react-query';
+import { PlayerService } from '../../services/player.service';
+import { playerKeys } from '../../queries/player.queries';
 
 export const useAuthInitialization = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { isInitialized } = useAppSelector((state) => state.auth);
   const initRef = useRef(false);
@@ -32,9 +35,6 @@ export const useAuthInitialization = () => {
         location.pathname === '/privacy' ||
         location.pathname === '/terms';
 
-      // When visiting an activation link — skip session restore entirely.
-      // The activation flow should always land on a clean login form,
-      // regardless of any existing session in the browser.
       const isActivationFlow = searchParams.get('activated') === 'true';
 
       if (
@@ -48,9 +48,15 @@ export const useAuthInitialization = () => {
       dispatch(setLoading());
 
       try {
-        const response = await AuthService.getProfile();
+        // Use fetchQuery to populate React Query cache and avoid double request
+        const data = await queryClient.fetchQuery({
+          queryKey: playerKeys.profile(),
+          queryFn: PlayerService.getProfile,
+          staleTime: 5 * 60 * 1000,
+        });
 
-        dispatch(setUser(response.data));
+        // Use the user info from the player profile to initialize auth state
+        dispatch(setUser(data.user));
         localStorage.setItem('hasSession', 'true');
 
         const redirectPath = sessionStorage.getItem('redirectAfterLogin');
@@ -88,7 +94,14 @@ export const useAuthInitialization = () => {
       initRef.current = true;
       initializeAuth();
     }
-  }, [dispatch, isInitialized, navigate, location.pathname, searchParams]);
+  }, [
+    dispatch,
+    isInitialized,
+    navigate,
+    location.pathname,
+    searchParams,
+    queryClient,
+  ]);
 
   useEffect(() => {
     const handlePageShow = (event: PageTransitionEvent) => {

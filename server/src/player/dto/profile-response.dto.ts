@@ -29,8 +29,12 @@ export const FULL_PROFILE_INCLUDE = {
   },
   user: {
     select: {
+      id: true,
+      email: true,
       username: true,
       avatar: true,
+      role: true,
+      isActivated: true,
       language: true,
     },
   },
@@ -118,8 +122,12 @@ const PlayerProfileResponseSchema = z.object({
   createdAt: z.iso.datetime().or(z.any()).optional(),
   updatedAt: z.iso.datetime().or(z.any()).optional(),
   user: z.object({
+    id: z.string(),
+    email: z.string(),
     username: z.string().nullable(),
     avatar: z.string().nullable(),
+    role: z.enum(['PLAYER', 'MODERATOR', 'ADMIN']),
+    isActivated: z.boolean(),
     language: z.string(),
   }),
 });
