@@ -110,7 +110,13 @@ export const useCatchFishMutation = () => {
             const g = data.gearItems.find(
               (gi: IOwnedGearItem) => gi.uid === localUid,
             );
-            if (g && !g.isBroken && (g.condition === null || g.condition > 0)) {
+            if (
+              g &&
+              !g.isBroken &&
+              (g.condition === undefined ||
+                g.condition === null ||
+                g.condition > 0)
+            ) {
               return localUid;
             }
             return serverUid;
@@ -234,7 +240,13 @@ export const useBreakGearMutation = () => {
             const g = data.gearItems.find(
               (gi: IOwnedGearItem) => gi.uid === localUid,
             );
-            if (g && !g.isBroken && (g.condition === null || g.condition > 0)) {
+            if (
+              g &&
+              !g.isBroken &&
+              (g.condition === undefined ||
+                g.condition === null ||
+                g.condition > 0)
+            ) {
               return localUid;
             }
             return serverUid;
