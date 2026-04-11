@@ -143,7 +143,7 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
         fish.setState(FishState.Idle);
         fish.interestLevel = 0;
         fish.hasLostInterest = true;
-        return { biter: null, progress: 1 };
+        continue; // Don't block detection for other fish
       }
 
       if (
@@ -165,7 +165,7 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
             // If it's a static bait splash, 60% chance it spooks the predator instead
             if (Math.random() < 0.6) {
               fish.hasLostInterest = true;
-              return { biter: null, progress: 1 };
+              continue; // Don't block detection for other fish
             }
             attractSplashChance = 0.4; // Only 40% chance of immediate interest even if not spooked
           } else if (isNewSplash && isSpinning) {

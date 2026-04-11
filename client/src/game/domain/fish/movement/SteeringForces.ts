@@ -1,6 +1,7 @@
 import type { IUpdateContext } from '@/common/types';
 
 import type { Fish } from '../Fish';
+import { FishState } from '../FishState';
 import { FISH_AI, ATTRACTION } from '@/common/configs/game';
 import { vecLen, normalize } from '../../../utils/MathUtils';
 
@@ -224,7 +225,10 @@ export function getAvoidanceForce(
   if (fish.position.y < horizonY + margin) {
     fy += ((horizonY + margin - fish.position.y) / margin) * 0.5;
   }
-  if (fish.position.y > ctx.canvasHeight - margin && fish.state !== 'Hooked') {
+  if (
+    fish.position.y > ctx.canvasHeight - margin &&
+    fish.state !== FishState.Hooked
+  ) {
     fy -= ((fish.position.y - (ctx.canvasHeight - margin)) / margin) * 0.5;
   }
 

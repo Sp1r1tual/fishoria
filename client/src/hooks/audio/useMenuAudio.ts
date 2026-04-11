@@ -176,7 +176,18 @@ export function useMenuAudio(musicActive = true) {
         }
       } else {
         resumeSharedAudioContext();
-        if (musicActive && musicEnabled) {
+        if (isIOS) {
+          // Delay to let AudioContext stabilize on iOS before starting HTMLAudioElement
+          setTimeout(() => {
+            if (document.hidden || !musicActive || !musicEnabled) return;
+            const track = getCurrentTrack();
+            if (track.paused) {
+              // Forced reset of sync buffer
+              track.currentTime = track.currentTime + 0.001;
+              track.play().catch(() => {});
+            }
+          }, 200);
+        } else if (musicActive && musicEnabled) {
           const track = getCurrentTrack();
           if (track.paused) track.play().catch(() => {});
         }

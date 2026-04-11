@@ -88,8 +88,9 @@ export class SteeringBehavior implements IFishBehavior {
       fish.depth = targetD;
     }
 
-    // Smoothly adjust current depth towards target
-    fish.depth += (targetD - fish.depth) * 0.05;
+    // Smoothly adjust current depth towards target (frame-rate independent)
+    const depthLerpRate = 1.0 - Math.pow(0.95, dt * 60);
+    fish.depth += (targetD - fish.depth) * depthLerpRate;
 
     // Hard clamp to actual floor depth in case the floor rises abruptly
     fish.depth = Math.max(0.05, Math.min(fish.depth, floorDepthAtPoint));
@@ -285,9 +286,7 @@ export class SteeringBehavior implements IFishBehavior {
             MigrationRegistry.activeMigrations - 1,
           );
         } else {
-          const [nx, ny] = normalize(dx, dy);
-          forceX += nx * FISH_AI.migrationForce;
-          forceY += ny * FISH_AI.migrationForce;
+          // Migration force is applied below with the speed multiplier
         }
       }
 
@@ -557,9 +556,10 @@ export class SteeringBehavior implements IFishBehavior {
       );
       const realDepthAtPos = ctx.getDepthAt(realNx, realNy);
 
+      const depthLerpRate = 1.0 - Math.pow(0.88, dt * 60);
       fish.depth = Math.min(
         realDepthAtPos,
-        fish.depth + (ctx.baitDepth - fish.depth) * 0.12,
+        fish.depth + (ctx.baitDepth - fish.depth) * depthLerpRate,
       );
       fish.depth = Math.max(0.05, fish.depth);
     }

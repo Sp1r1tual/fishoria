@@ -328,12 +328,18 @@ export function useGameAudio(manageAmbient = true) {
                 weatherRef.current === 'rain' ? AMBIENT.rain : null;
 
               if (activeLakeAmbient && activeLakeAmbient.paused) {
+                // Hard reset for Safari: moving currentTime slightly forces the browser
+                // to skip its "catch-up" buffer and start playing at the normal rate.
+                activeLakeAmbient.currentTime =
+                  activeLakeAmbient.currentTime + 0.001;
                 activeLakeAmbient.play().catch(() => {});
               }
               if (activeRainAmbient && activeRainAmbient.paused) {
+                activeRainAmbient.currentTime =
+                  activeRainAmbient.currentTime + 0.001;
                 activeRainAmbient.play().catch(() => {});
               }
-            }, 150);
+            }, 200); // Slightly longer delay for stability
           });
         } else {
           resumeSharedAudioContext();

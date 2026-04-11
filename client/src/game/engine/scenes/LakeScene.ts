@@ -36,6 +36,7 @@ import { TimeManager } from '@/game/managers/TimeManager';
 import { WeatherLayer } from '../systems/WeatherLayer';
 import { GameEvents } from '../GameEvents';
 import { SnagMechanic } from '@/game/domain/mechanics/SnagMechanic';
+import { MigrationRegistry } from '@/game/domain/fish/MigrationRegistry';
 
 import {
   FISH_SPECIES,
@@ -1051,6 +1052,8 @@ export class LakeScene implements IScene {
     this.debugLayer.destroy();
     this.weatherLayer.destroy();
     this.groundbaitEffect.destroy();
+    // Reset global migration counter so it doesn't leak to the next lake
+    MigrationRegistry.activeMigrations = 0;
   }
 
   setDebugVisible(visible: boolean): void {
