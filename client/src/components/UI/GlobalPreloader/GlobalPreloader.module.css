@@ -1,17 +1,23 @@
 .globalPreloader {
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100svh;
+  z-index: 10000;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100svh;
   background-color: #070a1a;
   overflow: hidden;
   opacity: 0;
   transition: opacity 1.5s ease;
+  pointer-events: none;
 }
 
 .visible {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .loaderContent {

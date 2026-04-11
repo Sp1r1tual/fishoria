@@ -113,6 +113,16 @@ export function PreloaderScreen({
     };
   }, [t, error]);
 
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    };
+  }, []);
+
   return (
     <div className={styles.screen}>
       <div className={styles.container}>

@@ -35,6 +35,21 @@ export const GlobalPreloader = ({
     return () => clearTimeout(timer);
   }, [delay, visible]);
 
+  useEffect(() => {
+    if (visible) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    };
+  }, [visible]);
+
   return (
     <div
       className={`${styles.globalPreloader} ${visible ? styles.visible : ''}`}

@@ -16,16 +16,18 @@
 .main-menu__bg {
   position: fixed;
   inset: 0;
-  width: 100vw;
-  height: 100lvh;
-  overflow: hidden;
   pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    rgba(2, 6, 23, 0.2) 0%,
-    rgba(2, 6, 23, 0.5) 100%
-  );
   z-index: 0;
+}
+
+@media (max-width: 1024px) {
+  .main-menu__bg,
+  .main-menu__bg-overlay {
+    top: -100px;
+    bottom: -100px;
+    left: -20px;
+    right: -20px;
+  }
 }
 
 .main-menu__news-btn {
