@@ -2,7 +2,9 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 100lvh;
+  min-height: 100dvh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .container__bg {

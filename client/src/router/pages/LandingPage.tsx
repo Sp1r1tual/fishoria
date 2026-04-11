@@ -47,7 +47,7 @@ export const LandingPage = () => {
 
   const minAllowedHeight = useDynamicBounds(leftColumnRef, 60, 500, []);
   useScrollCssVar(containerRef, containerRef, '--scroll-y');
-  const dynamicMinHeight = `max(${minAllowedHeight}px, calc(100lvh - calc(var(--scroll-y, 0px) * 1.5)))`;
+  const dynamicMinHeight = `max(${minAllowedHeight}px, calc(100dvh - calc(var(--scroll-y, 0px) * 1.5)))`;
 
   return (
     <main ref={containerRef} className={styles.container}>
