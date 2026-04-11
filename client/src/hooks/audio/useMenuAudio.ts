@@ -1,7 +1,12 @@
 import { useEffect } from 'react';
 
 import { useAppSelector } from '@/hooks/core/useAppStore';
-import { getSharedAudioContext } from '@/common/media/audio-context';
+import {
+  getSharedAudioContext,
+  resumeSharedAudioContext,
+  suspendSharedAudioContext,
+  isIOS,
+} from '@/common/media/audio-context';
 import { useClickSound } from './useClickSound';
 
 // ---------------------------------------------------------------------------
@@ -165,10 +170,16 @@ export function useMenuAudio(musicActive = true) {
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        pauseAllTracks();
-      } else if (musicActive && musicEnabled) {
-        const track = getCurrentTrack();
-        if (track.paused) track.play().catch(() => {});
+        if (isIOS) {
+          pauseAllTracks();
+          suspendSharedAudioContext();
+        }
+      } else {
+        resumeSharedAudioContext();
+        if (musicActive && musicEnabled) {
+          const track = getCurrentTrack();
+          if (track.paused) track.play().catch(() => {});
+        }
       }
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);

@@ -10,7 +10,9 @@ import type { GamePhaseType, TimeOfDayType } from '@/common/types';
 import {
   getSharedAudioContext,
   resumeSharedAudioContext,
+  suspendSharedAudioContext,
   getSharedSfxGainNode,
+  isIOS,
 } from '@/common/media/audio-context';
 import { preloadClickBuffer } from './useClickSound';
 import { preloadDingBuffer } from './useDingSound';
@@ -267,18 +269,27 @@ export function useGameAudio(manageAmbient = true) {
     }
 
     const handleVisibilityChange = () => {
+      // On iOS, we must suspend context to avoid "catch-up" glitch speed-up
+      // On other platforms (PC/Android), we keep it running for background bell sounds
       if (document.hidden) {
-        Object.values(AMBIENT).forEach((a) => a.pause());
-      } else if (manageAmbient && ambientEnabledRef.current) {
-        const activeLakeAmbient =
-          weatherRef.current !== 'rain' ? currentAmbientRef.current : null;
-        const activeRainAmbient =
-          weatherRef.current === 'rain' ? AMBIENT.rain : null;
-        if (activeLakeAmbient && activeLakeAmbient.paused) {
-          activeLakeAmbient.play().catch(() => {});
+        if (isIOS) {
+          Object.values(AMBIENT).forEach((a) => a.pause());
+          suspendSharedAudioContext();
         }
-        if (activeRainAmbient && activeRainAmbient.paused) {
-          activeRainAmbient.play().catch(() => {});
+      } else {
+        resumeSharedAudioContext();
+        if (manageAmbient && ambientEnabledRef.current) {
+          const activeLakeAmbient =
+            weatherRef.current !== 'rain' ? currentAmbientRef.current : null;
+          const activeRainAmbient =
+            weatherRef.current === 'rain' ? AMBIENT.rain : null;
+
+          if (activeLakeAmbient && activeLakeAmbient.paused) {
+            activeLakeAmbient.play().catch(() => {});
+          }
+          if (activeRainAmbient && activeRainAmbient.paused) {
+            activeRainAmbient.play().catch(() => {});
+          }
         }
       }
     };

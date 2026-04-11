@@ -5,14 +5,20 @@
 let sharedCtx: AudioContext | null = null;
 let sharedSfxGainNode: GainNode | null = null;
 
+export const isIOS =
+  typeof window !== 'undefined' &&
+  (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (/Macintosh|Mac OS X/.test(navigator.userAgent) &&
+      navigator.maxTouchPoints > 1));
+
 export function getSharedAudioContext(): AudioContext {
-  if (!sharedCtx) {
-    const Ctor =
-      window.AudioContext ||
-      (window as unknown as { webkitAudioContext: typeof AudioContext })
-        .webkitAudioContext;
-    sharedCtx = new Ctor();
-  }
+  if (sharedCtx) return sharedCtx;
+
+  const Ctor =
+    window.AudioContext ||
+    (window as unknown as { webkitAudioContext: typeof AudioContext })
+      .webkitAudioContext;
+  sharedCtx = new Ctor();
   return sharedCtx;
 }
 
@@ -42,9 +48,18 @@ export function syncSharedSfxVolume(enabled: boolean, volumeLevel: number) {
  */
 export async function resumeSharedAudioContext(): Promise<void> {
   const ctx = getSharedAudioContext();
-  if (ctx.state === 'suspended') {
+  if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
     await ctx
       .resume()
       .catch((e) => console.warn('Failed to resume AudioContext:', e));
+  }
+}
+
+export async function suspendSharedAudioContext(): Promise<void> {
+  const ctx = getSharedAudioContext();
+  if (ctx.state === 'running') {
+    await ctx
+      .suspend()
+      .catch((e) => console.warn('Failed to suspend AudioContext:', e));
   }
 }

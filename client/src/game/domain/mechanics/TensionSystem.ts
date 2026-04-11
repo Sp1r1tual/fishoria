@@ -52,9 +52,9 @@ export class TensionSystem {
       let buildRate =
         (normalizedForce + TENSION.reelingBase) * TENSION.reelingRate;
 
-      // Cap the build rate so it never drops below ~0.6s to snap from 0 to 100%.
+      // Cap the build rate so it never drops below ~0.4s to snap from 0 to 100%.
       // This prevents massive fish from making reeling physically impossible with 50ms snaps.
-      buildRate = Math.min(buildRate, 1.8);
+      buildRate = Math.min(buildRate, 2.5);
 
       tension += buildRate * dtSec;
     } else if (params.playerRelaxing) {

@@ -26,7 +26,7 @@ export const REELING_PHYSICS = {
   /** Pixels-per-second base scale */
   pullSpeedScale: 75.0,
   /** Absolute minimum pixels-per-second pull guarantee even with terrible gear */
-  minPullSpeed: 25.0,
+  minPullSpeed: 20.0,
   shoreBoundaryPx: 4,
 } as const;
 
