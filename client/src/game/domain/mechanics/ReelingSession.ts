@@ -150,11 +150,16 @@ export function updateReelingPhase(
 
   // Pull fish toward shore (straight down toward bottom of screen)
   if (playerReeling) {
+    const gearMaxWeight = Math.min(
+      rodConfig?.maxWeight ?? 1,
+      reelConfig?.maxWeight ?? 1,
+    );
     pullFishToShore(
       hookedFish,
       hookedFish.position.x,
       H,
       reelConfig?.speed ?? 1.0,
+      gearMaxWeight,
       deltaTime,
       params.getDepthAt,
       params.waterBoundaryY * H,

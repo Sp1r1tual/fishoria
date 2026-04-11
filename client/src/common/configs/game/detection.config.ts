@@ -145,9 +145,9 @@ export const INTEREST_RATES = {
   },
 
   /** Float rig on bottom penalty (multiplier for interest fill rate) */
-  floatOnBottomPenalty: 0.35,
+  floatOnBottomPenalty: 0.15,
   /** Additional predator penalty on float at bottom */
-  floatOnBottomPredatorPenalty: 0.6,
+  floatOnBottomPredatorPenalty: 0.2,
 
   /** Minimum stationary fill rate */
   minStationaryRateNormal: 0.005,
@@ -178,8 +178,11 @@ export const STRIKE_CHANCES = {
   /** Spinning aggression boost to strike chance */
   spinningAggressionBoost: 3.5,
 
+  /** Strike chance penalty for a float lying on the bottom */
+  floatOnBottomStrikePenalty: 0.25,
+
   /** Float on bottom loss-of-interest chance (per tick, normalized) */
-  floatOnBottomLossChance: 0.008,
+  floatOnBottomLossChance: 0.02,
 } as const;
 
 export const EARLY_HOOK = {

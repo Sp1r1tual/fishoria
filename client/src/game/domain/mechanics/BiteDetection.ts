@@ -212,8 +212,12 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
       if (!fish.hasAttemptedAttack) {
         fish.hasAttemptedAttack = true;
 
-        const attackChance =
+        let attackChance =
           0.4 * baitScore * timeScore * fish.config.baseCatchChance;
+
+        if (params.rigType === 'float' && params.isOnBottom) {
+          attackChance *= STRIKE_CHANCES.floatOnBottomStrikePenalty;
+        }
 
         const finalChance = Math.min(attackChance, 0.3);
 
@@ -399,6 +403,10 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
             aggressionBoost;
           fleeChance = STRIKE_CHANCES.playful.fleeChance * params.deltaTime;
           lossChance = STRIKE_CHANCES.playful.lossChance * params.deltaTime;
+        }
+
+        if (params.rigType === 'float' && params.isOnBottom) {
+          strikeChance *= STRIKE_CHANCES.floatOnBottomStrikePenalty;
         }
 
         if (Math.random() < strikeChance && (!isSpinning || params.isMoving)) {

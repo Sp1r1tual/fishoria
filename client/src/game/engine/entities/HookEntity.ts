@@ -155,7 +155,8 @@ export class HookEntity {
       const bx = castX - this.container.x;
       const by = castY - this.container.y;
 
-      const isLayingOnSide = hookDepthM > groundDepthM;
+      // If a fish bites, the bobber should stand up regardless of whether it was laying on side
+      const isLayingOnSide = hookDepthM > groundDepthM && phase !== 'bite';
 
       // Animations
       const bobCycle = Math.sin(time * 0.005);
@@ -190,15 +191,10 @@ export class HookEntity {
           sinkY = bobCycle * 3 * this.scale;
         }
       } else if (phase === 'bite') {
-        if (isLayingOnSide) {
-          // When fish bites a laying bobber, it stands up partially and twitches
-          tilt = Math.PI / 2.8; // Approx 65 deg
-          sinkY = (4 + Math.sin(time * 0.15) * 2) * this.scale;
-        } else {
-          sinkY = 5 * this.scale;
-          tilt = 0;
-          bulbAlphaOverride = 0;
-        }
+        // When fish bites, standard behavior is to stand up and go under
+        sinkY = 5 * this.scale;
+        tilt = 0;
+        bulbAlphaOverride = 0;
       }
 
       const totalY = by + sinkY;
@@ -263,25 +259,30 @@ export class HookEntity {
         const bulbDist = 4 * this.scale;
         const bulbX = bx + sinT * bulbDist;
         const bulbY = totalY + cosT * bulbDist;
+        const bulbAlpha = bulbAlphaOverride != null ? bulbAlphaOverride : 1;
 
         if (isLayingOnSide) {
           const surfaceY = bulbY;
-          this.gfx.moveTo(bulbX - bulbRadius, surfaceY);
-          this.gfx.arc(bulbX, surfaceY, bulbRadius, Math.PI, 0);
-          this.gfx.fill({ color: 0xffffff, alpha: 1 });
-          this.gfx.stroke({ width: 1 * this.scale, color: 0xffffff, alpha: 1 });
+          if (bulbAlpha > 0) {
+            this.gfx.moveTo(bulbX - bulbRadius, surfaceY);
+            this.gfx.arc(bulbX, surfaceY, bulbRadius, Math.PI, 0);
+            this.gfx.fill({ color: 0xffffff, alpha: bulbAlpha });
+            this.gfx.stroke({
+              width: 1 * this.scale,
+              color: 0xffffff,
+              alpha: bulbAlpha,
+            });
 
-          this.gfx.moveTo(bulbX + bulbRadius, surfaceY);
-          this.gfx.arc(bulbX, surfaceY, bulbRadius, 0, Math.PI);
-          this.gfx.fill({ color: 0xffffff, alpha: 0.9 });
-          this.gfx.stroke({
-            width: 1 * this.scale,
-            color: 0xffffff,
-            alpha: 0.9,
-          });
+            this.gfx.moveTo(bulbX + bulbRadius, surfaceY);
+            this.gfx.arc(bulbX, surfaceY, bulbRadius, 0, Math.PI);
+            this.gfx.fill({ color: 0xffffff, alpha: bulbAlpha * 0.9 });
+            this.gfx.stroke({
+              width: 1 * this.scale,
+              color: 0xffffff,
+              alpha: bulbAlpha * 0.9,
+            });
+          }
         } else {
-          const bulbAlpha = bulbAlphaOverride != null ? bulbAlphaOverride : 1;
-
           if (bulbAlpha > 0) {
             this.gfx.circle(bulbX, bulbY, bulbRadius);
             this.gfx.fill({ color: 0xffffff, alpha: bulbAlpha });

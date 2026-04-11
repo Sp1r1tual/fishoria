@@ -11,6 +11,7 @@ export function pullFishToShore(
   targetX: number,
   targetY: number,
   reelSpeed: number,
+  gearMaxWeight: number,
   deltaTime: number,
   getDepthAt: (nx: number, ny: number) => number,
   horizonY: number,
@@ -24,11 +25,14 @@ export function pullFishToShore(
   // Base mechanical pull is directly equal to gear speed.
   const effectivePull = reelSpeed;
 
+  // The penalty is based on how heavy the fish is relative to the gear's max weight.
+  const weightRatio = Math.max(0.1, fishWeight / Math.max(1, gearMaxWeight));
+
   // We gently soften the weight penalty for very heavy fish so it doesn't become impossible.
   // A 5kg fish shouldn't be 10x harder than a 0.5kg fish, just considerably slower.
   const weightPenalty = Math.max(
     1,
-    Math.pow(fishWeight, 0.6) * REELING_PHYSICS.weightPenaltyFactor,
+    Math.pow(weightRatio, 0.6) * REELING_PHYSICS.weightPenaltyFactor,
   );
 
   // Scale to actual on-screen pixels-per-second movement

@@ -124,14 +124,19 @@ export class SteeringBehavior implements IFishBehavior {
         wy * FISH_STATE_SPEEDS.hooked.verticalWanderForce +
         FISH_STATE_SPEEDS.hooked.verticalBias;
 
+      // Massive fish generate huge tension but are naturally more sluggish when fleeing.
+      const sluggishness = Math.max(1, Math.pow(fish.weight || 1, 0.45));
+
       if (ctx.playerReeling) {
         speed =
-          FISH_STATE_SPEEDS.hooked.reelingSpeedMultiplier *
-          fish.config.behavior.mobility;
+          (FISH_STATE_SPEEDS.hooked.reelingSpeedMultiplier *
+            fish.config.behavior.mobility) /
+          sluggishness;
       } else {
         speed =
-          FISH_STATE_SPEEDS.hooked.freeSpeedMultiplier *
-          fish.config.behavior.mobility;
+          (FISH_STATE_SPEEDS.hooked.freeSpeedMultiplier *
+            fish.config.behavior.mobility) /
+          sluggishness;
       }
     } else if (fish.state === FishState.Escaping && ctx.baitPosition) {
       // Flee
