@@ -44,12 +44,6 @@ function ensureAllTracksConnected() {
 
   for (const track of musicTracks) {
     if (!connectedTracks.has(track)) {
-      // iOS Safari has severe sync issues when HTMLAudioElement is connected to AudioContext
-      // and then backgrounded. Modern iOS allows direct .volume control, so we bypass AudioContext.
-      if (isIOS) {
-        connectedTracks.add(track);
-        continue;
-      }
       try {
         const ctx = getSharedAudioContext();
         const source = ctx.createMediaElementSource(track);
@@ -151,22 +145,12 @@ export function useMenuAudio(musicActive = true) {
           currentMenuVolume = targetVolume;
           if (gainNode) gainNode.gain.value = currentMenuVolume;
 
-          if (isIOS) {
-            const track = getCurrentTrack();
-            if (track) track.volume = currentMenuVolume;
-          }
-
           if (fadeInterval) clearInterval(fadeInterval);
           fadeInterval = null;
         } else {
           currentMenuVolume += diff > 0 ? 0.01 : -0.015;
           const level = Math.max(0, Math.min(1, currentMenuVolume));
           if (gainNode) gainNode.gain.value = level;
-
-          if (isIOS) {
-            const track = getCurrentTrack();
-            if (track) track.volume = level;
-          }
         }
       }, 20);
     } else {
@@ -175,11 +159,6 @@ export function useMenuAudio(musicActive = true) {
         currentMenuVolume = Math.max(0, currentMenuVolume - 0.015);
         if (gainNode)
           gainNode.gain.value = Math.max(0, Math.min(1, currentMenuVolume));
-
-        if (isIOS) {
-          const track = getCurrentTrack();
-          if (track) track.volume = currentMenuVolume;
-        }
 
         if (currentMenuVolume <= 0) {
           pauseAllTracks();
@@ -191,12 +170,21 @@ export function useMenuAudio(musicActive = true) {
 
     const handleVisibilityChange = () => {
       if (!document.hidden) {
+        if (isIOS && musicGainNode) {
+          currentMenuVolume = 0;
+          musicGainNode.gain.value = 0;
+        }
+
         resumeSharedAudioContext();
 
-        // Standard resume logic without any delay or catch-up workarounds.
         if (musicActive && musicEnabled) {
-          const track = getCurrentTrack();
-          if (track.paused) track.play().catch(() => {});
+          setTimeout(
+            () => {
+              const track = getCurrentTrack();
+              if (track.paused) track.play().catch(() => {});
+            },
+            isIOS ? 250 : 0,
+          );
         }
       }
     };

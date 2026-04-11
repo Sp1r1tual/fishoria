@@ -101,9 +101,8 @@ function ensureAmbientConnected(audio: HTMLAudioElement) {
       ambientGainNode.connect(ctx.destination);
     }
 
-    // iOS Safari has severe sync issues when HTMLAudioElement is connected to AudioContext.
-    // We bypass this for long tracks on iOS and use direct .volume instead.
-    if (isIOS) return ambientGainNode;
+    // Connect to AudioContext to allow GainNode volume control, even on iOS,
+    // since iOS Safari entirely ignores the .volume property on playback.
 
     if (!connectedAmbients.has(audio)) {
       const source = ctx.createMediaElementSource(audio);
@@ -231,23 +230,12 @@ export function useGameAudio(manageAmbient = true) {
         currentAmbientLevel = targetVolume;
         if (ambientGainNode) ambientGainNode.gain.value = currentAmbientLevel;
 
-        // Fallback for iOS direct volume control
-        Object.values(AMBIENT).forEach((a) => {
-          if (!a.paused) a.volume = isIOS ? currentAmbientLevel : 1;
-        });
-
         if (ambientFadeInterval) clearInterval(ambientFadeInterval);
         ambientFadeInterval = null;
       } else {
         currentAmbientLevel += diff > 0 ? 0.01 : -0.015;
         const level = Math.max(0, Math.min(1, currentAmbientLevel));
         if (ambientGainNode) ambientGainNode.gain.value = level;
-
-        if (isIOS) {
-          Object.values(AMBIENT).forEach((a) => {
-            if (!a.paused) a.volume = level;
-          });
-        }
       }
     }, 20);
   }, [manageAmbient]);
@@ -348,14 +336,17 @@ export function useGameAudio(manageAmbient = true) {
   // Visibility change handler — registered once per mount, uses refs for current state.
   useEffect(() => {
     const handleVisibilityChange = () => {
-      // Just ensure context gets un-suspended if the OS natively paused it
       if (!document.hidden) {
+        // Just ensure context gets un-suspended if the OS natively paused it.
+        // We use a masking technique: drop volume to 0 instantly, wait a moment
+        // for Safari to process its "catch-up" glitch buffer from backgrounding,
+        // then initiate the sync which fades the volume back in smoothly.
+        if (isIOS && ambientGainNode) {
+          currentAmbientLevel = 0;
+          ambientGainNode.gain.value = 0;
+        }
         resumeSharedAudioContext().then(() => {
-          if (isIOS) {
-            setTimeout(syncAmbientTracks, 50);
-          } else {
-            syncAmbientTracks();
-          }
+          setTimeout(syncAmbientTracks, isIOS ? 250 : 50);
         });
       }
     };
@@ -426,7 +417,7 @@ export function useGameAudio(manageAmbient = true) {
           if (currentPhaseRef.current === 'reeling') {
             startLoop('unwinding');
           }
-        }, 300);
+        }, 1000);
       }
     },
     [startLoop, stopLoop],
