@@ -4,7 +4,6 @@ import { useAppSelector } from '@/hooks/core/useAppStore';
 import {
   getSharedAudioContext,
   resumeSharedAudioContext,
-  suspendSharedAudioContext,
   isIOS,
 } from '@/common/media/audio-context';
 import { useClickSound } from './useClickSound';
@@ -45,6 +44,12 @@ function ensureAllTracksConnected() {
 
   for (const track of musicTracks) {
     if (!connectedTracks.has(track)) {
+      // iOS Safari has severe sync issues when HTMLAudioElement is connected to AudioContext
+      // and then backgrounded. Modern iOS allows direct .volume control, so we bypass AudioContext.
+      if (isIOS) {
+        connectedTracks.add(track);
+        continue;
+      }
       try {
         const ctx = getSharedAudioContext();
         const source = ctx.createMediaElementSource(track);
@@ -144,14 +149,24 @@ export function useMenuAudio(musicActive = true) {
         const diff = targetVolume - currentMenuVolume;
         if (Math.abs(diff) < 0.01) {
           currentMenuVolume = targetVolume;
-          if (gainNode)
-            gainNode.gain.value = Math.max(0, Math.min(1, currentMenuVolume));
+          if (gainNode) gainNode.gain.value = currentMenuVolume;
+
+          if (isIOS) {
+            const track = getCurrentTrack();
+            if (track) track.volume = currentMenuVolume;
+          }
+
           if (fadeInterval) clearInterval(fadeInterval);
           fadeInterval = null;
         } else {
           currentMenuVolume += diff > 0 ? 0.01 : -0.015;
-          if (gainNode)
-            gainNode.gain.value = Math.max(0, Math.min(1, currentMenuVolume));
+          const level = Math.max(0, Math.min(1, currentMenuVolume));
+          if (gainNode) gainNode.gain.value = level;
+
+          if (isIOS) {
+            const track = getCurrentTrack();
+            if (track) track.volume = level;
+          }
         }
       }, 20);
     } else {
@@ -160,6 +175,12 @@ export function useMenuAudio(musicActive = true) {
         currentMenuVolume = Math.max(0, currentMenuVolume - 0.015);
         if (gainNode)
           gainNode.gain.value = Math.max(0, Math.min(1, currentMenuVolume));
+
+        if (isIOS) {
+          const track = getCurrentTrack();
+          if (track) track.volume = currentMenuVolume;
+        }
+
         if (currentMenuVolume <= 0) {
           pauseAllTracks();
           if (fadeInterval) clearInterval(fadeInterval);
@@ -169,25 +190,11 @@ export function useMenuAudio(musicActive = true) {
     }
 
     const handleVisibilityChange = () => {
-      if (document.hidden) {
-        if (isIOS) {
-          pauseAllTracks();
-          suspendSharedAudioContext();
-        }
-      } else {
+      if (!document.hidden) {
         resumeSharedAudioContext();
-        if (isIOS) {
-          // Delay to let AudioContext stabilize on iOS before starting HTMLAudioElement
-          setTimeout(() => {
-            if (document.hidden || !musicActive || !musicEnabled) return;
-            const track = getCurrentTrack();
-            if (track.paused) {
-              // Forced reset of sync buffer
-              track.currentTime = track.currentTime + 0.001;
-              track.play().catch(() => {});
-            }
-          }, 200);
-        } else if (musicActive && musicEnabled) {
+
+        // Standard resume logic without any delay or catch-up workarounds.
+        if (musicActive && musicEnabled) {
           const track = getCurrentTrack();
           if (track.paused) track.play().catch(() => {});
         }
