@@ -8,7 +8,6 @@
   font-family: var(--font-sans);
   color: var(--clr-text);
   padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
 }
 
 @keyframes fade-in {
