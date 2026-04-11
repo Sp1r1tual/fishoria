@@ -3,13 +3,16 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  min-height: 100lvh;
+  min-height: 100dvh;
   position: relative;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 @media (max-width: 1044px) {
   .main-menu {
-    padding: 0;
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 
