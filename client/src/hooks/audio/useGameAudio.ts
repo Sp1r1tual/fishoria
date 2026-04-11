@@ -185,8 +185,9 @@ export async function unlockAudio() {
 // Hook
 // ---------------------------------------------------------------------------
 export function useGameAudio(manageAmbient = true) {
-  const { sfxEnabled, sfxVolume, ambientEnabled, ambientVolume } =
-    useAppSelector((s) => s.settings);
+  const { sfxEnabled, ambientEnabled, ambientVolume } = useAppSelector(
+    (s) => s.settings,
+  );
   const weather = useAppSelector((s) => s.game.weather);
   const currentLakeId = useAppSelector((s) => s.game.currentLakeId);
 
@@ -199,118 +200,166 @@ export function useGameAudio(manageAmbient = true) {
   const unwindingTimeoutRef = useRef<number | null>(null);
   const currentAmbientRef = useRef<HTMLAudioElement | null>(null);
 
-  // Keep refs in sync & update active loop volumes
+  // Keep refs in sync with latest values
   useEffect(() => {
     sfxEnabledRef.current = sfxEnabled;
     ambientEnabledRef.current = ambientEnabled !== false;
     ambientVolumeRef.current = ambientVolume ?? 60;
     weatherRef.current = weather;
+  }, [sfxEnabled, ambientEnabled, ambientVolume, weather]);
 
-    if (manageAmbient) {
-      const shouldPlayAny = ambientEnabled !== false;
-      const targetVolume = shouldPlayAny ? (ambientVolume ?? 60) / 100 : 0;
+  // Ambient playback management (only for the managing instance)
+  useEffect(() => {
+    if (!manageAmbient) return;
 
+    const shouldPlayAny = ambientEnabled !== false;
+    const targetVolume = shouldPlayAny ? (ambientVolume ?? 60) / 100 : 0;
+
+    if (ambientFadeInterval) {
+      clearInterval(ambientFadeInterval);
+      ambientFadeInterval = null;
+    }
+
+    // Sync tracks visibility (play/pause)
+    const activeLakeAmbient =
+      weather !== 'rain' ? currentAmbientRef.current : null;
+    const activeRainAmbient = weather === 'rain' ? AMBIENT.rain : null;
+
+    // Ensure connected
+    const gainNode =
+      ambientGainNode ||
+      (activeLakeAmbient
+        ? ensureAmbientConnected(activeLakeAmbient)
+        : activeRainAmbient
+          ? ensureAmbientConnected(activeRainAmbient)
+          : null);
+
+    if (activeLakeAmbient) {
+      if (activeLakeAmbient.paused && !document.hidden) {
+        // Don't reset currentTime — preserve playback position across settings changes
+        activeLakeAmbient.play().catch(() => {});
+      }
+      activeLakeAmbient.volume = 1;
+    }
+    if (activeRainAmbient) {
+      if (activeRainAmbient.paused && !document.hidden) {
+        activeRainAmbient.play().catch(() => {});
+      }
+      activeRainAmbient.volume = 1;
+    }
+
+    // Pause others
+    Object.keys(AMBIENT).forEach((key) => {
+      const a = AMBIENT[key];
+      if (a !== activeLakeAmbient && a !== activeRainAmbient) {
+        a.pause();
+      }
+    });
+
+    // RAMP VOLUME
+    ambientFadeInterval = setInterval(() => {
+      const diff = targetVolume - currentAmbientLevel;
+      if (Math.abs(diff) < 0.01) {
+        currentAmbientLevel = targetVolume;
+        if (gainNode) gainNode.gain.value = currentAmbientLevel;
+        if (ambientFadeInterval) clearInterval(ambientFadeInterval);
+        ambientFadeInterval = null;
+      } else {
+        currentAmbientLevel += diff > 0 ? 0.01 : -0.015;
+        if (gainNode)
+          gainNode.gain.value = Math.max(0, Math.min(1, currentAmbientLevel));
+      }
+    }, 20);
+
+    return () => {
       if (ambientFadeInterval) {
         clearInterval(ambientFadeInterval);
         ambientFadeInterval = null;
       }
+    };
+  }, [ambientEnabled, ambientVolume, weather, currentLakeId, manageAmbient]);
 
-      // Sync tracks visibility (play/pause)
-      const activeLakeAmbient =
-        weather !== 'rain' ? currentAmbientRef.current : null;
-      const activeRainAmbient = weather === 'rain' ? AMBIENT.rain : null;
-
-      // Ensure connected
-      const gainNode =
-        ambientGainNode ||
-        (activeLakeAmbient
-          ? ensureAmbientConnected(activeLakeAmbient)
-          : activeRainAmbient
-            ? ensureAmbientConnected(activeRainAmbient)
-            : null);
-
-      if (activeLakeAmbient) {
-        if (activeLakeAmbient.paused && !document.hidden) {
-          activeLakeAmbient.currentTime = 0;
-          activeLakeAmbient.play().catch(() => {});
-        }
-        activeLakeAmbient.volume = 1;
-      }
-      if (activeRainAmbient) {
-        if (activeRainAmbient.paused && !document.hidden) {
-          activeRainAmbient.currentTime = 0;
-          activeRainAmbient.play().catch(() => {});
-        }
-        activeRainAmbient.volume = 1;
-      }
-
-      // Pause others
-      Object.keys(AMBIENT).forEach((key) => {
-        const a = AMBIENT[key];
-        if (a !== activeLakeAmbient && a !== activeRainAmbient) {
-          a.pause();
-        }
-      });
-
-      // RAMP VOLUME
-      ambientFadeInterval = setInterval(() => {
-        const diff = targetVolume - currentAmbientLevel;
-        if (Math.abs(diff) < 0.01) {
-          currentAmbientLevel = targetVolume;
-          if (gainNode) gainNode.gain.value = currentAmbientLevel;
-          if (ambientFadeInterval) clearInterval(ambientFadeInterval);
-          ambientFadeInterval = null;
-        } else {
-          currentAmbientLevel += diff > 0 ? 0.01 : -0.015;
-          if (gainNode)
-            gainNode.gain.value = Math.max(0, Math.min(1, currentAmbientLevel));
-        }
-      }, 20);
-    }
-
+  // Visibility change handler — registered once per mount, uses refs for current state.
+  // Separated from ambient effect to avoid re-registering the listener on every
+  // settings/weather change, which caused race conditions with multiple instances.
+  useEffect(() => {
     const handleVisibilityChange = () => {
-      // On iOS, we must suspend context to avoid "catch-up" glitch speed-up
-      // On other platforms (PC/Android), we keep it running for background bell sounds
       if (document.hidden) {
         if (isIOS) {
           Object.values(AMBIENT).forEach((a) => a.pause());
+          // Stop active looping SFX to prevent catch-up glitch on resume
+          for (const key of Object.keys(activeLoops) as SfxKey[]) {
+            const entry = activeLoops[key];
+            if (entry) {
+              try {
+                entry.source.stop();
+              } catch {
+                /* already stopped */
+              }
+              entry.source.disconnect();
+              entry.gain.disconnect();
+              delete activeLoops[key];
+            }
+          }
+          // Clear any pending unwinding timeout to prevent it firing during suspend
+          if (unwindingTimeoutRef.current !== null) {
+            window.clearTimeout(unwindingTimeoutRef.current);
+            unwindingTimeoutRef.current = null;
+          }
           suspendSharedAudioContext();
         }
       } else {
-        resumeSharedAudioContext();
-        if (manageAmbient && ambientEnabledRef.current) {
-          const activeLakeAmbient =
-            weatherRef.current !== 'rain' ? currentAmbientRef.current : null;
-          const activeRainAmbient =
-            weatherRef.current === 'rain' ? AMBIENT.rain : null;
+        if (isIOS) {
+          // iOS: Wait for the AudioContext to fully resume before touching ambient audio.
+          // Playing immediately after resume causes a "catch-up" speed glitch where
+          // the audio engine tries to fast-forward through the time it was suspended.
+          const ctx = getSharedAudioContext();
+          resumeSharedAudioContext().then(() => {
+            // Wait an extra frame for the audio pipeline to stabilize
+            setTimeout(() => {
+              if (ctx.state !== 'running') return;
+              if (!manageAmbient || !ambientEnabledRef.current) return;
 
-          if (activeLakeAmbient && activeLakeAmbient.paused) {
-            activeLakeAmbient.play().catch(() => {});
-          }
-          if (activeRainAmbient && activeRainAmbient.paused) {
-            activeRainAmbient.play().catch(() => {});
+              const activeLakeAmbient =
+                weatherRef.current !== 'rain'
+                  ? currentAmbientRef.current
+                  : null;
+              const activeRainAmbient =
+                weatherRef.current === 'rain' ? AMBIENT.rain : null;
+
+              if (activeLakeAmbient && activeLakeAmbient.paused) {
+                activeLakeAmbient.play().catch(() => {});
+              }
+              if (activeRainAmbient && activeRainAmbient.paused) {
+                activeRainAmbient.play().catch(() => {});
+              }
+            }, 150);
+          });
+        } else {
+          resumeSharedAudioContext();
+          if (manageAmbient && ambientEnabledRef.current) {
+            const activeLakeAmbient =
+              weatherRef.current !== 'rain' ? currentAmbientRef.current : null;
+            const activeRainAmbient =
+              weatherRef.current === 'rain' ? AMBIENT.rain : null;
+
+            if (activeLakeAmbient && activeLakeAmbient.paused) {
+              activeLakeAmbient.play().catch(() => {});
+            }
+            if (activeRainAmbient && activeRainAmbient.paused) {
+              activeRainAmbient.play().catch(() => {});
+            }
           }
         }
       }
     };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
 
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      if (ambientFadeInterval) {
-        clearInterval(ambientFadeInterval);
-        ambientFadeInterval = null;
-      }
     };
-  }, [
-    sfxEnabled,
-    sfxVolume,
-    ambientEnabled,
-    ambientVolume,
-    weather,
-    currentLakeId,
-    manageAmbient,
-  ]);
+    // manageAmbient is constant per hook instance, so this effectively runs once
+  }, [manageAmbient]);
 
   // -------------------------------------------------------------------------
   // Web Audio playback helpers
