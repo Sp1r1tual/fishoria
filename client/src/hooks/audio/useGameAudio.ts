@@ -417,7 +417,7 @@ export function useGameAudio(manageAmbient = true) {
           if (currentPhaseRef.current === 'reeling') {
             startLoop('unwinding');
           }
-        }, 1000);
+        }, 300);
       }
     },
     [startLoop, stopLoop],

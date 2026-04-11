@@ -122,50 +122,47 @@ export function useMenuAudio(musicActive = true) {
     const shouldPlay = musicActive && musicEnabled;
     const targetVolume = shouldPlay ? musicVolume / 100 : 0;
 
-    if (fadeInterval) {
-      clearInterval(fadeInterval);
-      fadeInterval = null;
-    }
-
-    if (shouldPlay) {
-      const gainNode = ensureAllTracksConnected();
-      const track = getCurrentTrack();
-
-      if (track.paused) {
-        currentMenuVolume = 0;
-        if (gainNode) gainNode.gain.value = 0;
-        track.volume = 1; // Keep HTML volume at max, use GainNode for control
-        track.currentTime = 0;
-        track.play().catch(() => {});
+    // Helper to ramp volume to target
+    const syncMenuVolume = (target: number) => {
+      if (fadeInterval) {
+        clearInterval(fadeInterval);
+        fadeInterval = null;
       }
 
+      const gainNode = ensureAllTracksConnected();
+      if (!gainNode) return;
+
       fadeInterval = setInterval(() => {
-        const diff = targetVolume - currentMenuVolume;
+        const diff = target - currentMenuVolume;
         if (Math.abs(diff) < 0.01) {
-          currentMenuVolume = targetVolume;
-          if (gainNode) gainNode.gain.value = currentMenuVolume;
+          currentMenuVolume = target;
+          gainNode.gain.value = currentMenuVolume;
+
+          if (currentMenuVolume <= 0 && target === 0) pauseAllTracks();
 
           if (fadeInterval) clearInterval(fadeInterval);
           fadeInterval = null;
         } else {
           currentMenuVolume += diff > 0 ? 0.01 : -0.015;
           const level = Math.max(0, Math.min(1, currentMenuVolume));
-          if (gainNode) gainNode.gain.value = level;
+          gainNode.gain.value = level;
         }
       }, 20);
-    } else {
-      const gainNode = ensureAllTracksConnected();
-      fadeInterval = setInterval(() => {
-        currentMenuVolume = Math.max(0, currentMenuVolume - 0.015);
-        if (gainNode)
-          gainNode.gain.value = Math.max(0, Math.min(1, currentMenuVolume));
+    };
 
-        if (currentMenuVolume <= 0) {
-          pauseAllTracks();
-          if (fadeInterval) clearInterval(fadeInterval);
-          fadeInterval = null;
-        }
-      }, 20);
+    if (shouldPlay) {
+      const track = getCurrentTrack();
+      if (track.paused) {
+        currentMenuVolume = 0;
+        const gainNode = ensureAllTracksConnected();
+        if (gainNode) gainNode.gain.value = 0;
+        track.volume = 1; // Keep HTML volume at max
+        track.currentTime = 0;
+        track.play().catch(() => {});
+      }
+      syncMenuVolume(targetVolume);
+    } else {
+      syncMenuVolume(0);
     }
 
     const handleVisibilityChange = () => {
@@ -182,6 +179,7 @@ export function useMenuAudio(musicActive = true) {
             () => {
               const track = getCurrentTrack();
               if (track.paused) track.play().catch(() => {});
+              syncMenuVolume(targetVolume); // Re-trigger the fade-in
             },
             isIOS ? 250 : 0,
           );
