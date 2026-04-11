@@ -154,18 +154,6 @@ export async function unlockAudio() {
       if (!isIOS) {
         ensureAmbientConnected(bgAudio);
       }
-
-      bgAudio.muted = true;
-      bgAudio
-        .play()
-        .then(() => {
-          bgAudio.pause();
-          bgAudio.muted = false;
-          bgAudio.currentTime = 0;
-        })
-        .catch(() => {
-          bgAudio.muted = false;
-        });
     });
 
     // Resume multiple times to be absolutely sure
