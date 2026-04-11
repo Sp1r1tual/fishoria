@@ -49,8 +49,14 @@ export class TensionSystem {
 
     if (params.playerReeling) {
       // Single unified tension formula — no fighting/tired distinction
-      tension +=
-        (normalizedForce + TENSION.reelingBase) * dtSec * TENSION.reelingRate;
+      let buildRate =
+        (normalizedForce + TENSION.reelingBase) * TENSION.reelingRate;
+
+      // Cap the build rate so it never drops below ~0.6s to snap from 0 to 100%.
+      // This prevents massive fish from making reeling physically impossible with 50ms snaps.
+      buildRate = Math.min(buildRate, 1.8);
+
+      tension += buildRate * dtSec;
     } else if (params.playerRelaxing) {
       // Quickly drop tension, giving fish a chance to run
       tension -= dtSec * TENSION.relaxRate;

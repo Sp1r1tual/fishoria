@@ -104,25 +104,72 @@ export function getAttractionForce(
   const baseRange = ATTRACTION.baseAttractionRange * gbRadiusScale;
 
   if (isInfluencedByGroundbait) {
+    let shouldAttract = false;
+
+    // If bait is cast, check rig conditions
+    if (ctx.baitPosition && ctx.rigType) {
+      const minD = fish.originalDepthRange.min;
+      const maxD = fish.originalDepthRange.max;
+      const isComfortableDepth = ctx.baitDepth >= minD && ctx.baitDepth <= maxD;
+
+      if (ctx.rigType === 'float') {
+        shouldAttract = isComfortableDepth;
+      } else if (ctx.rigType === 'feeder') {
+        shouldAttract = true;
+      } else if (ctx.rigType === 'spinning') {
+        shouldAttract = true; // spinning bait generally pulls fish from their current locations, no depth restriction
+      }
+
+      if (shouldAttract && ctx.rigType === 'feeder') {
+        // Feeder groundbait makes the fish want to go to the bottom
+        fish.preferredDepthRange = {
+          min: ctx.lakeMaxDepth * 0.9,
+          max: ctx.lakeMaxDepth,
+        };
+      } else {
+        fish.preferredDepthRange = { ...fish.originalDepthRange };
+      }
+    } else {
+      // If not cast or no rig selected, restore depth range and do not attract
+      fish.preferredDepthRange = { ...fish.originalDepthRange };
+      shouldAttract = false;
+    }
+
+    if (!shouldAttract) return [0, 0];
+
     // Groundbait Logic: Create a "gathering zone" around the bait.
-    const comfortZone = baseRange * 0.45;
+    // Hard limit: groundbait only works within 2.2x its base range (approx 700px)
+    const maxGbDist = baseRange * 2.2;
+    if (dist > maxGbDist) return [0, 0];
+
+    const comfortZone = baseRange * 0.15;
 
     if (dist > comfortZone) {
       // Zone 1: Strong outer pull to the area
+      // Normalized pull that fades out as we hit the boundary
+      const fadeOut = Math.max(
+        0,
+        1 - (dist - baseRange) / (maxGbDist - baseRange),
+      );
       str =
-        Math.min(1.5, (baseRange * 1.8) / dist) *
+        Math.min(1.8, (baseRange * 2.0) / dist) *
         fish.config.behavior.curiosity *
-        gbStrBonus;
+        gbStrBonus *
+        (dist > baseRange ? fadeOut : 1.0);
     } else {
-      // Zone 2: Weak inner pull to bring fish directly to the hook
-      // Scaling force from 0.05 to 0.15 based on curiosity and groundbait strength
-      str = (0.05 + 0.1 * fish.config.behavior.curiosity) * gbStrBonus;
+      // Zone 2: Inner pull to bring fish directly to the hook
+      str = (0.12 + 0.1 * fish.config.behavior.curiosity) * gbStrBonus;
     }
   } else {
+    // Standard bait attraction limit (approx 240px)
+    const maxBaitDist = ATTRACTION.baseAttractionRange * 3.0;
+    if (dist > maxBaitDist) return [0, 0];
+
     // Standard bait attraction: Pulls the fish directly toward the hook.
     str =
-      Math.min(1, ATTRACTION.baseAttractionRange / dist) *
-      fish.config.behavior.curiosity;
+      Math.min(1.1, ATTRACTION.baseAttractionRange / dist) *
+      fish.config.behavior.curiosity *
+      Math.max(0, 1 - dist / maxBaitDist);
   }
 
   const [nx, ny] = normalize(dx, dy);

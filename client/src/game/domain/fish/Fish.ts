@@ -48,6 +48,7 @@ export class Fish {
   isResting: boolean = false;
   restDuration: number = 0;
   preferredDepthRange: { min: number; max: number };
+  originalDepthRange: { min: number; max: number };
   weightRange: { min: number; max: number };
 
   // Performance: cached depth bias (recalculated every N frames)
@@ -72,7 +73,8 @@ export class Fish {
     };
     this.state = FishState.Idle;
     this.behavior = behavior ?? new SteeringBehavior();
-    this.preferredDepthRange = preferredDepthRange;
+    this.preferredDepthRange = { ...preferredDepthRange };
+    this.originalDepthRange = { ...preferredDepthRange };
     this.weightRange = weightRange ?? config.weightRange;
     // Stagger probes across fish so they don't all probe on the same frame
     this.depthProbeCounter = Math.floor(
@@ -127,7 +129,8 @@ export class Fish {
     this.separationForce.x = 0;
     this.separationForce.y = 0;
     this.nearbyFishCount = 0;
-    this.preferredDepthRange = preferredDepthRange;
+    this.preferredDepthRange = { ...preferredDepthRange };
+    this.originalDepthRange = { ...preferredDepthRange };
     this.weightRange = weightRange ?? config.weightRange;
     if (this.migrationTarget) {
       MigrationRegistry.activeMigrations = Math.max(

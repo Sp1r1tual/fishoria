@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+
+import type { LakeScene } from '@/game/engine/scenes/LakeScene';
 
 import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 
@@ -11,7 +13,7 @@ import { useConsumeMutation } from '@/queries/inventory.queries';
 import { WeatherForecastModal } from '@/components/UI/modals/WeatherForecastModal/WeatherForecastModal';
 import { WeatherStatus } from '@/components/UI/WeatherStatus/WeatherStatus';
 
-import type { LakeScene } from '@/game/engine/scenes/LakeScene';
+import { GameEvents } from '@/game/engine/GameEvents';
 
 import { GROUNDBAITS } from '@/common/configs/game';
 import { TimeManager } from '@/game/managers/TimeManager';
@@ -82,6 +84,30 @@ export function LakeInfo({ sceneRef, isDebugActive }: ILakeInfoProps) {
     sceneRef.current?.setActiveGroundbait(activeGroundbait, expiry);
   };
 
+  const timerRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (!groundbaitExpiresAt) return;
+
+    const update = () => {
+      if (timerRef.current) {
+        timerRef.current.innerText = TimeManager.formatTimeRemaining(
+          groundbaitExpiresAt,
+          t,
+        );
+      }
+    };
+
+    update();
+    const interval = setInterval(update, 1000);
+    const unbind = GameEvents.on('timeUpdate', update);
+
+    return () => {
+      clearInterval(interval);
+      unbind();
+    };
+  }, [groundbaitExpiresAt, t]);
+
   const renderGroundbaitStatus = () => {
     const count = groundbaitCounts[activeGroundbait] ?? 0;
     const isActive = groundbaitExpiresAt !== null;
@@ -113,7 +139,9 @@ export function LakeInfo({ sceneRef, isDebugActive }: ILakeInfoProps) {
           <div className={styles['lake-info__groundbait-timer-wrap']}>
             <div className={styles['lake-info__groundbait-timer']}>
               {t('hud.groundbait')}:{' '}
-              {TimeManager.formatTimeRemaining(groundbaitExpiresAt, t)}
+              <span ref={timerRef}>
+                {TimeManager.formatTimeRemaining(groundbaitExpiresAt, t)}
+              </span>
             </div>
             <button
               className={styles['lake-info__cancel-gb']}

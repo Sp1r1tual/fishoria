@@ -754,7 +754,7 @@ export class LakeScene implements IScene {
     this.updateCtx.waterBoundaryY = this.config.environment.waterBoundaryY;
     this.updateCtx.baitPosition = isCast
       ? { x: this.hookX, y: this.hookY }
-      : null;
+      : { x: W / 2, y: H * 0.75 }; // Default attraction point in the center of the lake when not cast
     this.updateCtx.baitDepth = this.hookDepthM;
     this.updateCtx.timeOfDay = this.timeOfDay;
     this.updateCtx.weather = this.weather;
@@ -843,18 +843,23 @@ export class LakeScene implements IScene {
     ) {
       const gbCfg = GROUNDBAITS[this.activeGroundbaitType];
       if (gbCfg) {
-        const baseRadius = 25; // Matching ATTRACTION.baseAttractionRange
-        const radiusM = baseRadius * (gbCfg.attractionRadiusScale || 1.0);
+        // baseAttractionRange is 80 (pixels/scale).
+        // We show the "core" range (baseRadius * scale) and the "max" influence (maxRadius)
+        const baseRadius = 80;
+        const coreRadius = baseRadius * (gbCfg.attractionRadiusScale || 1.0);
+        const maxRadius = coreRadius * 2.2; // Matching the hard limit in SteeringForces
+
         const isVisibleInPhase = ![
           'idle',
           'caught',
           'broken',
           'escaped',
         ].includes(this.phase);
+
         this.debugLayer.updateGroundbait(
           this.hookX,
           this.hookY,
-          radiusM,
+          maxRadius, // Visualizing the full influence boundary
           isVisibleInPhase,
         );
       }

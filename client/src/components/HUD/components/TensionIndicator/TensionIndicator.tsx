@@ -39,10 +39,21 @@ export function TensionIndicator({
 
       if (!tensionBarsRef.current) return;
 
+      // Detect meaningful changes to avoid redundant DOM updates
+      // while ensuring 0-boundary transitions are always captured.
+      const hasSignificantTensionChange =
+        Math.abs(currentTension - lastDrawnTension) > 0.002 ||
+        (currentTension === 0 && lastDrawnTension > 0) ||
+        (currentTension > 0 && lastDrawnTension === 0);
+
+      const hasSignificantBiteChange =
+        Math.abs(currentBite - lastDrawnBite) > 0.005;
+      const hasPhaseChanged = currentPhase !== lastDrawnPhase;
+
       if (
-        Math.abs(currentTension - lastDrawnTension) < 0.005 &&
-        Math.abs(currentBite - lastDrawnBite) < 0.005 &&
-        currentPhase === lastDrawnPhase
+        !hasSignificantTensionChange &&
+        !hasSignificantBiteChange &&
+        !hasPhaseChanged
       ) {
         return;
       }
@@ -65,7 +76,9 @@ export function TensionIndicator({
 
       for (let i = 0; i < 20; i++) {
         const threshold = i / 20;
-        const isActive = threshold < fillValue;
+        // Add a small epsilon (0.1%) to threshold to avoid "ghost" bars
+        // from microscopic floating point residuals.
+        const isActive = threshold + 0.001 < fillValue;
         const el = segments[i] as HTMLDivElement;
 
         if (el) {

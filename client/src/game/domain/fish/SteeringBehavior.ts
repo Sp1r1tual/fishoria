@@ -311,7 +311,7 @@ export class SteeringBehavior implements IFishBehavior {
             ATTRACTION.baseAttractionRange *
             (ctx.activeGroundbait.attractionRadiusScale || 1.0);
 
-          if (speciesMult > 0 && dist < gbRadius * 1.5) {
+          if (speciesMult > 0 && dist < gbRadius * 2.2) {
             MigrationRegistry.activeMigrations = Math.max(
               0,
               MigrationRegistry.activeMigrations - 1,
@@ -323,8 +323,9 @@ export class SteeringBehavior implements IFishBehavior {
         if (!fish.migrationTarget) {
           const [sax, say] = getAttractionForce(fish, ctx);
           // Additive attraction instead of overriding to let fish still wander naturally
-          forceX += sax * 0.4;
-          forceY += say * 0.4;
+          // Increased influence from 0.4 to 0.8 to make it feel more like a "magnet".
+          forceX += sax * 0.8;
+          forceY += say * 0.8;
         }
       }
 

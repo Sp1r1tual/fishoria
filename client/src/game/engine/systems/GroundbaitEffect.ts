@@ -40,12 +40,12 @@ export class GroundbaitEffect {
         this.PALETTE[Math.floor(Math.random() * this.PALETTE.length)];
 
       this.particles.push({
-        x: W / 2 + (Math.random() - 0.5) * (40 * scale),
-        y: H + 10,
-        vx: (Math.random() - 0.5) * (55 * scale),
-        vy: (-8 - Math.random() * 40) * scale,
+        x: W / 2 + (Math.random() - 0.5) * (60 * scale),
+        y: H - 20, // Spawn slightly inside the screen
+        vx: (Math.random() - 0.5) * (60 * scale),
+        vy: (-15 - Math.random() * 45) * scale, // Increased upward burst
         life: 1.0,
-        size: (1.0 + Math.random() * 3.5) * scale,
+        size: (1.5 + Math.random() * 4.5) * scale,
         alpha: 1.0,
         color,
       });
