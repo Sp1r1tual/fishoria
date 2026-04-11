@@ -322,6 +322,7 @@
     "buy": "Buy",
     "sell": "Sell",
     "qty": "Qty",
+    "available": "Available",
     "notEnoughMoney": "Not enough money!",
     "tabs": {
       "bait": "Bait",

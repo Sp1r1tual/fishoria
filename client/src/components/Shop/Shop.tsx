@@ -134,7 +134,7 @@ export function Shop() {
                           {t(`baits.${bait.id}.description`)}
                         </div>
                         <div className={styles['shop-item__owned']}>
-                          {t('inventory.title')}:{' '}
+                          {t('shop.available')}:{' '}
                           <span>{baitCounts[id] ?? 0}</span>
                         </div>
 
@@ -217,7 +217,7 @@ export function Shop() {
                           {t(`groundbaits.${gb.id}.description`)}
                         </div>
                         <div className={styles['shop-item__owned']}>
-                          {t('inventory.title')}:{' '}
+                          {t('shop.available')}:{' '}
                           <span>{groundbaitCounts[id] ?? 0}</span>
                         </div>
 
