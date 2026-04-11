@@ -2,10 +2,14 @@ import { Application } from 'pixi.js';
 
 import type { IScene } from '@/common/types';
 
+import BackgroundTimerWorker from './workers/backgroundTimer.worker?worker';
+
 export class Game {
   private app!: Application;
   private currentScene: IScene | null = null;
   private isDestroyed = false;
+  private worker: Worker | null = null;
+  private handleVisibilityChange: (() => void) | null = null;
 
   async init(container: HTMLDivElement): Promise<void> {
     this.app = new Application();
@@ -48,9 +52,30 @@ export class Game {
     this.app.canvas.style.margin = '0';
     container.appendChild(this.app.canvas);
 
+    // When visible, use standard PixiJS ticker
     this.app.ticker.add((ticker) => {
-      this.currentScene?.update(ticker.deltaTime);
+      if (!document.hidden) {
+        this.currentScene?.update(ticker.deltaTime);
+      }
     });
+
+    // Instantiate the Web Worker to act as a reliable background timer (bypassing main thread 1000ms throttle)
+    this.worker = new BackgroundTimerWorker();
+    this.worker.onmessage = (e) => {
+      // If hidden, update game logic with calculated delta time
+      if (document.hidden && !this.isDestroyed) {
+        this.currentScene?.update(e.data.dt);
+      }
+    };
+
+    this.handleVisibilityChange = () => {
+      if (document.hidden) {
+        this.worker?.postMessage('start');
+      } else {
+        this.worker?.postMessage('stop');
+      }
+    };
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
   }
 
   async loadScene(scene: IScene): Promise<void> {
@@ -81,6 +106,16 @@ export class Game {
 
   destroy(): void {
     this.isDestroyed = true;
+    if (this.handleVisibilityChange) {
+      document.removeEventListener(
+        'visibilitychange',
+        this.handleVisibilityChange,
+      );
+    }
+    if (this.worker) {
+      this.worker.terminate();
+      this.worker = null;
+    }
     this.currentScene?.destroy();
     try {
       if (this.app?.renderer && this.app.canvas) {

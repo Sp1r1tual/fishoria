@@ -22,7 +22,7 @@ export const GEAR_WEAR = {
 
 export const CATCH_RESULT = {
   /** Weight distribution power: higher = more small fish, rarer trophies */
-  weightDistributionPower: 5.5,
+  weightDistributionPower: 2.4,
 
   /** Length calculation: length = max(minLength, weight * lengthPerKg + random * lengthJitter) */
   minLength: 5,

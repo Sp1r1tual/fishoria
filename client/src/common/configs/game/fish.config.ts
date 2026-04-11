@@ -16,11 +16,11 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     name: 'Perch',
     description:
       'A feisty predator with striking striped markings. Common near submerged vegetation.',
-    weightRange: { min: 0.05, max: 2 },
+    weightRange: { min: 0.12, max: 2 },
     activityByTimeOfDay: { morning: 0.9, day: 0.7, evening: 0.8, night: 0.1 },
     preferredBaits: ['worm', 'maggot'],
     preferredGroundbait: 'dried_blood',
-    baseCatchChance: 0.75,
+    baseCatchChance: 0.65,
     behavior: {
       aggression: 0.7,
       curiosity: 0.8,
@@ -93,7 +93,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     name: 'Crucian Carp',
     description:
       'A resilient little fish that survives in low-oxygen water. Bites cautiously.',
-    weightRange: { min: 0.1, max: 3 },
+    weightRange: { min: 0.25, max: 3 },
     activityByTimeOfDay: { morning: 0.9, day: 0.4, evening: 0.8, night: 0.75 },
     preferredBaits: ['worm', 'bread'],
     preferredGroundbait: 'vanillin',
@@ -113,11 +113,11 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     name: 'Roach',
     description:
       'A shoal fish found near mid-water. Very common, great for beginners.',
-    weightRange: { min: 0.05, max: 1.2 },
+    weightRange: { min: 0.15, max: 1.2 },
     activityByTimeOfDay: { morning: 0.95, day: 0.8, evening: 0.5, night: 0.1 },
     preferredBaits: ['maggot', 'bread'],
     preferredGroundbait: 'vanillin',
-    baseCatchChance: 0.85,
+    baseCatchChance: 0.7,
     behavior: {
       aggression: 0.2,
       curiosity: 0.95,
@@ -159,11 +159,11 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     name: 'Ruffe',
     description:
       'A small spiny fish related to the prefix. Often a nuisance bite.',
-    weightRange: { min: 0.02, max: 0.4 },
+    weightRange: { min: 0.08, max: 0.4 },
     activityByTimeOfDay: { morning: 0.4, day: 0.2, evening: 0.8, night: 1.0 },
     preferredBaits: ['worm', 'maggot'],
     preferredGroundbait: 'vanillin',
-    baseCatchChance: 0.95,
+    baseCatchChance: 0.75,
     behavior: {
       aggression: 0.3,
       curiosity: 1,

@@ -34,12 +34,12 @@ export const LAKES: ILakeConfig[] = [
       species: [
         {
           speciesId: 'crucian',
-          weight: 35, // ~35% (Predominant in such lakes)
+          weight: 35, // ~25% (was 35%)
           preferredDepthRange: { min: 1, max: 2.3 },
         },
         {
           speciesId: 'roach',
-          weight: 20,
+          weight: 15, // ~15% (was 20%)
           preferredDepthRange: { min: 0.3, max: 1.45 },
         },
         {
@@ -49,12 +49,12 @@ export const LAKES: ILakeConfig[] = [
         },
         {
           speciesId: 'pike',
-          weight: 22,
+          weight: 30, // ~40% (was 22%)
           preferredDepthRange: { min: 0.2, max: 2.5 },
         },
         {
           speciesId: 'ruffe',
-          weight: 8,
+          weight: 5, // ~5% (was 8%)
           preferredDepthRange: { min: 0.75, max: 2.7 },
         },
       ],

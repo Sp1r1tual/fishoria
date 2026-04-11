@@ -228,14 +228,14 @@ export function useGameAudio(manageAmbient = true) {
             : null);
 
       if (activeLakeAmbient) {
-        if (activeLakeAmbient.paused) {
+        if (activeLakeAmbient.paused && !document.hidden) {
           activeLakeAmbient.currentTime = 0;
           activeLakeAmbient.play().catch(() => {});
         }
         activeLakeAmbient.volume = 1;
       }
       if (activeRainAmbient) {
-        if (activeRainAmbient.paused) {
+        if (activeRainAmbient.paused && !document.hidden) {
           activeRainAmbient.currentTime = 0;
           activeRainAmbient.play().catch(() => {});
         }
@@ -476,13 +476,15 @@ export function useGameAudio(manageAmbient = true) {
         if (
           ambientEnabledRef.current &&
           weatherRef.current !== 'rain' &&
-          targetAudio.paused
+          targetAudio.paused &&
+          !document.hidden
         ) {
           targetAudio.currentTime = 0;
           targetAudio.play().catch(() => {});
         } else if (
           weatherRef.current === 'rain' ||
-          !ambientEnabledRef.current
+          !ambientEnabledRef.current ||
+          document.hidden
         ) {
           targetAudio.pause();
         }

@@ -1085,7 +1085,8 @@ export class LakeScene implements IScene {
     let biter: Fish | null = null;
 
     if (this.biteUpdateTimer >= 5) {
-      // Every 5 frames (~12 times/sec)
+      // Store elapsed logic frames before zeroing
+      const elapsedBiteFrames = this.biteUpdateTimer;
       this.biteUpdateTimer = 0;
       const biteResult = detectBite({
         fish: this.spawnSystem.fish,
@@ -1095,7 +1096,7 @@ export class LakeScene implements IScene {
         canvasHeight: H,
         timeOfDay: this.timeOfDay,
         visibility: this.config.environment.visibility,
-        deltaTime: deltaTime * 5, // Account for skipped frames in AI logic
+        deltaTime: elapsedBiteFrames, // Real elapsed frames instead of a hardcoded *5 multiplier
         hookDepthM:
           this.hookConfig?.rigType === 'spinning'
             ? this.currentLureDepthM
