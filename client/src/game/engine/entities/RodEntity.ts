@@ -176,7 +176,11 @@ export class RodEntity {
       const my = (p1.y + p2.y) / 2 + this.lineSlack * 20 * this.scale;
       this.lineGfx.quadraticCurveTo(mx, my, p2.x, p2.y);
     }
-    this.lineGfx.stroke({ width: 0.7 * this.scale, color, alpha: alpha });
+    // Thicker line for better visibility, especially on mobile
+    const baseWidth = this.scale < 0.75 ? 2.6 : 1.4;
+    const lineWidth = baseWidth * this.scale;
+
+    this.lineGfx.stroke({ width: lineWidth, color, alpha: alpha });
 
     const tip = this.guidePoints[this.guidePoints.length - 1];
     const dx = this.hookX - tip.x;
@@ -228,7 +232,7 @@ export class RodEntity {
       this.lineGfx.lineTo(this.hookX, this.hookY);
 
       this.lineGfx.stroke({
-        width: 0.8 * this.scale,
+        width: lineWidth * 1.1, // Slightly thicker for the main line segment
         color,
         alpha: isCritical ? 0.95 : 0.6,
       });

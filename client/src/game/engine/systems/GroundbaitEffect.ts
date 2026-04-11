@@ -32,20 +32,23 @@ export class GroundbaitEffect {
    * Spawns a burst of groundbait particles
    */
   public spawn(W: number, H: number): void {
-    const scale = W < 1000 ? 0.75 : 1.0;
+    // Detect mobile/small screen based on renderer width (considering Retina/high DPI)
+    const isSmallScreen = W < 1000;
+    const scale = isSmallScreen ? 0.65 : 1.0;
+    const count = isSmallScreen ? 50 : 75;
 
     // Spawn burst of particles with scaled horizontal spread and vertical arc
-    for (let i = 0; i < 75; i++) {
+    for (let i = 0; i < count; i++) {
       const color =
         this.PALETTE[Math.floor(Math.random() * this.PALETTE.length)];
 
       this.particles.push({
-        x: W / 2 + (Math.random() - 0.5) * (60 * scale),
-        y: H - 20, // Spawn slightly inside the screen
-        vx: (Math.random() - 0.5) * (60 * scale),
-        vy: (-15 - Math.random() * 45) * scale, // Increased upward burst
+        x: W / 2 + (Math.random() - 0.5) * (40 * scale),
+        y: H - 15,
+        vx: (Math.random() - 0.5) * (50 * scale),
+        vy: (-12 - Math.random() * 38) * scale,
         life: 1.0,
-        size: (1.5 + Math.random() * 4.5) * scale,
+        size: (1.2 + Math.random() * 3.8) * scale,
         alpha: 1.0,
         color,
       });

@@ -119,8 +119,15 @@ export class InputHandler {
         this.castClickBound as EventListener,
       );
     } else {
+      canvas.addEventListener(
+        'touchend',
+        (e) => {
+          this.castClickBound(e);
+          e.preventDefault(); // Prevent phantom click on mobile
+        },
+        { passive: false },
+      );
       canvas.addEventListener('click', this.castClickBound as EventListener);
-      canvas.addEventListener('touchend', this.castClickBound as EventListener);
     }
     window.addEventListener('keydown', this.keyDownBound);
     window.addEventListener('keyup', this.keyUpBound);
@@ -135,10 +142,6 @@ export class InputHandler {
     } else {
       this.canvas.removeEventListener(
         'click',
-        this.castClickBound as EventListener,
-      );
-      this.canvas.removeEventListener(
-        'touchend',
         this.castClickBound as EventListener,
       );
     }

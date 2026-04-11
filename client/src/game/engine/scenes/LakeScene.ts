@@ -397,10 +397,15 @@ export class LakeScene implements IScene {
       this.callbacks.onResetCast?.(this.phase);
     }
     this.resetCast(true); // Silent reset to avoid double phase transition (idle -> waiting) in UI
+
+    // Ensure dimensions are fresh before validation, handles mobile address bar / orientation shifts
+    const W = this.app.renderer.width;
+    const H = this.app.renderer.height;
+
     const target = validateCast(
       pixel,
-      this.app.renderer.width,
-      this.app.renderer.height,
+      W,
+      H,
       this.config.allowedCastArea,
       this.config.environment.waterBoundaryY,
     );
@@ -409,8 +414,6 @@ export class LakeScene implements IScene {
       return;
     }
 
-    const W = this.app.renderer.width;
-    const H = this.app.renderer.height;
     const waterY = H * this.config.environment.waterBoundaryY;
     const waterHeight = Math.max(1, H - waterY);
 
@@ -659,6 +662,16 @@ export class LakeScene implements IScene {
     }
 
     this.phase = 'idle';
+
+    // Explicitly reset hook and cast coordinates to screen center for a predictable next cast
+    const W = this.app.renderer.width;
+    const H = this.app.renderer.height;
+    this.hookX = W / 2;
+    this.hookY = H / 2;
+    this.castX = this.hookX;
+    this.castY = this.hookY;
+    this.currentLureDepthM = 0;
+
     for (const fish of this.spawnSystem.fish) {
       fish.setState(FishState.Idle);
       fish.interestLevel = 0;
