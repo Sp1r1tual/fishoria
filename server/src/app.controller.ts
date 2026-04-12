@@ -4,7 +4,7 @@ import { Throttle } from '@nestjs/throttler';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import * as fs from 'fs';
 import * as path from 'path';
-import { marked } from 'marked';
+import type { marked as MarkedType } from 'marked';
 
 import { AppService } from './app.service';
 import { getAdminDashboardTemplate } from './common/templates/admin-dashboard.template';
@@ -41,9 +41,13 @@ export class AppController {
       throw new NotFoundException('Documentation file not found');
     }
 
+    const { marked } = await (import('marked') as Promise<{
+      marked: typeof MarkedType;
+    }>);
     const content = fs.readFileSync(filePath, 'utf-8');
+
     return {
-      html: marked(content),
+      html: await marked.parse(content),
       filename,
     };
   }
