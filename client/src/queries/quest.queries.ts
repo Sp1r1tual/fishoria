@@ -6,12 +6,12 @@ import type { IPlayerQuest, IPlayerProfile } from '@/common/types/player.types';
 import { useGameAudio } from '@/hooks/audio/useGameAudio';
 import { useAppDispatch } from '@/hooks/core/useAppStore';
 
-import { playerKeys } from './player.queries';
+import { PLAYER_KEYS } from './player.queries';
 import { addToast } from '@/store/slices/uiSlice';
 
 import { QuestService } from '@/services/quest.service';
 
-const QUEST_KEYS = {
+export const QUEST_KEYS = {
   all: ['quests'] as const,
 };
 
@@ -68,7 +68,7 @@ export const useClaimQuestReward = () => {
         }),
       );
 
-      queryClient.setQueryData(playerKeys.profile(), updatedProfile);
+      queryClient.setQueryData(PLAYER_KEYS.profile(), updatedProfile);
 
       queryClient.invalidateQueries({ queryKey: QUEST_KEYS.all });
     },

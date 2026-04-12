@@ -1,4 +1,4 @@
-import type { BaitTypeType, GroundbaitTypeType } from './index';
+import type { BaitTypeType, GroundbaitTypeType, WeatherType } from './index';
 
 export interface IFishBehaviorTraits {
   aggression: number;
@@ -41,7 +41,7 @@ export interface IUpdateContext {
   baitPosition: { x: number; y: number } | null;
   baitDepth: number;
   timeOfDay: string;
-  weather: 'clear' | 'cloudy' | 'rain';
+  weather: WeatherType;
   obstacles: Array<{ x: number; y: number; radius: number }>;
   playerReeling?: boolean;
   isAnyFishHooked?: boolean;

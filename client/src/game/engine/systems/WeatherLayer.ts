@@ -1,4 +1,5 @@
 import { Container, Graphics, Application } from 'pixi.js';
+import type { WeatherType } from '@/common/types';
 
 interface IRainDrop {
   x: number;
@@ -50,7 +51,7 @@ export class WeatherLayer {
   private birds: IBird[] = [];
   private meteors: IMeteor[] = [];
   private ambientGfx: Graphics;
-  private weatherType: 'clear' | 'cloudy' | 'rain' = 'clear';
+  private weatherType: WeatherType = 'clear';
   private currentTintAlpha = 0;
 
   private readonly MAX_RAIN_DROPS = 180;
@@ -115,7 +116,7 @@ export class WeatherLayer {
     };
   }
 
-  public setWeather(type: 'clear' | 'cloudy' | 'rain') {
+  public setWeather(type: WeatherType) {
     this.weatherType = type;
     if (type !== 'rain') {
       // Fade out logic or immediate clear

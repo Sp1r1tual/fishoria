@@ -1,8 +1,7 @@
 import type { AxiosInstance, AxiosError } from 'axios';
 import i18n from '@/i18n';
 
-import { store } from '@/store';
-
+import { store } from '@/store/store';
 import { addToast } from '@/store/slices/uiSlice';
 
 export const errorInterceptors = (axiosInstance: AxiosInstance) => {

@@ -2,7 +2,11 @@ import { useEffect } from 'react';
 
 import { useAppSelector } from '@/hooks/core/useAppStore';
 
-import type { IOwnedGearItem } from '@/common/types';
+import type {
+  IOwnedGearItem,
+  BaitTypeType,
+  GroundbaitTypeType,
+} from '@/common/types';
 
 import { usePlayerQuery } from '@/queries/player.queries';
 
@@ -110,13 +114,13 @@ export function SceneSync({ sceneRef }: ISceneSyncProps) {
 
     sceneRef.current.syncWithState({
       lakeId: currentLakeId,
-      activeBait,
+      activeBait: activeBait as BaitTypeType,
       baitName: isLure
         ? SHOP_HOOKS.find((h) => h.id === activeBait)?.name || activeBait
         : (BAITS as Record<string, { name: string }>)[activeBait]?.name ||
           activeBait,
       hasBait: bCount > 0,
-      activeGroundbait,
+      activeGroundbait: activeGroundbait as GroundbaitTypeType,
       groundbaitExpiresAt,
       baseDepth,
       rodConfig,

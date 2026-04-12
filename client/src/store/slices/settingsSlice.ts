@@ -2,7 +2,8 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 import type { ISettingsState } from '@/common/types';
 
-const SETTINGS_SAVE_KEY = 'wfg_settings';
+const SETTINGS_SAVE_KEY = 'fishoria_settings';
+
 const loadSettings = (): ISettingsState => {
   const defaults: ISettingsState = {
     musicEnabled: true,

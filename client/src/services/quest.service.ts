@@ -1,14 +1,15 @@
-import { $mainApi } from '@/http/axios';
-
 import type { IPlayerQuest, IPlayerProfile } from '@/common/types/player.types';
 
-export const QuestService = {
-  getQuests: async (): Promise<IPlayerQuest[]> => {
+import { $mainApi } from '@/http/axios';
+
+export class QuestService {
+  static async getQuests(): Promise<IPlayerQuest[]> {
     const { data } = await $mainApi.get('/quests');
     return data;
-  },
-  claimReward: async (playerQuestId: string): Promise<IPlayerProfile> => {
+  }
+
+  static async claimReward(playerQuestId: string): Promise<IPlayerProfile> {
     const { data } = await $mainApi.post('/quests/claim', { playerQuestId });
     return data;
-  },
-};
+  }
+}

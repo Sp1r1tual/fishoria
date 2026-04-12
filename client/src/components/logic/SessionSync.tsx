@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '@/hooks/core/useAppStore';
+import type { WeatherType } from '@/common/types';
 
 import {
   setWeather,
@@ -9,7 +10,7 @@ import {
 
 import { TimeManager } from '@/game/managers/TimeManager';
 
-const generateRandomWeather = (): 'clear' | 'cloudy' | 'rain' => {
+const generateRandomWeather = (): WeatherType => {
   const rand = Math.random();
   if (rand > 0.85) return 'rain';
   if (rand > 0.6) return 'cloudy';
@@ -35,13 +36,13 @@ export function SessionSync() {
   useEffect(() => {
     const session = TimeManager.loadSessionData();
     const loadedForecast = session?.weatherForecast as
-      | ('clear' | 'cloudy' | 'rain')[]
+      | WeatherType[]
       | undefined;
     const loadedLastHour = session?.lastWeatherUpdateHour as number | undefined;
 
     if (session) {
       if (session.weather) {
-        dispatch(setWeather(session.weather as 'clear' | 'cloudy' | 'rain'));
+        dispatch(setWeather(session.weather as WeatherType));
       }
       if (loadedForecast) {
         dispatch(setWeatherForecast(loadedForecast));
@@ -71,7 +72,7 @@ export function SessionSync() {
     const diffWeather = lastUpdate !== null ? currentHour - lastUpdate : 0;
 
     if (isInvalid || diffWeather >= 24 || diffWeather < 0) {
-      const newForecast: ('clear' | 'cloudy' | 'rain')[] = [];
+      const newForecast: WeatherType[] = [];
       for (let i = 0; i < 24; i++) newForecast.push(generateRandomWeather());
       dispatch(setWeatherForecast(newForecast));
       dispatch(setLastWeatherUpdateHour(currentHour));
@@ -121,7 +122,7 @@ export function SessionSync() {
       const diffWeather = lastUpdate !== null ? currentHour - lastUpdate : 0;
 
       if (isInvalid || diffWeather >= 24 || diffWeather < 0) {
-        const newForecast: ('clear' | 'cloudy' | 'rain')[] = [];
+        const newForecast: WeatherType[] = [];
         for (let i = 0; i < 24; i++) newForecast.push(generateRandomWeather());
 
         dispatch(setWeatherForecast(newForecast));

@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { loadTranslations, markLanguageInitialized } from '@/i18n';
 import { WoodySelect } from '../UI/WoodySelect/WoodySelect';
 
 import { updateSettings } from '@/store/slices/settingsSlice';
@@ -16,13 +15,11 @@ export function LocalizationSection() {
 
   const handleLanguageChange = useCallback(
     async (lang: 'en' | 'uk') => {
-      await loadTranslations(lang);
-      localStorage.setItem('i18nextLng', lang);
+      await i18n.changeLanguage(lang);
       dispatch(updateSettings({ language: lang }));
-      markLanguageInitialized();
       updateLangOnServer(lang);
     },
-    [updateLangOnServer, dispatch],
+    [updateLangOnServer, dispatch, i18n],
   );
 
   return (

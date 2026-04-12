@@ -683,6 +683,27 @@
     "low_line": "Low fishing line remaining!",
     "tooManyRequests": "Too many requests. Please try again later."
   },
+  "serverUnavailable": {
+    "title": "Fishoria | Server Unavailable",
+    "description": "The Fishoria servers are currently unavailable. Please try again later."
+  },
+  "meta": {
+    "landing": "Join Fishoria — a free browser fishing simulator. Cast your line, catch rare fish and upgrade your gear.",
+    "resetPassword": "Reset your Fishoria account password securely.",
+    "privacy": "Read the Fishoria Privacy Policy to understand how we handle your personal data.",
+    "terms": "Review the Fishoria Terms of Service before playing.",
+    "home": "Welcome back, angler! Select a lake and start fishing in Fishoria.",
+    "shop": "Browse the Fishoria marketplace. Buy rods, lures, and upgrades to improve your fishing.",
+    "inventory": "View your caught fish and inventory in Fishoria.",
+    "gear": "Manage your fishing rods, reels and tackle in Fishoria.",
+    "statistics": "Track your fishing statistics, catch records and progression in Fishoria.",
+    "settings": "Configure your Fishoria game settings, language and audio preferences.",
+    "guide": "Learn how to fish in Fishoria with our complete beginner and advanced guides.",
+    "quests": "Complete fishing quests and earn rewards in Fishoria.",
+    "help": "Get help and support for Fishoria. Find answers to common questions.",
+    "news": "Latest news, updates and patch notes for Fishoria.",
+    "achievements": "View your unlocked achievements and milestones in Fishoria."
+  },
   "errorPage": {
     "title": "Oops! Something went wrong.",
     "description": "An unexpected error occurred while loading this page.",

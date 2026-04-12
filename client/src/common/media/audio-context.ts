@@ -18,6 +18,7 @@ export function getSharedAudioContext(): AudioContext {
     window.AudioContext ||
     (window as unknown as { webkitAudioContext: typeof AudioContext })
       .webkitAudioContext;
+
   sharedCtx = new Ctor();
   return sharedCtx;
 }
@@ -51,7 +52,7 @@ export async function resumeSharedAudioContext(): Promise<void> {
   if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
     await ctx
       .resume()
-      .catch((e) => console.warn('Failed to resume AudioContext:', e));
+      .catch((error) => console.warn('Failed to resume AudioContext:', error));
   }
 }
 
@@ -60,6 +61,6 @@ export async function suspendSharedAudioContext(): Promise<void> {
   if (ctx.state === 'running') {
     await ctx
       .suspend()
-      .catch((e) => console.warn('Failed to suspend AudioContext:', e));
+      .catch((error) => console.warn('Failed to suspend AudioContext:', error));
   }
 }

@@ -7,13 +7,16 @@ export class ProgressTracker {
 
   updateSpeed(newBytes: number) {
     const now = Date.now();
+
     this.speedWindow.push({ time: now, bytes: newBytes });
+
     while (
       this.speedWindow.length > 0 &&
       this.speedWindow[0].time < now - 2000
     ) {
       this.speedWindow.shift();
     }
+
     if (this.speedWindow.length > 1) {
       const timeDiff = (now - this.speedWindow[0].time) / 1000;
       if (timeDiff > 0) {
@@ -37,10 +40,6 @@ export class ProgressTracker {
     this.loadedCount++;
   }
 }
-
-/**
- * Handles discovery of all assets in the project.
- */
 
 export function discoverAssets(): string[] {
   const imageAssets = (

@@ -6,11 +6,15 @@ import type {
   IGearAction,
 } from '@/common/types';
 
-import { store } from '@/store';
+import { store } from '@/store/store';
 import { addPendingEquips } from '@/store/slices/gameSlice';
-import { playerKeys } from './player.queries';
+import { PLAYER_KEYS } from './player.queries';
 
 import { InventoryService } from '../services/inventory.service';
+
+export const INVENTORY_KEYS = {
+  all: ['inventory'] as const,
+};
 
 type EquipPayload = (IGearAction | { equips: IGearAction[] }) & {
   buffer?: boolean;
@@ -27,11 +31,13 @@ export const useEquipMutation = () => {
     mutationFn: async (payload) => {
       const { buffer, ...data } = payload;
       if (buffer) {
-        return queryClient.getQueryData<IPlayerProfile>(playerKeys.profile());
+        return queryClient.getQueryData<IPlayerProfile>(PLAYER_KEYS.profile());
       }
+
       const state = store.getState();
       if (state.game.currentLakeId) {
         const equips = 'equips' in data ? data.equips : [data];
+
         store.dispatch(addPendingEquips(equips));
         return null;
       }
@@ -41,7 +47,7 @@ export const useEquipMutation = () => {
     },
     onMutate: async (payload) => {
       const previousProfile = queryClient.getQueryData<IPlayerProfile>(
-        playerKeys.profile(),
+        PLAYER_KEYS.profile(),
       );
 
       if (previousProfile) {
@@ -65,20 +71,23 @@ export const useEquipMutation = () => {
           }
         }
 
-        queryClient.setQueryData(playerKeys.profile(), updatedProfile);
-        queryClient.cancelQueries({ queryKey: playerKeys.profile() });
+        queryClient.setQueryData(PLAYER_KEYS.profile(), updatedProfile);
+        await queryClient.cancelQueries({ queryKey: PLAYER_KEYS.profile() });
       }
 
       return { previousProfile };
     },
     onError: (_err, _variables, context) => {
       if (context?.previousProfile) {
-        queryClient.setQueryData(playerKeys.profile(), context.previousProfile);
+        queryClient.setQueryData(
+          PLAYER_KEYS.profile(),
+          context.previousProfile,
+        );
       }
     },
     onSuccess: (updatedProfile) => {
       if (updatedProfile != null) {
-        queryClient.setQueryData(playerKeys.profile(), updatedProfile);
+        queryClient.setQueryData(PLAYER_KEYS.profile(), updatedProfile);
       }
     },
   });
@@ -94,9 +103,10 @@ export const useRepairMutation = () => {
   >({
     mutationFn: InventoryService.repair,
     onMutate: async (payload) => {
-      await queryClient.cancelQueries({ queryKey: playerKeys.profile() });
+      await queryClient.cancelQueries({ queryKey: PLAYER_KEYS.profile() });
+
       const previousProfile = queryClient.getQueryData<IPlayerProfile>(
-        playerKeys.profile(),
+        PLAYER_KEYS.profile(),
       );
 
       if (previousProfile) {
@@ -120,18 +130,21 @@ export const useRepairMutation = () => {
           kit.condition = kitCond - repairAmount;
         }
 
-        queryClient.setQueryData(playerKeys.profile(), updatedProfile);
+        queryClient.setQueryData(PLAYER_KEYS.profile(), updatedProfile);
       }
       return { previousProfile };
     },
     onError: (_err, _variables, context) => {
       if (context?.previousProfile) {
-        queryClient.setQueryData(playerKeys.profile(), context.previousProfile);
+        queryClient.setQueryData(
+          PLAYER_KEYS.profile(),
+          context.previousProfile,
+        );
       }
     },
     onSuccess: (data) => {
       queryClient.setQueryData(
-        playerKeys.profile(),
+        PLAYER_KEYS.profile(),
         (old: IPlayerProfile | undefined) => {
           if (!old) return data;
           return {
@@ -159,9 +172,10 @@ export const useConsumeMutation = () => {
   >({
     mutationFn: InventoryService.consumeConsumable,
     onMutate: async (newItem) => {
-      await queryClient.cancelQueries({ queryKey: playerKeys.profile() });
+      await queryClient.cancelQueries({ queryKey: PLAYER_KEYS.profile() });
+
       const previousProfile = queryClient.getQueryData<IPlayerProfile>(
-        playerKeys.profile(),
+        PLAYER_KEYS.profile(),
       );
 
       if (previousProfile) {
@@ -170,25 +184,30 @@ export const useConsumeMutation = () => {
           (c: { itemId: string; itemType: string }) =>
             c.itemId === newItem.itemId && c.itemType === newItem.itemType,
         );
+
         if (index !== -1) {
           updatedProfile.consumables[index].quantity -= newItem.quantity || 1;
+
           if (updatedProfile.consumables[index].quantity <= 0) {
             updatedProfile.consumables.splice(index, 1);
           }
         }
-        queryClient.setQueryData(playerKeys.profile(), updatedProfile);
+        queryClient.setQueryData(PLAYER_KEYS.profile(), updatedProfile);
       }
 
       return { previousProfile };
     },
     onError: (_err, _newItem, context) => {
       if (context?.previousProfile) {
-        queryClient.setQueryData(playerKeys.profile(), context.previousProfile);
+        queryClient.setQueryData(
+          PLAYER_KEYS.profile(),
+          context.previousProfile,
+        );
       }
     },
     onSuccess: (data) => {
       queryClient.setQueryData(
-        playerKeys.profile(),
+        PLAYER_KEYS.profile(),
         (old: IPlayerProfile | undefined) => {
           if (!old) return data;
           return {
@@ -216,10 +235,11 @@ export const useDeleteMutation = () => {
   >({
     mutationFn: InventoryService.deleteGear,
     onMutate: async (payload) => {
-      await queryClient.cancelQueries({ queryKey: playerKeys.profile() });
+      await queryClient.cancelQueries({ queryKey: PLAYER_KEYS.profile() });
       const previousProfile = queryClient.getQueryData<IPlayerProfile>(
-        playerKeys.profile(),
+        PLAYER_KEYS.profile(),
       );
+
       if (previousProfile) {
         const updatedProfile = structuredClone(previousProfile);
         updatedProfile.gearItems = updatedProfile.gearItems.filter(
@@ -233,18 +253,21 @@ export const useDeleteMutation = () => {
           updatedProfile.equippedLineUid = null;
         if (updatedProfile.equippedHookUid === payload.uid)
           updatedProfile.equippedHookUid = null;
-        queryClient.setQueryData(playerKeys.profile(), updatedProfile);
+        queryClient.setQueryData(PLAYER_KEYS.profile(), updatedProfile);
       }
       return { previousProfile };
     },
     onError: (_err, _variables, context) => {
       if (context?.previousProfile) {
-        queryClient.setQueryData(playerKeys.profile(), context.previousProfile);
+        queryClient.setQueryData(
+          PLAYER_KEYS.profile(),
+          context.previousProfile,
+        );
       }
     },
     onSuccess: (data) => {
       queryClient.setQueryData(
-        playerKeys.profile(),
+        PLAYER_KEYS.profile(),
         (old: IPlayerProfile | undefined) => {
           if (!old) return data;
           return {

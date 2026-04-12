@@ -98,7 +98,8 @@ export type GearTypeType =
   | 'hook'
   | 'gadget'
   | 'bait'
-  | 'groundbait';
+  | 'groundbait'
+  | 'repair_kit';
 
 export interface IGearItemBase {
   id: string;
@@ -112,7 +113,7 @@ export interface IGearItemBase {
   totalLength?: number;
   count?: number;
   isBroken?: boolean;
-  itemType?: 'rod' | 'reel' | 'line' | 'hook' | 'gadget';
+  itemType?: GearTypeType;
   rigType?: RigTypeType;
   rodCategory?: 'float' | 'feeder' | 'spinning';
 }

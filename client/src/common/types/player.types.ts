@@ -29,11 +29,17 @@ export interface IPlayerQuest {
   updatedAt: string;
 }
 
+import type {
+  BaitTypeType,
+  GroundbaitTypeType,
+  GearTypeType,
+} from './gear.types';
+
 export interface IOwnedGearItem {
   uid: string;
   id: string;
   itemId: string;
-  itemType: string;
+  itemType: GearTypeType;
   condition?: number;
   meters?: number; // for lines
   isBroken?: boolean;
@@ -64,13 +70,25 @@ export interface ILakeStatMetadata {
   speciesWeights: Record<string, number>;
 }
 
+import type { IUser } from './auth.types';
+
+export interface IPlayerAchievement {
+  id: string;
+  achievementId: string;
+  achievement: {
+    id: string;
+    code: string;
+    title: Record<string, string>;
+    description: Record<string, string>;
+    imageUrl: string | null;
+  };
+  unlockedAt: string | null;
+  createdAt: string;
+}
+
 export interface IPlayerProfile {
   id: string;
-  user: {
-    username: string | null;
-    avatar: string | null;
-    language: string;
-  };
+  user: IUser;
   money: number;
   level: number;
   xp: number;
@@ -79,11 +97,12 @@ export interface IPlayerProfile {
   equippedLineUid: string | null;
   equippedHookUid: string | null;
   hasEchoSounder: boolean;
-  activeBait: string;
-  activeGroundbait: string;
+  activeBait: BaitTypeType | string;
+  activeGroundbait: GroundbaitTypeType | string;
   gearItems: IOwnedGearItem[];
   consumables: { itemId: string; itemType: string; quantity: number }[];
   fishCatches: IFishCatchMetadata[];
   lakeStats: ILakeStatMetadata[];
   playerQuests: IPlayerQuest[];
+  playerAchievements: IPlayerAchievement[];
 }

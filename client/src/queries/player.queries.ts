@@ -1,16 +1,20 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { ACHIEVEMENT_KEYS } from './achievement.queries';
+import { QUEST_KEYS } from './quest.queries';
+import { INVENTORY_KEYS } from './inventory.queries';
+
 import { PlayerService } from '../services/player.service';
 import { refreshToken } from '../http/interceptors/auth.interceptor';
 
-export const playerKeys = {
+export const PLAYER_KEYS = {
   all: ['player'] as const,
-  profile: () => [...playerKeys.all, 'profile'] as const,
+  profile: () => [...PLAYER_KEYS.all, 'profile'] as const,
 };
 
 export const usePlayerQuery = () => {
   return useQuery({
-    queryKey: playerKeys.profile(),
+    queryKey: PLAYER_KEYS.profile(),
     queryFn: PlayerService.getProfile,
     staleTime: 5 * 60 * 1000,
   });
@@ -23,7 +27,7 @@ export const useAddMoneyMutation = () => {
     mutationFn: (payload: { amount: number; targetUserId?: string }) =>
       PlayerService.addMoney(payload),
     onSuccess: (data) => {
-      queryClient.setQueryData(playerKeys.profile(), data);
+      queryClient.setQueryData(PLAYER_KEYS.profile(), data);
     },
   });
 };
@@ -34,7 +38,7 @@ export const useResetProfileMutation = () => {
   return useMutation({
     mutationFn: PlayerService.resetProfile,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: playerKeys.all });
+      queryClient.invalidateQueries({ queryKey: PLAYER_KEYS.all });
     },
   });
 };
@@ -45,14 +49,12 @@ export const useUpdateLanguageMutation = () => {
   return useMutation({
     mutationFn: (language: string) => PlayerService.updateLanguage(language),
     onSuccess: async () => {
-      // 1. Manually trigger a token refresh to update the JWT embedded with the new language
       await refreshToken().catch(() => null);
 
-      // 2. Invalidate all queries that depend on language
-      queryClient.invalidateQueries({ queryKey: playerKeys.all });
-      queryClient.invalidateQueries({ queryKey: ['achievements'] });
-      queryClient.invalidateQueries({ queryKey: ['quests'] });
-      queryClient.invalidateQueries({ queryKey: ['inventory'] });
+      queryClient.invalidateQueries({ queryKey: PLAYER_KEYS.all });
+      queryClient.invalidateQueries({ queryKey: ACHIEVEMENT_KEYS.all });
+      queryClient.invalidateQueries({ queryKey: QUEST_KEYS.all });
+      queryClient.invalidateQueries({ queryKey: INVENTORY_KEYS.all });
     },
   });
 };
@@ -64,7 +66,7 @@ export const useUpdateProfileMutation = () => {
     mutationFn: (payload: { username?: string; avatar?: string }) =>
       PlayerService.updateProfile(payload),
     onSuccess: (data) => {
-      queryClient.setQueryData(playerKeys.profile(), data);
+      queryClient.setQueryData(PLAYER_KEYS.profile(), data);
     },
   });
 };

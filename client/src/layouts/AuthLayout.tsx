@@ -12,7 +12,7 @@ import { useAuthInitialization } from '../hooks/core/useAuthInitialization';
 
 import { GlobalPreloader } from '@/components/UI/GlobalPreloader/GlobalPreloader';
 import { ScrollToTop } from '@/components/UI/ScrollToTop/ScrollToTop';
-import { TitleManager } from '@/components/UI/TitleManager/TitleManager';
+import { RouteMetadata } from '@/components/logic/RouteMetadata';
 import { CookieConsent } from '@/components/CookieConsent/CookieConsent';
 
 export const AuthLayout = () => {
@@ -25,12 +25,9 @@ export const AuthLayout = () => {
 
   const [searchParams] = useSearchParams();
 
-  // Initialize auth state and handle initial session logic
   useAuthInitialization();
 
   useEffect(() => {
-    // Do not redirect away from /welcome when an activation flow is in progress.
-    // The user should see the "account activated" message and login form.
     const isActivationFlow = searchParams.get('activated') === 'true';
 
     if (
@@ -68,7 +65,7 @@ export const AuthLayout = () => {
 
   return (
     <>
-      <TitleManager />
+      <RouteMetadata />
       <ScrollToTop />
       <Outlet />
       <CookieConsent />

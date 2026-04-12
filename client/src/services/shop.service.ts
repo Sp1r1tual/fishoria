@@ -1,16 +1,15 @@
+import type { IPlayerProfile, IBuyItemPayload } from '@/common/types';
+
 import { $mainApi } from '@/http/axios';
 
-export const ShopService = {
-  buy: async (payload: {
-    itemId: string;
-    itemType: string;
-    quantity?: number;
-  }) => {
-    const { data } = await $mainApi.post('/shop/buy', payload);
+export class ShopService {
+  static async buy(payload: IBuyItemPayload): Promise<IPlayerProfile> {
+    const { data } = await $mainApi.post<IPlayerProfile>('/shop/buy', payload);
     return data;
-  },
-  sell: async () => {
-    const { data } = await $mainApi.post('/shop/sell');
+  }
+
+  static async sell(): Promise<IPlayerProfile> {
+    const { data } = await $mainApi.post<IPlayerProfile>('/shop/sell');
     return data;
-  },
-};
+  }
+}

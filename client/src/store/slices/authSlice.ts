@@ -2,13 +2,14 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 import type { IUser } from '@/common/types';
 
-type AuthStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
+type AuthStatusType = 'idle' | 'loading' | 'succeeded' | 'failed';
 
 interface AuthState {
   isAuthenticated: boolean;
   user: IUser | null;
-  status: AuthStatus;
+  status: AuthStatusType;
   isInitialized: boolean;
+  isLoggedOut: boolean;
 }
 
 const initialState: AuthState = {
@@ -16,6 +17,7 @@ const initialState: AuthState = {
   user: null,
   status: 'idle',
   isInitialized: false,
+  isLoggedOut: false,
 };
 
 const authSlice = createSlice({
@@ -25,25 +27,32 @@ const authSlice = createSlice({
     setLoading: (state) => {
       state.status = 'loading';
     },
+    setInitialized: (state) => {
+      state.isInitialized = true;
+    },
 
     setUser: (state, action: PayloadAction<IUser | null>) => {
       state.user = action.payload;
       state.isAuthenticated = !!action.payload;
       state.status = action.payload ? 'succeeded' : 'failed';
+      if (action.payload) {
+        state.isLoggedOut = false;
+      }
     },
-
-    setInitialized: (state) => {
-      state.isInitialized = true;
-    },
-
     clearAuth: (state) => {
       state.user = null;
       state.isAuthenticated = false;
       state.status = 'failed';
     },
+    logout: (state) => {
+      state.user = null;
+      state.isAuthenticated = false;
+      state.status = 'failed';
+      state.isLoggedOut = true;
+    },
   },
 });
 
-export const { setUser, clearAuth, setLoading, setInitialized } =
+export const { setUser, clearAuth, setLoading, setInitialized, logout } =
   authSlice.actions;
 export default authSlice.reducer;

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { store } from '@/store';
+import { store } from '@/store/store';
 
 import styles from './TensionIndicator.module.css';
 

@@ -14,6 +14,7 @@ import type {
   GamePhaseType,
   ILakeSceneCallbacks,
   IUpdateContext,
+  WeatherType,
 } from '@/common/types';
 
 import { FishSpawnSystem } from '../systems/FishSpawnSystem';
@@ -114,7 +115,7 @@ export class LakeScene implements IScene {
   private lastW = 0;
   private lastH = 0;
   private weatherLayer!: WeatherLayer;
-  private weather: 'clear' | 'cloudy' | 'rain' = 'clear';
+  private weather: WeatherType = 'clear';
   private groundbaitEffect!: GroundbaitEffect;
 
   private config: ILakeConfig;
@@ -559,7 +560,7 @@ export class LakeScene implements IScene {
     );
   }
 
-  setWeather(type: 'clear' | 'cloudy' | 'rain'): void {
+  setWeather(type: WeatherType): void {
     this.weather = type;
     this.weatherLayer.setWeather(type);
     const W = this.app.renderer.width;

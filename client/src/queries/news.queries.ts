@@ -2,15 +2,14 @@ import { useQuery } from '@tanstack/react-query';
 
 import { NewsService } from '../services/news.service';
 
-const newsKeys = {
+export const NEWS_KEYS = {
   all: ['news'] as const,
-  list: (lang: string) => [...newsKeys.all, 'list', lang] as const,
+  list: (lang: string) => [...NEWS_KEYS.all, 'list', lang] as const,
 };
 
 export const useNewsQuery = (lang: string = 'en') => {
   return useQuery({
-    queryKey: newsKeys.list(lang),
+    queryKey: NEWS_KEYS.list(lang),
     queryFn: () => NewsService.getAll(lang),
-    staleTime: 5 * 60 * 1000,
   });
 };

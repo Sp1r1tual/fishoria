@@ -10,3 +10,6 @@ export * from './lake.types';
 export * from './mechanics.types';
 export * from './engine.types';
 export * from './auth.types';
+export * from './news.types';
+export * from './shop.types';
+export * from './inventory.types';

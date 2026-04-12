@@ -2,12 +2,13 @@ import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 
 import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
+import type { WeatherType } from '@/common/types';
 
 import { WoodyButton } from '@/components/UI/buttons/WoodyButton/WoodyButton';
 
 import { setWeather } from '@/store/slices/gameSlice';
 import { useAddMoneyMutation } from '@/queries/player.queries';
-import { store } from '@/store';
+import { store } from '@/store/store';
 
 import { TimeManager } from '@/game/managers/TimeManager';
 
@@ -92,7 +93,7 @@ export function DebugTerminal({
         break;
 
       case 'weather': {
-        const type = args[0]?.toLowerCase() as 'clear' | 'cloudy' | 'rain';
+        const type = args[0]?.toLowerCase() as WeatherType;
         if (['clear', 'cloudy', 'rain'].includes(type)) {
           dispatch(setWeather(type));
           addLog(`CLIMATE SYNCHRONIZED: ${type.toUpperCase()}`, 'success');

@@ -1,11 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import {
-  loadTranslations,
-  I18N_STORAGE_KEY,
-  type SupportedLanguage,
-} from '@/i18n';
+import type { SupportedLanguageType } from '@/i18n';
 
 import { updateSettings } from '@/store/slices/settingsSlice';
 import { usePlayerQuery } from '@/queries/player.queries';
@@ -26,8 +22,8 @@ export function LanguageSync() {
 
     if (syncedRef.current) return;
 
-    const serverLang = player.user.language as SupportedLanguage;
-    const localLang = i18n.language as SupportedLanguage;
+    const serverLang = player.user.language as SupportedLanguageType;
+    const localLang = i18n.language as SupportedLanguageType;
 
     if (serverLang === localLang) {
       syncedRef.current = true;
@@ -35,8 +31,7 @@ export function LanguageSync() {
     }
 
     if (serverLang === 'en' || serverLang === 'uk') {
-      loadTranslations(serverLang).then(() => {
-        localStorage.setItem(I18N_STORAGE_KEY, serverLang);
+      i18n.changeLanguage(serverLang).then(() => {
         dispatch(updateSettings({ language: serverLang }));
         syncedRef.current = true;
       });

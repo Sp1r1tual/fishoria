@@ -1,55 +1,34 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import HttpBackend from 'i18next-http-backend';
+import LanguageDetector from 'i18next-browser-languagedetector';
 
-export const I18N_STORAGE_KEY = 'i18nextLng';
-const LANG_INIT_KEY = 'fishing_lang_initialized';
+export type SupportedLanguageType = 'en' | 'uk';
 
-export type SupportedLanguage = 'en' | 'uk';
-
-export function detectLanguage(): SupportedLanguage {
-  const stored = localStorage.getItem(I18N_STORAGE_KEY);
-  if (stored === 'uk' || stored === 'en') return stored as SupportedLanguage;
-
-  if (!localStorage.getItem(LANG_INIT_KEY)) {
-    const browserLang = navigator.language?.toLowerCase() ?? 'en';
-    return browserLang.startsWith('uk') ? 'uk' : 'en';
-  }
-  return 'en';
-}
-
-export function markLanguageInitialized() {
-  localStorage.setItem(LANG_INIT_KEY, '1');
-}
-
-export function isFirstLanguageRun(): boolean {
-  return !localStorage.getItem(LANG_INIT_KEY);
-}
-
-i18n.use(initReactI18next).init({
-  lng: detectLanguage(),
-  fallbackLng: 'en',
-  ns: ['translation'],
-  defaultNS: 'translation',
-  resources: {},
-  interpolation: {
-    escapeValue: false,
-  },
-});
+export const i18nInitPromise = i18n
+  .use(HttpBackend)
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    fallbackLng: 'en',
+    supportedLngs: ['en', 'uk'],
+    ns: ['translation'],
+    defaultNS: 'translation',
+    interpolation: {
+      escapeValue: false,
+    },
+    backend: {
+      loadPath: '/locales/{{lng}}/{{ns}}.json',
+    },
+    detection: {
+      order: ['localStorage', 'navigator'],
+      caches: ['localStorage'],
+      lookupLocalStorage: 'i18nextLng',
+    },
+  });
 
 i18n.on('languageChanged', (lng) => {
   document.documentElement.lang = lng;
 });
-document.documentElement.lang = i18n.language;
-
-export async function loadTranslations(lang: SupportedLanguage) {
-  try {
-    const res = await fetch(`/locales/${lang}/translation.json`);
-    const data = await res.json();
-    i18n.addResourceBundle(lang, 'translation', data, true, true);
-    await i18n.changeLanguage(lang);
-  } catch (err) {
-    console.error(`Failed to load translations for ${lang}:`, err);
-  }
-}
 
 export default i18n;

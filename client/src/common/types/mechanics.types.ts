@@ -1,4 +1,9 @@
-import type { IFishSpeciesConfig, BaitTypeType, TimeOfDayType } from './index';
+import type {
+  IFishSpeciesConfig,
+  BaitTypeType,
+  TimeOfDayType,
+  WeatherType,
+} from './index';
 
 export interface ITensionState {
   value: number;
@@ -67,7 +72,7 @@ export interface IBiteDetectionParams {
   hookDepthM: number;
   isAnyFishHooked?: boolean;
   timeSinceCast: number;
-  weather: 'clear' | 'cloudy' | 'rain';
+  weather: WeatherType;
   rigType?: string;
   isMoving?: boolean;
   isOnBottom?: boolean;

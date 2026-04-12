@@ -1,16 +1,15 @@
-import { $mainApi } from '@/http/axios';
-import { clearLoggedOut } from '@/http/interceptors/auth.interceptor';
+import type { ILoginResponse, IAuthForm } from '@/common/types';
 
-import type { ILoginResponse, IAuthForm, IUser } from '@/common/types';
+import { $mainApi } from '@/http/axios';
 
 export class AuthService {
-  static async login(data: Omit<IAuthForm, 'confirmPassword' | 'username'>) {
-    const response = await $mainApi.post<ILoginResponse>('/auth/login', data);
+  static async register(data: IAuthForm) {
+    const response = await $mainApi.post('/auth/register', data);
     return response;
   }
 
-  static async register(data: IAuthForm) {
-    const response = await $mainApi.post('/auth/register', data);
+  static async login(data: Pick<IAuthForm, 'email' | 'password'>) {
+    const response = await $mainApi.post<ILoginResponse>('/auth/login', data);
     return response;
   }
 
@@ -18,20 +17,19 @@ export class AuthService {
     const currentPath = window.location.pathname + window.location.search;
     sessionStorage.setItem('redirectAfterLogin', currentPath);
     sessionStorage.removeItem('loggedOut');
-    clearLoggedOut();
 
     window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
-  }
-
-  static async refresh() {
-    const response = await $mainApi.post<{ success: boolean }>('/auth/refresh');
-    return response;
   }
 
   static async logout() {
     const response = await $mainApi.post<{ success: boolean; message: string }>(
       '/auth/logout',
     );
+    return response;
+  }
+
+  static async refresh() {
+    const response = await $mainApi.post<{ success: boolean }>('/auth/refresh');
     return response;
   }
 
@@ -45,7 +43,7 @@ export class AuthService {
 
   static async resetPassword(data: {
     token: string;
-    password: Omit<IAuthForm, 'confirmPassword' | 'username'>['password'];
+    password: IAuthForm['password'];
   }) {
     const response = await $mainApi.post<{ success: boolean; message: string }>(
       '/auth/reset-password',
@@ -59,11 +57,6 @@ export class AuthService {
       '/auth/verify-reset-token',
       { token },
     );
-    return response;
-  }
-
-  static async getProfile() {
-    const response = await $mainApi.get<IUser>('/player/profile');
     return response;
   }
 }

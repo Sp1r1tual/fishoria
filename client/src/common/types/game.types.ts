@@ -6,6 +6,8 @@ export interface ILossEvent {
   lostMeters?: number;
 }
 
+export type WeatherType = 'clear' | 'cloudy' | 'rain';
+
 export interface IGameState {
   currentLakeId: string | null;
   phase: GamePhaseType;
@@ -19,8 +21,33 @@ export interface IGameState {
   groundbaitExpiresAt: number | null;
   lastCatch: CatchResultType | null;
   lossEvent: ILossEvent | null;
-  weather: 'clear' | 'cloudy' | 'rain';
-  weatherForecast: ('clear' | 'cloudy' | 'rain')[];
+  weather: WeatherType;
+  weatherForecast: WeatherType[];
   lastWeatherUpdateHour: number | null;
   baseDepth: number;
+}
+
+export interface ICatchFishPayload {
+  speciesId: string;
+  speciesName: string;
+  weight: number;
+  length: number;
+  lakeId: string;
+  lakeName: string;
+  baitUsed: string;
+  method: string;
+  xpGain?: number;
+  rodDamage?: number;
+  reelDamage?: number;
+  maxWeight?: number;
+  sizeRank?: 'small' | 'good' | 'trophy';
+  isReleased?: boolean;
+}
+
+export interface IBreakGearPayload {
+  type: 'rod' | 'reel' | 'line' | 'hook' | 'bait';
+  baitId?: string;
+  lostMeters?: number;
+  rodDamage?: number;
+  reelDamage?: number;
 }

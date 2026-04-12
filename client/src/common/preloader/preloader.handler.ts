@@ -2,9 +2,6 @@ import type { AssetContext } from '@/common/types';
 
 import { ProgressTracker } from './preloader.utils';
 
-/**
- * Fallback to native browser loading (Image/Audio) to ensure assets are in cache.
- */
 async function fallbackToNative(url: string, isAudio: boolean): Promise<void> {
   if (!isAudio) {
     await new Promise<void>((resolve) => {
@@ -21,7 +18,7 @@ async function fallbackToNative(url: string, isAudio: boolean): Promise<void> {
       img.src = url;
 
       if (img.complete) safeResolve();
-      setTimeout(safeResolve, 3000);
+      setTimeout(safeResolve, 10000);
 
       const win = window as unknown as { _assetCache?: Set<unknown> };
       if (!win._assetCache) win._assetCache = new Set();
@@ -42,9 +39,6 @@ async function fallbackToNative(url: string, isAudio: boolean): Promise<void> {
   }
 }
 
-/**
- * Main asset loading logic per URL.
- */
 export async function loadAsset(
   url: string,
   tracker: ProgressTracker,
@@ -71,7 +65,7 @@ export async function loadAsset(
 
   try {
     const fetchController = new AbortController();
-    const fetchTimeout = setTimeout(() => fetchController.abort(), 3000);
+    const fetchTimeout = setTimeout(() => fetchController.abort(), 10000);
 
     let response: Response;
     try {
@@ -97,8 +91,12 @@ export async function loadAsset(
       const fetchMs = Date.now() - assetStartTime;
       context.currentIsFromCache =
         response.status === 304 || response.type === 'opaque' || fetchMs < 50;
-    } catch {
+    } catch (error) {
       clearTimeout(fetchTimeout);
+      console.warn(
+        `Preloader: Fetch failed for ${assetName}, falling back to native.`,
+        error,
+      );
       await fallbackToNative(url, isAudio);
       return;
     }
@@ -134,7 +132,7 @@ export async function loadAsset(
           const readResult = await Promise.race([
             reader.read(),
             new Promise<{ done: true; value: undefined }>((_, reject) =>
-              setTimeout(() => reject(new Error('read timeout')), 5000),
+              setTimeout(() => reject(new Error('read timeout')), 15000),
             ),
           ]);
 
@@ -148,11 +146,15 @@ export async function loadAsset(
             }
           }
         }
-      } catch {
+      } catch (error) {
+        console.warn(
+          `Preloader: Stream reading failed for ${assetName}:`,
+          error,
+        );
         try {
           reader.cancel();
-        } catch {
-          /* ignore error during cancel */
+        } catch (cancelError) {
+          console.debug('Preloader: Error during reader cancel:', cancelError);
         }
         if (contentLength > currentLoaded) {
           tracker.addLoadedBytes(contentLength - currentLoaded);
@@ -164,12 +166,11 @@ export async function loadAsset(
         context.currentItemLoadedBytes = Math.max(currentLoaded, contentLength);
       if (contentLength === 0) context.currentItemTotalBytes = currentLoaded;
     } else {
-      // Fallback for Safari Images
       try {
         const blob = await Promise.race([
           response.blob(),
           new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error('blob timeout')), 5000),
+            setTimeout(() => reject(new Error('blob timeout')), 15000),
           ),
         ]);
         tracker.addLoadedBytes(blob.size);
@@ -178,7 +179,11 @@ export async function loadAsset(
           if (contentLength === 0) context.currentItemTotalBytes = blob.size;
           onProgressEmit();
         }
-      } catch {
+      } catch (error) {
+        console.warn(
+          `Preloader: Blob/Fallback failed for ${assetName}:`,
+          error,
+        );
         if (contentLength > 0) {
           tracker.addLoadedBytes(contentLength);
           if (context.currentAssetName === assetName)
@@ -192,11 +197,13 @@ export async function loadAsset(
     if (!isAudio) {
       const img = new Image();
       img.src = url;
+
       const win = window as unknown as { _assetCache?: Set<unknown> };
       if (!win._assetCache) win._assetCache = new Set();
       win._assetCache.add(img);
     }
-  } catch {
+  } catch (error) {
+    console.error(`Preloader: Critical error loading ${url}:`, error);
     await fallbackToNative(url, isAudio);
   } finally {
     tracker.incrementLoadedCount();

@@ -4,11 +4,13 @@ interface NewsState {
   readIds: string[];
 }
 
-const READ_NEWS_KEY = 'wfg_read_news_ids';
+const READ_NEWS_KEY = 'fishoria_read_news_ids';
 
 const loadInitial = (): string[] => {
   if (typeof window === 'undefined') return [];
+
   const stored = localStorage.getItem(READ_NEWS_KEY);
+
   if (stored) {
     try {
       return JSON.parse(stored);

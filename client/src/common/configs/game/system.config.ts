@@ -24,6 +24,12 @@ export const CATCH_RESULT = {
   /** Weight distribution power: higher = more small fish, rarer trophies */
   weightDistributionPower: 2.4,
 
+  /** Quality thresholds based on percentage of max weight */
+  qualityThresholds: {
+    good: 0.4,
+    trophy: 0.75,
+  },
+
   /** Length calculation: length = max(minLength, weight * lengthPerKg + random * lengthJitter) */
   minLength: 5,
   lengthPerKg: 20,
@@ -70,6 +76,16 @@ export const SCENE_TIMING = {
 
   /** Bottom detection tolerance (meters) */
   bottomDetectionTolerance: 0.05,
+} as const;
+
+export const EXPERIENCE = {
+  /** Base XP gained per kilogram of fish caught */
+  baseXpPerKg: 25,
+} as const;
+
+export const ECONOMY = {
+  /** Base price per kilogram of fish sold */
+  baseFishPricePerKg: 15,
 } as const;
 
 export const GLOBAL_CONSTANTS = {

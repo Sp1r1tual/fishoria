@@ -1,14 +1,8 @@
-/**
- * Common thresholds for fish quality based on weight relative to species max.
- */
-const FISH_QUALITY_THRESHOLDS = {
-  GOOD: 0.4,
-  TROPHY: 0.75,
-} as const;
+import { CATCH_RESULT } from '@/common/configs/game/system.config';
 
 export function getFishQuality(weight: number, maxWeight: number) {
-  const isTrophy = weight >= maxWeight * FISH_QUALITY_THRESHOLDS.TROPHY;
-  const isGood = weight >= maxWeight * FISH_QUALITY_THRESHOLDS.GOOD;
+  const isTrophy = weight >= maxWeight * CATCH_RESULT.qualityThresholds.trophy;
+  const isGood = weight >= maxWeight * CATCH_RESULT.qualityThresholds.good;
 
   return {
     isTrophy,

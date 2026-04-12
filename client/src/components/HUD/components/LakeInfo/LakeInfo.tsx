@@ -16,6 +16,8 @@ import { WeatherStatus } from '@/components/UI/WeatherStatus/WeatherStatus';
 import { GameEvents } from '@/game/engine/GameEvents';
 
 import { GROUNDBAITS } from '@/common/configs/game';
+import type { GroundbaitTypeType } from '@/common/types';
+
 import { TimeManager } from '@/game/managers/TimeManager';
 
 import styles from './LakeInfo.module.css';
@@ -81,7 +83,10 @@ export function LakeInfo({ sceneRef, isDebugActive }: ILakeInfoProps) {
     });
     dispatch(setGroundbaitExpiry(expiry));
     sceneRef.current?.throwGroundbait();
-    sceneRef.current?.setActiveGroundbait(activeGroundbait, expiry);
+    sceneRef.current?.setActiveGroundbait(
+      activeGroundbait as GroundbaitTypeType,
+      expiry,
+    );
   };
 
   const timerRef = useRef<HTMLSpanElement>(null);

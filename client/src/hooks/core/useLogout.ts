@@ -1,23 +1,20 @@
 import { useAppDispatch } from './useAppStore';
 
-import { clearAuth } from '@/store/slices/authSlice';
+import { logout } from '@/store/slices/authSlice';
 import { queryClient } from '@/common/configs/libs/reactQuery';
 
 import { AuthService } from '@/services/auth.service';
-import { setLoggedOut as setInterceptorLoggedOut } from '@/http/interceptors/auth.interceptor';
 
 export const useLogout = () => {
   const dispatch = useAppDispatch();
 
-  const logout = async (hardRedirect = true) => {
+  const logoutAction = async (hardRedirect = true) => {
     try {
       await AuthService.logout();
     } catch (error) {
       console.error('[Auth] Logout request failed:', error);
     } finally {
-      dispatch(clearAuth());
-
-      setInterceptorLoggedOut();
+      dispatch(logout());
 
       sessionStorage.setItem('loggedOut', 'true');
       localStorage.removeItem('hasSession');
@@ -34,5 +31,5 @@ export const useLogout = () => {
     }
   };
 
-  return { logout };
+  return { logout: logoutAction };
 };

@@ -3,7 +3,7 @@ import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import type { IUser } from '@/common/types';
 
-import { store } from '@/store';
+import { store } from '@/store/store';
 import { setUser, clearAuth } from '@/store/slices/authSlice';
 
 const PUBLIC_PATHS = [
@@ -15,23 +15,9 @@ const PUBLIC_PATHS = [
 ];
 
 let refreshPromise: Promise<IUser> | null = null;
-let isLoggedOut = false;
 
-export const setLoggedOut = () => {
-  isLoggedOut = true;
-};
-
-export const clearLoggedOut = () => {
-  isLoggedOut = false;
-};
-
-/**
- * Performs a token refresh via httpOnly cookie.
- * The server sets new Authentication + Refresh cookies automatically.
- * After refresh, fetches the user profile to update Redux state.
- */
 const refreshToken = async (): Promise<IUser> => {
-  if (isLoggedOut) {
+  if (store.getState().auth.isLoggedOut) {
     throw new Error('User has logged out');
   }
 
@@ -44,7 +30,6 @@ const refreshToken = async (): Promise<IUser> => {
           headers = { 'x-xsrf-token': decodeURIComponent(match[1]) };
         }
 
-        // 1. Refresh tokens — server sets new cookies automatically
         const refreshResponse = await axios.post<{
           user: IUser;
           expiresIn: number;
@@ -75,9 +60,6 @@ const refreshToken = async (): Promise<IUser> => {
         const isAxiosError = axios.isAxiosError(error);
         const status = isAxiosError ? error.response?.status : null;
 
-        // ONLY clear auth if it's definitely an authentication failure (401, 403).
-        // If it's a 500 or network error, we keep the auth state so the user isn't
-        // kicked to the login page prematurely.
         if (status === 401 || status === 403) {
           localStorage.removeItem('hasSession');
           localStorage.removeItem('authExpiry');
@@ -100,8 +82,6 @@ const refreshToken = async (): Promise<IUser> => {
 };
 
 const authInterceptors = (axiosInstance: AxiosInstance) => {
-  // Proactive Token Refresh Interceptor
-  // This checks the client-calculated expiration time before sending each request.
   axiosInstance.interceptors.request.use(
     async (config) => {
       if (
@@ -119,8 +99,6 @@ const authInterceptors = (axiosInstance: AxiosInstance) => {
         return config;
       }
 
-      // If we have a session but no expiry tracking, refresh proactively
-      // to establish a valid authExpiry (e.g. after Google OAuth redirect).
       const shouldRefresh = !expiry || Date.now() > expiry - 60000;
 
       if (shouldRefresh) {
@@ -133,7 +111,9 @@ const authInterceptors = (axiosInstance: AxiosInstance) => {
           );
           await refreshToken();
         } catch {
-          // If refresh fails proactively, the request will fail with 401 later.
+          console.debug(
+            '[Auth] Proactive refresh failed, continuing with original request',
+          );
         }
       }
 
@@ -144,7 +124,6 @@ const authInterceptors = (axiosInstance: AxiosInstance) => {
 
   axiosInstance.interceptors.response.use(
     (response: AxiosResponse) => {
-      // Automatically keep the auth expiry entry in sync
       if (
         response.data &&
         typeof response.data === 'object' &&
@@ -170,7 +149,7 @@ const authInterceptors = (axiosInstance: AxiosInstance) => {
         return Promise.reject(error);
       }
 
-      if (isLoggedOut) {
+      if (store.getState().auth.isLoggedOut) {
         return Promise.reject(error);
       }
 
@@ -195,7 +174,6 @@ const authInterceptors = (axiosInstance: AxiosInstance) => {
         try {
           await refreshToken();
 
-          // Retry the original request — new cookie is already set
           return axiosInstance(originalRequest);
         } catch (refreshError) {
           if (

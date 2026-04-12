@@ -1,15 +1,3 @@
-.container {
-  width: 100%;
-  min-height: 100dvh;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  background-color: var(--clr-bg);
-  font-family: var(--font-sans);
-  color: var(--clr-text);
-  padding-top: env(safe-area-inset-top);
-}
-
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -21,43 +9,8 @@
   }
 }
 
-.background {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  will-change: transform;
-}
-
-@media (max-width: 1024px) {
-  .background {
-    top: -100px;
-    bottom: -100px;
-    left: -20px;
-    right: -20px;
-  }
-}
-
-.background::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(
-      circle at top right,
-      rgba(46, 204, 113, 0.15),
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at bottom left,
-      rgba(30, 74, 110, 0.4),
-      transparent 50%
-    );
-  opacity: 0.8;
-  filter: blur(2px) contrast(1.1);
-}
-
 .content {
+  --content-pad: 80px;
   position: relative;
   z-index: 2;
   display: flex;
@@ -66,10 +19,11 @@
   align-items: center;
   width: 100%;
   margin: auto;
-  padding: 0px 80px;
+  padding: 0px var(--content-pad);
   animation: fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   transition: gap 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   overflow-anchor: none;
+  overflow-y: hidden;
 }
 
 .topSection {
@@ -89,7 +43,7 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .bottomInfoWrapper {
@@ -127,13 +81,6 @@
   display: flex;
   flex-direction: column;
   gap: 80px;
-}
-
-.footerWrapper {
-  width: 100%;
-  z-index: 10;
-  margin-top: auto;
-  position: relative;
 }
 
 @media (max-width: 900px) {
@@ -175,8 +122,8 @@
 
 @media (max-width: 640px) {
   .content {
+    --content-pad: 24px;
     gap: 60px;
-    padding-inline: 24px;
   }
 
   .topSection {

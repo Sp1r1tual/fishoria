@@ -35,7 +35,7 @@ import { SHOP_HOOKS, SHOP_RODS } from '@/common/configs/game';
 import jeepIcon from '@/assets/ui/jeep.webp';
 
 import { usePlayerQuery } from '@/queries/player.queries';
-import { store } from '@/store';
+import { store } from '@/store/store';
 
 import styles from './HUD.module.css';
 

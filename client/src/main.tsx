@@ -3,53 +3,44 @@ import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router';
 import { Provider } from 'react-redux';
 import { Analytics } from '@vercel/analytics/react';
-import './i18n';
+import { SpeedInsights } from '@vercel/speed-insights/react';
+
+import i18n, { i18nInitPromise, type SupportedLanguageType } from './i18n';
 
 import { ReactQueryProvider } from './providers/ReactQueryProvider';
 import { ErrorBoundary } from './components/errors/ErrorBoundary';
 import { GlobalErrorOverlay } from './components/errors/GlobalErrorOverlay';
 import { router } from './router/router';
 
-import { store } from './store';
+import { store } from './store/store';
 import { updateSettings } from './store/slices/settingsSlice';
-
-import {
-  loadTranslations,
-  markLanguageInitialized,
-  isFirstLanguageRun,
-  detectLanguage,
-  type SupportedLanguage,
-} from './i18n';
 
 import './index.css';
 
-const initialLang: SupportedLanguage = isFirstLanguageRun()
-  ? detectLanguage()
-  : ((store.getState().settings.language as SupportedLanguage) ?? 'en');
-
-if (isFirstLanguageRun()) {
-  store.dispatch(updateSettings({ language: initialLang }));
-  markLanguageInitialized();
-}
-
-loadTranslations(initialLang).then(() => {
-  const rootElement = document.getElementById('root');
-
-  if (!rootElement) {
-    throw new Error('Root element not found');
+i18nInitPromise.then(() => {
+  const currentLang = i18n.language as SupportedLanguageType;
+  if (store.getState().settings.language !== currentLang) {
+    store.dispatch(updateSettings({ language: currentLang }));
   }
 
-  createRoot(rootElement).render(
-    <StrictMode>
-      <Provider store={store}>
-        <ErrorBoundary>
-          <GlobalErrorOverlay />
-          <ReactQueryProvider>
-            <RouterProvider router={router} />
-            <Analytics />
-          </ReactQueryProvider>
-        </ErrorBoundary>
-      </Provider>
-    </StrictMode>,
-  );
+  const rootElement = document.getElementById('root');
+
+  if (rootElement) {
+    createRoot(rootElement).render(
+      <StrictMode>
+        <Provider store={store}>
+          <ErrorBoundary>
+            <GlobalErrorOverlay />
+            <ReactQueryProvider>
+              <RouterProvider router={router} />
+              <Analytics />
+              <SpeedInsights />
+            </ReactQueryProvider>
+          </ErrorBoundary>
+        </Provider>
+      </StrictMode>,
+    );
+  } else {
+    console.error('Root element not found');
+  }
 });

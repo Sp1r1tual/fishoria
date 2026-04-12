@@ -8,12 +8,12 @@ import {
   setInitialized,
   setLoading,
   setUser,
+  logout,
 } from '../../store/slices/authSlice';
 
-import { setLoggedOut as setInterceptorLoggedOut } from '../../http/interceptors/auth.interceptor';
 import { useQueryClient } from '@tanstack/react-query';
+import { PLAYER_KEYS } from '../../queries/player.queries';
 import { PlayerService } from '../../services/player.service';
-import { playerKeys } from '../../queries/player.queries';
 
 export const useAuthInitialization = () => {
   const dispatch = useAppDispatch();
@@ -50,7 +50,7 @@ export const useAuthInitialization = () => {
       try {
         // Use fetchQuery to populate React Query cache and avoid double request
         const data = await queryClient.fetchQuery({
-          queryKey: playerKeys.profile(),
+          queryKey: PLAYER_KEYS.profile(),
           queryFn: PlayerService.getProfile,
           staleTime: 5 * 60 * 1000,
         });
@@ -108,8 +108,7 @@ export const useAuthInitialization = () => {
       const wasLoggedOut = sessionStorage.getItem('loggedOut') === 'true';
 
       if (event.persisted && wasLoggedOut) {
-        setInterceptorLoggedOut();
-        dispatch(clearAuth());
+        dispatch(logout());
       }
     };
 

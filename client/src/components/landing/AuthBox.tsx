@@ -11,10 +11,9 @@ import { RegisterForm } from '@/components/landing/RegisterForm';
 import { ForgotPasswordForm } from '@/components/landing/ForgotPasswordForm';
 
 import { setUser } from '@/store/slices/authSlice';
-import { type AppDispatch } from '@/store';
+import { type AppDispatch } from '@/store/store';
 
 import { AuthService } from '@/services/auth.service';
-import { clearLoggedOut } from '@/http/interceptors/auth.interceptor';
 
 import googleIcon from '@/assets/landing/google.webp';
 
@@ -63,7 +62,6 @@ export const AuthBox = ({ onModeChange }: AuthBoxProps) => {
   const handleLoginSuccess = (data: ILoginResponse) => {
     sessionStorage.removeItem('loggedOut');
     localStorage.setItem('hasSession', 'true');
-    clearLoggedOut();
     dispatch(setUser(data.user));
 
     const redirect = sessionStorage.getItem('redirectAfterLogin') || '/';

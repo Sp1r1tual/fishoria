@@ -1,4 +1,4 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, type PayloadAction, nanoid } from '@reduxjs/toolkit';
 
 import type { ScreenType, IToast } from '@/common/types';
 
@@ -24,13 +24,24 @@ const uiSlice = createSlice({
       state.previousScreen = state.screen;
       state.screen = action.payload;
     },
-    addToast(state, action: PayloadAction<Omit<IToast, 'id'>>) {
-      const id = Math.random().toString(36).substr(2, 9);
-      state.toasts.push({ ...action.payload, id });
+
+    addToast: {
+      reducer(state, action: PayloadAction<IToast>) {
+        state.toasts.push(action.payload);
+      },
+      prepare(toast: Omit<IToast, 'id'>) {
+        return {
+          payload: {
+            ...toast,
+            id: nanoid(),
+          },
+        };
+      },
     },
     removeToast(state, action: PayloadAction<string>) {
       state.toasts = state.toasts.filter((t) => t.id !== action.payload);
     },
+
     setGameAssetsLoaded(state, action: PayloadAction<boolean>) {
       state.gameAssetsLoaded = action.payload;
     },

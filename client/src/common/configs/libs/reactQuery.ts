@@ -1,29 +1,22 @@
 import { QueryClient, QueryCache, MutationCache } from '@tanstack/react-query';
 
+const handleGlobalError = (error: unknown) => {
+  const axiosError = error as { response?: { status?: number } };
+  const status = axiosError.response?.status;
+
+  if (!status || status >= 500) {
+    if (window.location.pathname !== '/server-unavailable') {
+      window.location.href = '/server-unavailable';
+    }
+  }
+};
+
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
-    onError: (error: unknown) => {
-      const axiosError = error as { response?: { status?: number } };
-      const status = axiosError.response?.status;
-
-      if (!status || status >= 500) {
-        if (window.location.pathname !== '/server-unavailable') {
-          window.location.href = '/server-unavailable';
-        }
-      }
-    },
+    onError: handleGlobalError,
   }),
   mutationCache: new MutationCache({
-    onError: (error: unknown) => {
-      const axiosError = error as { response?: { status?: number } };
-      const status = axiosError.response?.status;
-
-      if (!status || status >= 500) {
-        if (window.location.pathname !== '/server-unavailable') {
-          window.location.href = '/server-unavailable';
-        }
-      }
-    },
+    onError: handleGlobalError,
   }),
   defaultOptions: {
     queries: {

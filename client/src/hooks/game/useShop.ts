@@ -133,10 +133,13 @@ export function useShop() {
         price: total,
       },
       async () => {
-        const payload = { itemId: id, itemType, quantity: qty };
         closeModal();
         try {
-          await buyMutation.mutateAsync(payload);
+          await buyMutation.mutateAsync({
+            itemId: id,
+            itemType: itemType as GearTypeType,
+            quantity: qty,
+          });
           notifySuccess(
             t('shop.boughtSuccess', {
               qty,

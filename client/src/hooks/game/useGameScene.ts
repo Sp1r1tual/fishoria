@@ -2,12 +2,17 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 
-import type { IOwnedGearItem, CatchResultType } from '@/common/types';
+import type {
+  IOwnedGearItem,
+  CatchResultType,
+  BaitTypeType,
+  GroundbaitTypeType,
+} from '@/common/types';
 
 import { useGameAudio } from '@/hooks/audio/useGameAudio';
 import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 
-import { store } from '@/store';
+import { store } from '@/store/store';
 import {
   setPhase,
   setTension,
@@ -460,9 +465,13 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
                 c.itemId === activeBait && c.itemType === 'bait',
             )?.quantity ?? 0) > 0;
 
-        scene.setActiveBait(activeBait, baitName, baitAvailable);
+        scene.setActiveBait(
+          activeBait as BaitTypeType,
+          baitName,
+          baitAvailable,
+        );
         scene.setActiveGroundbait(
-          activeGroundbait,
+          activeGroundbait as GroundbaitTypeType,
           state.game.groundbaitExpiresAt,
         );
         scene.setWeather(state.game.weather);
@@ -544,7 +553,11 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
             c.itemId === player.activeBait && c.itemType === 'bait',
         )?.quantity ?? 0);
 
-    sceneRef.current.setActiveBait(player.activeBait, baitName, baitCount > 0);
+    sceneRef.current.setActiveBait(
+      player.activeBait as BaitTypeType,
+      baitName,
+      baitCount > 0,
+    );
   }, [player, player?.activeBait, player?.consumables, player?.gearItems]);
 
   useEffect(() => {

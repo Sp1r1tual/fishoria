@@ -3,7 +3,11 @@ import { useTranslation } from 'react-i18next';
 
 import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import { useDingSound } from '@/hooks/audio/useDingSound';
-import type { IPlayerQuest } from '@/common/types/player.types';
+import type {
+  IPlayerProfile,
+  IPlayerQuest,
+  IPlayerAchievement,
+} from '@/common/types/player.types';
 
 import type { IToast } from '@/common/types';
 
@@ -17,35 +21,28 @@ export function ToastContainer() {
   const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation();
   const { data: player } = usePlayerQuery();
-  const prevAchievements = useRef<typeof player.playerAchievements | undefined>(
-    undefined,
-  );
-  const prevQuests = useRef<typeof player.playerQuests | undefined>(undefined);
+  const prevAchievements = useRef<
+    IPlayerProfile['playerAchievements'] | undefined
+  >(undefined);
+  const prevQuests = useRef<IPlayerQuest[] | undefined>(undefined);
 
   useEffect(() => {
     if (player?.playerAchievements) {
       if (prevAchievements.current) {
-        type AchRecord = {
-          id: string;
-          achievement: {
-            title: unknown;
-            code: string;
-            imageUrl?: string | null;
-          };
-        };
-        const currentIds = player.playerAchievements.map(
-          (a: AchRecord) => a.id,
-        );
+        const currentIds =
+          player?.playerAchievements?.map((a: IPlayerAchievement) => a.id) ||
+          [];
 
-        const prevIds = prevAchievements.current.map((a: AchRecord) => a.id);
+        const prevIds =
+          prevAchievements.current?.map((a: IPlayerAchievement) => a.id) || [];
         const newIds = currentIds.filter((id: string) => !prevIds.includes(id));
 
         newIds.forEach((id: string) => {
-          const newAch = player.playerAchievements.find(
-            (a: AchRecord) => a.id === id,
+          const newAch = player?.playerAchievements?.find(
+            (a: IPlayerAchievement) => a.id === id,
           );
           if (newAch) {
-            const titleObj = newAch.achievement.title as Record<string, string>;
+            const titleObj = newAch.achievement.title;
             const lang = i18n.language.split('-')[0];
             const translatedTitle =
               titleObj?.[lang] ||

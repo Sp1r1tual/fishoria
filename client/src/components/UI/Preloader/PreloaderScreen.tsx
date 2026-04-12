@@ -6,7 +6,7 @@ import type { PreloadStep } from '@/common/types';
 
 import { unlockAudio } from '@/hooks/audio/useGameAudio';
 
-import { store } from '@/store';
+import { store } from '@/store/store';
 import { addToast } from '@/store/slices/uiSlice';
 
 import { WoodyButton } from '../buttons/WoodyButton/WoodyButton';

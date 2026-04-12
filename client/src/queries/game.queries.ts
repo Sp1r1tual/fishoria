@@ -1,61 +1,64 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import type { IPlayerProfile, IOwnedGearItem } from '@/common/types';
+import type {
+  IPlayerProfile,
+  IOwnedGearItem,
+  ICatchFishPayload,
+  IBreakGearPayload,
+} from '@/common/types';
 
-import { playerKeys } from './player.queries';
-import { InventoryService } from '../services/inventory.service';
-import { store } from '@/store';
+import { PLAYER_KEYS } from './player.queries';
+import { store } from '@/store/store';
 import { clearPendingEquips } from '@/store/slices/gameSlice';
 
+import { InventoryService } from '../services/inventory.service';
 import { GameService } from '../services/game.service';
-import { FISH_SPECIES } from '@/common/configs/game/fish.config';
 
-import { getXpNeededForLevel } from '@/common/utils/experience.util';
+import { calculateOptimisticLevel } from '@/common/utils/experience.util';
 
-const calculateOptimisticLevel = (
-  currentLevel: number,
-  currentXp: number,
-  weight: number,
-  speciesId: string,
+const preserveValidGearSelection = (
+  localUid: string | null,
+  serverUid: string | null,
+  allGearItems: IOwnedGearItem[],
 ) => {
-  const multiplier = FISH_SPECIES[speciesId]?.priceMultiplier || 1.0;
-  const xpGain = Math.ceil((weight || 0) * 25 * multiplier);
-  let newXp = currentXp + xpGain;
-  let newLevel = currentLevel;
+  if (!localUid) return serverUid;
+  const item = allGearItems.find((gi: IOwnedGearItem) => gi.uid === localUid);
 
-  let xpNeeded = getXpNeededForLevel(newLevel);
-  while (newXp >= xpNeeded) {
-    newXp -= xpNeeded;
-    newLevel += 1;
-    xpNeeded = getXpNeededForLevel(newLevel);
+  if (
+    item &&
+    !item.isBroken &&
+    (item.condition === undefined ||
+      item.condition === null ||
+      item.condition > 0)
+  ) {
+    return localUid;
   }
 
-  return { newLevel, newXp };
+  return serverUid;
 };
 
 export const useCatchFishMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (
-      payload: Parameters<typeof GameService.catchFish>[0],
-    ) => {
+    mutationFn: async (payload: ICatchFishPayload) => {
       const state = store.getState();
       const pendingEquips = state.game.pendingEquips;
+
       if (pendingEquips && pendingEquips.length > 0) {
         try {
           await InventoryService.equip({ equips: pendingEquips });
-        } catch (e) {
-          console.error('Failed to flush gears before catch:', e);
+        } catch (error) {
+          console.error('Failed to flush gears before catch:', error);
         }
         store.dispatch(clearPendingEquips());
       }
       return GameService.catchFish(payload);
     },
     onMutate: async (newCatch) => {
-      await queryClient.cancelQueries({ queryKey: playerKeys.profile() });
+      await queryClient.cancelQueries({ queryKey: PLAYER_KEYS.profile() });
       const previousPlayer = queryClient.getQueryData<IPlayerProfile>(
-        playerKeys.profile(),
+        PLAYER_KEYS.profile(),
       );
 
       if (previousPlayer) {
@@ -71,6 +74,7 @@ export const useCatchFishMutation = () => {
           const idx = newConsumables.findIndex(
             (c) => c.itemId === newCatch.baitUsed && c.itemType === 'bait',
           );
+
           if (idx !== -1) {
             newConsumables[idx] = {
               ...newConsumables[idx],
@@ -79,7 +83,7 @@ export const useCatchFishMutation = () => {
           }
         }
 
-        queryClient.setQueryData(playerKeys.profile(), {
+        queryClient.setQueryData(PLAYER_KEYS.profile(), {
           ...previousPlayer,
           level: newLevel,
           xp: newXp,
@@ -91,56 +95,37 @@ export const useCatchFishMutation = () => {
     },
     onError: (_err, _newCatch, context) => {
       if (context?.previousPlayer) {
-        queryClient.setQueryData(playerKeys.profile(), context.previousPlayer);
+        queryClient.setQueryData(PLAYER_KEYS.profile(), context.previousPlayer);
       }
     },
     onSuccess: (data) => {
       queryClient.setQueryData(
-        playerKeys.profile(),
+        PLAYER_KEYS.profile(),
         (old: IPlayerProfile | undefined) => {
           if (!old) return data;
-          // Merge server data but preserve local selections to avoid race conditions
-          // if user changed bait or gear while catch mutation was in flight
-          // Helper to get local item if it's still valid, otherwise use server's selection
-          const preserveValid = (
-            localUid: string | null,
-            serverUid: string | null,
-          ) => {
-            if (!localUid) return serverUid;
-            const g = data.gearItems.find(
-              (gi: IOwnedGearItem) => gi.uid === localUid,
-            );
-            if (
-              g &&
-              !g.isBroken &&
-              (g.condition === undefined ||
-                g.condition === null ||
-                g.condition > 0)
-            ) {
-              return localUid;
-            }
-            return serverUid;
-          };
-
           return {
             ...data,
             activeBait: old.activeBait,
             activeGroundbait: old.activeGroundbait,
-            equippedRodUid: preserveValid(
+            equippedRodUid: preserveValidGearSelection(
               old.equippedRodUid,
               data.equippedRodUid,
+              data.gearItems,
             ),
-            equippedReelUid: preserveValid(
+            equippedReelUid: preserveValidGearSelection(
               old.equippedReelUid,
               data.equippedReelUid,
+              data.gearItems,
             ),
-            equippedLineUid: preserveValid(
+            equippedLineUid: preserveValidGearSelection(
               old.equippedLineUid,
               data.equippedLineUid,
+              data.gearItems,
             ),
-            equippedHookUid: preserveValid(
+            equippedHookUid: preserveValidGearSelection(
               old.equippedHookUid,
               data.equippedHookUid,
+              data.gearItems,
             ),
           };
         },
@@ -151,26 +136,26 @@ export const useCatchFishMutation = () => {
 
 export const useBreakGearMutation = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: async (
-      payload: Parameters<typeof GameService.breakGear>[0],
-    ) => {
+    mutationFn: async (payload: IBreakGearPayload) => {
       const state = store.getState();
       const pendingEquips = state.game.pendingEquips;
+
       if (pendingEquips && pendingEquips.length > 0) {
         try {
           await InventoryService.equip({ equips: pendingEquips });
-        } catch (e) {
-          console.error('Failed to flush gears before break:', e);
+        } catch (error) {
+          console.error('Failed to flush gears before break:', error);
         }
         store.dispatch(clearPendingEquips());
       }
       return GameService.breakGear(payload);
     },
     onMutate: async (variables) => {
-      await queryClient.cancelQueries({ queryKey: playerKeys.profile() });
+      await queryClient.cancelQueries({ queryKey: PLAYER_KEYS.profile() });
       const previousPlayer = queryClient.getQueryData<IPlayerProfile>(
-        playerKeys.profile(),
+        PLAYER_KEYS.profile(),
       );
 
       if (previousPlayer) {
@@ -181,6 +166,7 @@ export const useBreakGearMutation = () => {
           const idx = newConsumables.findIndex(
             (c) => c.itemId === variables.baitId && c.itemType === 'bait',
           );
+
           if (idx !== -1) {
             newConsumables[idx] = {
               ...newConsumables[idx],
@@ -216,61 +202,44 @@ export const useBreakGearMutation = () => {
           newPlayer.equippedReelUid = null;
         }
 
-        queryClient.setQueryData(playerKeys.profile(), newPlayer);
+        queryClient.setQueryData(PLAYER_KEYS.profile(), newPlayer);
       }
 
       return { previousPlayer };
     },
     onError: (_err, _vars, context) => {
       if (context?.previousPlayer) {
-        queryClient.setQueryData(playerKeys.profile(), context.previousPlayer);
+        queryClient.setQueryData(PLAYER_KEYS.profile(), context.previousPlayer);
       }
     },
     onSuccess: (data) => {
       queryClient.setQueryData(
-        playerKeys.profile(),
+        PLAYER_KEYS.profile(),
         (old: IPlayerProfile | undefined) => {
           if (!old) return data;
-          // Helper to get local item if it's still valid, otherwise use server's selection
-          const preserveValid = (
-            localUid: string | null,
-            serverUid: string | null,
-          ) => {
-            if (!localUid) return serverUid;
-            const g = data.gearItems.find(
-              (gi: IOwnedGearItem) => gi.uid === localUid,
-            );
-            if (
-              g &&
-              !g.isBroken &&
-              (g.condition === undefined ||
-                g.condition === null ||
-                g.condition > 0)
-            ) {
-              return localUid;
-            }
-            return serverUid;
-          };
-
           return {
             ...data,
             activeBait: old.activeBait,
             activeGroundbait: old.activeGroundbait,
-            equippedRodUid: preserveValid(
+            equippedRodUid: preserveValidGearSelection(
               old.equippedRodUid,
               data.equippedRodUid,
+              data.gearItems,
             ),
-            equippedReelUid: preserveValid(
+            equippedReelUid: preserveValidGearSelection(
               old.equippedReelUid,
               data.equippedReelUid,
+              data.gearItems,
             ),
-            equippedLineUid: preserveValid(
+            equippedLineUid: preserveValidGearSelection(
               old.equippedLineUid,
               data.equippedLineUid,
+              data.gearItems,
             ),
-            equippedHookUid: preserveValid(
+            equippedHookUid: preserveValidGearSelection(
               old.equippedHookUid,
               data.equippedHookUid,
+              data.gearItems,
             ),
           };
         },

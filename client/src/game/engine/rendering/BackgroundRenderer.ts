@@ -1,6 +1,5 @@
 import { Container, Graphics, Assets, Sprite } from 'pixi.js';
-
-import type { ILakeConfig, TimeOfDayType } from '@/common/types';
+import type { ILakeConfig, TimeOfDayType, WeatherType } from '@/common/types';
 
 export class BackgroundRenderer {
   private bgSprite: Sprite;
@@ -31,7 +30,7 @@ export class BackgroundRenderer {
     W: number,
     H: number,
     timeOfDay: TimeOfDayType,
-    weather: 'clear' | 'cloudy' | 'rain' = 'clear',
+    weather: WeatherType = 'clear',
   ): void {
     const tod = this.config.timeOfDayConfig[timeOfDay];
     this.bgSprite.width = W;

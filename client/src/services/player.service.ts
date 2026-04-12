@@ -1,24 +1,30 @@
+import type { IPlayerProfile } from '@/common/types/player.types';
+
 import { $mainApi } from '@/http/axios';
 
-export const PlayerService = {
-  getProfile: async () => {
-    const { data } = await $mainApi.get('/player/profile');
+export class PlayerService {
+  static async getProfile(): Promise<IPlayerProfile> {
+    const { data } = await $mainApi.get<IPlayerProfile>('/player/profile');
     return data;
-  },
-  addMoney: async (payload: { amount: number; targetUserId?: string }) => {
-    const { data } = await $mainApi.post('/player/add-money', payload);
-    return data;
-  },
-  resetProfile: async () => {
-    const { data } = await $mainApi.post('/player/reset');
-    return data;
-  },
-  updateLanguage: async (language: string) => {
-    const { data } = await $mainApi.post('/player/language', { language });
-    return data;
-  },
-  updateProfile: async (payload: { username?: string; avatar?: string }) => {
+  }
+
+  static async updateProfile(payload: { username?: string; avatar?: string }) {
     const { data } = await $mainApi.post('/player/update', payload);
     return data;
-  },
-};
+  }
+
+  static async addMoney(payload: { amount: number; targetUserId?: string }) {
+    const { data } = await $mainApi.post('/player/add-money', payload);
+    return data;
+  }
+
+  static async resetProfile() {
+    const { data } = await $mainApi.post('/player/reset');
+    return data;
+  }
+
+  static async updateLanguage(language: string) {
+    const { data } = await $mainApi.post('/player/language', { language });
+    return data;
+  }
+}

@@ -1,8 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import type { IPlayerProfile } from '@/common/types';
+import type {
+  IPlayerProfile,
+  IBuyItemPayload,
+  GearTypeType,
+} from '@/common/types';
 
-import { playerKeys } from './player.queries';
+import { PLAYER_KEYS } from './player.queries';
 
 import { ShopService } from '../services/shop.service';
 import {
@@ -15,46 +19,51 @@ import {
   SHOP_GADGETS,
   FISH_SPECIES,
 } from '@/common/configs/game';
+import { ECONOMY } from '@/common/configs/game/system.config';
+
+const getItemPrice = (itemId: string, itemType: string): number => {
+  switch (itemType) {
+    case 'bait':
+      return (BAITS as Record<string, { price: number }>)[itemId]?.price ?? 0;
+    case 'groundbait':
+      return (
+        (GROUNDBAITS as Record<string, { price: number }>)[itemId]?.price ?? 0
+      );
+    case 'rod':
+      return SHOP_RODS.find((r) => r.id === itemId)?.price ?? 0;
+    case 'reel':
+      return SHOP_REELS.find((r) => r.id === itemId)?.price ?? 0;
+    case 'line':
+      return SHOP_LINES.find((l) => l.id === itemId)?.price ?? 0;
+    case 'hook':
+      return SHOP_HOOKS.find((h) => h.id === itemId)?.price ?? 0;
+    case 'gadget':
+      return SHOP_GADGETS.find((g) => g.id === itemId)?.price ?? 0;
+    default:
+      return 0;
+  }
+};
 
 export const useBuyMutation = () => {
   const queryClient = useQueryClient();
   return useMutation<
     unknown,
     unknown,
-    { itemId: string; itemType: string; quantity?: number },
+    IBuyItemPayload,
     { previousProfile: IPlayerProfile | undefined }
   >({
     mutationFn: ShopService.buy,
     onMutate: async (newItem) => {
-      await queryClient.cancelQueries({ queryKey: playerKeys.profile() });
+      await queryClient.cancelQueries({ queryKey: PLAYER_KEYS.profile() });
       const previousProfile = queryClient.getQueryData<IPlayerProfile>(
-        playerKeys.profile(),
+        PLAYER_KEYS.profile(),
       );
 
       if (previousProfile) {
         const updatedProfile = structuredClone(previousProfile);
 
-        let price = 0;
+        const price = getItemPrice(newItem.itemId, newItem.itemType);
         const qty = newItem.quantity || 1;
-
-        if (newItem.itemType === 'bait')
-          price =
-            (BAITS as Record<string, { price: number }>)[newItem.itemId]
-              ?.price ?? 0;
-        if (newItem.itemType === 'groundbait')
-          price =
-            (GROUNDBAITS as Record<string, { price: number }>)[newItem.itemId]
-              ?.price ?? 0;
-        if (newItem.itemType === 'rod')
-          price = SHOP_RODS.find((r) => r.id === newItem.itemId)?.price ?? 0;
-        if (newItem.itemType === 'reel')
-          price = SHOP_REELS.find((r) => r.id === newItem.itemId)?.price ?? 0;
-        if (newItem.itemType === 'line')
-          price = SHOP_LINES.find((l) => l.id === newItem.itemId)?.price ?? 0;
-        if (newItem.itemType === 'hook')
-          price = SHOP_HOOKS.find((h) => h.id === newItem.itemId)?.price ?? 0;
-        if (newItem.itemType === 'gadget')
-          price = SHOP_GADGETS.find((r) => r.id === newItem.itemId)?.price ?? 0;
 
         const totalPrice = price * qty;
         updatedProfile.money -= totalPrice;
@@ -79,7 +88,7 @@ export const useBuyMutation = () => {
               uid: `__optimistic_${Date.now()}_${i}`,
               id: `__optimistic_${Date.now()}_${i}`,
               itemId: newItem.itemId,
-              itemType: newItem.itemType,
+              itemType: newItem.itemType as GearTypeType,
               condition:
                 newItem.itemType === 'rod' ||
                 newItem.itemType === 'reel' ||
@@ -92,18 +101,21 @@ export const useBuyMutation = () => {
           }
         }
 
-        queryClient.setQueryData(playerKeys.profile(), updatedProfile);
+        queryClient.setQueryData(PLAYER_KEYS.profile(), updatedProfile);
       }
 
       return { previousProfile };
     },
     onError: (_err, _newItem, context) => {
       if (context?.previousProfile) {
-        queryClient.setQueryData(playerKeys.profile(), context.previousProfile);
+        queryClient.setQueryData(
+          PLAYER_KEYS.profile(),
+          context.previousProfile,
+        );
       }
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(playerKeys.profile(), data);
+      queryClient.setQueryData(PLAYER_KEYS.profile(), data);
     },
   });
 };
@@ -118,9 +130,9 @@ export const useSellMutation = () => {
   >({
     mutationFn: ShopService.sell,
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: playerKeys.profile() });
+      await queryClient.cancelQueries({ queryKey: PLAYER_KEYS.profile() });
       const previousProfile = queryClient.getQueryData<IPlayerProfile>(
-        playerKeys.profile(),
+        PLAYER_KEYS.profile(),
       );
 
       if (previousProfile) {
@@ -131,21 +143,27 @@ export const useSellMutation = () => {
           const species =
             FISH_SPECIES[f.speciesId as keyof typeof FISH_SPECIES];
           const multiplier = species?.priceMultiplier || 1.0;
-          total += Math.ceil(f.weight * 15 * multiplier);
+
+          total += Math.ceil(
+            f.weight * ECONOMY.baseFishPricePerKg * multiplier,
+          );
         });
         updatedProfile.money += total;
         updatedProfile.fishCatches = [];
-        queryClient.setQueryData(playerKeys.profile(), updatedProfile);
+        queryClient.setQueryData(PLAYER_KEYS.profile(), updatedProfile);
       }
       return { previousProfile };
     },
     onError: (_err, _newItem, context) => {
       if (context?.previousProfile) {
-        queryClient.setQueryData(playerKeys.profile(), context.previousProfile);
+        queryClient.setQueryData(
+          PLAYER_KEYS.profile(),
+          context.previousProfile,
+        );
       }
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(playerKeys.profile(), data);
+      queryClient.setQueryData(PLAYER_KEYS.profile(), data);
     },
   });
 };

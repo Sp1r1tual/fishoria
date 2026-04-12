@@ -1,0 +1,15 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: 20px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.inner {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
