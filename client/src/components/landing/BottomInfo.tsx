@@ -1,6 +1,6 @@
 import { useEffect, useRef, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { prepareWithSegments, layout } from '@chenglou/pretext';
+import { prepareWithSegments, measureLineStats } from '@chenglou/pretext';
 
 import { useBottomInfoAnimation } from '../../hooks/ui/useBottomInfoAnimation';
 import { useFishController } from '@/hooks/game/useFishController';
@@ -78,7 +78,8 @@ export const BottomInfo = () => {
 
   const totalHeight = useMemo(() => {
     if (!fontsLoaded || !prepared || !availableWidth) return 400;
-    const baseH = layout(prepared, availableWidth, lineH).height;
+    const stats = measureLineStats(prepared, availableWidth);
+    const baseH = Math.max(1, stats.lineCount) * lineH;
     return baseH + lineH * 0.5 + padY;
   }, [fontsLoaded, prepared, availableWidth, lineH, padY]);
 

@@ -131,13 +131,9 @@ export const useBottomInfoAnimation = ({
         const line = layoutNextLine(prepared, cursor, textWidth);
         if (line && line.text) {
           const fullLineText = line.text;
-          const naturalWidth = ctx.measureText(fullLineText).width;
+          const naturalWidth = line.width;
 
-          const tempCursor: LayoutCursor = {
-            segmentIndex: line.end.segmentIndex,
-            graphemeIndex: line.end.graphemeIndex,
-          };
-          const nextLine = layoutNextLine(prepared, tempCursor, textWidth);
+          const nextLine = layoutNextLine(prepared, line.end, textWidth);
           const isLastLine = !nextLine || !nextLine.text;
 
           let gapExtra = 0;
