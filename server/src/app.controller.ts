@@ -21,8 +21,11 @@ export class AppController {
   async getDashboard(@Res() res: express.Response) {
     const stats = await this.appService.getStats();
 
-    // Get list of doc files
-    const docsPath = path.join(process.cwd(), 'docs');
+    const localDocsPath = path.join(process.cwd(), 'docs');
+    const docsPath = fs.existsSync(localDocsPath)
+      ? localDocsPath
+      : path.join(__dirname, '..', 'docs');
+
     let docFiles: string[] = [];
     if (fs.existsSync(docsPath)) {
       docFiles = fs.readdirSync(docsPath).filter((f) => f.endsWith('.md'));
@@ -35,7 +38,11 @@ export class AppController {
   @Get('api/docs-content/:filename')
   @ApiOperation({ summary: 'Get rendered markdown content' })
   async getDocContent(@Param('filename') filename: string) {
-    const filePath = path.join(process.cwd(), 'docs', filename);
+    const localDocsPath = path.join(process.cwd(), 'docs');
+    const docsPath = fs.existsSync(localDocsPath)
+      ? localDocsPath
+      : path.join(__dirname, '..', 'docs');
+    const filePath = path.join(docsPath, filename);
 
     if (!fs.existsSync(filePath)) {
       throw new NotFoundException('Documentation file not found');
