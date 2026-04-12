@@ -1,4 +1,4 @@
-# Fishoria: a fishing simulator in your browser
+# Fishoria — A Fishing Simulator in Your Browser
 
 **Fishoria** is not just another browser game. It is a highly interactive, state-of-the-art web-based fishing simulator, blending mesmerizing WebGL graphics with uncompromised gameplay realism.
 
@@ -12,7 +12,7 @@ Feel the adrenaline rush of fighting a trophy catch, carefully select your tackl
 
 ---
 
-## Why will Fishoria hook you from the first minute?
+## Why Will Fishoria Hook You From the First Minute?
 
 🌊 **Living Ecosystem & Advanced Fish AI**
 Forget boring, predictable algorithms. The fish in Fishoria have their own distinct behaviors! They migrate, seek comfortable depths, react differently to the time of day, and get spooked by the sound of a splash. Outsmarting each one is a true challenge.
@@ -40,34 +40,162 @@ We have polished every single detail: water droplets streaming down your screen,
 
 ---
 
-## Architecture Without Compromises
+## Tech Stack
 
-Fishoria is also a technical masterpiece. We've combined the latest cutting-edge technologies to ensure maximum performance and reliability:
+### Client — Frontend Engine
 
-### Client Side ([/client](./client))
+| Category          | Technology                                                                           |
+| :---------------- | :----------------------------------------------------------------------------------- |
+| **UI Framework**  | [React 19](https://react.dev/) with React Compiler (auto-memoization)                |
+| **Bundler**       | [Vite 8](https://vite.dev/)                                                          |
+| **Rendering**     | [PixiJS 8](https://pixijs.com/) — WebGL 2D graphics, particle systems                |
+| **State**         | [Redux Toolkit](https://redux-toolkit.js.org/) — global game state                   |
+| **Data Fetching** | [TanStack Query v5](https://tanstack.com/query) — server state, caching              |
+| **Routing**       | [React Router 7](https://reactrouter.com/)                                           |
+| **i18n**          | [i18next](https://www.i18next.com/) + react-i18next                                  |
+| **Forms**         | [React Hook Form](https://react-hook-form.com/)                                      |
+| **Math**          | [simplex-noise](https://github.com/jwagner/simplex-noise.js) — procedural generation |
+| **Analytics**     | [Vercel Analytics](https://vercel.com/analytics)                                     |
+| **Language**      | TypeScript 5                                                                         |
 
-- **Responsive UI/UX:** React 19 + Vite 6 guarantee instant feedback and blazing-fast load times.
-- **Rendering Magic:** Pixi.js 8 (WebGL) draws smooth graphics and creates an irreplaceable atmosphere.
-- **Zero-Lag Data Management:** Redux Toolkit + TanStack Query v5 eliminate network lag and state drops.
-- **Routing:** React Router 7 provides seamless navigation and fast transitions between game screens.
-- **Globalization:** i18next makes the game accessible and understandable for players worldwide, supporting multiple languages.
-- **Optimization & Touch Interface:** Thanks to Object Pooling and async fish spawning, the game maintains a stable 60 FPS, while universal Pointer-Events allow for flawless gameplay on tablets and mobile phones!
+### Server — Backend Core
 
-### Server Side ([/server](./server))
+| Category       | Technology                                                                     |
+| :------------- | :----------------------------------------------------------------------------- |
+| **Framework**  | [NestJS 11](https://nestjs.com/)                                               |
+| **ORM**        | [Prisma 7](https://www.prisma.io/) with `@prisma/adapter-pg`                   |
+| **Database**   | [PostgreSQL (Supabase)](https://supabase.com/)                                 |
+| **Caching**    | [Redis (Upstash)](https://upstash.com/) — REST-based                           |
+| **Validation** | [Zod 4](https://zod.dev/) & [nestjs-zod](https://github.com/risen7/nestjs-zod) |
+| **Auth**       | [Passport.js](https://www.passportjs.org/) — JWT, Google OAuth, Local          |
+| **Mailing**    | [Nodemailer](https://nodemailer.com/) — Gmail SMTP                             |
+| **Docs**       | [Swagger / OpenAPI](https://swagger.io/) via `@nestjs/swagger`                 |
+| **Language**   | TypeScript 5                                                                   |
 
-- **Bulletproof Core:** NestJS 11 + Prisma 7 handle complex game logic at incredibly high speeds.
-- **Reliable DB & Cache:** PostgreSQL (Supabase) + Redis (Upstash) keep thousands of player records absolutely secure.
-- **Security & Notifications:** Passport.js (JWT and Google OAuth2) securely protects accounts, while Nodemailer automates email verification.
-- **Efficiency:** Zod validation and built-in rate limiting keep the server stable even during massive player spikes.
-- **For Administrators:** A built-in In-Game Terminal (Debug Shell v1.05) with role-based access to manage the game world seamlessly from the browser.
+### DevOps & Quality
+
+| Category        | Technology                                                                      |
+| :-------------- | :------------------------------------------------------------------------------ |
+| **Hosting**     | [Vercel](https://vercel.com/) — client & server deployments                     |
+| **Git Hooks**   | [Husky](https://typicode.github.io/husky/) — pre-commit automation              |
+| **Lint Staged** | [lint-staged](https://github.com/lint-staged/lint-staged) — incremental linting |
+| **Linting**     | ESLint 9 + Prettier                                                             |
+| **Unused Code** | [Knip](https://knip.dev/) — dead export & dependency detection                  |
 
 ---
 
-## Explore the Depths of Code
+## Getting Started
 
-- **`/client`** — the game client. Look under the hood of our game engine and UI in the [Client README](./client/README.md).
-- **`/server`** — the backend. Discover how the security and APIs are structured in the [Server README](./server/README.md).
-- **`/docs`** — the sacred texts. Read up on tension formulas, AI behaviors, and ecosystem mathematics in [GAME_MECHANICS.md](./docs/GAME_MECHANICS.md).
+### Prerequisites
+
+- **Node.js** ≥ 18
+- **Yarn** (package manager)
+- **PostgreSQL** database (or [Supabase](https://supabase.com/) account)
+- **Redis** instance (or [Upstash](https://upstash.com/) account)
+
+### 1. Clone & Install
+
+```bash
+git clone https://github.com/your-repo/fishoria.git
+cd fishoria
+
+# Install root dependencies (Husky, lint-staged)
+yarn install
+
+# Install client dependencies
+cd client && yarn install && cd ..
+
+# Install server dependencies
+cd server && yarn install && cd ..
+```
+
+### 2. Configure Environment
+
+```bash
+# Client
+cp client/.env.example client/.env
+
+# Server
+cp server/.env.example server/.env
+```
+
+Edit both `.env` files with your credentials. See each directory's README for details.
+
+### 3. Database Setup
+
+```bash
+cd server
+
+# Apply migrations
+yarn prisma:migrate
+
+# Generate Prisma client
+yarn prisma:generate
+
+# Seed initial data (news, quests, achievements)
+yarn prisma:seed
+```
+
+### 4. Run in Development
+
+```bash
+# Terminal 1 — Start the API server (port 5000)
+cd server && yarn dev
+
+# Terminal 2 — Start the client dev server (port 5173)
+cd client && yarn dev
+```
+
+Open `http://localhost:5173` in your browser and start fishing!
+
+---
+
+## Available Scripts
+
+### Root (Monorepo)
+
+| Command                   | Description                     |
+| :------------------------ | :------------------------------ |
+| `yarn translations:check` | Check i18n translation coverage |
+| `yarn prepare`            | Install Husky git hooks         |
+
+### Client (`/client`)
+
+| Command                  | Description                       |
+| :----------------------- | :-------------------------------- |
+| `yarn dev`               | Start Vite dev server             |
+| `yarn build`             | Lint + compile + production build |
+| `yarn preview`           | Preview production build locally  |
+| `yarn lint` / `lint:fix` | ESLint check / auto-fix           |
+| `yarn format`            | Format with Prettier              |
+| `yarn convert`           | Convert images to WebP            |
+| `yarn knip`              | Detect unused code                |
+
+### Server (`/server`)
+
+| Command                  | Description                   |
+| :----------------------- | :---------------------------- |
+| `yarn dev`               | Start in watch mode           |
+| `yarn build`             | Lint + compile + NestJS build |
+| `yarn start:prod`        | Run production build          |
+| `yarn lint` / `lint:fix` | ESLint check / auto-fix       |
+| `yarn format`            | Format with Prettier          |
+| `yarn prisma:migrate`    | Run database migrations       |
+| `yarn prisma:generate`   | Generate Prisma client        |
+| `yarn prisma:seed`       | Seed database                 |
+| `yarn prisma:studio`     | Open Prisma Studio GUI        |
+| `yarn knip`              | Detect unused code            |
+
+---
+
+## Documentation
+
+| Document                                                                | Description                                |
+| :---------------------------------------------------------------------- | :----------------------------------------- |
+| [Client README](./client/README.md)                                     | Frontend architecture, game engine, UI     |
+| [Server README](./server/README.md)                                     | Backend API, all endpoints, setup          |
+| [In-Game Terminal Commands](./docs/CLIENT_IN_GAME_TERMINAL_COMMANDS.md) | Debug shell commands reference             |
+| [Server Internal Wiki](./server/docs/)                                  | 12 detailed module docs (auth, game, etc.) |
 
 ---
 
