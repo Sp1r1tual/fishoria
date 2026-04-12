@@ -1,12 +1,5 @@
 import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import {
-  ApiCookieAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
 import { ZodValidationPipe } from 'nestjs-zod';
 
 import { ShopService } from './shop.service';
@@ -14,9 +7,6 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { GetUserId } from '../auth/decorators/get-user-id.decorator';
 import { BuyDto } from './dto/shop.dto';
 
-@ApiTags('shop')
-@ApiCookieAuth('Authentication')
-@ApiSecurity('XSRF')
 @Throttle({ default: { limit: 100, ttl: 60000 } })
 @Controller('shop')
 export class ShopController {
@@ -24,9 +14,6 @@ export class ShopController {
 
   @UseGuards(JwtAuthGuard)
   @Post('buy')
-  @ApiOperation({ summary: 'Buy item from shop' })
-  @ApiResponse({ status: 201, description: 'Item purchased successfully.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   buyItem(
     @GetUserId() userId: string,
     @Body(new ZodValidationPipe(BuyDto))
@@ -37,9 +24,6 @@ export class ShopController {
 
   @UseGuards(JwtAuthGuard)
   @Post('sell')
-  @ApiOperation({ summary: 'Sell all caught fish' })
-  @ApiResponse({ status: 201, description: 'Fish sold successfully.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   sellItem(@GetUserId() userId: string) {
     return this.shopService.sellAllFish(userId);
   }

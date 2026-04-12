@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { createZodDto } from 'nestjs-zod';
 
 const ConditionSchema = z.object({
   id: z.string(),
@@ -18,7 +19,11 @@ const QuestSchema = z.object({
   xpReward: z.number(),
   moneyReward: z.number(),
   order: z.number(),
+  createdAt: z.iso.datetime().or(z.any()).optional(),
+  updatedAt: z.iso.datetime().or(z.any()).optional(),
 });
+
+class QuestResponseDto extends createZodDto(QuestSchema) {}
 
 export const PlayerQuestSchema = z.object({
   id: z.string(),
@@ -31,3 +36,5 @@ export const PlayerQuestSchema = z.object({
   createdAt: z.iso.datetime().or(z.any()).optional(),
   updatedAt: z.iso.datetime().or(z.any()).optional(),
 });
+
+export class PlayerQuestResponseDto extends createZodDto(PlayerQuestSchema) {}

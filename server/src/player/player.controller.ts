@@ -1,47 +1,42 @@
 import { Controller, Get, Post, UseGuards, Body } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import ms from 'ms';
 import { Throttle } from '@nestjs/throttler';
-import {
-  ApiBody,
-  ApiCookieAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
 import { ZodValidationPipe } from 'nestjs-zod';
 
-import { PlayerService } from './player.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUserId } from '../auth/decorators/get-user-id.decorator';
+
+import { PlayerService } from './player.service';
 import { AddMoneyDto } from './dto/player.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UpdateLanguageDto } from './dto/update-language.dto';
 
-@ApiTags('player')
-@ApiCookieAuth('Authentication')
 @Throttle({ default: { limit: 100, ttl: 60000 } })
 @Controller('player')
 export class PlayerController {
-  constructor(private readonly playerService: PlayerService) {}
+  constructor(
+    private readonly playerService: PlayerService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  @ApiOperation({ summary: 'Get current player profile' })
-  @ApiResponse({ status: 200, description: 'Return player profile.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  getProfile(@GetUserId() userId: string) {
-    return this.playerService.getProfile(userId);
+  async getProfile(@GetUserId() userId: string) {
+    const profile = await this.playerService.getProfile(userId);
+    const jwtExp = this.configService.get<string>(
+      'JWT_ACCESS_TOKEN_EXPIRATION',
+    )!;
+    const expiresIn = ms(jwtExp as ms.StringValue);
+
+    return { ...profile, expiresIn };
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('MODERATOR')
   @Post('add-money')
-  @ApiSecurity('XSRF')
-  @ApiOperation({ summary: 'Add money to player (Moderator only)' })
-  @ApiResponse({ status: 201, description: 'Money added successfully.' })
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
   addMoney(
     @GetUserId() modId: string,
     @Body(new ZodValidationPipe(AddMoneyDto)) body: AddMoneyDto,
@@ -51,20 +46,12 @@ export class PlayerController {
 
   @UseGuards(JwtAuthGuard)
   @Post('reset')
-  @ApiSecurity('XSRF')
-  @ApiOperation({ summary: 'Reset player profile' })
-  @ApiResponse({ status: 201, description: 'Profile reset successfully.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   resetProfile(@GetUserId() userId: string) {
     return this.playerService.resetProfile(userId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('language')
-  @ApiSecurity('XSRF')
-  @ApiOperation({ summary: 'Update player language' })
-  @ApiResponse({ status: 201, description: 'Language updated successfully.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   updateLanguage(
     @GetUserId() userId: string,
     @Body(new ZodValidationPipe(UpdateLanguageDto)) body: UpdateLanguageDto,
@@ -74,10 +61,6 @@ export class PlayerController {
 
   @UseGuards(JwtAuthGuard)
   @Post('update')
-  @ApiSecurity('XSRF')
-  @ApiOperation({ summary: 'Update player profile' })
-  @ApiResponse({ status: 201, description: 'Profile updated successfully.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   updateProfile(
     @GetUserId() userId: string,
     @Body(new ZodValidationPipe(UpdateProfileDto)) body: UpdateProfileDto,

@@ -8,6 +8,6 @@ import { QuestEntity } from './entities/quest.entity';
 @Module({
   controllers: [QuestController],
   providers: [QuestService, PrismaService, QuestEntity],
-  exports: [QuestService],
+  exports: [QuestService, QuestEntity],
 })
 export class QuestModule {}

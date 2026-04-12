@@ -3,43 +3,6 @@ import { createZodDto } from 'nestjs-zod';
 
 import { PlayerQuestSchema } from '../../quest/dto/quest-response.dto';
 
-/**
- * Standardized Prisma `include` for PlayerProfile responses.
- * Every endpoint that returns a profile MUST use this to ensure
- * a consistent response shape for the client cache.
- */
-export const FULL_PROFILE_INCLUDE = {
-  gearItems: true,
-  consumables: true,
-  fishCatches: true,
-  lakeStats: true,
-  playerQuests: {
-    include: {
-      quest: true,
-    },
-  },
-  playerAchievements: {
-    include: {
-      achievement: {
-        include: {
-          translations: true,
-        },
-      },
-    },
-  },
-  user: {
-    select: {
-      id: true,
-      email: true,
-      username: true,
-      avatar: true,
-      role: true,
-      isActivated: true,
-      language: true,
-    },
-  },
-} as const;
-
 const GearItemSchema = z.object({
   uid: z.string(),
   profileId: z.string(),
@@ -111,8 +74,8 @@ const PlayerProfileResponseSchema = z.object({
   equippedLineUid: z.string().nullable(),
   equippedHookUid: z.string().nullable(),
   hasEchoSounder: z.boolean(),
-  activeBait: z.string(),
-  activeGroundbait: z.string(),
+  activeBait: z.string().nullable(),
+  activeGroundbait: z.string().nullable(),
   gearItems: z.array(GearItemSchema),
   consumables: z.array(ConsumableItemSchema),
   fishCatches: z.array(FishCatchSchema),

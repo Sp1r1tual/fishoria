@@ -12,9 +12,9 @@ import * as bcrypt from 'bcrypt';
 
 import { RedisService } from '../common/redis/redis.service';
 import { MailService } from '../mail/mail.service';
+import { AuthEntity } from './entities/auth.entity';
 import { GoogleAuthPayloadDto } from './dto/google-payload.dto';
 import { RegisterDto } from './dto/register.dto';
-import { AuthEntity } from './entities/auth.entity';
 
 @Injectable()
 export class AuthService {
@@ -83,6 +83,7 @@ export class AuthService {
 
     const ban = await this.authEntity.findActiveBan(user.id);
     if (ban) {
+      await this.redis.set(`ban:${user.id}`, 'true', { ex: 3600 });
       throw new UnauthorizedException('landing.auth.errors.accountBanned');
     }
 

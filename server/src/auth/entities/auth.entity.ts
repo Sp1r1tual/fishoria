@@ -93,6 +93,7 @@ export class AuthEntity {
         where: { id: userId },
         data: { password: hashPassword },
       });
+
       await tx.passwordResetToken.deleteMany({
         where: { userId },
       });

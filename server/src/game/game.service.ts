@@ -1,10 +1,10 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 
 import { GameEntity } from './entities/game.entity';
-import { mapPlayerProfile } from '../player/player.mapper';
 import { CatchDto } from './dto/catch.dto';
 import { BreakDto } from './dto/break-gear.dto';
 import { FISH_SPECIES_MULTIPLIERS } from '../common/configs/prices.config';
+import { mapPlayerProfile } from '../player/mappers/player.mapper';
 
 @Injectable()
 export class GameService {
@@ -13,6 +13,7 @@ export class GameService {
   async catchFish(userId: string, body: CatchDto) {
     const user = await this.gameEntity.findUser(userId);
     if (!user) throw new BadRequestException('User not found');
+
     const lang = user.language;
 
     const profile = await this.gameEntity.findProfile(userId);
@@ -44,6 +45,7 @@ export class GameService {
   async breakGear(userId: string, body: BreakDto) {
     const user = await this.gameEntity.findUser(userId);
     if (!user) throw new BadRequestException('User not found');
+
     const lang = user.language;
 
     const profile = await this.gameEntity.findProfile(userId);

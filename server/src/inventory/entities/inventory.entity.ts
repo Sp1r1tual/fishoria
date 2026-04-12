@@ -2,7 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 
 import { PrismaService } from '../../common/prisma/prisma.service';
-import { FULL_PROFILE_INCLUDE } from '../../player/dto/profile-response.dto';
+import { FULL_PROFILE_INCLUDE } from '../../player/constants/player.constants';
 
 @Injectable()
 export class InventoryEntity {
@@ -66,6 +66,7 @@ export class InventoryEntity {
       if (kitCondition <= 0) {
         throw new BadRequestException('Invalid repair kit');
       }
+
       if (
         !targetItem ||
         targetItem.profileId !== profileId ||

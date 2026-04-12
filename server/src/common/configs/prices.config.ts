@@ -76,9 +76,11 @@ export const FISH_SPECIES_MULTIPLIERS: Record<string, number> = {
 
 export function getItemPrice(itemId: string): number {
   const price = ITEM_PRICES[itemId];
+
   if (price === undefined) {
     throw new Error(`Unknown item ID: ${itemId}`);
   }
+
   return price;
 }
 

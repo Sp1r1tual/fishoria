@@ -63,7 +63,7 @@ export class AuthService {
   }
 
   static async getProfile() {
-    const response = await $mainApi.get<IUser>('/auth/profile');
+    const response = await $mainApi.get<IUser>('/player/profile');
     return response;
   }
 }

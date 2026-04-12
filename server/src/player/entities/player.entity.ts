@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 
 import { PrismaService } from '../../common/prisma/prisma.service';
-import { FULL_PROFILE_INCLUDE } from '../dto/profile-response.dto';
+import { FULL_PROFILE_INCLUDE } from '../constants/player.constants';
+import { getXpNeededForLevel } from '../utils/player-experience.util';
 
 @Injectable()
 export class PlayerEntity {
@@ -163,5 +164,26 @@ export class PlayerEntity {
 
   async countQuests() {
     return this.prisma.quest.count();
+  }
+
+  async addXp(tx: Prisma.TransactionClient, profileId: string, xpGain: number) {
+    const currentProfile = await tx.playerProfile.findUnique({
+      where: { id: profileId },
+    });
+
+    let newXp = (currentProfile?.xp || 0) + xpGain;
+    let newLevel = currentProfile?.level || 1;
+    let xpNeeded = getXpNeededForLevel(newLevel);
+
+    while (newXp >= xpNeeded) {
+      newXp -= xpNeeded;
+      newLevel += 1;
+      xpNeeded = getXpNeededForLevel(newLevel);
+    }
+
+    await tx.playerProfile.update({
+      where: { id: profileId },
+      data: { xp: newXp, level: newLevel },
+    });
   }
 }

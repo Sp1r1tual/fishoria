@@ -10,14 +10,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import {
-  ApiBody,
-  ApiCookieAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
 import type { Request, Response } from 'express';
@@ -25,23 +17,12 @@ import ms from 'ms';
 
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { GetUserId } from './decorators/get-user-id.decorator';
 import { GoogleAuthPayloadDto } from './dto/google-payload.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { LoginDto } from './dto/login.dto';
 
-interface IRequestWithUser extends Request {
-  user: {
-    id: string;
-    email: string;
-    role: string;
-    language: string;
-  };
-}
-
-@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -51,17 +32,10 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  @ApiOperation({ summary: 'Initiate Google OAuth' })
-  @ApiResponse({ status: 302, description: 'Redirect to Google.' })
   async googleAuth() {}
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  @ApiOperation({ summary: 'Google OAuth callback' })
-  @ApiResponse({
-    status: 302,
-    description: 'Login success and redirect to client.',
-  })
   async googleAuthRedirect(@Req() req: Request, @Res() res: Response) {
     const internalUser = await this.authService.validateOAuthUser(
       req.user as GoogleAuthPayloadDto,
@@ -75,21 +49,13 @@ export class AuthController {
 
     this.setCookies(res, access_token, refresh_token);
 
-    res.redirect(
-      this.configService.get<string>('CLIENT_URL') || 'http://localhost:5173',
-    );
+    res.redirect(this.configService.get<string>('CLIENT_URL')!);
   }
 
   @Post('refresh')
-  @Throttle({ default: { limit: 15, ttl: 60000 } })
-  @ApiOperation({ summary: 'Refresh access token' })
-  @ApiResponse({ status: 201, description: 'Tokens refreshed.' })
-  @ApiResponse({
-    status: 401,
-    description: 'Invalid or missing refresh token.',
-  })
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   async refresh(@Req() req: Request, @Res() res: Response) {
-    const refreshToken = req.cookies?.Refresh;
+    const refreshToken = req.cookies?.Refresh || req.body?.refreshToken;
 
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token is missing');
@@ -113,17 +79,19 @@ export class AuthController {
     )!;
     const expiresIn = ms(jwtExp as ms.StringValue);
 
-    res.send({ user: tokens.user, success: true, expiresIn });
+    res.send({
+      user: tokens.user,
+      accessToken: tokens.access_token,
+      refreshToken: tokens.refresh_token,
+      success: true,
+      expiresIn,
+    });
   }
 
   @Post('logout')
   @UseGuards(JwtAuthGuard)
-  @ApiCookieAuth('Authentication')
-  @ApiSecurity('XSRF')
-  @ApiOperation({ summary: 'Logout user' })
-  @ApiResponse({ status: 201, description: 'Logged out successfully.' })
   async logout(@Req() req: Request, @Res() res: Response) {
-    const refreshToken = req.cookies?.Refresh;
+    const refreshToken = req.cookies?.Refresh || req.body?.refreshToken;
 
     if (refreshToken) {
       await this.authService.logout(refreshToken);
@@ -133,26 +101,8 @@ export class AuthController {
     res.send({ success: true });
   }
 
-  @Get('profile')
-  @UseGuards(JwtAuthGuard)
-  @ApiCookieAuth('Authentication')
-  @ApiOperation({ summary: 'Get current user profile' })
-  @ApiResponse({ status: 200, description: 'Return user profile.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  getProfile(@GetUserId() userId: string, @Req() req: IRequestWithUser) {
-    const jwtExp = this.configService.get<string>(
-      'JWT_ACCESS_TOKEN_EXPIRATION',
-    )!;
-    const expiresIn = ms(jwtExp as ms.StringValue);
-
-    return { ...req.user, userId, expiresIn };
-  }
-
   @Post('forgot-password')
-  @Throttle({ default: { limit: 3, ttl: 60000 } })
-  @ApiOperation({ summary: 'Request password reset' })
-  @ApiBody({ type: ForgotPasswordDto })
-  @ApiResponse({ status: 201, description: 'Reset link sent if email exists.' })
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   async forgotPassword(@Body() dto: ForgotPasswordDto, @Req() req: Request) {
     await this.authService.requestPasswordReset(
       dto.email,
@@ -165,21 +115,12 @@ export class AuthController {
   }
 
   @Post('verify-reset-token')
-  @ApiOperation({ summary: 'Verify password reset token' })
-  @ApiBody({
-    schema: { type: 'object', properties: { token: { type: 'string' } } },
-  })
-  @ApiResponse({ status: 201, description: 'Token verified.' })
-  @ApiResponse({ status: 400, description: 'Invalid token.' })
   async verifyResetToken(@Body('token') token: string) {
     return await this.authService.verifyPasswordResetToken(token);
   }
 
   @Post('reset-password')
-  @Throttle({ default: { limit: 3, ttl: 60000 } })
-  @ApiOperation({ summary: 'Reset password using token' })
-  @ApiBody({ type: ResetPasswordDto })
-  @ApiResponse({ status: 201, description: 'Password updated successfully.' })
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   async resetPassword(@Body() dto: ResetPasswordDto) {
     await this.authService.resetPassword(dto.token, dto.password);
 
@@ -188,9 +129,6 @@ export class AuthController {
 
   @Post('register')
   @Throttle({ default: { limit: 5, ttl: 60000 } })
-  @ApiOperation({ summary: 'Register new user' })
-  @ApiBody({ type: RegisterDto })
-  @ApiResponse({ status: 201, description: 'User registered successfully.' })
   async register(@Body() dto: RegisterDto) {
     return await this.authService.register(dto);
   }
@@ -198,10 +136,6 @@ export class AuthController {
   @Post('login')
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @UseGuards(AuthGuard('local'))
-  @ApiOperation({ summary: 'Login user' })
-  @ApiBody({ type: LoginDto })
-  @ApiResponse({ status: 201, description: 'Logged in successfully.' })
-  @ApiResponse({ status: 401, description: 'Invalid credentials.' })
   async login(
     @Body() _dto: LoginDto,
     @Req() req: Request,
@@ -227,15 +161,16 @@ export class AuthController {
     )!;
     const expiresIn = ms(jwtExp as ms.StringValue);
 
-    return res.json({ user, success: true, expiresIn });
+    return res.json({
+      user,
+      accessToken: tokens.access_token,
+      refreshToken: tokens.refresh_token,
+      success: true,
+      expiresIn,
+    });
   }
 
   @Get('activate/:link')
-  @ApiOperation({ summary: 'Activate account via link' })
-  @ApiResponse({
-    status: 302,
-    description: 'Account activated and redirect to client.',
-  })
   async activate(@Param('link') link: string, @Res() res: Response) {
     try {
       await this.authService.activate(link);

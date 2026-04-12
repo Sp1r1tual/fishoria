@@ -7,6 +7,6 @@ import { PlayerEntity } from './entities/player.entity';
 @Module({
   controllers: [PlayerController],
   providers: [PlayerService, PlayerEntity],
-  exports: [PlayerService],
+  exports: [PlayerService, PlayerEntity],
 })
 export class PlayerModule {}

@@ -243,7 +243,6 @@ export async function seedQuests(prisma: PrismaClient) {
           xpReward: quest.xpReward,
           moneyReward: quest.moneyReward,
           order: quest.order,
-          // For simplicity, we just delete and recreation of translations on seed
           translations: {
             deleteMany: {},
             create: [

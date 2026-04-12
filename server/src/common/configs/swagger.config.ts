@@ -25,6 +25,7 @@ export function setupSwagger(app: INestApplication) {
       },
       'XSRF',
     )
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

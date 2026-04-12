@@ -25,6 +25,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       httpStatus = exception.getStatus();
       const response = exception.getResponse();
+
       if (typeof response === 'object' && response !== null) {
         const msg = (response as Record<string, unknown>).message;
 
@@ -39,6 +40,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         case 'P2002': {
           httpStatus = HttpStatus.CONFLICT;
           const target = (exception.meta?.target as string[])?.join(', ');
+
           message = `Unique constraint failed on field(s): ${target}`;
           break;
         }

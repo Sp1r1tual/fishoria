@@ -35,4 +35,60 @@ export class AchievementEntity {
       include: { translations: true },
     });
   }
+
+  async checkAndAssignCatchAchievements(
+    tx: Prisma.TransactionClient,
+    profileId: string,
+    isTrophy: boolean,
+  ) {
+    if (isTrophy) {
+      const ach = await tx.achievement.findUnique({
+        where: { code: 'sportsman_fisher' },
+      });
+
+      if (ach) {
+        const hasAch = await tx.playerAchievement.findUnique({
+          where: {
+            profileId_achievementId: {
+              profileId,
+              achievementId: ach.id,
+            },
+          },
+        });
+
+        if (!hasAch) {
+          await tx.playerAchievement.create({
+            data: { profileId, achievementId: ach.id },
+          });
+        }
+      }
+    }
+  }
+
+  async checkAndAssignRecklessAchievement(
+    tx: Prisma.TransactionClient,
+    profileId: string,
+  ) {
+    const achCode = 'reckless';
+    const ach = await tx.achievement.findUnique({
+      where: { code: achCode },
+    });
+
+    if (ach) {
+      const hasAch = await tx.playerAchievement.findUnique({
+        where: {
+          profileId_achievementId: {
+            profileId,
+            achievementId: ach.id,
+          },
+        },
+      });
+
+      if (!hasAch) {
+        await tx.playerAchievement.create({
+          data: { profileId, achievementId: ach.id },
+        });
+      }
+    }
+  }
 }

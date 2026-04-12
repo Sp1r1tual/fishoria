@@ -3,14 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { AchievementEntity } from './entities/achievement.entity';
 import { AchievementResponseDto } from './dto/achievement-response.dto';
 
-interface RawAchievementItem {
+interface IRawAchievementItem {
   id: string;
+  order: number;
   code: string;
   imageUrl: string | null;
-  order: number;
+  translations: { title: string; description: string }[];
   createdAt: Date;
   updatedAt: Date;
-  translations: { title: string; description: string }[];
 }
 
 @Injectable()
@@ -22,11 +22,12 @@ export class AchievementsService {
   ): Promise<AchievementResponseDto[]> {
     const achievements = (await this.achievementEntity.findAll(
       language,
-    )) as RawAchievementItem[];
+    )) as IRawAchievementItem[];
+
     return achievements.map((item) => this.mapLocalized(item));
   }
 
-  private mapLocalized(item: RawAchievementItem): AchievementResponseDto {
+  private mapLocalized(item: IRawAchievementItem): AchievementResponseDto {
     const translation = item.translations?.[0];
 
     return {

@@ -2,6 +2,14 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 
 import { InventoryEntity } from './entities/inventory.entity';
 
+type InventoryTargetType =
+  | 'rod'
+  | 'reel'
+  | 'line'
+  | 'hook'
+  | 'bait'
+  | 'groundbait';
+
 @Injectable()
 export class InventoryService {
   constructor(private readonly inventoryEntity: InventoryEntity) {}
@@ -9,7 +17,7 @@ export class InventoryService {
   async equipGear(
     userId: string,
     equips: {
-      targetType: 'rod' | 'reel' | 'line' | 'hook' | 'bait' | 'groundbait';
+      targetType: InventoryTargetType;
       uid?: string | null;
       targetId?: string | null;
     }[],
@@ -40,15 +48,18 @@ export class InventoryService {
           profile.id,
           action.targetType,
         );
+
         if (!item)
           throw new BadRequestException(
             `Item not found in inventory: ${action.uid}`,
           );
+
         if (item.isBroken) {
           throw new BadRequestException(
             `Cannot equip broken item: ${action.uid}`,
           );
         }
+
         equippedItems[action.targetType] = item;
       }
 
@@ -124,13 +135,16 @@ export class InventoryService {
       profile.id,
       'repair_kit',
     );
+
     if (!kit || (kit.condition ?? 100) <= 0)
       throw new BadRequestException('Invalid repair kit');
+
     const targetItem = await this.inventoryEntity.findGearItem(
       targetUid,
       profile.id,
       targetType,
     );
+
     if (
       !targetItem ||
       targetItem.condition === null ||

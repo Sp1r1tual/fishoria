@@ -2,7 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 
 import { PrismaService } from '../../common/prisma/prisma.service';
-import { FULL_PROFILE_INCLUDE } from '../../player/dto/profile-response.dto';
+import { FULL_PROFILE_INCLUDE } from '../../player/constants/player.constants';
 import { getFishSellPrice } from '../../common/configs/prices.config';
 
 @Injectable()

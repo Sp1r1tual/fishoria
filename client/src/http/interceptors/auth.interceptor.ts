@@ -177,8 +177,7 @@ const authInterceptors = (axiosInstance: AxiosInstance) => {
       if (
         originalRequest &&
         error.response?.status === 404 &&
-        (originalRequest.url?.includes('/auth/profile') ||
-          originalRequest.url?.includes('/player/profile'))
+        originalRequest.url?.includes('/player/profile')
       ) {
         localStorage.removeItem('hasSession');
         localStorage.removeItem('authExpiry');

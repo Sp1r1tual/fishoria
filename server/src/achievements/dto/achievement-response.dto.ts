@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 
-export const AchievementResponseSchema = z.object({
+const AchievementResponseSchema = z.object({
   id: z.string(),
   code: z.string(),
   imageUrl: z.string().nullable(),

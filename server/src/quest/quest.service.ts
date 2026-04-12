@@ -4,25 +4,19 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { QuestEntity } from './entities/quest.entity';
-
-interface LocalizedQuestField {
-  [lang: string]: string | undefined;
-}
-
-interface QuestCondition {
-  id: string;
-  type: string;
-  value: string;
-  target: number;
-  label: LocalizedQuestField | string;
-}
+import { QuestEntity, IQuestCondition } from './entities/quest.entity';
+import { PlayerQuestResponseDto } from './dto/quest-response.dto';
+import { PlayerProfileResponseDto } from '../player/dto/profile-response.dto';
+import { mapPlayerProfile } from '../player/mappers/player.mapper';
 
 @Injectable()
 export class QuestService {
   constructor(private readonly questEntity: QuestEntity) {}
 
-  async getPlayerQuests(userId: string, language: string = 'en') {
+  async getPlayerQuests(
+    userId: string,
+    language: string = 'en',
+  ): Promise<PlayerQuestResponseDto[]> {
     const profile = await this.questEntity.findProfileWithQuests(
       userId,
       language,
@@ -37,13 +31,13 @@ export class QuestService {
       const description = translation?.description || '';
 
       const rawConditions =
-        (q?.conditions as unknown as QuestCondition[]) || [];
+        (q?.conditions as unknown as IQuestCondition[]) || [];
       const conditions = rawConditions
         .map((c) => {
           if (!c) return null;
           const labelObj =
             c.label && typeof c.label === 'object'
-              ? (c.label as LocalizedQuestField)
+              ? (c.label as Record<string, string>)
               : null;
 
           const label = labelObj
@@ -51,11 +45,15 @@ export class QuestService {
             : (c.label as string) || '';
 
           return {
-            ...c,
+            id: c.id,
+            type: c.type,
+            value: c.value,
+            target: c.target,
             label,
+            lakeId: c.lakeId,
           };
         })
-        .filter(Boolean);
+        .filter((c): c is NonNullable<typeof c> => c !== null);
 
       return {
         ...pq,
@@ -69,7 +67,10 @@ export class QuestService {
     });
   }
 
-  async claimReward(userId: string, playerQuestId: string) {
+  async claimReward(
+    userId: string,
+    playerQuestId: string,
+  ): Promise<PlayerProfileResponseDto> {
     const profile = await this.questEntity.findProfile(userId);
     if (!profile) throw new NotFoundException('Profile not found');
 
@@ -88,6 +89,13 @@ export class QuestService {
       throw new BadRequestException('Reward already claimed');
     }
 
-    return this.questEntity.executeClaimRewardTx(playerQuestId, profile.id);
+    const updatedProfile = await this.questEntity.executeClaimRewardTx(
+      playerQuestId,
+      profile.id,
+    );
+
+    return mapPlayerProfile(
+      updatedProfile,
+    ) as unknown as PlayerProfileResponseDto;
   }
 }

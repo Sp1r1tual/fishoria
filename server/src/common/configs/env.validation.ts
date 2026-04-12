@@ -17,6 +17,7 @@ export function validateEnv(config: Record<string, unknown>): Env {
         `Environment validation failed:\n${missingVars.join('\n')}`,
       );
     }
+
     throw error;
   }
 }

@@ -1,8 +1,18 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 
 import { PrismaService } from '../../common/prisma/prisma.service';
-import { FULL_PROFILE_INCLUDE } from '../../player/dto/profile-response.dto';
-import { getXpNeededForLevel } from '../../common/utils/experience.util';
+import { FULL_PROFILE_INCLUDE } from '../../player/constants/player.constants';
+import { getXpNeededForLevel } from '../../player/utils/player-experience.util';
+
+export interface IQuestCondition {
+  id: string;
+  type: string;
+  value: string;
+  target: number;
+  label: string | { uk: string; en: string };
+  lakeId?: string;
+}
 
 @Injectable()
 export class QuestEntity {
@@ -100,6 +110,64 @@ export class QuestEntity {
     });
 
     return await this.findProfileWithFullInclude(profileId);
+  }
+
+  async updateQuestProgress(
+    tx: Prisma.TransactionClient,
+    profileId: string,
+    catchData: { method: string; speciesId: string; lakeId: string },
+  ) {
+    const activeQuests = await tx.playerQuest.findMany({
+      where: { profileId, isCompleted: false },
+      include: { quest: true },
+    });
+
+    for (const pq of activeQuests) {
+      const questDef = pq.quest;
+      const conditions =
+        (questDef.conditions as unknown as IQuestCondition[]) || [];
+      const currentProgress = (pq.progress as Record<string, number>) || {};
+
+      let updated = false;
+
+      for (const cond of conditions) {
+        if (cond.type === 'CATCH_METHOD' && cond.value === catchData.method) {
+          currentProgress[cond.id] = (currentProgress[cond.id] || 0) + 1;
+          updated = true;
+        }
+
+        if (
+          cond.type === 'CATCH_SPECIES' &&
+          cond.value === catchData.speciesId
+        ) {
+          currentProgress[cond.id] = (currentProgress[cond.id] || 0) + 1;
+          updated = true;
+        }
+
+        if (
+          cond.type === 'CATCH_SPECIES_ON_LAKE' &&
+          cond.value === catchData.speciesId &&
+          cond.lakeId === catchData.lakeId
+        ) {
+          currentProgress[cond.id] = (currentProgress[cond.id] || 0) + 1;
+          updated = true;
+        }
+      }
+
+      if (updated) {
+        const isCompleted = conditions.every(
+          (c: IQuestCondition) => (currentProgress[c.id] || 0) >= c.target,
+        );
+
+        await tx.playerQuest.update({
+          where: { id: pq.id },
+          data: {
+            progress: currentProgress,
+            isCompleted,
+          },
+        });
+      }
+    }
   }
 
   private async findProfileWithFullInclude(profileId: string) {

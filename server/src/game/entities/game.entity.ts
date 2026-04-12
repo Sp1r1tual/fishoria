@@ -2,23 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { PlayerProfile, Prisma } from '@prisma/client';
 
 import { PrismaService } from '../../common/prisma/prisma.service';
-import { FULL_PROFILE_INCLUDE } from '../../player/dto/profile-response.dto';
+import { QuestEntity } from '../../quest/entities/quest.entity';
+import { AchievementEntity } from '../../achievements/entities/achievement.entity';
+import { PlayerEntity } from '../../player/entities/player.entity';
+import { FULL_PROFILE_INCLUDE } from '../../player/constants/player.constants';
 import { CatchDto } from '../dto/catch.dto';
 import { BreakDto } from '../dto/break-gear.dto';
-import { getXpNeededForLevel } from '../../common/utils/experience.util';
-
-interface QuestCondition {
-  id: string;
-  type: string;
-  value: string;
-  target: number;
-  label: string | { uk: string; en: string };
-  lakeId?: string;
-}
 
 @Injectable()
 export class GameEntity {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly questEntity: QuestEntity,
+    private readonly achievementEntity: AchievementEntity,
+    private readonly playerEntity: PlayerEntity,
+  ) {}
 
   async findProfile(userId: string) {
     return this.prisma.playerProfile.findUnique({
@@ -55,6 +53,7 @@ export class GameEntity {
 
   async findDuplicateCatch(profileId: string, body: CatchDto) {
     const fiveSecondsAgo = new Date(Date.now() - 5000);
+
     return this.prisma.fishCatch.findFirst({
       where: {
         profileId,
@@ -91,56 +90,11 @@ export class GameEntity {
         },
       });
 
-      const activeQuests = await tx.playerQuest.findMany({
-        where: {
-          profileId: profile.id,
-          isCompleted: false,
-        },
-        include: { quest: true },
+      await this.questEntity.updateQuestProgress(tx, profile.id, {
+        method: body.method,
+        speciesId: body.speciesId,
+        lakeId: body.lakeId,
       });
-
-      for (const pq of activeQuests) {
-        const questDef = pq.quest;
-        const conditions =
-          (questDef.conditions as unknown as QuestCondition[]) || [];
-        const currentProgress = (pq.progress as Record<string, number>) || {};
-        let updated = false;
-
-        for (const cond of conditions) {
-          if (cond.type === 'CATCH_METHOD' && cond.value === body.method) {
-            currentProgress[cond.id] = (currentProgress[cond.id] || 0) + 1;
-            updated = true;
-          }
-
-          if (cond.type === 'CATCH_SPECIES' && cond.value === body.speciesId) {
-            currentProgress[cond.id] = (currentProgress[cond.id] || 0) + 1;
-            updated = true;
-          }
-
-          if (
-            cond.type === 'CATCH_SPECIES_ON_LAKE' &&
-            cond.value === body.speciesId &&
-            cond.lakeId === body.lakeId
-          ) {
-            currentProgress[cond.id] = (currentProgress[cond.id] || 0) + 1;
-            updated = true;
-          }
-        }
-
-        if (updated) {
-          const isCompleted = conditions.every(
-            (c: QuestCondition) => (currentProgress[c.id] || 0) >= c.target,
-          );
-
-          await tx.playerQuest.update({
-            where: { id: pq.id },
-            data: {
-              progress: currentProgress,
-              isCompleted,
-            },
-          });
-        }
-      }
 
       if (body.baitUsed && !body.baitUsed.startsWith('lure_')) {
         await tx.consumableItem.updateMany({
@@ -154,17 +108,7 @@ export class GameEntity {
         });
       }
 
-      const currentProfile = await tx.playerProfile.findUnique({
-        where: { id: profile.id },
-      });
-      let newXp = (currentProfile?.xp || 0) + xpGain;
-      let newLevel = currentProfile?.level || 1;
-      let xpNeeded = getXpNeededForLevel(newLevel);
-      while (newXp >= xpNeeded) {
-        newXp -= xpNeeded;
-        newLevel += 1;
-        xpNeeded = getXpNeededForLevel(newLevel);
-      }
+      await this.playerEntity.addXp(tx, profile.id, xpGain);
 
       const rodDamage = body.rodDamage ?? 0;
       const reelDamage = body.reelDamage ?? 0;
@@ -173,12 +117,15 @@ export class GameEntity {
         const rodItem = await tx.gearItem.findUnique({
           where: { uid: profile.equippedRodUid },
         });
+
         if (rodItem?.condition !== null && rodItem?.condition !== undefined) {
           const newCondition = Math.max(0, rodItem.condition - rodDamage);
+
           await tx.gearItem.update({
             where: { uid: profile.equippedRodUid },
             data: { condition: newCondition, isBroken: newCondition === 0 },
           });
+
           if (newCondition === 0) {
             await tx.playerProfile.update({
               where: { id: profile.id },
@@ -192,12 +139,15 @@ export class GameEntity {
         const reelItem = await tx.gearItem.findUnique({
           where: { uid: profile.equippedReelUid },
         });
+
         if (reelItem?.condition !== null && reelItem?.condition !== undefined) {
           const newCondition = Math.max(0, reelItem.condition - reelDamage);
+
           await tx.gearItem.update({
             where: { uid: profile.equippedReelUid },
             data: { condition: newCondition, isBroken: newCondition === 0 },
           });
+
           if (newCondition === 0) {
             await tx.playerProfile.update({
               where: { id: profile.id },
@@ -261,34 +211,16 @@ export class GameEntity {
         });
       }
 
-      if (
+      const isTrophy =
         body.sizeRank === 'trophy' ||
-        (body.maxWeight && body.weight >= body.maxWeight * 0.75)
-      ) {
-        const ach = await tx.achievement.findUnique({
-          where: { code: 'sportsman_fisher' },
-        });
-        if (ach) {
-          const hasAch = await tx.playerAchievement.findUnique({
-            where: {
-              profileId_achievementId: {
-                profileId: profile.id,
-                achievementId: ach.id,
-              },
-            },
-          });
-          if (!hasAch) {
-            await tx.playerAchievement.create({
-              data: { profileId: profile.id, achievementId: ach.id },
-            });
-          }
-        }
-      }
+        (body.maxWeight && body.weight >= body.maxWeight * 0.75) ||
+        false;
 
-      await tx.playerProfile.update({
-        where: { id: profile.id },
-        data: { xp: newXp, level: newLevel },
-      });
+      await this.achievementEntity.checkAndAssignCatchAchievements(
+        tx,
+        profile.id,
+        isTrophy,
+      );
     });
 
     return await this.findProfileWithFullInclude(profile.id, language);
@@ -318,18 +250,21 @@ export class GameEntity {
         const rodItem = await tx.gearItem.findUnique({
           where: { uid: currentProfile.equippedRodUid },
         });
+
         if (rodItem?.condition !== null && rodItem?.condition !== undefined) {
           const newCondition = Math.max(0, rodItem.condition - rodDamage);
+
           await tx.gearItem.update({
             where: { uid: currentProfile.equippedRodUid },
             data: { condition: newCondition, isBroken: newCondition === 0 },
           });
+
           if (newCondition === 0) {
             await tx.playerProfile.update({
               where: { id: profile.id },
               data: { equippedRodUid: null },
             });
-            // Update currentProfile so subseq. code knows
+
             currentProfile.equippedRodUid = null;
           }
         }
@@ -343,17 +278,21 @@ export class GameEntity {
         const reelItem = await tx.gearItem.findUnique({
           where: { uid: currentProfile.equippedReelUid },
         });
+
         if (reelItem?.condition !== null && reelItem?.condition !== undefined) {
           const newCondition = Math.max(0, reelItem.condition - reelDamage);
+
           await tx.gearItem.update({
             where: { uid: currentProfile.equippedReelUid },
             data: { condition: newCondition, isBroken: newCondition === 0 },
           });
+
           if (newCondition === 0) {
             await tx.playerProfile.update({
               where: { id: profile.id },
               data: { equippedReelUid: null },
             });
+
             currentProfile.equippedReelUid = null;
           }
         }
@@ -416,8 +355,10 @@ export class GameEntity {
         const line = await tx.gearItem.findFirst({
           where: { uid: currentProfile.equippedLineUid },
         });
+
         if (line && line.meters !== null) {
           const remaining = Math.max(0, line.meters - lostMeters);
+
           if (remaining < 10) {
             await tx.gearItem.delete({ where: { uid: line.uid } });
             await tx.playerProfile.update({
@@ -439,10 +380,12 @@ export class GameEntity {
           where: { uid: currentProfile.equippedRodUid },
           data: { isBroken: true, condition: 0 },
         });
+
         await tx.playerProfile.update({
           where: { id: profile.id },
           data: { equippedRodUid: null },
         });
+
         gearBroken = true;
       }
 
@@ -451,10 +394,12 @@ export class GameEntity {
           where: { uid: currentProfile.equippedReelUid },
           data: { isBroken: true, condition: 0 },
         });
+
         await tx.playerProfile.update({
           where: { id: profile.id },
           data: { equippedReelUid: null },
         });
+
         gearBroken = true;
       }
 
@@ -463,25 +408,10 @@ export class GameEntity {
       }
 
       if (gearBroken) {
-        const achCode = 'reckless';
-        const ach = await tx.achievement.findUnique({
-          where: { code: achCode },
-        });
-        if (ach) {
-          const hasAch = await tx.playerAchievement.findUnique({
-            where: {
-              profileId_achievementId: {
-                profileId: profile.id,
-                achievementId: ach.id,
-              },
-            },
-          });
-          if (!hasAch) {
-            await tx.playerAchievement.create({
-              data: { profileId: profile.id, achievementId: ach.id },
-            });
-          }
-        }
+        await this.achievementEntity.checkAndAssignRecklessAchievement(
+          tx,
+          profile.id,
+        );
       }
     });
 

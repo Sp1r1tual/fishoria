@@ -1,12 +1,5 @@
 import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import {
-  ApiCookieAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
 import { ZodValidationPipe } from 'nestjs-zod';
 
 import { GameService } from './game.service';
@@ -15,9 +8,6 @@ import { GetUserId } from '../auth/decorators/get-user-id.decorator';
 import { CatchDto } from './dto/catch.dto';
 import { BreakDto } from './dto/break-gear.dto';
 
-@ApiTags('game')
-@ApiCookieAuth('Authentication')
-@ApiSecurity('XSRF')
 @Throttle({ default: { limit: 100, ttl: 60000 } })
 @Controller('game')
 export class GameController {
@@ -25,9 +15,6 @@ export class GameController {
 
   @UseGuards(JwtAuthGuard)
   @Post('catch')
-  @ApiOperation({ summary: 'Register a fish catch' })
-  @ApiResponse({ status: 201, description: 'Fish caught successfully.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   catchFish(
     @GetUserId() userId: string,
     @Body(new ZodValidationPipe(CatchDto))
@@ -38,9 +25,6 @@ export class GameController {
 
   @UseGuards(JwtAuthGuard)
   @Post('break')
-  @ApiOperation({ summary: 'Register gear break' })
-  @ApiResponse({ status: 201, description: 'Gear broken recorded.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   breakGear(
     @GetUserId() userId: string,
     @Body(new ZodValidationPipe(BreakDto))

@@ -29,6 +29,11 @@ export class CsrfGuard implements CanActivate {
       return true;
     }
 
+    // Skip CSRF for Bearer tokens (mobile apps)
+    if (request.headers.authorization?.startsWith('Bearer ')) {
+      return true;
+    }
+
     const csrfCookie = request.cookies['XSRF-TOKEN'];
     const csrfHeader = request.headers['x-xsrf-token'];
 

@@ -1,14 +1,9 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
 enum UserRole {
@@ -116,10 +111,10 @@ model GearItem {
   uid       String        @id @default(uuid())
   profileId String
   profile   PlayerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  itemType  String // "rod", "reel", "line", "hook", "repair_kit"
-  itemId    String // e.g., "rod_spinning_basic", "lure_vibrotail"
-  condition Float? // 100 max
-  meters    Float? // for lines
+  itemType  String
+  itemId    String
+  condition Float?
+  meters    Float?
   isBroken  Boolean       @default(false)
   createdAt DateTime      @default(now())
 
@@ -133,8 +128,8 @@ model ConsumableItem {
   id        String        @id @default(uuid())
   profileId String
   profile   PlayerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  itemType  String // "bait" or "groundbait"
-  itemId    String // e.g., "worm", "vanillin"
+  itemType  String
+  itemId    String
   quantity  Int           @default(0)
 
   @@unique([profileId, itemId])
@@ -168,13 +163,13 @@ model LakeStatistic {
   id             String        @id @default(uuid())
   profileId      String
   profile        PlayerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  lakeId         String // e.g., "forest_lake"
+  lakeId         String
   totalCaught    Int           @default(0)
-  totalWeight    Float         @default(0) // kg
-  records        Json          @default("{}") // speciesId -> max weight
-  minWeights     Json          @default("{}") // speciesId -> min weight
-  speciesCounts  Json          @default("{}") // speciesId -> count
-  speciesWeights Json          @default("{}") // speciesId -> total weight
+  totalWeight    Float         @default(0)
+  records        Json          @default("{}")
+  minWeights     Json          @default("{}")
+  speciesCounts  Json          @default("{}")
+  speciesWeights Json          @default("{}")
 
   @@unique([profileId, lakeId])
   @@map("lake_statistics")
@@ -252,7 +247,7 @@ model PlayerQuest {
 
 model Achievement {
   id                 String                   @id @default(uuid())
-  code               String                   @unique // "reckless", "sportsman_fisher"
+  code               String                   @unique
   imageUrl           String?
   order              Int                      @default(0)
   translations       AchievementTranslation[]

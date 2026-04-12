@@ -1,35 +1,23 @@
 import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import {
-  ApiCookieAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
 import { ZodValidationPipe } from 'nestjs-zod';
 
-import { InventoryService } from './inventory.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { GetUserId } from '../auth/decorators/get-user-id.decorator';
+
+import { InventoryService } from './inventory.service';
 import { EquipDto } from './dto/equip.dto';
 import { RepairDto } from './dto/repair.dto';
 import { DeleteGearDto } from './dto/delete-gear.dto';
 import { ConsumeDto } from './dto/consume.dto';
 
-@ApiTags('inventory')
-@ApiCookieAuth('Authentication')
-@ApiSecurity('XSRF')
-@Throttle({ default: { limit: 120, ttl: 60000 } })
+@Throttle({ default: { limit: 100, ttl: 60000 } })
 @Controller('inventory')
 export class InventoryController {
   constructor(private readonly inventoryService: InventoryService) {}
 
   @UseGuards(JwtAuthGuard)
   @Post('equip')
-  @ApiOperation({ summary: 'Equip gear modules' })
-  @ApiResponse({ status: 201, description: 'Gear equipped successfully.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   equip(
     @GetUserId() userId: string,
     @Body(new ZodValidationPipe(EquipDto))
@@ -49,9 +37,6 @@ export class InventoryController {
 
   @UseGuards(JwtAuthGuard)
   @Post('repair')
-  @ApiOperation({ summary: 'Repair gear using a kit' })
-  @ApiResponse({ status: 201, description: 'Gear repaired successfully.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   repair(
     @GetUserId() userId: string,
     @Body(new ZodValidationPipe(RepairDto))
@@ -67,9 +52,6 @@ export class InventoryController {
 
   @UseGuards(JwtAuthGuard)
   @Post('delete')
-  @ApiOperation({ summary: 'Delete gear from inventory' })
-  @ApiResponse({ status: 201, description: 'Gear deleted successfully.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   delete(
     @GetUserId() userId: string,
     @Body(new ZodValidationPipe(DeleteGearDto))
@@ -80,9 +62,6 @@ export class InventoryController {
 
   @UseGuards(JwtAuthGuard)
   @Post('consume')
-  @ApiOperation({ summary: 'Consume an item' })
-  @ApiResponse({ status: 201, description: 'Item consumed successfully.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   consume(
     @GetUserId() userId: string,
     @Body(new ZodValidationPipe(ConsumeDto))

@@ -18,4 +18,3 @@ const EquipSchema = z.object({
 });
 
 export class EquipDto extends createZodDto(EquipSchema) {}
-type EquipItemDto = z.infer<typeof EquipItemSchema>;

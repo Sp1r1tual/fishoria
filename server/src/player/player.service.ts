@@ -12,7 +12,7 @@ import {
   STARTER_CONSUMABLES,
 } from '../common/configs/starter-kit';
 
-import { mapPlayerProfile } from './player.mapper';
+import { mapPlayerProfile } from './mappers/player.mapper';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Injectable()
@@ -24,6 +24,7 @@ export class PlayerService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
     const lang = user.language;
 
     const rawProfile = await this.playerEntity.findProfile(userId, lang);
@@ -131,10 +132,12 @@ export class PlayerService {
     dto: UpdateProfileDto,
   ): Promise<PlayerProfileResponseDto> {
     const data: Prisma.UserUpdateInput = {};
+
     if (dto.username) data.username = dto.username;
     if (dto.avatar) data.avatar = dto.avatar;
 
     await this.playerEntity.updateUser(userId, data);
+
     return this.getProfile(userId);
   }
 }
