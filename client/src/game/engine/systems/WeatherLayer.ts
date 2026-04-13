@@ -123,9 +123,9 @@ export class WeatherLayer {
     const isLeft = Math.random() > 0.5;
     this.birds.push({
       x: isLeft ? -50 : W + 50,
-      y: Math.random() * (H * 0.25) + 10,
+      y: Math.random() * (H * 0.12) + 5,
       vx: (isLeft ? 1 : -1) * (1 + Math.random() * 2),
-      vy: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.2,
       wingSpan: 6 + Math.random() * 6,
       flapSpeed: 0.1 + Math.random() * 0.1,
       time: Math.random() * 100,
