@@ -1,19 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { News, NewsTranslation, Prisma } from '@prisma/client';
 
+import { RedisService } from '../common/redis/redis.service';
 import { NewsEntity } from './entities/news.entity';
 
-interface LocalizedField {
-  [lang: string]: string | undefined;
-}
+const NEWS_CACHE_TTL = 600;
 
 @Injectable()
 export class NewsService {
-  constructor(private readonly newsEntity: NewsEntity) {}
+  constructor(
+    private readonly newsEntity: NewsEntity,
+    private readonly redis: RedisService,
+  ) {}
 
   async getAllNews(language: string = 'en') {
+    const cacheKey = `cache:news:${language}`;
+
+    const cached = await this.redis.get(cacheKey);
+    if (cached) {
+      try {
+        return JSON.parse(cached as string);
+      } catch {
+        console.error('Corrupted cache for news');
+      }
+    }
+
     const news = await this.newsEntity.findPublished(language);
-    return news.map((item) => this.mapLocalized(item));
+    const result = news.map((item) => this.mapLocalized(item));
+
+    await this.redis
+      .set(cacheKey, JSON.stringify(result), { ex: NEWS_CACHE_TTL })
+      .catch(() => null);
+
+    return result;
   }
 
   async getNewsById(id: string, language: string = 'en') {

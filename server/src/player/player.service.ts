@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 
+import { RedisService } from '../common/redis/redis.service';
 import { PlayerEntity } from './entities/player.entity';
 import { PlayerProfileResponseDto } from './dto/profile-response.dto';
 
@@ -15,9 +16,15 @@ import {
 import { mapPlayerProfile } from './mappers/player.mapper';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 
+const QUEST_COUNT_CACHE_KEY = 'cache:quest_count';
+const QUEST_COUNT_TTL = 300;
+
 @Injectable()
 export class PlayerService {
-  constructor(private readonly playerEntity: PlayerEntity) {}
+  constructor(
+    private readonly playerEntity: PlayerEntity,
+    private readonly redis: RedisService,
+  ) {}
 
   async getProfile(userId: string): Promise<PlayerProfileResponseDto> {
     const user = await this.playerEntity.findUser(userId);
@@ -90,7 +97,18 @@ export class PlayerService {
   }
 
   private async syncQuests(profileId: string, currentCount: number) {
-    const total = await this.playerEntity.countQuests();
+    let total: number;
+
+    const cached = await this.redis.get(QUEST_COUNT_CACHE_KEY);
+    if (cached !== null && cached !== undefined) {
+      total = Number(cached);
+    } else {
+      total = await this.playerEntity.countQuests();
+      await this.redis.set(QUEST_COUNT_CACHE_KEY, total.toString(), {
+        ex: QUEST_COUNT_TTL,
+      });
+    }
+
     if (currentCount >= total) return;
 
     const allQuests = await this.playerEntity.findQuests();

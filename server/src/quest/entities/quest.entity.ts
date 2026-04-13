@@ -44,6 +44,25 @@ export class QuestEntity {
     });
   }
 
+  async findAllQuestsWithTranslations(language: string) {
+    return this.prisma.quest.findMany({
+      include: {
+        translations: {
+          where: { language },
+        },
+      },
+    });
+  }
+
+  async findPlayerQuestsOnly(userId: string) {
+    return this.prisma.playerProfile.findUnique({
+      where: { userId },
+      select: {
+        playerQuests: true,
+      },
+    });
+  }
+
   async findProfile(userId: string) {
     return this.prisma.playerProfile.findUnique({
       where: { userId },

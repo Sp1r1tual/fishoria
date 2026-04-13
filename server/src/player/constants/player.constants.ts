@@ -10,11 +10,7 @@ export const FULL_PROFILE_INCLUDE = {
   },
   playerAchievements: {
     include: {
-      achievement: {
-        include: {
-          translations: true,
-        },
-      },
+      achievement: true,
     },
   },
   user: {
