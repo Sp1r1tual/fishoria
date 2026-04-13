@@ -85,7 +85,7 @@ export const EXPERIENCE = {
 
 export const ECONOMY = {
   /** Base price per kilogram of fish sold */
-  baseFishPricePerKg: 15,
+  baseFishPricePerKg: 7,
 } as const;
 
 export const GLOBAL_CONSTANTS = {
