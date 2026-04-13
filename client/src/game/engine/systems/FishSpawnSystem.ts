@@ -262,7 +262,7 @@ export class FishSpawnSystem {
     this.fishCache.push(fish);
   }
 
-  private biasedRandom(power = 1.2): number {
+  private biasedRandom(power = 1): number {
     const r = Math.random();
     return r < 0.5
       ? Math.pow(r * 2, power) / 2

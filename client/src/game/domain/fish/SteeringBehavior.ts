@@ -228,14 +228,14 @@ export class SteeringBehavior implements IFishBehavior {
           const normX = Math.random();
           const biasedX =
             normX < 0.5
-              ? Math.pow(normX * 2, 2.6) / 2
-              : 1 - Math.pow((1 - normX) * 2, 2.6) / 2;
+              ? Math.pow(normX * 2, 2) / 2
+              : 1 - Math.pow((1 - normX) * 2, 2) / 2;
 
           const normY = Math.random();
           const biasedY =
             normY < 0.5
-              ? Math.pow(normY * 2, 2.2) / 2
-              : 1 - Math.pow((1 - normY) * 2, 2.2) / 2;
+              ? Math.pow(normY * 2, 2) / 2
+              : 1 - Math.pow((1 - normY) * 2, 2) / 2;
 
           const tx = 50 + biasedX * (ctx.canvasWidth - 100);
           const ty = horizonY + biasedY * (ctx.canvasHeight - horizonY - 10);
