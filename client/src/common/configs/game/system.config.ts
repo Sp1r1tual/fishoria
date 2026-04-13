@@ -21,8 +21,8 @@ export const GEAR_WEAR = {
 } as const;
 
 export const CATCH_RESULT = {
-  /** Weight distribution power: higher = more small fish, rarer trophies */
-  weightDistributionPower: 2.4,
+  /** Weight distribution power: lower = more varied weights, higher = more small fish */
+  weightDistributionPower: 2.2,
 
   /** Quality thresholds based on percentage of max weight */
   qualityThresholds: {
@@ -85,7 +85,7 @@ export const EXPERIENCE = {
 
 export const ECONOMY = {
   /** Base price per kilogram of fish sold */
-  baseFishPricePerKg: 7,
+  baseFishPricePerKg: 3,
 } as const;
 
 export const GLOBAL_CONSTANTS = {

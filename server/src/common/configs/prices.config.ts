@@ -59,7 +59,7 @@ const ITEM_PRICES: Record<string, number> = {
 };
 
 /** Fish base sell price multiplier: total = weight * FISH_SELL_MULTIPLIER * speciesMultiplier */
-const FISH_SELL_MULTIPLIER = 7;
+const FISH_SELL_MULTIPLIER = 3;
 
 /** Species-specific multipliers to match client fish.config.ts */
 export const FISH_SPECIES_MULTIPLIERS: Record<string, number> = {
