@@ -47,33 +47,33 @@ All global settings are extracted into separate files:
 
 All environment variables are strictly typed and validated via Zod:
 
-| Variable                       | Type     | Description                        |
-| :----------------------------- | :------- | :--------------------------------- |
-| `NODE_ENV`                     | enum     | `development` / `production` / `test` |
-| `PORT`                         | string   | Server port                        |
-| `CLIENT_URL`                   | URL      | Frontend URL                       |
-| `API_URL`                      | URL      | Backend URL                        |
-| `COOKIE_DOMAIN`                | string?  | Cookie domain (optional)           |
-| `DATABASE_URL`                 | URL      | Direct Prisma connection           |
-| `POOLER_DATABASE_URL`          | URL      | Connection pooler URL              |
-| `UPSTASH_REDIS_REST_URL`       | URL      | Redis REST endpoint                |
-| `UPSTASH_REDIS_REST_TOKEN`     | string   | Redis auth token                   |
-| `GOOGLE_CLIENT_ID`             | string   | Google OAuth client ID             |
-| `GOOGLE_SECRET`                | string   | Google OAuth secret                |
-| `GOOGLE_CALLBACK_URL`          | URL      | Google OAuth callback URL          |
-| `JWT_SECRET`                   | string   | Min 32 chars                       |
-| `JWT_ACCESS_TOKEN_EXPIRATION`  | string   | e.g., `15m`                        |
-| `JWT_REFRESH_TOKEN_EXPIRATION` | string   | e.g., `7d`                         |
-| `JWT_RESET_SECRET`             | string   | Min 32 chars                       |
-| `JWT_RESET_TOKEN_EXPIRATION`   | string   | e.g., `1h`                         |
-| `SMTP_USER`                    | email    | Gmail SMTP user                    |
-| `SMTP_PASSWORD`                | string   | Gmail app password                 |
+| Variable                       | Type    | Description                           |
+| :----------------------------- | :------ | :------------------------------------ |
+| `NODE_ENV`                     | enum    | `development` / `production` / `test` |
+| `PORT`                         | string  | Server port                           |
+| `CLIENT_URL`                   | URL     | Frontend URL                          |
+| `API_URL`                      | URL     | Backend URL                           |
+| `COOKIE_DOMAIN`                | string? | Cookie domain (optional)              |
+| `DATABASE_URL`                 | URL     | Direct Prisma connection              |
+| `POOLER_DATABASE_URL`          | URL     | Connection pooler URL                 |
+| `UPSTASH_REDIS_REST_URL`       | URL     | Redis REST endpoint                   |
+| `UPSTASH_REDIS_REST_TOKEN`     | string  | Redis auth token                      |
+| `GOOGLE_CLIENT_ID`             | string  | Google OAuth client ID                |
+| `GOOGLE_SECRET`                | string  | Google OAuth secret                   |
+| `GOOGLE_CALLBACK_URL`          | URL     | Google OAuth callback URL             |
+| `JWT_SECRET`                   | string  | Min 32 chars                          |
+| `JWT_ACCESS_TOKEN_EXPIRATION`  | string  | e.g., `15m`                           |
+| `JWT_REFRESH_TOKEN_EXPIRATION` | string  | e.g., `7d`                            |
+| `JWT_RESET_SECRET`             | string  | Min 32 chars                          |
+| `JWT_RESET_TOKEN_EXPIRATION`   | string  | e.g., `1h`                            |
+| `SMTP_USER`                    | email   | Gmail SMTP user                       |
+| `SMTP_PASSWORD`                | string  | Gmail app password                    |
 
 ### 6. Admin Dashboard (`common/templates`)
 
 The root route (`GET /`) serves a server-rendered HTML admin dashboard:
 
-- Displays total registered player count and server version (`v0.2.0`).
+- Displays total registered player count and server version (`v0.3.0`).
 - Sidebar with **Internal Wiki** — lists all `.md` files from the `docs/` directory. Clicking a file fetches its content via `GET /api/docs-content/:filename`, renders it with `marked` (Markdown → HTML), and displays in a modal.
 - Link to Swagger API documentation (`/docs`).
 - Styled with a dark theme, glassmorphism, Inter font, and accent glow animations.
@@ -97,11 +97,11 @@ Uses a separate Prisma client with `@prisma/adapter-pg` for direct PostgreSQL po
 
 ## 📡 Root Endpoints
 
-| Method | Path                        | Description                      | Access |
-| :----- | :-------------------------- | :------------------------------- | :----- |
-| `GET`  | `/`                         | Admin Dashboard (HTML)           | Public |
-| `GET`  | `/api/docs-content/:file`   | Rendered markdown doc content    | Public |
-| `GET`  | `/favicon.ico`              | Favicon redirect                 | Public |
+| Method | Path                      | Description                   | Access |
+| :----- | :------------------------ | :---------------------------- | :----- |
+| `GET`  | `/`                       | Admin Dashboard (HTML)        | Public |
+| `GET`  | `/api/docs-content/:file` | Rendered markdown doc content | Public |
+| `GET`  | `/favicon.ico`            | Favicon redirect              | Public |
 
 ## 📡 Logging
 
