@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 
 import { useScrollReveal } from '@/hooks/ui/useScrollReveal';
 
+import { SkeletonImage } from '../UI/skeletons/SkeletonImage/SkeletonImage';
+
 import styles from './Masonry.module.css';
 
 const IMAGE_1 =
@@ -99,12 +101,11 @@ export const Masonry = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
                   { caption: item.caption },
                 )}
               >
-                <img
+                <SkeletonImage
                   src={item.src}
                   alt={item.alt}
                   className={styles.masonryImage}
-                  loading="lazy"
-                  decoding="async"
+                  objectFit="cover"
                 />
               </button>
               <figcaption className={styles.masonryCaption}>
