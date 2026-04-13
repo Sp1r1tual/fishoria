@@ -31,23 +31,10 @@ export class GameEntity {
     });
   }
 
-  async findFullProfile(profileId: string, language: string = 'en') {
+  async findFullProfile(profileId: string, _language: string = 'en') {
     return this.prisma.playerProfile.findUnique({
       where: { id: profileId },
-      include: {
-        ...FULL_PROFILE_INCLUDE,
-        playerQuests: {
-          include: {
-            quest: {
-              include: {
-                translations: {
-                  where: { language },
-                },
-              },
-            },
-          },
-        },
-      },
+      include: FULL_PROFILE_INCLUDE,
     });
   }
 
@@ -70,7 +57,7 @@ export class GameEntity {
     profile: PlayerProfile,
     body: CatchDto,
     xpGain: number,
-    language: string = 'en',
+    _language: string = 'en',
   ) {
     await this.prisma.$transaction(async (tx) => {
       await tx.$executeRaw`SELECT 1 FROM player_profiles WHERE id = ${profile.id} FOR UPDATE`;
@@ -223,13 +210,13 @@ export class GameEntity {
       );
     });
 
-    return await this.findProfileWithFullInclude(profile.id, language);
+    return await this.findProfileWithFullInclude(profile.id, _language);
   }
 
   async executeBreakGearTx(
     profile: PlayerProfile,
     body: BreakDto,
-    language: string = 'en',
+    _language: string = 'en',
   ) {
     await this.prisma.$transaction(async (tx) => {
       await tx.$executeRaw`SELECT 1 FROM player_profiles WHERE id = ${profile.id} FOR UPDATE`;
@@ -415,29 +402,16 @@ export class GameEntity {
       }
     });
 
-    return await this.findProfileWithFullInclude(profile.id, language);
+    return await this.findProfileWithFullInclude(profile.id, _language);
   }
 
   private async findProfileWithFullInclude(
     profileId: string,
-    language: string = 'en',
+    _language: string = 'en',
   ) {
     return await this.prisma.playerProfile.findUnique({
       where: { id: profileId },
-      include: {
-        ...FULL_PROFILE_INCLUDE,
-        playerQuests: {
-          include: {
-            quest: {
-              include: {
-                translations: {
-                  where: { language },
-                },
-              },
-            },
-          },
-        },
-      },
+      include: FULL_PROFILE_INCLUDE,
     });
   }
 }

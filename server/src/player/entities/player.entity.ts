@@ -9,34 +9,10 @@ import { getXpNeededForLevel } from '../utils/player-experience.util';
 export class PlayerEntity {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findProfile(userId: string, language: string = 'en') {
+  async findProfile(userId: string, _language: string = 'en') {
     return this.prisma.playerProfile.findUnique({
       where: { userId },
-      include: {
-        ...FULL_PROFILE_INCLUDE,
-        playerQuests: {
-          include: {
-            quest: {
-              include: {
-                translations: {
-                  where: { language },
-                },
-              },
-            },
-          },
-        },
-        playerAchievements: {
-          include: {
-            achievement: {
-              include: {
-                translations: {
-                  where: { language },
-                },
-              },
-            },
-          },
-        },
-      },
+      include: FULL_PROFILE_INCLUDE,
     });
   }
 
@@ -49,71 +25,23 @@ export class PlayerEntity {
 
   async createProfile(
     data: Prisma.PlayerProfileCreateInput,
-    language: string = 'en',
+    _language: string = 'en',
   ) {
     return this.prisma.playerProfile.create({
       data,
-      include: {
-        ...FULL_PROFILE_INCLUDE,
-        playerQuests: {
-          include: {
-            quest: {
-              include: {
-                translations: {
-                  where: { language },
-                },
-              },
-            },
-          },
-        },
-        playerAchievements: {
-          include: {
-            achievement: {
-              include: {
-                translations: {
-                  where: { language },
-                },
-              },
-            },
-          },
-        },
-      },
+      include: FULL_PROFILE_INCLUDE,
     });
   }
 
   async updateProfile(
     profileId: string,
     data: Prisma.PlayerProfileUpdateInput,
-    language: string = 'en',
+    _language: string = 'en',
   ) {
     return this.prisma.playerProfile.update({
       where: { id: profileId },
       data,
-      include: {
-        ...FULL_PROFILE_INCLUDE,
-        playerQuests: {
-          include: {
-            quest: {
-              include: {
-                translations: {
-                  where: { language },
-                },
-              },
-            },
-          },
-        },
-        playerAchievements: {
-          include: {
-            achievement: {
-              include: {
-                translations: {
-                  where: { language },
-                },
-              },
-            },
-          },
-        },
-      },
+      include: FULL_PROFILE_INCLUDE,
     });
   }
 

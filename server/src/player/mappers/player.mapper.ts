@@ -4,7 +4,7 @@ interface IRawAchievement {
   id: string;
   code: string;
   imageUrl: string | null;
-  translations?: { title: string; description: string }[];
+  translations?: { language?: string; title: string; description: string }[];
 }
 
 interface IRawPlayerAchievement {
@@ -17,11 +17,17 @@ interface IRawQuest {
 }
 
 export const mapPlayerProfile = <
-  T extends { playerAchievements?: unknown[]; playerQuests?: unknown[] },
+  T extends {
+    playerAchievements?: unknown[];
+    playerQuests?: unknown[];
+    user?: { language?: string | null };
+  },
 >(
   profile: T | null,
 ) => {
   if (!profile) return null;
+
+  const userLang = profile.user?.language || 'en';
 
   return {
     ...profile,
@@ -29,7 +35,11 @@ export const mapPlayerProfile = <
       (profile.playerAchievements as IRawPlayerAchievement[]) || []
     ).map((pa) => {
       const achievement = pa.achievement || {};
-      const translation = achievement.translations?.[0];
+      const translations = achievement.translations || [];
+      const translation =
+        translations.find((t) => t.language === userLang) ||
+        translations.find((t) => t.language === 'en') ||
+        translations[0];
 
       return {
         ...pa,
@@ -47,7 +57,12 @@ export const mapPlayerProfile = <
       }[]) || []
     ).map((pq) => {
       const quest = pq.quest || ({} as IRawQuest);
-      const translation = quest.translations?.[0];
+      const translations = quest.translations || [];
+      const translation =
+        translations.find((t) => t.language === userLang) ||
+        translations.find((t) => t.language === 'en') ||
+        translations[0];
+
       const title = translation?.title || 'Quest';
       const language = translation?.language || 'en';
 

@@ -5,12 +5,20 @@ export const FULL_PROFILE_INCLUDE = {
   lakeStats: true,
   playerQuests: {
     include: {
-      quest: true,
+      quest: {
+        include: {
+          translations: true,
+        },
+      },
     },
   },
   playerAchievements: {
     include: {
-      achievement: true,
+      achievement: {
+        include: {
+          translations: true,
+        },
+      },
     },
   },
   user: {
