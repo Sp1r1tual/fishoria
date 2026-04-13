@@ -147,10 +147,18 @@ export async function unlockAudio() {
       .catch(() => {});
 
     Object.values(AMBIENT).forEach((bgAudio) => {
-      // On iOS, we don't connect to AudioContext to avoid the backgrounding glitch
-      if (!isIOS) {
-        ensureAmbientConnected(bgAudio);
-      }
+      // On iOS Safari, we must play/pause each audio element during the first user interaction
+      // to allow them to be played later by non-user events or async state changes.
+      bgAudio
+        .play()
+        .then(() => {
+          bgAudio.pause();
+          bgAudio.currentTime = 0;
+        })
+        .catch(() => {});
+
+      // Connect to AudioContext to allow GainNode volume control
+      ensureAmbientConnected(bgAudio);
     });
 
     // Resume multiple times to be absolutely sure
