@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { SkeletonImage } from '@/components/UI/skeletons/SkeletonImage/SkeletonImage';
 
 import type { IFishCatch, CatchResultType } from '@/common/types';
 
@@ -144,10 +145,12 @@ export function CatchPopup({ result, sceneRef }: ICatchPopupProps) {
       }
       header={
         <div className={styles.fishImageContainer}>
-          <img
-            className={styles.fishImage}
+          <SkeletonImage
             src={fish.species.imageUrl}
             alt={fish.species.name}
+            className={styles.fishImage}
+            objectFit="contain"
+            skeletonHeight={100}
           />
         </div>
       }

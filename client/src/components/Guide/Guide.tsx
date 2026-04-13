@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
 import { ScreenContainer } from '../UI/ScreenContainer/ScreenContainer';
+import { SkeletonImage } from '../UI/skeletons/SkeletonImage/SkeletonImage';
 
 import { FISH_SPECIES } from '@/common/configs/game';
 
@@ -29,13 +30,14 @@ export function Guide() {
           >
             <div className={styles['guide__fish-info']}>
               <div className={styles['guide__fish-header']}>
-                <span className={styles['guide__fish-icon']}>
-                  <img
-                    src={fish.imageUrl}
-                    alt={fish.name}
-                    style={{ width: 100, height: 60, objectFit: 'contain' }}
-                  />
-                </span>
+                <SkeletonImage
+                  src={fish.imageUrl}
+                  alt={fish.name}
+                  width={100}
+                  height={60}
+                  objectFit="contain"
+                  wrapperClassName={styles['guide__fish-icon']}
+                />
                 <h3 className={styles['guide__fish-name']}>
                   {t(`fish.${fish.id}.name`)}
                 </h3>

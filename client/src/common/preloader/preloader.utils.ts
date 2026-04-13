@@ -53,7 +53,8 @@ export function discoverAssets(): string[] {
   ).filter(
     (path) =>
       !path.toLowerCase().includes('global') &&
-      !path.toLowerCase().includes('landing'),
+      !path.toLowerCase().includes('landing') &&
+      !path.toLowerCase().includes('/fish/'),
   );
 
   const audioAssets = (
