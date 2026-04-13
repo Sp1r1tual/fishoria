@@ -35,10 +35,6 @@ interface IRodVisualOutput {
   lineSlack: number;
 }
 
-/**
- * Computes the rod and line visual state (base position, aim, tension, slack)
- * from the current fishing state. Pure function — no mutations.
- */
 export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
   const {
     phase,
@@ -67,7 +63,6 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
     : 70 * renderScale;
   const baseY = H;
 
-  // Final tip target position
   const aimX = isCast ? (phase === 'reeling' ? hookX : castX) : baseX;
   const aimY = isCast
     ? phase === 'reeling'
@@ -89,7 +84,6 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
         ? hookY
         : baseY;
 
-  // Sync line with bobber animation
   if (
     isCast &&
     !isSpinning &&
@@ -141,8 +135,7 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
       rodTension = 0.08;
     } else {
       const depthRatio = currentLureDepthM / Math.max(0.1, groundDepthM);
-      // Slack increases with depth ratio, but is capped by absolute depth
-      // Shallow water (e.g. 1m) should have less visual slack than deep water (e.g. 5m)
+
       const depthFactor = Math.min(1.0, 0.3 + (groundDepthM / 4.0) * 0.7);
       const baseSlack = (0.1 + Math.pow(depthRatio, 1.2) * 0.75) * depthFactor;
       const subtleWave = Math.sin(time * 1.5) * 0.02 * depthRatio;
@@ -150,11 +143,9 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
       rodTension = 0;
     }
   } else if (isCast && phase === 'waiting') {
-    // Float is always relaxed, Feeder (donka) is always tight
     const depthFactor = Math.min(1.0, 0.3 + (groundDepthM / 4.0) * 0.7);
     const baseSlack = rigType === 'feeder' ? 0.04 : 0.85 * depthFactor;
 
-    // Add subtle water current and fish-nibble micro-movements
     const currentWave = Math.sin(time * 1.2) * 0.015;
     const nibbleJitter =
       maxInterest > 0.4 ? Math.sin(time * 15) * (maxInterest - 0.4) * 0.04 : 0;
@@ -179,9 +170,7 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
     lineSlack = 1.0;
   }
 
-  // Add cast "whipping" effect to the rod tip immediately after casting
   if (isCast && phase === 'waiting' && timeSinceCast < 1.0) {
-    // Starts bent forward (due to cast momentum) then oscillates backward/forward rapidly while decaying
     const rodWhip =
       Math.exp(-timeSinceCast * 6) * Math.cos(timeSinceCast * 25) * 0.35;
     rodTension += rodWhip;

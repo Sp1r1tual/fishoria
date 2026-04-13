@@ -21,7 +21,6 @@ export class Game {
       /iPad|iPhone|iPod/.test(navigator.userAgent) ||
       (/Macintosh|Mac OS X/.test(navigator.userAgent) &&
         navigator.maxTouchPoints > 1);
-    // Increase resolution for better quality on iOS (Retina), capped at 3.0
     const maxResolution = isIOS
       ? Math.min(window.devicePixelRatio || 2, 3)
       : window.devicePixelRatio || 1;
@@ -43,7 +42,6 @@ export class Game {
       return;
     }
 
-    // Let PixiJS own the canvas — avoids WebGL context sharing issues
     this.app.canvas.style.display = 'block';
     this.app.canvas.style.width = '100%';
     this.app.canvas.style.height = '100%';
@@ -52,17 +50,14 @@ export class Game {
     this.app.canvas.style.margin = '0';
     container.appendChild(this.app.canvas);
 
-    // When visible, use standard PixiJS ticker
     this.app.ticker.add((ticker) => {
       if (!document.hidden) {
         this.currentScene?.update(ticker.deltaTime);
       }
     });
 
-    // Instantiate the Web Worker to act as a reliable background timer (bypassing main thread 1000ms throttle)
     this.worker = new BackgroundTimerWorker();
     this.worker.onmessage = (e) => {
-      // If hidden, update game logic with calculated delta time
       if (document.hidden && !this.isDestroyed) {
         this.currentScene?.update(e.data.dt);
       }
@@ -122,14 +117,14 @@ export class Game {
         this.app.canvas.remove();
       }
     } catch {
-      // ignore pixi canvas getter errors
+      void 0;
     }
     try {
       if (this.app && this.app.renderer) {
         this.app.destroy(false);
       }
     } catch {
-      // Ignore errors if Pixi isn't fully initialized
+      void 0;
     }
   }
 }

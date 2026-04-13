@@ -123,7 +123,7 @@ export class InputHandler {
         'touchend',
         (e) => {
           this.castClickBound(e);
-          e.preventDefault(); // Prevent phantom click on mobile
+          e.preventDefault();
         },
         { passive: false },
       );

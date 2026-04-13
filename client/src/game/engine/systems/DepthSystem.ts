@@ -4,7 +4,6 @@ export class DepthSystem {
   private config: IDepthMapConfig;
   private canvasHeight: number;
 
-  // Cache for grid-based depth lookups (quantized to 1/100 precision)
   private depthCache = new Map<string, number>();
 
   constructor(config: IDepthMapConfig, canvasHeight: number) {
@@ -12,7 +11,6 @@ export class DepthSystem {
     this.canvasHeight = canvasHeight;
   }
 
-  /** Convert canvas pixel Y → real depth in meters */
   pixelYToDepth(pixelY: number): number {
     const normY = Math.max(0, Math.min(1, pixelY / this.canvasHeight));
     return (
@@ -21,10 +19,8 @@ export class DepthSystem {
     );
   }
 
-  /** Get depth at a normalized position from the depth map (cached for grid type) */
   getDepthAt(normX: number, normY: number): number {
     if (this.config.type === 'function' && this.config.fn) {
-      // Function-based maps are not cached (may be dynamic)
       const t = Math.max(0, Math.min(1, this.config.fn(normX, normY)));
       return (
         this.config.minDepth + t * (this.config.maxDepth - this.config.minDepth)
@@ -32,7 +28,6 @@ export class DepthSystem {
     }
 
     if (this.config.type === 'grid' && this.config.data) {
-      // Quantize to 1/100 grid to avoid float key collisions while keeping good precision
       const key = `${(normX * 100) | 0},${(normY * 100) | 0}`;
       const cached = this.depthCache.get(key);
       if (cached !== undefined) return cached;
@@ -45,7 +40,6 @@ export class DepthSystem {
     return this.config.minDepth;
   }
 
-  /** Bilinear interpolation on the depth grid */
   private computeGridDepth(normX: number, normY: number): number {
     const data = this.config.data;
 
@@ -81,7 +75,6 @@ export class DepthSystem {
     );
   }
 
-  /** Convert depth in meters → canvas pixel Y */
   depthToPixelY(depthM: number): number {
     const t =
       (depthM - this.config.minDepth) /

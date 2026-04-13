@@ -77,10 +77,7 @@ export class DebugLayer {
     if (this.container.visible) {
       this.dynamicGfx.clear();
       const now = performance.now();
-      // Throttle text update to 4 times per second (approx every 15 frames)
       if (now - this.lastFpsUpdateTime > 250) {
-        // app.ticker.FPS is already a 10-frame smoothed value in Pixi.
-        // Using it directly makes the UI more responsive to spikes.
         const currentFps = Math.round(this.app.ticker.FPS);
         this.fpsLabel.text = `FPS: ${currentFps}`;
         this.lastFpsUpdateTime = now;
@@ -108,7 +105,7 @@ export class DebugLayer {
   ): void {
     if (this.container.visible && isCast && progress > 0) {
       this.snagLabel.visible = true;
-      this.snagLabel.anchor.set(1, 0.5); // Right-aligned, vertically centered
+      this.snagLabel.anchor.set(1, 0.5);
       this.snagLabel.position.set(x - 10, y - 10);
       this.snagLabel.text = `Snag: ${progress.toFixed(2)}`;
     } else {
@@ -142,16 +139,11 @@ export class DebugLayer {
       H = this.app.renderer.height;
     const gfx = this.terrainGfx;
     gfx.clear();
-    // Adaptive density: high resolution for PC, optimized for mobile (landscape)
     const isSmallScreen = this.app.renderer.width < 1000;
     const rows = isSmallScreen ? 30 : 50;
     const cols = isSmallScreen ? 45 : 75;
     const waterBoundaryY = this.config.environment.waterBoundaryY;
     const horizonY = H * waterBoundaryY;
-
-    // Group draws by depth range to reduce state changes if possible
-    // though in Pixi 8, each circle(...) call already adds to the current batch.
-    // The main bottleneck is often the number of geometries.
 
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {

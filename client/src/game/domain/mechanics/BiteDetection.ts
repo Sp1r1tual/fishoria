@@ -4,7 +4,7 @@ import type {
   LureTypeType,
 } from '@/common/types';
 
-import { FishState } from '../fish/FishState';
+import { FISH_STATES } from '../fish/constants/FishState';
 import type { Fish } from '../fish/Fish';
 
 import {
@@ -21,17 +21,17 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
   const scale = params.canvasHeight / GLOBAL_CONSTANTS.baseHeight;
 
   const interestedFish = (params.fish as Fish[]).find(
-    (f) => f.state === FishState.Interested || f.state === FishState.Biting,
+    (f) => f.state === FISH_STATES.Interested || f.state === FISH_STATES.Biting,
   );
 
   for (const fish of params.fish as Fish[]) {
     if (
-      fish.state === FishState.Hooked ||
+      fish.state === FISH_STATES.Hooked ||
       (interestedFish && interestedFish !== fish)
     )
       continue;
 
-    if (fish.state === FishState.Biting) continue;
+    if (fish.state === FISH_STATES.Biting) continue;
 
     const dx = fish.position.x - params.hookPixelX;
     const dy = fish.position.y - params.hookPixelY;
@@ -56,7 +56,6 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
       fish.config.activityByTimeOfDay[params.timeOfDay] ??
       BITE_DETECTION.activityScoreDefault;
 
-    // Predators become more active in rain or cloudy weather, effectively waking up even at "dead" hours.
     if (fish.config.isPredator && params.weather !== 'clear') {
       const weatherBoost = params.weather === 'rain' ? 0.35 : 0.15;
       timeScore = Math.min(1.0, timeScore + weatherBoost);
@@ -64,7 +63,7 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
 
     if (timeScore < BITE_DETECTION.minTimeScoreForInterest) {
       if (Math.random() < BITE_DETECTION.chanceOfBiteAtDeadHour) {
-        fish.setState(FishState.Idle);
+        fish.setState(FISH_STATES.Idle);
         fish.hasLostInterest = true;
         continue;
       }
@@ -101,7 +100,7 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
 
     if (
       dist < visionRadius &&
-      fish.state === FishState.Idle &&
+      fish.state === FISH_STATES.Idle &&
       baitScore > 0 &&
       timeScore > BITE_DETECTION.minTimeScoreForInterest &&
       depthScore > BITE_DETECTION.minDepthScoreForInterest &&
@@ -112,9 +111,8 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
           Math.random() <
             BITE_DETECTION.predatorCuriosityChance * params.deltaTime)) &&
       !fish.hasLostInterest &&
-      !interestedFish // Triple check
+      !interestedFish
     ) {
-      // Predators are curious, but more within their visual range
       let attractChance = isSpinning
         ? fish.config.isPredator
           ? BITE_DETECTION.attractChanceSpinningPredator
@@ -126,12 +124,11 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
         const lureMultiplier = fish.config.lureMultipliers[lureType] ?? 1.0;
         attractChance *= lureMultiplier;
       }
-      // 1. Spook Zone: if the bait lands directly on a fish's head, it always gets spooked
+
       const isSpookZone =
         params.timeSinceCast < BITE_DETECTION.splashZoneTime * 0.4 &&
         dist < BITE_DETECTION.splashZoneRadius * 0.7 * scale;
 
-      // 2. Near splash attraction: instantly interested if it's a predator and it lands close enough
       const isAttractSplashZone =
         !isSpookZone &&
         params.timeSinceCast < BITE_DETECTION.splashZoneTime &&
@@ -139,11 +136,10 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
         fish.config.isPredator;
 
       if (isSpookZone) {
-        // Direct hit - spook the fish and it won't bite for 30-40s (state return handled by hasLostInterest)
-        fish.setState(FishState.Idle);
+        fish.setState(FISH_STATES.Idle);
         fish.interestLevel = 0;
         fish.hasLostInterest = true;
-        continue; // Don't block detection for other fish
+        continue;
       }
 
       if (
@@ -153,7 +149,6 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
             : BITE_DETECTION.floatGracePeriod) ||
         isAttractSplashZone
       ) {
-        // Predators are curious, but float/feeder splashes are often suspicious
         let attractSplashChance = 0;
         const isNewSplash =
           fish.lastSplashSeenTime === -1 ||
@@ -162,14 +157,13 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
         if (isAttractSplashZone) {
           fish.lastSplashSeenTime = params.timeSinceCast;
           if (isNewSplash && !isSpinning) {
-            // If it's a static bait splash, 60% chance it spooks the predator instead
-            if (Math.random() < 0.6) {
+            if (Math.random() < BITE_DETECTION.splashSpookChance) {
               fish.hasLostInterest = true;
-              continue; // Don't block detection for other fish
+              continue;
             }
-            attractSplashChance = 0.4; // Only 40% chance of immediate interest even if not spooked
+            attractSplashChance = BITE_DETECTION.splashInterestChanceStatic;
           } else if (isNewSplash && isSpinning) {
-            attractSplashChance = 1.0;
+            attractSplashChance = BITE_DETECTION.splashInterestChanceSpinning;
           }
         }
 
@@ -178,8 +172,6 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
           (Math.random() < attractChance * params.deltaTime ||
             Math.random() < attractSplashChance)
         ) {
-          // Chance for an instant strike without the interest-filling "games"
-          // ONLY after required pulls for spinning lures, and NEVER for static baits in a splash zone
           const canInstantStrike =
             !isAttractSplashZone || (isSpinning && !params.isOnBottom);
 
@@ -192,37 +184,43 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
               (params.pullCount ?? 0) >=
                 BITE_DETECTION.spinningMinPullsForInstantStrike)
           ) {
-            fish.setState(FishState.Biting);
+            fish.setState(FISH_STATES.Biting);
             return { biter: fish, progress: 0 };
           }
 
-          fish.setState(FishState.Interested);
+          fish.setState(FISH_STATES.Interested);
           fish.interestLevel = isSpinning
             ? BITE_DETECTION.initialInterestSpinning
             : BITE_DETECTION.initialInterestFloat;
 
           if (isAttractSplashZone) {
-            fish.interestLevel += BITE_DETECTION.splashInterestBoost; // Extra boost from splash
+            fish.interestLevel += BITE_DETECTION.splashInterestBoost;
           }
         }
       }
     }
 
-    if (fish.state === FishState.Interested && !fish.hasLostInterest) {
+    if (fish.state === FISH_STATES.Interested && !fish.hasLostInterest) {
       if (!fish.hasAttemptedAttack) {
         fish.hasAttemptedAttack = true;
 
         let attackChance =
-          0.4 * baitScore * timeScore * fish.config.baseCatchChance;
+          STRIKE_CHANCES.immediateAttackChanceMultiplier *
+          baitScore *
+          timeScore *
+          fish.config.baseCatchChance;
 
         if (params.rigType === 'float' && params.isOnBottom) {
           attackChance *= STRIKE_CHANCES.floatOnBottomStrikePenalty;
         }
 
-        const finalChance = Math.min(attackChance, 0.3);
+        const finalChance = Math.min(
+          attackChance,
+          STRIKE_CHANCES.immediateAttackChanceCap,
+        );
 
         if (Math.random() < finalChance && (!isSpinning || params.isMoving)) {
-          fish.setState(FishState.Biting);
+          fish.setState(FISH_STATES.Biting);
           return { biter: fish, progress: 0 };
         }
       }
@@ -234,7 +232,6 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
             ? INTEREST_RATES.weather.cloudy
             : INTEREST_RATES.weather.clear;
 
-      // Base fill rate (environmental and bait factors)
       let rate =
         baitScore *
         timeScore *
@@ -245,34 +242,28 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
         params.deltaTime;
 
       if (params.rigType === 'float' || params.rigType === 'feeder') {
-        // Float/Feeder rigs strongly depend on being at the right depth to grow interest
         rate *= depthScore * verticalGapScore;
         if (fish.config.isPredator) {
-          rate *= 1.35;
+          rate *= INTEREST_RATES.predatorInterestBonusStatic;
         }
       }
 
       if (isSpinning) {
-        // High distance falloff for interest
-        // High distance falloff for interest: very slow growth at edge of vision
         const distRatio = dist / visionRadius;
-        // Proximity penalty: slower growth/decay when far away, but NEVER flips the sign
+
         const proximityMultiplier = Math.max(
           0.05,
           1.1 - Math.pow(distRatio, 1.3),
         );
 
-        // Passive focus
         const passiveFocus = params.isOnBottom
           ? INTEREST_RATES.spinning.passiveFocusOnBottom
           : INTEREST_RATES.spinning.passiveFocusInWater;
 
-        // Active attraction
         const activeAttract = params.isMoving
           ? INTEREST_RATES.spinning.activeAttractMoving
           : INTEREST_RATES.spinning.activeAttractIdle;
 
-        // Retrieval technique bonus (spinning only)
         let techniqueBonus = 1.0;
         if (
           params.retrieveType &&
@@ -310,7 +301,6 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
           rate * proximityMultiplier * techniqueBonus * speedBonus;
 
         if (focusSum > 0) {
-          // Interest grows: strongly depends on correct depth, UNLESS already very interested
           const effectiveDepthScore =
             fish.interestLevel >= 0.2 ? 1.0 : depthScore;
           const effectiveVerticalGapScore =
@@ -321,13 +311,10 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
             effectiveDepthScore *
             effectiveVerticalGapScore;
         } else {
-          // Interest decays: happens even (or faster) if depth is wrong
-          // If depth is wrong (score < 1), we slightly accelerate the decay
           const depthDecayMultiplier = 2.0 - depthScore * verticalGapScore;
           rate = baseSpinningRate * focusSum * depthDecayMultiplier;
         }
       } else {
-        // Penalty for rigs on the bottom
         if (params.isOnBottom) {
           if (params.rigType === 'float') {
             rate *= INTEREST_RATES.floatOnBottomPenalty;
@@ -338,7 +325,6 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
           }
         }
 
-        // Ensure a minimum floor for stationary bait
         const isFloatOnBottom = params.rigType === 'float' && params.isOnBottom;
         const minStationaryRate =
           (isFloatOnBottom
@@ -349,34 +335,30 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
         rate = Math.max(minStationaryRate, rate);
       }
 
-      // "Magnet" effect
       if (fish.interestLevel > INTEREST_RATES.magnetThreshold && rate > 0) {
         rate += INTEREST_RATES.magnetRate * params.deltaTime;
       }
 
       fish.interestLevel = Math.max(0, Math.min(1, fish.interestLevel + rate));
 
-      // Immediate reset to Idle if interest hits 0 (for spinning)
       if (fish.interestLevel <= 0 && isSpinning) {
-        fish.setState(FishState.Idle);
+        fish.setState(FISH_STATES.Idle);
         continue;
       }
 
       if (fish.interestLevel > maxInterest) maxInterest = fish.interestLevel;
 
-      // If the fish swims too far away while "interested", it should lose interest immediately
       const maxInterestDist =
         (isSpinning && fish.config.isPredator
           ? INTEREST_RATES.maxInterestDistSpinningPredator
           : INTEREST_RATES.maxInterestDistFloat) * scale;
       if (dist > maxInterestDist) {
-        fish.setState(FishState.Idle);
+        fish.setState(FISH_STATES.Idle);
         fish.interestLevel = 0;
         fish.hasLostInterest = true;
         continue;
       }
 
-      // --- NIBBLING / CHOICE PHASE ---
       if (
         fish.interestLevel >= 1 &&
         dist < BITE_DETECTION.biteRadiusPx * scale
@@ -410,12 +392,12 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
         }
 
         if (Math.random() < strikeChance && (!isSpinning || params.isMoving)) {
-          fish.setState(FishState.Biting);
+          fish.setState(FISH_STATES.Biting);
           return { biter: fish, progress: 0 };
         }
 
         if (Math.random() < fleeChance) {
-          fish.setState(FishState.Escaping);
+          fish.setState(FISH_STATES.Escaping);
           fish.interestLevel = 0;
           fish.hasLostInterest = true;
         }
@@ -427,14 +409,14 @@ export function detectBite(params: IBiteDetectionParams): IBiteResult {
             Math.random() <
               STRIKE_CHANCES.floatOnBottomLossChance * params.deltaTime)
         ) {
-          fish.setState(FishState.Idle);
+          fish.setState(FISH_STATES.Idle);
           fish.interestLevel = 0;
           fish.hasLostInterest = true;
         }
       }
 
       if (fish.stateTimer > INTEREST_RATES.maxInterestDuration) {
-        fish.setState(FishState.Idle);
+        fish.setState(FISH_STATES.Idle);
         fish.interestLevel = 0;
         fish.hasLostInterest = true;
       }

@@ -66,6 +66,13 @@ export const BITE_DETECTION = {
   /** Chance per tick for a predator to check out stationary lure (normalized) */
   predatorCuriosityChance: 0.1,
 
+  /** Chance of predator being spooked by a splash from static bait */
+  splashSpookChance: 0.6,
+  /** Chance of predator becoming interested in static bait splash (if not spooked) */
+  splashInterestChanceStatic: 0.4,
+  /** Chance of predator becoming interested in spinning lure splash */
+  splashInterestChanceSpinning: 1.0,
+
   /** Default scores */
   baitScoreDefault: 1.0,
   noBaitScore: 0.0,
@@ -149,6 +156,9 @@ export const INTEREST_RATES = {
   /** Additional predator penalty on float at bottom */
   floatOnBottomPredatorPenalty: 0.2,
 
+  /** Interest fill rate multiplier for predators on static rigs */
+  predatorInterestBonusStatic: 1.35,
+
   /** Minimum stationary fill rate */
   minStationaryRateNormal: 0.005,
   /** Minimum stationary fill rate for float on bottom */
@@ -183,6 +193,14 @@ export const STRIKE_CHANCES = {
 
   /** Float on bottom loss-of-interest chance (per tick, normalized) */
   floatOnBottomLossChance: 0.02,
+
+  /** Immediate attack chance base multiplier */
+  immediateAttackChanceMultiplier: 0.4,
+  /** Cap for immediate attack chance */
+  immediateAttackChanceCap: 0.3,
+
+  /** Groundbait cluster attraction strength multiplier (for idle fish) */
+  groundbaitDriftStrength: 0.8,
 } as const;
 
 export const EARLY_HOOK = {

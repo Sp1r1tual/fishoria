@@ -40,11 +40,6 @@ interface IReelingUpdateParams {
   getDepthAt: (nx: number, ny: number) => number;
 }
 
-/**
- * Processes one frame of the reeling phase:
- * tension update, energy drain, gear wear, break/escape checks,
- * fish pulling, and catch detection.
- */
 export function updateReelingPhase(
   params: IReelingUpdateParams,
   callbacks: ILakeSceneCallbacks,
@@ -84,7 +79,6 @@ export function updateReelingPhase(
 
   callbacks.onTensionChange(tension.value, tension.isBroken);
 
-  // Accumulate gear wear
   const wearMulti = 1.0 + tension.value * GEAR_WEAR.tensionWearMultiplier;
   const dtSec = deltaTime / 60;
   let accumRodWear =
@@ -104,7 +98,6 @@ export function updateReelingPhase(
     accumReelWear = 0;
   }
 
-  // Check for line/gear break
   if (tension.isBroken) {
     if (accumRodWear > 0 || accumReelWear > 0) {
       callbacks.onGearDamaged?.(accumRodWear, accumReelWear);
@@ -135,7 +128,6 @@ export function updateReelingPhase(
     };
   }
 
-  // Check for fish escape
   if (tension.isEscaped) {
     return {
       tension,
@@ -148,7 +140,6 @@ export function updateReelingPhase(
     };
   }
 
-  // Pull fish toward shore (straight down toward bottom of screen)
   if (playerReeling) {
     const gearMaxWeight = Math.min(
       rodConfig?.maxWeight ?? 1,
@@ -170,12 +161,10 @@ export function updateReelingPhase(
   const hookX = hookedFish.position.x;
   const hookY = hookedFish.position.y;
 
-  // Shore boundary: scales with screen height to match fish pulling physics
   const scale = H / 800;
   const isAtShore =
     H - hookY <= Math.max(10 * scale, REELING_PHYSICS.shoreBoundaryPx);
 
-  // Check for successful catch
   if (isAtShore && playerReeling) {
     let method = 'FLOAT';
     if (hookConfig?.rigType) {

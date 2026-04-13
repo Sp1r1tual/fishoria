@@ -1,9 +1,10 @@
 import type { IUpdateContext } from '@/common/types';
 
 import type { Fish } from '../Fish';
-import { FishState } from '../FishState';
+import { FISH_STATES } from '../constants/FishState';
+
+import { vecLen, normalize } from '@/game/utils/MathUtils';
 import { FISH_AI, ATTRACTION } from '@/common/configs/game';
-import { vecLen, normalize } from '../../../utils/MathUtils';
 
 export function getDepthBiasForce(
   fish: Fish,
@@ -29,23 +30,20 @@ export function getDepthBiasForce(
   const maxD = fish.preferredDepthRange.max;
   const tolerance = FISH_AI.depthBiasComfortTolerance;
 
-  // If we are within the preferred range (with tolerance), we feel NO bias force.
-  // This allows the fish to wander UNIFORMLY within its preferred depths.
   if (currentD >= minD - tolerance && currentD <= maxD + tolerance) {
     fish.cachedDepthBias[0] = 0;
     fish.cachedDepthBias[1] = 0;
     return fish.cachedDepthBias;
   }
 
-  // Gradient search for the NEAREST boundary (min or max)
   const targetDepth = currentD < minD ? minD : maxD;
 
-  const d = 0.05; // Probe 5% of map width/height
+  const d = FISH_AI.depthProbeStep;
   const probes = [
-    { dx: 0, dy: -1, val: ctx.getDepthAt(nx, Math.max(0, ny - d)) }, // Up
-    { dx: 0, dy: 1, val: ctx.getDepthAt(nx, Math.min(1, ny + d)) }, // Down
-    { dx: -1, dy: 0, val: ctx.getDepthAt(Math.max(0, nx - d), ny) }, // Left
-    { dx: 1, dy: 0, val: ctx.getDepthAt(Math.min(1, nx + d), ny) }, // Right
+    { dx: 0, dy: -1, val: ctx.getDepthAt(nx, Math.max(0, ny - d)) },
+    { dx: 0, dy: 1, val: ctx.getDepthAt(nx, Math.min(1, ny + d)) },
+    { dx: -1, dy: 0, val: ctx.getDepthAt(Math.max(0, nx - d), ny) },
+    { dx: 1, dy: 0, val: ctx.getDepthAt(Math.min(1, nx + d), ny) },
   ];
 
   let bestDir = { dx: 0, dy: 0, diff: Math.abs(currentD - targetDepth) };
@@ -56,7 +54,6 @@ export function getDepthBiasForce(
     }
   }
 
-  // Apply return force with slight randomized jitter to ensure fish don't all follow exactly same paths
   const jitterX = (Math.random() - 0.5) * 0.15;
   const jitterY = (Math.random() - 0.5) * 0.15;
 
@@ -65,7 +62,6 @@ export function getDepthBiasForce(
   fish.cachedDepthBias[1] =
     (bestDir.dy + jitterY) * FISH_AI.depthBiasForceStrength;
 
-  // HURRY UP if way outside the zone
   const discomfortDist = currentD < minD ? minD - currentD : currentD - maxD;
   if (discomfortDist > FISH_AI.depthDiscomfortThreshold) {
     fish.velocity.x *= FISH_AI.depthDiscomfortSpeedBoost;
@@ -80,10 +76,13 @@ export function getAttractionForce(
   ctx: IUpdateContext,
 ): [number, number] {
   if (!ctx.baitPosition) return [0, 0];
+
   const dx = ctx.baitPosition.x - fish.position.x;
   const dy = ctx.baitPosition.y - fish.position.y;
+
   const dist = vecLen(dx, dy);
   if (dist < 1) return [0, 0];
+
   let gbRadiusScale = 1.0;
   let gbStrBonus = 1.0;
   let isInfluencedByGroundbait = false;
@@ -100,14 +99,12 @@ export function getAttractionForce(
     }
   }
 
-  // Base attraction calculation
   let str = 0;
   const baseRange = ATTRACTION.baseAttractionRange * gbRadiusScale;
 
   if (isInfluencedByGroundbait) {
     let shouldAttract = false;
 
-    // If bait is cast, check rig conditions
     if (ctx.baitPosition && ctx.rigType) {
       const minD = fish.originalDepthRange.min;
       const maxD = fish.originalDepthRange.max;
@@ -118,11 +115,10 @@ export function getAttractionForce(
       } else if (ctx.rigType === 'feeder') {
         shouldAttract = true;
       } else if (ctx.rigType === 'spinning') {
-        shouldAttract = true; // spinning bait generally pulls fish from their current locations, no depth restriction
+        shouldAttract = true;
       }
 
       if (shouldAttract && ctx.rigType === 'feeder') {
-        // Feeder groundbait makes the fish want to go to the bottom
         fish.preferredDepthRange = {
           min: ctx.lakeMaxDepth * 0.9,
           max: ctx.lakeMaxDepth,
@@ -131,23 +127,18 @@ export function getAttractionForce(
         fish.preferredDepthRange = { ...fish.originalDepthRange };
       }
     } else {
-      // If not cast or no rig selected, restore depth range and do not attract
       fish.preferredDepthRange = { ...fish.originalDepthRange };
       shouldAttract = false;
     }
 
     if (!shouldAttract) return [0, 0];
 
-    // Groundbait Logic: Create a "gathering zone" around the bait.
-    // Hard limit: groundbait only works within 2.2x its base range (approx 700px)
     const maxGbDist = baseRange * 2.2;
     if (dist > maxGbDist) return [0, 0];
 
     const comfortZone = baseRange * 0.15;
 
     if (dist > comfortZone) {
-      // Zone 1: Strong outer pull to the area
-      // Normalized pull that fades out as we hit the boundary
       const fadeOut = Math.max(
         0,
         1 - (dist - baseRange) / (maxGbDist - baseRange),
@@ -158,15 +149,12 @@ export function getAttractionForce(
         gbStrBonus *
         (dist > baseRange ? fadeOut : 1.0);
     } else {
-      // Zone 2: Inner pull to bring fish directly to the hook
       str = (0.12 + 0.1 * fish.config.behavior.curiosity) * gbStrBonus;
     }
   } else {
-    // Standard bait attraction limit (approx 240px)
     const maxBaitDist = ATTRACTION.baseAttractionRange * 3.0;
     if (dist > maxBaitDist) return [0, 0];
 
-    // Standard bait attraction: Pulls the fish directly toward the hook.
     str =
       Math.min(1.1, ATTRACTION.baseAttractionRange / dist) *
       fish.config.behavior.curiosity *
@@ -175,7 +163,6 @@ export function getAttractionForce(
 
   const [nx, ny] = normalize(dx, dy);
 
-  // --- ADD JITTER if interested (Strong Tugging effect) ---
   if (
     fish.interestLevel > ATTRACTION.jitterInterestThreshold &&
     dist < ATTRACTION.jitterMaxDist
@@ -212,7 +199,6 @@ export function getAvoidanceForce(
     }
   }
 
-  // Boundary repulsion to prevent clustering in canvas corners
   const margin = FISH_AI.boundaryRepulsionMargin;
   if (fish.position.x < margin) {
     fx += ((margin - fish.position.x) / margin) * 0.5;
@@ -227,7 +213,7 @@ export function getAvoidanceForce(
   }
   if (
     fish.position.y > ctx.canvasHeight - margin &&
-    fish.state !== FishState.Hooked
+    fish.state !== FISH_STATES.Hooked
   ) {
     fy -= ((fish.position.y - (ctx.canvasHeight - margin)) / margin) * 0.5;
   }

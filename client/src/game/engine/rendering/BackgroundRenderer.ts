@@ -1,4 +1,5 @@
 import { Container, Graphics, Assets, Sprite } from 'pixi.js';
+
 import type { ILakeConfig, TimeOfDayType, WeatherType } from '@/common/types';
 
 export class BackgroundRenderer {
@@ -36,22 +37,18 @@ export class BackgroundRenderer {
     this.bgSprite.width = W;
     this.bgSprite.height = H;
 
-    // Set target tint factor based on weather
     if (weather === 'rain') this.targetTintFactor = 0.75;
     else if (weather === 'cloudy') this.targetTintFactor = 0.85;
     else this.targetTintFactor = 1.0;
 
-    // We don't apply the tint immediately here, it's done in update()
     this.applyCurrentTint();
 
     this.waterGfx.clear();
     const area = this.config.allowedCastArea;
     if (area.type === 'polygon' && area.points) {
-      // Use the organic allowed cast area points
       const polyPoints = area.points.flatMap((p) => [p.x * W, p.y * H]);
       this.waterGfx.poly(polyPoints);
     } else {
-      // Fallback to simple rectangle
       const waterY = this.config.environment.waterBoundaryY * H;
       const waterH = H - waterY;
       this.waterGfx.rect(0, waterY, W, waterH);
@@ -64,9 +61,6 @@ export class BackgroundRenderer {
   private applyCurrentTint(): void {
     const val = Math.floor(255 * this.currentTintFactor);
     this.bgSprite.tint = (val << 16) | (val << 8) | val;
-
-    // Also update water if it's visible or depends on weather
-    // (Note: we already draw water in drawBackground, but we might want it to respond to lerp too)
   }
 
   public update(dt: number): void {

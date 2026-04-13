@@ -4,15 +4,14 @@ export class RodEntity {
   private gfx: Graphics;
   private lineGfx: Graphics;
 
-  /** Rod base position (bottom of rod, on shore) */
   baseX = 80;
   baseY = 0;
   hookX = 400;
   hookY = 300;
   aimX = 400;
   aimY = 300;
-  tension = 0; // Rod bend 0–1
-  lineSlack = 0; // 0=Tight, 1=Slack
+  tension = 0;
+  lineSlack = 0;
   isCast = false;
   isSpinning = false;
   scale = 1.0;
@@ -86,16 +85,14 @@ export class RodEntity {
       ty = this.tipY;
     const dir = this.aimX >= bx ? 1 : -1;
 
-    // 1. Handle & Reel
     const handleLen = 50 * this.scale;
     const dx = tx - bx;
     const dy = ty - by;
     const dist = Math.sqrt(dx * dx + dy * dy);
 
-    // Handle should point towards the tip for a smooth transition
     const hx = bx + (dx / dist) * handleLen;
     const hy = by + (dy / dist) * handleLen;
-    const handleColor = this.isSpinning ? 0x2d5a3d : 0x825a38; // Dark green vs classic wood
+    const handleColor = this.isSpinning ? 0x2d5a3d : 0x825a38;
     this.gfx.moveTo(bx, by);
     this.gfx.lineTo(hx, hy);
     this.gfx.stroke({ width: 10 * this.scale, color: handleColor });
@@ -105,13 +102,12 @@ export class RodEntity {
 
     this.guidePoints.push({ x: hx, y: hy + 5 * this.scale });
 
-    // 2. Rod Body
     let prevX = hx;
     let prevY = hy;
 
     for (let i = 1; i <= segments; i++) {
       const t = i / segments;
-      // Bend scaled by tension and scale
+
       const bend = Math.pow(t, 4.0) * this.tension * 85 * this.scale * dir;
       const currX = hx + (tx - hx) * t + bend;
       const currY = hy + (ty - hy) * t;
@@ -122,14 +118,13 @@ export class RodEntity {
       this.gfx.stroke({ width: Math.max(0.6, width), color: 0x111111 });
 
       if (i % 6 === 0 || i === segments) {
-        // Calculate perpendicular normal to point "downwards" from the rod
         const rodDx = currX - prevX;
         const rodDy = currY - prevY;
         const len = Math.sqrt(rodDx * rodDx + rodDy * rodDy) || 1;
-        // Normal vector pointing "down" relative to the rod's slope
+
         const nx = -rodDy / len;
         const ny = rodDx / len;
-        // Ensure it always points to the bottom half of the screen (y is positive)
+
         const flip = dir;
 
         const offsetDist = width + 1.5 * this.scale;
@@ -139,12 +134,10 @@ export class RodEntity {
         this.guidePoints.push({ x: ringX, y: ringY });
 
         if (i < segments) {
-          // Draw small leg from rod to ring
           this.gfx.moveTo(currX, currY);
           this.gfx.lineTo(ringX, ringY);
           this.gfx.stroke({ width: 1.2 * this.scale, color: 0x444444 });
 
-          // Draw ring itself
           this.gfx.circle(ringX, ringY, 1.8 * this.scale);
           this.gfx.stroke({ width: 1, color: 0xdddddd });
         }
@@ -168,7 +161,6 @@ export class RodEntity {
 
     this.lineGfx.moveTo(this.guidePoints[0].x, this.guidePoints[0].y);
 
-    // Draw line through guides
     for (let i = 1; i < this.guidePoints.length; i++) {
       const p1 = this.guidePoints[i - 1];
       const p2 = this.guidePoints[i];
@@ -176,7 +168,7 @@ export class RodEntity {
       const my = (p1.y + p2.y) / 2 + this.lineSlack * 20 * this.scale;
       this.lineGfx.quadraticCurveTo(mx, my, p2.x, p2.y);
     }
-    // Thicker line for better visibility, especially on mobile
+
     const baseWidth = this.scale < 0.75 ? 2.6 : 1.4;
     const lineWidth = baseWidth * this.scale;
 
@@ -192,24 +184,21 @@ export class RodEntity {
 
       this.lineGfx.moveTo(tip.x, tip.y);
 
-      const segments = 12; // Use more segments for more natural catenary/noise deformation
+      const segments = 12;
       const points: { x: number; y: number }[] = [];
       points.push({ x: tip.x, y: tip.y });
 
       for (let i = 1; i <= segments; i++) {
         const t = i / segments;
-        // Basic linear interpolation
+
         let px = tip.x + dx * t;
         let py = tip.y + dy * t;
 
-        // Add catenary-like sag (parabolic)
         const sag = Math.sin(t * Math.PI) * finalSlack;
 
-        // Perpendicular vector for sag
         let nx = -dy / dist;
         let ny = dx / dist;
 
-        // Ensure the sag always points downwards (positive Y)
         if (ny < 0) {
           nx = -nx;
           ny = -ny;
@@ -221,7 +210,6 @@ export class RodEntity {
         points.push({ x: px, y: py });
       }
 
-      // Draw through the generated points using smoothing
       for (let i = 1; i < points.length; i++) {
         const p0 = points[i - 1];
         const p1 = points[i];
@@ -232,7 +220,7 @@ export class RodEntity {
       this.lineGfx.lineTo(this.hookX, this.hookY);
 
       this.lineGfx.stroke({
-        width: lineWidth * 1.1, // Slightly thicker for the main line segment
+        width: lineWidth * 1.1,
         color,
         alpha: isCritical ? 0.95 : 0.6,
       });

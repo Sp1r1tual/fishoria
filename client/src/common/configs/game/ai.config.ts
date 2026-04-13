@@ -67,6 +67,9 @@ export const FISH_AI = {
   /** Depth bias steering force strength */
   depthBiasForceStrength: 0.25,
 
+  /** Depth probe step (normalized percent of map) */
+  depthProbeStep: 0.05,
+
   /** Speed boost when very uncomfortable (far from preferred depth) */
   depthDiscomfortSpeedBoost: 1.15,
 

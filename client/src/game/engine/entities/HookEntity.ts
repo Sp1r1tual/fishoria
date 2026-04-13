@@ -1,6 +1,5 @@
 import { Container, Graphics, Text, TextStyle } from 'pixi.js';
 
-/** Grouped parameters for HookEntity rendering — replaces 18 positional args */
 interface IHookRenderState {
   x: number;
   y: number;
@@ -144,7 +143,6 @@ export class HookEntity {
   ): void {
     this.gfx.clear();
 
-    // 1. Bobber rendering (NOT for spinning lures)
     if (
       this.isCast &&
       this.rigType !== 'spinning' &&
@@ -155,14 +153,12 @@ export class HookEntity {
       const bx = castX - this.container.x;
       const by = castY - this.container.y;
 
-      // If a fish bites, the bobber should stand up regardless of whether it was laying on side
       const isLayingOnSide = hookDepthM > groundDepthM && phase !== 'bite';
 
-      // Animations
       const bobCycle = Math.sin(time * 0.005);
 
       let tilt = isLayingOnSide
-        ? Math.PI / 2.1 // Slightly less than 90 deg for better visibility
+        ? Math.PI / 2.1
         : bobCycle * 0.15 +
           (maxInterest > 0.3 && !isLayingOnSide
             ? (Math.random() - 0.5) * 0.1
@@ -172,16 +168,14 @@ export class HookEntity {
       let bulbAlphaOverride: number | null = null;
 
       if (this.rigType === 'feeder') {
-        sinkY = 0; // Feeder indicator stays static
+        sinkY = 0;
       } else if (phase === 'waiting') {
         if (maxInterest > 0.15) {
-          // Dynamic Nibble Dips
           const pulse = Math.sin(time * 0.05) * maxInterest;
           const dipThreshold = 0.09;
 
           if (isLayingOnSide) {
-            // When laying on side, "nibble" means the bobber twitches and slightly stands up
-            tilt -= pulse * 0.3; // Much more stable rotation range
+            tilt -= pulse * 0.3;
             sinkY = pulse * 2 * this.scale;
           } else {
             sinkY = Math.max(0, pulse * 14 * this.scale);
@@ -191,7 +185,6 @@ export class HookEntity {
           sinkY = bobCycle * 3 * this.scale;
         }
       } else if (phase === 'bite') {
-        // When fish bites, standard behavior is to stand up and go under
         sinkY = 5 * this.scale;
         tilt = 0;
         bulbAlphaOverride = 0;
@@ -199,7 +192,6 @@ export class HookEntity {
 
       const totalY = by + sinkY;
 
-      // Draw Ripples
       if (phase === 'bite' || bulbAlphaOverride === 0) {
         const isStrike = phase === 'bite';
         const maxRipple = isStrike ? 50 : 80;
@@ -216,13 +208,11 @@ export class HookEntity {
         });
       }
 
-      // 2. Render Bobber
       const bulbRadius = 4.5 * this.scale;
 
       const sinT = Math.sin(tilt);
       const cosT = Math.cos(tilt);
 
-      // Helper to draw parts with surface clipping
       const drawClippedSegment = (
         x0: number,
         y0: number,
@@ -255,7 +245,6 @@ export class HookEntity {
           alpha: 0.2,
         });
       } else {
-        // White Bulb
         const bulbDist = 4 * this.scale;
         const bulbX = bx + sinT * bulbDist;
         const bulbY = totalY + cosT * bulbDist;
@@ -294,7 +283,6 @@ export class HookEntity {
           }
         }
 
-        // Top Stem (Hi-Viz Orange)
         const topStemStart = 4 * this.scale - bulbRadius;
         const topStemEnd = -14 * this.scale;
         drawClippedSegment(
@@ -306,7 +294,6 @@ export class HookEntity {
           0xff4411,
         );
 
-        // Bottom Stem (Dark)
         const botStemStart = 4 * this.scale + bulbRadius;
         const botStemEnd = 12 * this.scale;
         drawClippedSegment(
@@ -318,7 +305,6 @@ export class HookEntity {
           0x333333,
         );
 
-        // Line to hook (always underwater part)
         this.gfx.moveTo(bx + sinT * botStemEnd, totalY + cosT * botStemEnd);
         this.gfx.lineTo(0, 0);
         this.gfx.stroke({
@@ -329,42 +315,33 @@ export class HookEntity {
       }
     }
 
-    // 2. Lure rendering (for spinning)
     if (
       this.isCast &&
       this.rigType === 'spinning' &&
       phase !== 'caught' &&
       phase !== 'broken'
     ) {
-      // No depth offset - user wants to keep things anchored to the surface for top-down view
       const depthOffset = 0;
 
       this.gfx.circle(0, depthOffset, 3 * this.scale);
       this.gfx.fill({ color: 0xcccccc, alpha: 0.8 });
       this.gfx.stroke({ width: 0.5 * this.scale, color: 0xffffff });
-
-      // Main line is handled by RodEntity. No extra visual line here.
     }
 
-    // 2. Hook/Bait Point (underwater vs surface)
     if (phase === 'reeling' || phase === 'caught') {
-      // Small bright dot indicating where the fish is hooked
       this.gfx.circle(0, 0, 3 * this.scale);
       this.gfx.fill({ color: 0xffffff, alpha: 1.0 });
       this.gfx.stroke({ width: 1 * this.scale, color: 0xaaaaaa });
     } else if (!this.isCast) {
       if (this.rigType === 'feeder') {
-        // Just draw a small white dot/sinker
         this.gfx.circle(0, 0, 3 * this.scale);
         this.gfx.fill({ color: 0xdddddd });
         this.gfx.stroke({ width: 0.5 * this.scale, color: 0x999999 });
       } else {
-        // 2. Initial state (UI/Preparing) - Show white ball/float
         this.gfx.circle(0, 0, 4.5 * this.scale);
         this.gfx.fill({ color: 0xffffff });
         this.gfx.stroke({ width: 0.5 * this.scale, color: 0x999999 });
 
-        // Small hook representation
         this.gfx.moveTo(0, 4.5 * this.scale);
         this.gfx.lineTo(0, 10 * this.scale);
         this.gfx.arc(
@@ -377,7 +354,6 @@ export class HookEntity {
         this.gfx.stroke({ width: 1.5 * this.scale, color: 0xc0c0c0 });
       }
     }
-    // If waiting/bite, we draw nothing extra at 0,0 - only the bobber is relevant.
   }
 
   destroy(): void {

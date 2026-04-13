@@ -8,14 +8,13 @@ import type {
 import type { IAllowedCastArea, IVec2 } from '@/common/types';
 
 import { Fish } from '@/game/domain/fish/Fish';
-import { MigrationRegistry } from '@/game/domain/fish/MigrationRegistry';
-import { FishState } from '@/game/domain/fish/FishState';
+import { MigrationRegistry } from '@/game/domain/fish/registers/MigrationRegistry';
+import { FISH_STATES } from '@/game/domain/fish/constants/FishState';
 import { FishEntity } from '../entities/FishEntity';
 import { pointInPolygon } from '@/game/utils/MathUtils';
 
 import { FISH_SPECIES, FISH_SPAWN } from '@/common/configs/game';
 
-/** Pre-computed pixel bounds for a spawn zone */
 interface IZoneBounds {
   minX: number;
   maxX: number;
@@ -26,7 +25,7 @@ interface IZoneBounds {
 export class FishSpawnSystem {
   private spawned: ISpawnedFish[] = [];
   private pool: ISpawnedFish[] = [];
-  private fishCache: Fish[] = []; // Cached array — invalidated on add/remove
+  private fishCache: Fish[] = [];
   private spawnAccum = 0;
 
   private config: IFishSpawnsConfig;
@@ -37,7 +36,6 @@ export class FishSpawnSystem {
   private allowedCastArea: IAllowedCastArea;
   private getDepthAt: (nx: number, ny: number) => number;
 
-  /** Cached pixel bounds per zone id — avoids recomputing min/max on every spawn attempt */
   private zoneBoundsCache = new Map<string, IZoneBounds>();
 
   constructor(
@@ -61,10 +59,6 @@ export class FishSpawnSystem {
     this.initialSpawn();
   }
 
-  /**
-   * Pre-compute pixel bounding boxes for all polygon zones.
-   * Called once on construction and after resize.
-   */
   private prebuildZoneBounds(): void {
     this.zoneBoundsCache.clear();
     const W = this.canvasWidth;
@@ -88,10 +82,6 @@ export class FishSpawnSystem {
     }
   }
 
-  /**
-   * Spawn initial fish in small async batches so we don't block the main thread.
-   * Uses requestIdleCallback when available, falls back to setTimeout.
-   */
   private initialSpawn(): void {
     const initialCount = Math.floor(
       this.config.maxFishCount * FISH_SPAWN.initialSpawnFraction,
@@ -135,24 +125,22 @@ export class FishSpawnSystem {
 
   private spawnOne(): void {
     if (this.spawned.length >= this.config.maxFishCount) {
-      // Pause rotation if ANY fish is currently interacting with the player
       const isAnyFishEngaged = this.spawned.some(
         ({ fish }) =>
-          fish.state === FishState.Interested ||
-          fish.state === FishState.Biting ||
-          fish.state === FishState.Hooked,
+          fish.state === FISH_STATES.Interested ||
+          fish.state === FISH_STATES.Biting ||
+          fish.state === FISH_STATES.Hooked,
       );
 
       if (isAnyFishEngaged) {
-        return; // Pause auto-deletion to not disrupt gameplay
+        return;
       }
 
-      // Rotation logic: remove the oldest fish to make room for a new one
       const oldest = this.spawned[0];
       if (oldest) {
         this.removeFish(oldest.fish);
       } else {
-        return; // Should not happen
+        return;
       }
     }
 
@@ -161,7 +149,6 @@ export class FishSpawnSystem {
 
     if (!speciesList || speciesList.length === 0) return;
 
-    // Weighted species selection
     const totalWeight = speciesList.reduce((s, spec) => s + spec.weight, 0);
     let r = Math.random() * totalWeight;
     let selected = speciesList[0];
@@ -198,7 +185,6 @@ export class FishSpawnSystem {
 
       const floorDepth = this.getDepthAt(testNx, testNy);
 
-      // Check if inside allowedCastArea (using screen-normalized coordinates)
       const pt: IVec2 = { x: testNx, y: pos.y / this.canvasHeight };
       let isInside = false;
       if (
@@ -215,22 +201,20 @@ export class FishSpawnSystem {
         const dy = pt.y - this.allowedCastArea.center.y;
         isInside = dx * dx + dy * dy <= this.allowedCastArea.radius ** 2;
       } else {
-        isInside = true; // Fallback if no specific area defined
+        isInside = true;
       }
 
       if (
         isInside &&
         ((floorDepth >= prefDepth.min - FISH_SPAWN.spawnDepthTolerance &&
           floorDepth <= prefDepth.max + FISH_SPAWN.spawnDepthTolerance) ||
-          attempts > FISH_SPAWN.maxSpawnAttempts * 0.8) // Become more lenient in very late attempts
+          attempts > FISH_SPAWN.maxSpawnAttempts * 0.8)
       ) {
         bestX = pos.x;
         bestY = pos.y;
         break;
       }
 
-      // If we haven't found a perfect spot, keep track of the one with best depth,
-      // BUT ONLY if it is inside the allowed area.
       const diff = Math.abs(floorDepth - targetDepth);
       if (isInside && diff < minDifference) {
         minDifference = diff;
@@ -240,7 +224,6 @@ export class FishSpawnSystem {
     }
 
     if (bestX === 0 && bestY === 0) {
-      // Last resort: find ANY position inside the zone that is also inside allowedCastArea
       for (let i = 0; i < 20; i++) {
         const fallback = this.randomPosInZone(zone);
         const pt = {
@@ -254,7 +237,6 @@ export class FishSpawnSystem {
         }
       }
 
-      // If still nothing, use pure fallback (should be rare)
       if (bestX === 0) {
         const fallback = this.randomPosInZone(zone);
         bestX = fallback.x;
@@ -277,10 +259,9 @@ export class FishSpawnSystem {
     }
 
     this.spawned.push({ fish, entity });
-    this.fishCache.push(fish); // Keep cache in sync
+    this.fishCache.push(fish);
   }
 
-  /** Biased random that pushes values towards 0 and 1 (S-curve) */
   private biasedRandom(power = 1.2): number {
     const r = Math.random();
     return r < 0.5
@@ -288,10 +269,6 @@ export class FishSpawnSystem {
       : 1 - Math.pow((1 - r) * 2, power) / 2;
   }
 
-  /**
-   * Returns a random position inside the zone.
-   * Uses pre-cached bounding boxes for polygon zones instead of recomputing min/max each call.
-   */
   private randomPosInZone(zone: ISpawnZone | undefined): {
     x: number;
     y: number;
@@ -301,7 +278,6 @@ export class FishSpawnSystem {
 
     if (zone && zone.type === 'circle' && zone.center && zone.radius != null) {
       const angle = Math.random() * Math.PI * 2;
-      // Pushing radius towards edges as well for circles
       const r = Math.pow(Math.random(), 0.7) * zone.radius;
       return {
         x: (zone.center.x + Math.cos(angle) * r) * W,
@@ -315,7 +291,6 @@ export class FishSpawnSystem {
       zone.points != null &&
       zone.points.length >= 2
     ) {
-      // Use pre-built bounds cache
       const bounds = this.zoneBoundsCache.get(zone.id);
       if (bounds) {
         return {
@@ -324,7 +299,6 @@ export class FishSpawnSystem {
         };
       }
 
-      // Fallback: compute on the fly (should not happen after prebuildZoneBounds)
       const xs = zone.points.map((p) => p.x * W);
       const ys = zone.points.map((p) => p.y * H);
       const minX = Math.min(...xs);
@@ -338,7 +312,6 @@ export class FishSpawnSystem {
       };
     }
 
-    // Default: random anywhere in the lake (below waterBoundaryY)
     return {
       x: this.biasedRandom() * W,
       y:
@@ -347,16 +320,6 @@ export class FishSpawnSystem {
         H,
     };
   }
-
-  /**
-   * deltaTime here is Pixi's normalized ticker delta (1.0 = one frame at 60 fps).
-   * To convert to seconds: deltaTime / 60.
-   * spawnRatePerSecond is fish per second, so:
-   *   accumulator += spawnRatePerSecond * (deltaTime / 60)
-   *
-   * Previously the code multiplied by an extra 0.016 which was incorrect
-   * (0.016 ≈ 1/60, so it was effectively dividing by 60 twice).
-   */
   update(deltaTime: number): void {
     this.spawnAccum += this.config.spawnRatePerSecond * (deltaTime / 60);
     while (this.spawnAccum >= 1) {
@@ -377,9 +340,8 @@ export class FishSpawnSystem {
     const idx = this.spawned.findIndex((s) => s.fish === fish);
     if (idx !== -1) {
       const removed = this.spawned.splice(idx, 1)[0];
-      this.fishCache.splice(idx, 1); // Keep cache in sync
+      this.fishCache.splice(idx, 1);
       if (removed) {
-        // Important: ensure migration counter is decremented if removed while migrating
         if (removed.fish.migrationTarget) {
           MigrationRegistry.activeMigrations = Math.max(
             0,
@@ -408,7 +370,6 @@ export class FishSpawnSystem {
     this.canvasWidth = newWidth;
     this.canvasHeight = newHeight;
 
-    // Rebuild zone bounds for new canvas dimensions
     this.prebuildZoneBounds();
   }
 

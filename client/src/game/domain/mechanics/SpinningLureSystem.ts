@@ -20,10 +20,6 @@ interface ISpinningLureUpdateParams {
   depthSystem: DepthSystem;
 }
 
-/**
- * Manages spinning lure physics: depth changes, horizontal movement,
- * and idle sink/float behavior based on lure type.
- */
 export function updateSpinningLure(
   params: ISpinningLureUpdateParams,
 ): ISpinningLureState {
@@ -47,14 +43,12 @@ export function updateSpinningLure(
   const lureType = hookConfig.lureType;
   const dtSec = deltaTime / 60;
 
-  // Dynamic ground depth under lure
   const normX = hookX / W;
   const waterY = H * waterBoundaryY;
   const normY = Math.max(0, Math.min(1, (hookY - waterY) / (H - waterY)));
   const groundDepthM = depthSystem.getDepthAt(normX, normY);
 
   if (playerReeling) {
-    // Move strictly downward toward screen bottom (shore)
     const pullSpeed =
       SPINNING_LURE.reelingPullSpeedBase *
       dtSec *
@@ -71,16 +65,13 @@ export function updateSpinningLure(
       reachedShore = true;
     }
 
-    // Depth changes when reeling scale with reel speed
     if (lureType === 'wobbler') {
-      // Dives when pulled
       currentLureDepthM = Math.min(
         groundDepthM,
         currentLureDepthM +
           params.retrieveSpeedMult * SPINNING_LURE.wobblerDiveSpeed * dtSec,
       );
     } else {
-      // Rises when pulled
       currentLureDepthM = Math.max(
         SPINNING_LURE.minDepth,
         currentLureDepthM -
@@ -88,7 +79,6 @@ export function updateSpinningLure(
       );
     }
   } else {
-    // Idle physics (sinking/floating)
     if (lureType === 'vibrotail') {
       currentLureDepthM = Math.min(
         groundDepthM,
@@ -100,7 +90,6 @@ export function updateSpinningLure(
         currentLureDepthM + SPINNING_LURE.spoonSinkSpeed * dtSec,
       );
     } else if (lureType === 'wobbler') {
-      // Floats up when idle
       currentLureDepthM = Math.max(
         SPINNING_LURE.minDepth,
         currentLureDepthM - SPINNING_LURE.wobblerFloatSpeed * dtSec,
@@ -108,7 +97,6 @@ export function updateSpinningLure(
     }
   }
 
-  // Final clamp to bottom
   currentLureDepthM = Math.min(currentLureDepthM, groundDepthM);
 
   return {

@@ -17,9 +17,8 @@ export function validateCast(
   allowedArea: IAllowedCastArea,
   waterBoundaryY: number,
 ): ICastTarget | null {
-  // 1. Initial clamp to water boundary (before checking against specific area polygon)
   const nyRaw = clickPixel.y / canvasHeight;
-  const ny = Math.max(waterBoundaryY + SCENE_TIMING.castWaterMargin, nyRaw); // Clamp to water plus margin
+  const ny = Math.max(waterBoundaryY + SCENE_TIMING.castWaterMargin, nyRaw);
   const nx = clickPixel.x / canvasWidth;
   const pt: IVec2 = { x: nx, y: ny };
 
@@ -36,7 +35,6 @@ export function validateCast(
 
   if (!valid) return null;
 
-  // Return the CLAMPED pixel coordinates
   return {
     normalizedX: nx,
     normalizedY: ny,

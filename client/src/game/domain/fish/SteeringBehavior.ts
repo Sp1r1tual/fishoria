@@ -7,11 +7,7 @@ import type {
   IActivityByTimeOfDay,
 } from '@/common/types';
 
-import { FishState } from './FishState';
 import type { Fish } from './Fish';
-import { MigrationRegistry } from './MigrationRegistry';
-
-const _tmpPt: IVec2 = { x: 0, y: 0 };
 
 import {
   getDepthBiasForce,
@@ -19,19 +15,25 @@ import {
   getAvoidanceForce,
 } from './movement/SteeringForces';
 
+import { MigrationRegistry } from './registers/MigrationRegistry';
+import { FISH_STATES } from './constants/FishState';
+
 import {
   vecLen,
   normalize,
   clamp,
   pointInPolygon,
-} from '../../utils/MathUtils';
+} from '@/game/utils/MathUtils';
 import {
   FISH_AI,
   FISH_STATE_SPEEDS,
   CAST_SPLASH,
   GLOBAL_CONSTANTS,
   ATTRACTION,
+  STRIKE_CHANCES,
 } from '@/common/configs/game';
+
+const _tmpPt: IVec2 = { x: 0, y: 0 };
 
 export class SteeringBehavior implements IFishBehavior {
   private noise2D = createNoise2D();
@@ -54,25 +56,21 @@ export class SteeringBehavior implements IFishBehavior {
       Math.min(1, (fish.position.y - horizonY) / waterHeight),
     );
 
-    // The total floor depth at this (x, y) point on the screen
     const floorDepthAtPoint = ctx.getDepthAt(nx, ny);
 
-    // --- VERTICAL DEPTH LOGIC ---
-    // The fish's ideal depth oscillates slowly within its preferred depth range
     const bob =
       (this.noise2D(
         this.noiseTime * 0.2,
         fish.id.charCodeAt(fish.id.length - 1),
       ) +
         1) /
-      2; // 0.0 to 1.0
+      2;
     let targetD =
       fish.preferredDepthRange.min +
       (fish.preferredDepthRange.max - fish.preferredDepthRange.min) * bob;
 
-    // If interested, try to match bait depth
     if (
-      fish.state === FishState.Interested &&
+      fish.state === FISH_STATES.Interested &&
       ctx.baitPosition &&
       ctx.baitDepth !== undefined &&
       (ctx.rigType !== 'spinning' || fish.interestLevel >= 0.2)
@@ -80,28 +78,23 @@ export class SteeringBehavior implements IFishBehavior {
       targetD = ctx.baitDepth;
     }
 
-    // Clamp target depth so fish doesn't dig into the floor or breach the surface
     targetD = Math.max(0.05, Math.min(targetD, floorDepthAtPoint));
 
-    // Initialize depth if it's 0 (freshly spawned)
     if (fish.depth === 0) {
       fish.depth = targetD;
     }
 
-    // Smoothly adjust current depth towards target (frame-rate independent)
     const depthLerpRate = 1.0 - Math.pow(0.95, dt * 60);
     fish.depth += (targetD - fish.depth) * depthLerpRate;
 
-    // Hard clamp to actual floor depth in case the floor rises abruptly
     fish.depth = Math.max(0.05, Math.min(fish.depth, floorDepthAtPoint));
 
-    // Safety clamp (not used since we moved towards map-based depth, but keeps the fish within world bounds)
     if (fish.position.y < horizonY) {
       fish.position.y = horizonY;
     }
     if (
       fish.position.y > ctx.canvasHeight - 5 &&
-      fish.state !== FishState.Hooked
+      fish.state !== FISH_STATES.Hooked
     ) {
       fish.position.y = ctx.canvasHeight - 5;
     }
@@ -112,8 +105,7 @@ export class SteeringBehavior implements IFishBehavior {
 
     const [wx, wy] = this.wander(fish);
 
-    if (fish.state === FishState.Hooked) {
-      // Struggling
+    if (fish.state === FISH_STATES.Hooked) {
       const rodX = ctx.canvasWidth / 2;
       const dx = fish.position.x - rodX;
       const [nx] = normalize(dx, 0);
@@ -125,7 +117,6 @@ export class SteeringBehavior implements IFishBehavior {
         wy * FISH_STATE_SPEEDS.hooked.verticalWanderForce +
         FISH_STATE_SPEEDS.hooked.verticalBias;
 
-      // Massive fish generate huge tension but are naturally more sluggish when fleeing.
       const sluggishness = Math.max(1, Math.pow(fish.weight || 1, 0.45));
 
       if (ctx.playerReeling) {
@@ -139,8 +130,7 @@ export class SteeringBehavior implements IFishBehavior {
             fish.config.behavior.mobility) /
           sluggishness;
       }
-    } else if (fish.state === FishState.Escaping && ctx.baitPosition) {
-      // Flee
+    } else if (fish.state === FISH_STATES.Escaping && ctx.baitPosition) {
       const dx = fish.position.x - ctx.baitPosition.x;
       const dy = fish.position.y - ctx.baitPosition.y;
       const [nx, ny] = normalize(dx, dy);
@@ -155,14 +145,14 @@ export class SteeringBehavior implements IFishBehavior {
         FISH_STATE_SPEEDS.escaping.speedMultiplier *
         fish.config.behavior.mobility;
       if (fish.stateTimer > FISH_STATE_SPEEDS.escaping.returnToIdleAfter)
-        fish.setState(FishState.Idle);
-    } else if (fish.state === FishState.Biting) {
+        fish.setState(FISH_STATES.Idle);
+    } else if (fish.state === FISH_STATES.Biting) {
       forceX = wx * FISH_STATE_SPEEDS.biting.wanderForceX;
       forceY = wy * FISH_STATE_SPEEDS.biting.wanderForceY;
       speed =
         FISH_STATE_SPEEDS.biting.multiplier * fish.config.behavior.mobility;
     } else if (
-      fish.state === FishState.Interested &&
+      fish.state === FISH_STATES.Interested &&
       ctx.baitPosition &&
       !ctx.isAnyFishHooked
     ) {
@@ -206,10 +196,9 @@ export class SteeringBehavior implements IFishBehavior {
       forceY = wy;
       const [bx, by] = getDepthBiasForce(fish, ctx);
 
-      // --- RESTING LOGIC ---
       if (!fish.isResting) {
         fish.restTimer -= dt;
-        if (fish.restTimer <= 0 && fish.state === FishState.Idle) {
+        if (fish.restTimer <= 0 && fish.state === FISH_STATES.Idle) {
           fish.isResting = true;
           fish.restDuration =
             FISH_AI.restDurationBase +
@@ -229,16 +218,13 @@ export class SteeringBehavior implements IFishBehavior {
         }
       }
 
-      // --- MIGRATION LOGIC ---
-      // Distant explorer logic
       if (!fish.isResting) {
         fish.migrationTimer -= dt;
         if (
           fish.migrationTimer <= 0 &&
-          fish.state === FishState.Idle &&
+          fish.state === FISH_STATES.Idle &&
           MigrationRegistry.activeMigrations < MigrationRegistry.maxMigrations
         ) {
-          // Use an aggressive S-curve distribution to push targets away from the center
           const normX = Math.random();
           const biasedX =
             normX < 0.5
@@ -257,11 +243,9 @@ export class SteeringBehavior implements IFishBehavior {
           const ny = Math.max(0, Math.min(1, (ty - horizonY) / waterHeight));
           const d = ctx.getDepthAt(nx, ny);
 
-          // Night migration: relax depth check because lethargic fish shouldn't be trapped in a single hole
           const nightTolerance =
             ctx.timeOfDay === 'night' ? 0.35 : FISH_AI.migrationDepthTolerance;
 
-          // Only migrate if destination has suitable depth (with tolerance)
           if (
             d >= fish.preferredDepthRange.min - nightTolerance &&
             d <= fish.preferredDepthRange.max + nightTolerance
@@ -270,7 +254,7 @@ export class SteeringBehavior implements IFishBehavior {
             MigrationRegistry.activeMigrations++;
             fish.migrationTimer = 5 + Math.random() * 25;
           } else {
-            fish.migrationTimer = FISH_AI.migrationRetryInterval; // Try again soon
+            fish.migrationTimer = FISH_AI.migrationRetryInterval;
           }
         }
       }
@@ -285,18 +269,13 @@ export class SteeringBehavior implements IFishBehavior {
             0,
             MigrationRegistry.activeMigrations - 1,
           );
-        } else {
-          // Migration force is applied below with the speed multiplier
         }
       }
 
-      // Extra strong depth bias for idle state (but reduce it by 70% during migration to allow travel)
       const migrationBiasModifier = fish.migrationTarget ? 0.3 : 1.0;
       forceX += bx * FISH_AI.idleDepthBiasForce * migrationBiasModifier;
       forceY += by * FISH_AI.idleDepthBiasForce * migrationBiasModifier;
 
-      // --- GROUNDBAIT ATTRACTION for IDLE/MIGRATING fish ---
-      // If groundbait is active, IDLE fish should slowly drift towards the bait cluster
       if (ctx.activeGroundbait && ctx.baitPosition) {
         if (fish.migrationTarget) {
           const dx = ctx.baitPosition.x - fish.position.x;
@@ -321,17 +300,16 @@ export class SteeringBehavior implements IFishBehavior {
 
         if (!fish.migrationTarget) {
           const [sax, say] = getAttractionForce(fish, ctx);
-          // Additive attraction instead of overriding to let fish still wander naturally
-          // Increased influence from 0.4 to 0.8 to make it feel more like a "magnet".
-          forceX += sax * 0.8;
-          forceY += say * 0.8;
+
+          forceX += sax * STRIKE_CHANCES.groundbaitDriftStrength;
+          forceY += say * STRIKE_CHANCES.groundbaitDriftStrength;
         }
       }
 
       speed = FISH_STATE_SPEEDS.idle.multiplier * fish.config.behavior.mobility;
       if (fish.migrationTarget) {
-        speed *= FISH_AI.migrationSpeedMultiplier; // Swim faster during migration
-        // Reduce random wandering during focused travel
+        speed *= FISH_AI.migrationSpeedMultiplier;
+
         forceX *= 0.5;
         forceY *= 0.5;
         const [dx, dy] = normalize(
@@ -350,8 +328,6 @@ export class SteeringBehavior implements IFishBehavior {
       }
     }
 
-    // --- BOUNDARY STEERING (stay within allowedCastArea) ---
-    // Throttle boundary check to every 4 frames per fish to save CPU
     const checkBoundary =
       (fish.id.charCodeAt(0) + Math.floor(performance.now() / 16)) % 4 === 0;
 
@@ -383,8 +359,6 @@ export class SteeringBehavior implements IFishBehavior {
       }
 
       if (!isInside) {
-        // If outside, steer towards a randomized "safe spot" within the lake to avoid clustering
-        // We use fish.id to generate a stable, unique target for each fish
         const hashX =
           ((fish.id.charCodeAt(0) * 13 + fish.id.charCodeAt(5)) % 100) / 100;
         const hashY =
@@ -398,14 +372,15 @@ export class SteeringBehavior implements IFishBehavior {
           targetY - fish.position.y,
         );
 
-        // Strong steering back to keep fish within allowed boundaries
         forceX += dx * 2.5;
         forceY += dy * 2.5;
-        // Don't modify speed so aggressively
       }
     }
 
-    if (fish.state === FishState.Hooked || fish.state === FishState.Escaping) {
+    if (
+      fish.state === FISH_STATES.Hooked ||
+      fish.state === FISH_STATES.Escaping
+    ) {
       if (fish.migrationTarget) {
         MigrationRegistry.activeMigrations = Math.max(
           0,
@@ -422,9 +397,7 @@ export class SteeringBehavior implements IFishBehavior {
     avx = rvx;
     avy = rvy;
 
-    // --- Cast Splash Response ---
     if (ctx.timeSinceCast < CAST_SPLASH.duration && ctx.baitPosition) {
-      // If this is a new splash (timeSinceCast reset), make a persistent decision for this fish
       if (
         ctx.timeSinceCast < fish.lastSplashSeenTime ||
         fish.lastSplashSeenTime < 0
@@ -432,11 +405,9 @@ export class SteeringBehavior implements IFishBehavior {
         const isPredatory =
           fish.config.behavior.fear <= CAST_SPLASH.predatorFearThreshold;
         if (isPredatory) {
-          // Predatory species have a fixed chance to be curious about the splash
           fish.isSplashCurious =
             Math.random() < CAST_SPLASH.predatorInterestChance;
         } else {
-          // Prey species are never curious about splashes; they always flee
           fish.isSplashCurious = false;
         }
       }
@@ -451,19 +422,16 @@ export class SteeringBehavior implements IFishBehavior {
         const intensity = CAST_SPLASH.duration - ctx.timeSinceCast;
 
         if (fish.isSplashCurious) {
-          // Predatory curiosity: Slight attraction to the splash
           avx -= nx * (intensity * CAST_SPLASH.predatorAttractionForce);
           avy -= ny * (intensity * CAST_SPLASH.predatorAttractionForce);
           speed *= CAST_SPLASH.predatorSpeedBoost;
         } else {
-          // Others (prey or uninterested predators): Fear/Repulsion
           avx += nx * (intensity * CAST_SPLASH.preyRepulsionForce);
           avy += ny * (intensity * CAST_SPLASH.preyRepulsionForce);
           speed *= CAST_SPLASH.preySpeedBoost;
         }
       }
     } else {
-      // Reset tracker when no active splash is present
       fish.lastSplashSeenTime = -1;
       fish.isSplashCurious = false;
     }
@@ -471,17 +439,18 @@ export class SteeringBehavior implements IFishBehavior {
     forceX += avx * CAST_SPLASH.avoidanceWeight;
     forceY += avy * CAST_SPLASH.avoidanceWeight;
 
-    // Apply school separation force (calculated in LakeScene updateSchoolDensity)
-    // Only for non-engaged fish to avoid interfering with hook/bite physics
-    if (fish.state !== FishState.Hooked && fish.state !== FishState.Biting) {
+    if (
+      fish.state !== FISH_STATES.Hooked &&
+      fish.state !== FISH_STATES.Biting
+    ) {
       forceX += fish.separationForce.x * FISH_AI.separation.forceMultiplier;
       forceY += fish.separationForce.y * FISH_AI.separation.forceMultiplier;
     }
 
-    // --- Day/Night and Weather Activity Penalty/Bonus ---
-    if (fish.state !== FishState.Hooked && fish.state !== FishState.Escaping) {
-      // Decrease mobility for inactive fish based on time of day.
-      // Using a more linear scaling 0.2 + 0.8 * activity to avoid extreme slowdowns.
+    if (
+      fish.state !== FISH_STATES.Hooked &&
+      fish.state !== FISH_STATES.Escaping
+    ) {
       const currentActivity =
         fish.config.activityByTimeOfDay[
           ctx.timeOfDay as keyof IActivityByTimeOfDay
@@ -491,15 +460,15 @@ export class SteeringBehavior implements IFishBehavior {
 
       if (ctx.weather === 'rain') {
         if (fish.config.isPredator) {
-          speed *= 1.3; // Predators are highly active hunting in the rain
+          speed *= 1.3;
         } else {
-          speed *= 1.15; // Non-predators (Carp, Crucian) also love rain due to oxygen boost
+          speed *= 1.15;
         }
       } else if (ctx.weather === 'cloudy') {
         if (fish.config.isPredator) {
-          speed *= 1.1; // Slightly more active due to lower light
+          speed *= 1.1;
         } else {
-          speed *= 0.95; // Slightly less active
+          speed *= 0.95;
         }
       }
     }
@@ -539,13 +508,13 @@ export class SteeringBehavior implements IFishBehavior {
     }
     if (
       fish.position.y > ctx.canvasHeight - 5 * scaleY &&
-      fish.state !== FishState.Hooked
+      fish.state !== FISH_STATES.Hooked
     ) {
       fish.position.y = ctx.canvasHeight - 5 * scaleY;
       fish.velocity.y *= -0.5;
     }
 
-    if (fish.state === FishState.Interested && ctx.baitDepth !== undefined) {
+    if (fish.state === FISH_STATES.Interested && ctx.baitDepth !== undefined) {
       const realNx = Math.max(
         0,
         Math.min(1, fish.position.x / ctx.canvasWidth),

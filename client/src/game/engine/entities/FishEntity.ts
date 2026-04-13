@@ -1,6 +1,6 @@
 import { Container, Graphics, Sprite, Text, Assets, Texture } from 'pixi.js';
 
-import { FishState } from '../../domain/fish/FishState';
+import { FISH_STATES } from '../../domain/fish/constants/FishState';
 import type { Fish } from '../../domain/fish/Fish';
 import { FISH_AI } from '@/common/configs/game';
 
@@ -44,20 +44,18 @@ export class FishEntity {
         }
       })
       .catch(console.error);
-    this.body.anchor.set(0.5); // Center the sprite
-    this.body.visible = false; // Fish are underwater, hidden entirely
+    this.body.anchor.set(0.5);
+    this.body.visible = false;
 
-    // Scale body down based on weight
     const scale = Math.max(0.15, Math.min(fish.weightRange.max / 15, 0.4));
     this.body.scale.set(scale);
 
     this.container.addChild(this.body);
     this.container.addChild(this.debugGfx);
     this.container.addChild(this.debugLabel);
-    // Draw ripples on the static parent layer, divorced from the moving fish container
+
     parent.addChild(this.interestRing);
 
-    // Initial species dot draw - only color and alpha change later
     this.debugGfx.circle(0, 0, 3);
     this.debugGfx.fill({ color: fish.config.color });
     this.debugLabel.y = -20;
@@ -86,10 +84,9 @@ export class FishEntity {
       this.body.rotation = pitch * 0.3;
     }
 
-    // Random surface ripple to indicate fish presence
     if (
       !this.activeRipple &&
-      this.fish.state === FishState.Idle &&
+      this.fish.state === FISH_STATES.Idle &&
       this.fish.nearbyFishCount >= 3 &&
       Math.random() < FISH_AI.surfaceRippleChance * deltaTime
     ) {
@@ -145,16 +142,14 @@ export class FishEntity {
       this.rippleNeedsClear = false;
     }
 
-    this.container.alpha = this.fish.state === FishState.Hooked ? 0.4 : 0.85;
+    this.container.alpha = this.fish.state === FISH_STATES.Hooked ? 0.4 : 0.85;
 
-    // Calculate target and smooth the indicator visibility
     const targetAlpha = visibility.debug
       ? 1.0
       : visibility.echo
         ? Math.max(0, visibility.intensity || 0)
         : 0;
 
-    // Smooth alpha changes: fast fade-in, slow decay (phosphor-like)
     const fadeSpeed = targetAlpha > this.indicatorAlpha ? 0.15 : 0.05;
     this.indicatorAlpha +=
       (targetAlpha - this.indicatorAlpha) * fadeSpeed * deltaTime;
@@ -168,9 +163,8 @@ export class FishEntity {
     if (isVisible) {
       this.debugNeedsClear = true;
       this.debugGfx.alpha = this.indicatorAlpha;
-      this.debugGfx.tint = visibility.debug ? 0xffffff : 0x00ff00; // Efficient way to change color if it's white or colored
+      this.debugGfx.tint = visibility.debug ? 0xffffff : 0x00ff00;
 
-      // Scale dot and font for small screens
       const targetSize = visibility.isSmall ? 8 : 10;
       const targetDotScale = visibility.isSmall ? 0.66 : 1.0;
 
@@ -181,26 +175,23 @@ export class FishEntity {
         this.debugGfx.scale.set(targetDotScale);
       }
 
-      // Labels only appear if indicator is fairly strong and update less frequently
       this.debugLabel.alpha = Math.max(0, (this.indicatorAlpha - 0.4) * 1.6);
 
       if (this.debugLabel.alpha > 0.3) {
         this.labelUpdateCounter += deltaTime;
         if (this.labelUpdateCounter >= 25) {
-          // Update every ~25 frames (~0.4s) instead of 10
           this.labelUpdateCounter = 0;
           let newText = '';
           if (visibility.debug) {
             const isEngaged =
-              this.fish.state === FishState.Biting ||
-              this.fish.state === FishState.Hooked ||
-              this.fish.state === FishState.Escaping;
+              this.fish.state === FISH_STATES.Biting ||
+              this.fish.state === FISH_STATES.Hooked ||
+              this.fish.state === FISH_STATES.Escaping;
             const showInterest =
               !isEngaged &&
               visibility.isCast &&
               this.fish.interestLevel > 0.005;
 
-            // Use simplified rounding to keep strings stable
             const intStr = showInterest
               ? `\nInt: ${Math.round(this.fish.interestLevel * 100) / 100}`
               : '';

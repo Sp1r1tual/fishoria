@@ -1,12 +1,12 @@
-import { TIME_SYSTEM } from '@/common/configs/game';
 import { GameEvents } from '@/game/engine/GameEvents';
+
+import { TIME_SYSTEM } from '@/common/configs/game';
 
 let realStartTime = Date.now();
 const date = new Date();
 date.setHours(TIME_SYSTEM.gameStartHour, 0, 0, 0);
 let virtualStartTime = date.getTime();
 
-// Try to auto-load saved session on initialization
 const saved = localStorage.getItem('fishing_session_data');
 if (saved) {
   try {
@@ -28,7 +28,6 @@ export const TimeManager = {
       return new Date();
     }
 
-    // game mode: speed multiplier from config
     const now = Date.now();
     const elapsedReal = now - realStartTime;
     const elapsedVirtual = elapsedReal * TIME_SYSTEM.gameTimeSpeedMultiplier;
@@ -36,7 +35,6 @@ export const TimeManager = {
     return new Date(virtualStartTime + elapsedVirtual);
   },
 
-  // Re-sync game time to starting hour if resetting
   resetGameTime() {
     realStartTime = Date.now();
     const date = new Date();

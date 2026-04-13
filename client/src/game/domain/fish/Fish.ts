@@ -3,13 +3,14 @@ import type {
   IUpdateContext,
   IFishBehavior,
   FishStateType,
-} from '../../../common/types';
+} from '@/common/types';
 
 import { SteeringBehavior } from './SteeringBehavior';
-import { FishState } from './FishState';
+
+import { FISH_STATES } from './constants/FishState';
+import { MigrationRegistry } from './registers/MigrationRegistry';
 
 import { FISH_AI, CATCH_RESULT } from '@/common/configs/game';
-import { MigrationRegistry } from './MigrationRegistry';
 
 let _counter = 0;
 
@@ -21,25 +22,22 @@ export class Fish {
   state: FishStateType;
   behavior: IFishBehavior;
   interestLevel: number = 0;
-  depth: number = 0; // meters from surface
-  weight: number = 0; // actual weight in kg, generated at bite time
+  depth: number = 0;
+  weight: number = 0;
   stateTimer: number = 0;
   nearbyFishCount: number = 0;
   separationForce: { x: number; y: number } = { x: 0, y: 0 };
   hasAttemptedAttack: boolean = false;
 
-  // Splash interaction tracking
   lastSplashSeenTime: number = -1;
   isSplashCurious: boolean = false;
 
-  // Bite mechanics
   biteStrategy: 'direct' | 'playful' =
     Math.random() < FISH_AI.directBiteChance ? 'direct' : 'playful';
   biteTimeout: number =
     FISH_AI.biteTimeoutBase + Math.random() * FISH_AI.biteTimeoutRange;
-  hasLostInterest: boolean = false; // Persistent loss of interest until resetCast
+  hasLostInterest: boolean = false;
 
-  // Movement & Exploration
   migrationTarget: { x: number; y: number } | null = null;
   migrationTimer: number =
     FISH_AI.migrationTimerBase + Math.random() * FISH_AI.migrationTimerRange;
@@ -51,10 +49,9 @@ export class Fish {
   originalDepthRange: { min: number; max: number };
   weightRange: { min: number; max: number };
 
-  // Performance: cached depth bias (recalculated every N frames)
   cachedDepthBias: [number, number] = [0, 0];
   depthProbeCounter: number = 0;
-  depthProbeInterval: number = 6; // Recalculate every 6 frames
+  depthProbeInterval: number = 6;
 
   constructor(
     config: IFishSpeciesConfig,
@@ -71,21 +68,17 @@ export class Fish {
       x: (Math.random() - 0.5) * FISH_AI.spawnVelocitySpread,
       y: (Math.random() - 0.5) * FISH_AI.spawnVelocitySpread,
     };
-    this.state = FishState.Idle;
+    this.state = FISH_STATES.Idle;
     this.behavior = behavior ?? new SteeringBehavior();
     this.preferredDepthRange = { ...preferredDepthRange };
     this.originalDepthRange = { ...preferredDepthRange };
     this.weightRange = weightRange ?? config.weightRange;
-    // Stagger probes across fish so they don't all probe on the same frame
+
     this.depthProbeCounter = Math.floor(
       Math.random() * this.depthProbeInterval,
     );
   }
 
-  /**
-   * Generates the actual weight for this fish using the same distribution
-   * that makes trophy fish rare. Called at bite time for optimization.
-   */
   generateWeight(): void {
     const wMin = this.weightRange.min;
     const wMax = this.weightRange.max;
@@ -97,13 +90,13 @@ export class Fish {
     this.state = state;
     this.stateTimer = 0;
 
-    if (state === FishState.Idle) {
+    if (state === FISH_STATES.Idle) {
       this.hasAttemptedAttack = false;
     }
   }
 
   update(context: IUpdateContext): void {
-    const dt = context.deltaTime / 60; // Convert typical Pixi deltaTime (1.0 @ 60fps) to approximate seconds
+    const dt = context.deltaTime / 60;
     this.stateTimer += dt;
     this.behavior.update(this, context);
   }
@@ -120,12 +113,12 @@ export class Fish {
     this.position.y = y;
     this.velocity.x = (Math.random() - 0.5) * FISH_AI.spawnVelocitySpread;
     this.velocity.y = (Math.random() - 0.5) * FISH_AI.spawnVelocitySpread;
-    this.state = FishState.Idle;
+    this.state = FISH_STATES.Idle;
     this.stateTimer = 0;
     this.interestLevel = 0;
     this.hasLostInterest = false;
-    this.weight = 0; // Reset weight; will be regenerated on next bite
-    this.depth = 0; // Will be re-initialized to target in SteeringBehavior
+    this.weight = 0;
+    this.depth = 0;
     this.separationForce.x = 0;
     this.separationForce.y = 0;
     this.nearbyFishCount = 0;

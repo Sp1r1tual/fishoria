@@ -28,16 +28,11 @@ export class GroundbaitEffect {
     parent.addChild(this.gfx);
   }
 
-  /**
-   * Spawns a burst of groundbait particles
-   */
   public spawn(W: number, H: number): void {
-    // Detect mobile/small screen based on renderer width (considering Retina/high DPI)
     const isSmallScreen = W < 1000;
     const scale = isSmallScreen ? 0.65 : 1.0;
     const count = isSmallScreen ? 50 : 75;
 
-    // Spawn burst of particles with scaled horizontal spread and vertical arc
     for (let i = 0; i < count; i++) {
       const color =
         this.PALETTE[Math.floor(Math.random() * this.PALETTE.length)];
@@ -55,9 +50,6 @@ export class GroundbaitEffect {
     }
   }
 
-  /**
-   * Updates particle positions and transparency
-   */
   public update(dt: number): void {
     if (this.particles.length === 0) {
       if (this.gfx.alpha > 0) this.gfx.clear();
@@ -65,14 +57,14 @@ export class GroundbaitEffect {
     }
 
     this.gfx.clear();
-    const spd = dt / 6; // Snappy simulation speed
+    const spd = dt / 6;
 
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];
       p.x += p.vx * spd;
       p.y += p.vy * spd;
-      p.vy += 3.2 * spd; // Strong gravity
-      p.life -= 0.08 * spd; // Quick decay
+      p.vy += 3.2 * spd;
+      p.life -= 0.08 * spd;
       p.alpha = Math.min(1.0, p.life * 4.0);
 
       if (p.life <= 0) {
@@ -85,9 +77,6 @@ export class GroundbaitEffect {
     }
   }
 
-  /**
-   * Cleans up PIXI resources
-   */
   public destroy(): void {
     this.gfx.destroy({ children: true });
   }

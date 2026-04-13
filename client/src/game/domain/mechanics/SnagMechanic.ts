@@ -17,7 +17,6 @@ export class SnagMechanic {
       this.snagChanceCounter +=
         (params.deltaTime / 60) * SNAG.spinningAccumulationRate;
 
-      // Starting from grace period of bottom dragging, start rolling for snag
       if (this.snagChanceCounter > SNAG.spinningSnagGracePeriod) {
         const snagProb =
           (this.snagChanceCounter - SNAG.spinningSnagGracePeriod) *
@@ -29,7 +28,6 @@ export class SnagMechanic {
         }
       }
     } else {
-      // Slow decay if not dragging
       this.snagChanceCounter = Math.max(
         0,
         this.snagChanceCounter -
