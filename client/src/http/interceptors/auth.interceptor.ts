@@ -83,42 +83,7 @@ const refreshToken = async (): Promise<IUser> => {
 
 const authInterceptors = (axiosInstance: AxiosInstance) => {
   axiosInstance.interceptors.request.use(
-    async (config) => {
-      if (
-        config.url &&
-        PUBLIC_PATHS.some((path) => config.url?.includes(path))
-      ) {
-        return config;
-      }
-
-      const authExpiry = localStorage.getItem('authExpiry');
-      const expiry = authExpiry ? parseInt(authExpiry, 10) : null;
-      const hasSession = localStorage.getItem('hasSession');
-
-      if (!expiry && !hasSession) {
-        return config;
-      }
-
-      const shouldRefresh = !expiry || Date.now() > expiry - 60000;
-
-      if (shouldRefresh) {
-        try {
-          const timeLeft = expiry
-            ? Math.round((expiry - Date.now()) / 1000)
-            : 'unknown';
-          console.log(
-            `[Auth] Proactive token refresh (expires in ${timeLeft}s)`,
-          );
-          await refreshToken();
-        } catch {
-          console.debug(
-            '[Auth] Proactive refresh failed, continuing with original request',
-          );
-        }
-      }
-
-      return config;
-    },
+    (config) => config,
     (error) => Promise.reject(error),
   );
 
