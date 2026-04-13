@@ -64,6 +64,7 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
 
   const rodDamageRef = useRef(0);
   const reelDamageRef = useRef(0);
+  const shownWarningsRef = useRef<Set<string>>(new Set());
 
   const audio = useGameAudio();
   const audioRef = useRef(audio);
@@ -236,15 +237,6 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
           onPhaseChange: (phase, wasHooked, isScaredAway) => {
             audioRef.current.onPhaseChange(phase);
             if (phase === 'escaped') {
-              if (!isScaredAway) {
-                dispatch(
-                  addToast({
-                    message: t('hud.escaped'),
-                    type: 'warning',
-                  }),
-                );
-              }
-
               const activeBait = playerRef.current?.activeBait || 'worm';
               const isLure = activeBait.startsWith('lure_');
 
@@ -264,11 +256,22 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
                 }
               }
 
+              const isItemLost = shouldLoseHook || shouldLoseBait;
+
+              if (!isScaredAway && !isItemLost) {
+                dispatch(
+                  addToast({
+                    message: t('hud.escaped'),
+                    type: 'warning',
+                  }),
+                );
+              }
+
               if (
-                shouldLoseHook ||
-                shouldLoseBait ||
-                rodDamageRef.current > 0 ||
-                reelDamageRef.current > 0
+                !isScaredAway &&
+                (isItemLost ||
+                  rodDamageRef.current > 0 ||
+                  reelDamageRef.current > 0)
               ) {
                 const currentHookUid = playerRef.current?.equippedHookUid;
                 const hookInstance = playerRef.current?.gearItems.find(
@@ -284,13 +287,12 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
 
                 breakMutationRef.current.mutate({
                   type: shouldLoseHook ? 'hook' : 'bait',
-                  baitId:
-                    shouldLoseHook || shouldLoseBait ? activeBait : undefined,
+                  baitId: isItemLost ? activeBait : undefined,
                   rodDamage: rodDamageRef.current,
                   reelDamage: reelDamageRef.current,
                 });
 
-                if (shouldLoseHook || shouldLoseBait) {
+                if (isItemLost) {
                   dispatch(
                     setLossEvent({
                       reason: 'escape',
@@ -372,6 +374,8 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
             }
           },
           onCastError: (msgId) => {
+            if (shownWarningsRef.current.has(msgId)) return;
+            shownWarningsRef.current.add(msgId);
             dispatch(addToast({ type: 'warning', message: t(msgId) }));
           },
           onResetCast: (prevPhase) => {

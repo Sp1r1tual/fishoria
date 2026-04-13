@@ -12,13 +12,13 @@ export const BITE_DETECTION = {
   chanceOfBiteAtDeadHour: 0.3,
 
   /** Radius (pixels, pre-scale) for fish to notice the bait/lure */
-  attractRadiusPx: 75,
+  attractRadiusPx: 60,
 
   /** Radius (pixels, pre-scale) for a bite to occur */
   biteRadiusPx: 10,
 
   /** Spinning predator vision radius (overrides attractRadiusPx for predators) */
-  spinningPredatorVisionPx: 110,
+  spinningPredatorVisionPx: 90,
 
   /** Depth penalty multiplier (how harshly out-of-range depth is penalized) */
   depthPenaltyFactor: 2.0,
@@ -99,9 +99,9 @@ export const INTEREST_RATES = {
   maxInterestDuration: 18,
 
   /** Max distance to remain interested (float/feeder, pre-scale) */
-  maxInterestDistFloat: 140,
+  maxInterestDistFloat: 120,
   /** Max distance for spinning predators (pre-scale) */
-  maxInterestDistSpinningPredator: 180,
+  maxInterestDistSpinningPredator: 150,
 
   /** Spinning-specific multipliers */
   spinning: {
