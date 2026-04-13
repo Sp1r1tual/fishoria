@@ -2,28 +2,31 @@ import { Component, type ReactNode } from 'react';
 import { Translation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 
-import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
+import { WoodyButton } from '@/components/UI/buttons/WoodyButton/WoodyButton';
 
 import styles from './errors.module.css';
 
-interface Props {
+interface IErrorBoundaryProps {
   children?: ReactNode;
 }
 
-interface State {
+interface IErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
 }
 
-export class ErrorBoundary extends Component<Props, State> {
-  public state: State = {
+export class ErrorBoundary extends Component<
+  IErrorBoundaryProps,
+  IErrorBoundaryState
+> {
+  public state: IErrorBoundaryState = {
     hasError: false,
     error: null,
   };
 
-  public static getDerivedStateFromError(error: Error): State {
+  public static getDerivedStateFromError(error: Error): IErrorBoundaryState {
     const errorMessage = error.message.toLowerCase();
-    // If it's a chunk load error (failed to fetch module), reload the page
+
     if (
       errorMessage.includes('failed to fetch dynamically imported module') ||
       (errorMessage.includes('loading chunk') &&
@@ -54,15 +57,8 @@ export class ErrorBoundary extends Component<Props, State> {
           {(t: TFunction) => (
             <div className={styles.errorContainer}>
               <div className={styles.errorBox}>
-                <h1>
-                  {t('errorPage.boundaryTitle', 'Oops! Something went wrong.')}
-                </h1>
-                <p>
-                  {t(
-                    'errorPage.boundaryDescription',
-                    'An unexpected error occurred in this component.',
-                  )}
-                </p>
+                <h1>{t('errorPage.boundaryTitle')}</h1>
+                <p>{t('errorPage.boundaryDescription')}</p>
 
                 {this.state.error && (
                   <div className={styles.errorDetails}>
@@ -72,10 +68,10 @@ export class ErrorBoundary extends Component<Props, State> {
 
                 <div className={styles.buttonGroup}>
                   <WoodyButton variant="brown" onClick={this.handleReload}>
-                    {t('errorPage.reload', 'Reload Page')}
+                    {t('errorPage.reload')}
                   </WoodyButton>
                   <WoodyButton variant="green" onClick={this.handleGoHome}>
-                    {t('errorPage.goHome', 'Go Home')}
+                    {t('errorPage.goHome')}
                   </WoodyButton>
                 </div>
               </div>

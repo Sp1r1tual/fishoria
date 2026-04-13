@@ -1,12 +1,11 @@
 import React from 'react';
 
-import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
-
 import { HUDSlot } from '../HUDSlot/HUDSlot';
 import { BaitPicker } from '../BaitPicker/BaitPicker';
 import { GroundbaitPicker } from '../GroundbaitPicker/GroundbaitPicker';
 import { GearParameterPicker } from '../GearParameterPicker/GearParameterPicker';
 
+import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import { navigateTo } from '@/store/slices/uiSlice';
 
 import type { LakeScene } from '@/game/engine/scenes/LakeScene';
@@ -15,7 +14,7 @@ import keepnetIcon from '@/assets/ui/keepnet.webp';
 import equipmentIcon from '@/assets/ui/equipment.webp';
 import echoSounderIcon from '@/assets/ui/echo_sounder.webp';
 
-import styles from '../../HUD.module.css';
+import styles from '@/components/HUD/HUD.module.css';
 
 interface IHUDActionButtonsProps {
   sceneRef: React.RefObject<LakeScene | null>;

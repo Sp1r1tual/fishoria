@@ -83,19 +83,15 @@ export function BaitPicker({
     : BAITS[activeBait] || currentHook;
 
   const getBaitIcon = (id: string, config: IBaitConfig | IHookConfig) => {
-    const icon =
-      config?.icon ||
-      (id === 'lure_wobbler' ? '🐟' : id === 'lure_spoon' ? '🥄' : '🐛');
+    const icon = config?.icon || '';
     if (icon.includes('/')) {
       return <img src={icon} alt={id} className={styles['picker__icon-img']} />;
     }
     return <span className={styles['picker__icon-emoji']}>{icon}</span>;
   };
 
-  const getSlotIcon = (id: string, config: IBaitConfig | IHookConfig) => {
-    const icon =
-      config?.icon ||
-      (id === 'lure_wobbler' ? '🐟' : id === 'lure_spoon' ? '🥄' : '🐛');
+  const getSlotIcon = (config: IBaitConfig | IHookConfig) => {
+    const icon = config?.icon || '';
     if (icon.includes('/')) {
       return (
         <img
@@ -202,7 +198,7 @@ export function BaitPicker({
         }}
         badge={activeCount}
       >
-        {currentBaitConfig && getSlotIcon(activeBait, currentBaitConfig)}
+        {currentBaitConfig && getSlotIcon(currentBaitConfig)}
       </HUDSlot>
     </div>
   );

@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { preloadGameAssets } from './PreloaderGenerator';
 import type { PreloadStep } from '@/common/types';
 
 import { unlockAudio } from '@/hooks/audio/useGameAudio';
 
+import { WoodyButton } from '../buttons/WoodyButton/WoodyButton';
+import { preloadGameAssets } from './PreloaderGenerator';
+
 import { store } from '@/store/store';
 import { addToast } from '@/store/slices/uiSlice';
-
-import { WoodyButton } from '../buttons/WoodyButton/WoodyButton';
 
 import styles from './PreloaderScreen.module.css';
 
@@ -96,7 +96,6 @@ export function PreloaderScreen({
       }
     }, controller.signal).catch((err) => {
       if (!controller.signal.aborted) {
-        console.error('Помилка під час завантаження ассетів', err);
         const message = err instanceof Error ? err.message : String(err);
         store.dispatch(
           addToast({
@@ -136,10 +135,7 @@ export function PreloaderScreen({
           {error ? (
             <div className={`${styles.errorState} fade-in`}>
               <p className={styles.errorMessage}>
-                {t(
-                  'common.serverUnavailable',
-                  'Server is temporarily unavailable',
-                )}
+                {t('common.serverUnavailable')}
               </p>
               <WoodyButton
                 variant="brown"
@@ -190,7 +186,7 @@ export function PreloaderScreen({
                         onCompleteRef.current();
                       }, 200);
                     }}
-                    label={t('preloader.clickToStart', 'Start The Game')}
+                    label={t('preloader.clickToStart')}
                   />
                 )}
               </div>

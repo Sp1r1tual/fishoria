@@ -1,10 +1,11 @@
 import type { TFunction } from 'i18next';
-import type { GearItemType, GearTypeType } from '@/hooks/game/useShop';
-import type { IGearItemBase } from '@/common/types';
 
-import coinIcon from '@/assets/ui/coin.webp';
+import type { IGearItemBase, GearItemType, GearTypeType } from '@/common/types';
+
 import { ItemIcon } from '../UI/ItemIcon/ItemIcon';
 import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
+
+import coinIcon from '@/assets/ui/coin.webp';
 
 interface IGearSectionProps {
   title: string;

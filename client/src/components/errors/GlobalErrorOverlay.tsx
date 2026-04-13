@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 
 import styles from './GlobalErrorOverlay.module.css';
 
-type RuntimeError = {
+interface IRuntimeError {
   id: string;
   message: string;
   stack?: string;
   timestamp: string;
-};
+}
 
 const getErrorId = () => {
   if (
@@ -20,7 +20,7 @@ const getErrorId = () => {
 };
 
 export const GlobalErrorOverlay = () => {
-  const [errors, setErrors] = useState<RuntimeError[]>([]);
+  const [errors, setErrors] = useState<IRuntimeError[]>([]);
 
   const pushError = (message: string, stack?: string) => {
     setErrors((current) => [

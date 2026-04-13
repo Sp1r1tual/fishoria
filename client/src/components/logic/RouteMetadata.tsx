@@ -20,7 +20,6 @@ export const RouteMetadata = () => {
   const matches = useMatches();
 
   useEffect(() => {
-    // Find the most specific handle (from child to parent)
     const activeMatch = [...matches].reverse().find((m) => m.handle);
     const handle = activeMatch?.handle as
       | {
@@ -33,21 +32,18 @@ export const RouteMetadata = () => {
       const pageTitle =
         typeof handle.title === 'function'
           ? handle.title(t)
-          : (handle.title ?? 'Fishoria');
+          : (handle.title ?? t('metadata.defaultTitle'));
 
       const pageDescription =
         typeof handle.description === 'function'
           ? handle.description(t)
-          : (handle.description ??
-            'Fishoria is a free browser-based fishing simulator. Catch fish, upgrade gear and compete with anglers worldwide.');
+          : (handle.description ?? t('metadata.defaultDescription'));
 
       document.title = pageTitle;
       setMetaDescription(pageDescription);
     } else {
-      document.title = 'Fishoria';
-      setMetaDescription(
-        'Fishoria is a free browser-based fishing simulator. Catch fish, upgrade gear and compete with anglers worldwide.',
-      );
+      document.title = t('metadata.defaultTitle');
+      setMetaDescription(t('metadata.defaultDescription'));
     }
   }, [matches, t]);
 

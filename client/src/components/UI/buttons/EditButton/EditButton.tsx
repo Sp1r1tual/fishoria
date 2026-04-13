@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { CircleButton } from '../CircleButton/CircleButton';
 
 import pencilIcon from '@/assets/ui/pencil.webp';

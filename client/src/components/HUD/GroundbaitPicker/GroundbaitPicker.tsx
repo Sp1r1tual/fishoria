@@ -58,15 +58,15 @@ export function GroundbaitPicker({ sceneRef, phase }: IGroundbaitPickerProps) {
   const currentGBConfig = GROUNDBAITS[activeGroundbait];
 
   const getGBIcon = (id: string, config: { icon?: string }) => {
-    const icon = config?.icon || '🍱';
+    const icon = config?.icon || '';
     if (icon.includes('/')) {
       return <img src={icon} alt={id} className={styles['picker__icon-img']} />;
     }
     return <span className={styles['picker__icon-emoji']}>{icon}</span>;
   };
 
-  const getSlotIcon = (_id: string, config: { icon?: string }) => {
-    const icon = config?.icon || '🍱';
+  const getSlotIcon = (config: { icon?: string }) => {
+    const icon = config?.icon || '';
     if (icon.includes('/')) {
       return (
         <img
@@ -133,7 +133,7 @@ export function GroundbaitPicker({ sceneRef, phase }: IGroundbaitPickerProps) {
             : undefined
         }
       >
-        {currentGBConfig && getSlotIcon(activeGroundbait, currentGBConfig)}
+        {currentGBConfig && getSlotIcon(currentGBConfig)}
       </HUDSlot>
     </div>
   );

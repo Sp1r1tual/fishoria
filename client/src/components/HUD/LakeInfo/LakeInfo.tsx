@@ -1,24 +1,22 @@
 import { useTranslation } from 'react-i18next';
 import { useRef, useState, useEffect } from 'react';
 
-import type { LakeScene } from '@/game/engine/scenes/LakeScene';
-
-import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
+import type { GroundbaitTypeType } from '@/common/types';
 
 import { GameClock } from '@/components/UI/GameClock/GameClock';
 
+import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import { setGroundbaitExpiry } from '@/store/slices/gameSlice';
 import { usePlayerQuery } from '@/queries/player.queries';
 import { useConsumeMutation } from '@/queries/inventory.queries';
 import { WeatherForecastModal } from '@/components/UI/modals/WeatherForecastModal/WeatherForecastModal';
 import { WeatherStatus } from '@/components/UI/WeatherStatus/WeatherStatus';
 
+import type { LakeScene } from '@/game/engine/scenes/LakeScene';
 import { GameEvents } from '@/game/engine/GameEvents';
+import { TimeManager } from '@/game/managers/TimeManager';
 
 import { GROUNDBAITS } from '@/common/configs/game';
-import type { GroundbaitTypeType } from '@/common/types';
-
-import { TimeManager } from '@/game/managers/TimeManager';
 
 import styles from './LakeInfo.module.css';
 

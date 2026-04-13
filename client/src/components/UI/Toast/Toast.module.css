@@ -23,8 +23,6 @@
   align-items: center;
   gap: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-
-  /* Start state */
   opacity: 0;
   transform: translateY(-20px) scale(0.9);
   transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);

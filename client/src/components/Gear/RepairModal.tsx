@@ -1,7 +1,9 @@
 import type { TFunction } from 'i18next';
+
 import type { IGearItemBase } from '@/common/types';
-import { UniversalModal } from '../UI/modals/UniversalModal/UniversalModal';
-import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
+
+import { UniversalModal } from '@/components/UI/modals/UniversalModal/UniversalModal';
+import { WoodyButton } from '@/components/UI/buttons/WoodyButton/WoodyButton';
 
 interface IRepairModalProps {
   repairableItems: IGearItemBase[];

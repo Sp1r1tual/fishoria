@@ -52,6 +52,14 @@
   background: rgba(0, 0, 0, 0.3);
   flex-shrink: 0;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  filter: grayscale(100%);
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.achievement_card--completed .achievement_card__image {
+  filter: none;
+  opacity: 1;
 }
 
 .achievement_card__info {
@@ -87,4 +95,15 @@
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.locked_badge {
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.empty_state {
+  padding: 16px;
+  text-align: center;
 }

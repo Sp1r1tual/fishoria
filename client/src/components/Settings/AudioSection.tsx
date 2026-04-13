@@ -1,10 +1,9 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
-
 import { AudioSlider } from './AudioSlider';
 
+import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import { updateSettings } from '@/store/slices/settingsSlice';
 
 import styles from './Settings.module.css';

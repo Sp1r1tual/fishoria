@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router';
 import ReactMarkdown from 'react-markdown';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-import type { INews } from '@/services/news.service';
-
 import { useNewsState } from '@/hooks/game/useNewsState';
 
 import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
 import { ScreenContainer } from '../UI/ScreenContainer/ScreenContainer';
 import { SkeletonImage } from '../UI/skeletons/SkeletonImage/SkeletonImage';
 import { NewsSkeleton } from './NewsSkeleton';
+
+import type { INews } from '@/services/news.service';
 
 import newsIcon from '@/assets/ui/news.webp';
 
@@ -34,7 +34,7 @@ export function News() {
             variant="green"
             size="sm"
             onClick={markAllAsRead}
-            label={t('news.markAllRead', 'Mark all as read')}
+            label={t('news.markAllRead')}
           />
         ) : undefined
       }
@@ -53,7 +53,7 @@ export function News() {
                 >
                   {!isRead && (
                     <div className={styles.newsItem__unreadBadge}>
-                      {t('news.newBadge', 'NEW')}
+                      {t('news.newBadge')}
                     </div>
                   )}
                   {item.imageUrl && (
@@ -99,7 +99,7 @@ export function News() {
                           variant="brown"
                           size="sm"
                           onClick={() => markAsRead(item.id)}
-                          label={t('news.markRead', 'Mark as read')}
+                          label={t('news.markRead')}
                         />
                       )}
                     </div>
@@ -111,9 +111,7 @@ export function News() {
         ) : (
           <div className={`${styles.news__emptyState} fade-in`}>
             <div className={styles.news__emptyIcon}>📰</div>
-            <p className={styles.news__emptyMessage}>
-              {t('news.noNews', 'No news for now')}
-            </p>
+            <p className={styles.news__emptyMessage}>{t('news.noNews')}</p>
           </div>
         )}
       </div>

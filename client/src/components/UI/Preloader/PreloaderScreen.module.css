@@ -231,7 +231,7 @@
     margin-top: 4px;
   }
   .subtitle {
-    display: none; /* Приховуємо дрібний текст копірайту для економії місця */
+    display: none;
   }
   .loaderContainer {
     gap: 8px;

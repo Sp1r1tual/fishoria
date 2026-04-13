@@ -1,0 +1,19 @@
+.clock {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.clock__icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.clock__text {
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}

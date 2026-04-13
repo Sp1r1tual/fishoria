@@ -4,6 +4,8 @@ import { TimeManager } from '@/game/managers/TimeManager';
 
 import clockIcon from '@/assets/ui/clock.webp';
 
+import styles from './GameClock.module.css';
+
 interface IGameClockProps {
   className?: string;
   iconClassName?: string;
@@ -39,12 +41,13 @@ export function GameClock({
   }, [mode]);
 
   return (
-    <div
-      className={className}
-      style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
-    >
-      <img src={clockIcon} alt="time" className={iconClassName} />
-      <span ref={timeTextRef}></span>
+    <div className={`${styles.clock} ${className}`}>
+      <img
+        src={clockIcon}
+        alt="time"
+        className={`${styles.clock__icon} ${iconClassName}`}
+      />
+      <span ref={timeTextRef} className={styles.clock__text}></span>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { useRouteError, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
-import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
+import { WoodyButton } from '@/components/UI/buttons/WoodyButton/WoodyButton';
 
 import styles from './errors.module.css';
 
@@ -24,31 +24,24 @@ export function ErrorElement() {
             e.currentTarget.style.display = 'none';
           }}
         />
-        <h1>{t('errorPage.title', 'Oops! Something went wrong.')}</h1>
-        <p>
-          {t(
-            'errorPage.description',
-            'We encountered an unexpected error while trying to load this page.',
-          )}
-        </p>
+        <h1>{t('errorPage.title')}</h1>
+        <p>{t('errorPage.description')}</p>
 
         {error && (
           <div className={styles.errorDetails}>
-            {error.statusText ||
-              error.message ||
-              t('errorPage.unknown', 'Unknown Error')}
+            {error.statusText || error.message || t('errorPage.unknown')}
           </div>
         )}
 
         <div className={styles.buttonGroup}>
           <WoodyButton variant="brown" onClick={() => navigate(-1)}>
-            {t('errorPage.goBack', 'Go Back')}
+            {t('errorPage.goBack')}
           </WoodyButton>
           <WoodyButton
             variant="green"
             onClick={() => navigate('/', { replace: true })}
           >
-            {t('errorPage.goHome', 'Home')}
+            {t('errorPage.goHome')}
           </WoodyButton>
         </div>
       </div>

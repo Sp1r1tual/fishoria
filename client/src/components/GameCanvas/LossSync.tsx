@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 
-import { InfoPopup } from '../UI/InfoPopup/InfoPopup';
+import { InfoPopup } from '@/components/UI/InfoPopup/InfoPopup';
 
 import { clearLossEvent } from '@/store/slices/gameSlice';
 

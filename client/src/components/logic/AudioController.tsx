@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router';
 
-import { useAppSelector } from '@/hooks/core/useAppStore';
 import { useMenuAudio } from '@/hooks/audio/useMenuAudio';
+import { useAppSelector } from '@/hooks/core/useAppStore';
+
 import { syncSharedSfxVolume } from '@/common/media/audio-context';
 
 export function AudioController() {

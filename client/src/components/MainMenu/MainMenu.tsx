@@ -2,7 +2,6 @@ import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
-import { useAppDispatch } from '@/hooks/core/useAppStore';
 import { useNewsState } from '@/hooks/game/useNewsState';
 
 import { Footer } from '../Footer/Footer';
@@ -15,6 +14,7 @@ import { EditButton } from '../UI/buttons/EditButton/EditButton';
 import { WeatherStatus } from '../UI/WeatherStatus/WeatherStatus';
 import { Fireflies } from '../Effects/Fireflies/Fireflies';
 
+import { useAppDispatch } from '@/hooks/core/useAppStore';
 import { navigateTo } from '@/store/slices/uiSlice';
 import { usePlayerQuery } from '@/queries/player.queries';
 
@@ -137,8 +137,8 @@ export function MainMenu() {
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
 
-    const rotateY = ((x - centerX) / centerX) * 8; // Max 8 deg
-    const rotateX = ((centerY - y) / centerY) * 8; // Max 8 deg
+    const rotateY = ((x - centerX) / centerX) * 8;
+    const rotateX = ((centerY - y) / centerY) * 8;
 
     bannerRef.current.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
   };

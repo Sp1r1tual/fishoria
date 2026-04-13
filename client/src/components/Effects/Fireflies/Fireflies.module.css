@@ -31,7 +31,6 @@
   will-change: transform, opacity;
 }
 
-/* Glow effect using pseudo-element for better performance and iOS support */
 .firefly::after {
   content: '';
   position: absolute;
@@ -81,7 +80,6 @@
   }
 }
 
-/* Specific positioning for sides */
 .firefly-wrapper:nth-child(odd) {
   left: calc(var(--left) / 3);
 }

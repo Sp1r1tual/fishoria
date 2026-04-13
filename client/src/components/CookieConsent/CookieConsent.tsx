@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
+import { WoodyButton } from '@/components/UI/buttons/WoodyButton/WoodyButton';
 
 import styles from './CookieConsent.module.css';
 

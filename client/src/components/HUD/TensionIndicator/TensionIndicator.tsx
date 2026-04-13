@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 
 import { store } from '@/store/store';
 
+import { GameEvents } from '@/game/engine/GameEvents';
+
 import styles from './TensionIndicator.module.css';
 
 export function TensionIndicator({
@@ -39,8 +41,6 @@ export function TensionIndicator({
 
       if (!tensionBarsRef.current) return;
 
-      // Detect meaningful changes to avoid redundant DOM updates
-      // while ensuring 0-boundary transitions are always captured.
       const hasSignificantTensionChange =
         Math.abs(currentTension - lastDrawnTension) > 0.002 ||
         (currentTension === 0 && lastDrawnTension > 0) ||
@@ -66,7 +66,6 @@ export function TensionIndicator({
       const isReelingOrBite =
         currentPhase === 'bite' || currentPhase === 'reeling';
 
-      // Always show colorful scale if tension is > 0 OR if we are in bite/reeling phases
       const useColorful = isReelingOrBite || currentTension > 0.01;
 
       let fillValue = isReelingOrBite ? currentTension : 0;
@@ -76,8 +75,7 @@ export function TensionIndicator({
 
       for (let i = 0; i < 20; i++) {
         const threshold = i / 20;
-        // Add a small epsilon (0.1%) to threshold to avoid "ghost" bars
-        // from microscopic floating point residuals.
+
         const isActive = threshold + 0.001 < fillValue;
         const el = segments[i] as HTMLDivElement;
 
@@ -97,34 +95,26 @@ export function TensionIndicator({
                 : '#ef4444';
 
           el.style.backgroundColor = bgColor;
-          // Sync color with background-color to fix currentColor issues in CSS
           el.style.color = bgColor;
         }
       }
     };
 
-    let unsubTension: () => void;
-    let unsubBite: () => void;
-    let unsubDebug: () => void;
-    let unsubPhase: () => void;
-
-    import('@/game/engine/GameEvents').then(({ GameEvents }) => {
-      unsubTension = GameEvents.on('tension', (val) => {
-        currentTension = val;
-        updateUI();
-      });
-      unsubBite = GameEvents.on('bite', (val) => {
-        currentBite = val;
-        updateUI();
-      });
-      unsubDebug = GameEvents.on('debug', (val) => {
-        localDebugActive = val;
-        updateUI();
-      });
-      unsubPhase = GameEvents.on('phase', (val) => {
-        currentPhase = val;
-        updateUI();
-      });
+    const unsubTension = GameEvents.on('tension', (val) => {
+      currentTension = val;
+      updateUI();
+    });
+    const unsubBite = GameEvents.on('bite', (val) => {
+      currentBite = val;
+      updateUI();
+    });
+    const unsubDebug = GameEvents.on('debug', (val) => {
+      localDebugActive = val;
+      updateUI();
+    });
+    const unsubPhase = GameEvents.on('phase', (val) => {
+      currentPhase = val;
+      updateUI();
     });
 
     const unsubStore = store.subscribe(() => {

@@ -823,7 +823,8 @@
     "title": "Achievements",
     "completed": "Completed",
     "locked": "Locked",
-    "notification": "Achievement unlocked!"
+    "notification": "Achievement unlocked!",
+    "empty": "No achievements available"
   },
   "common": {
     "loading": "Loading...",
@@ -845,5 +846,9 @@
   "auth": {
     "resetLinkSent": "If an account exists, a reset link has been sent",
     "passwordUpdated": "Password updated successfully"
+  },
+  "metadata": {
+    "defaultTitle": "Fishoria | Browser-based fishing simulator",
+    "defaultDescription": "Fishoria is a free browser-based fishing simulator. Catch fish, upgrade gear and compete with anglers worldwide."
   }
 }

@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 
 import { useClickSound } from '@/hooks/audio/useSoundEffect';
 import { useGameAudio } from '@/hooks/audio/useGameAudio';
-import { useAppDispatch } from '@/hooks/core/useAppStore';
 
 import type { IFishCatchMetadata } from '@/common/types/player.types';
 
@@ -11,14 +10,15 @@ import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
 import { ScreenContainer } from '../UI/ScreenContainer/ScreenContainer';
 import { ScreenHeader } from '../UI/ScreenHeader/ScreenHeader';
 
+import { useAppDispatch } from '@/hooks/core/useAppStore';
 import { navigateTo, addToast } from '@/store/slices/uiSlice';
 import { usePlayerQuery } from '@/queries/player.queries';
 import { useSellMutation } from '@/queries/shop.queries';
 
+import { FISH_SPECIES } from '@/common/configs/game';
+
 import coinIcon from '@/assets/ui/coin.webp';
 import keepnetIcon from '@/assets/ui/keepnet.webp';
-
-import { FISH_SPECIES } from '@/common/configs/game';
 
 import styles from './Inventory.module.css';
 
@@ -222,7 +222,6 @@ export function Inventory({ isModal = false }: { isModal?: boolean }) {
               </table>
             </div>
           </section>
-          {/* Кнопка тепер у хедері */}
         </>
       )}
     </div>

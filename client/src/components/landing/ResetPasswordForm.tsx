@@ -5,42 +5,12 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
-import { AuthService } from '@/services/auth.service';
 import { DefaultButton } from '@/components/UI/buttons/DefaultButton/DefaultButton';
+import { EyeIconOpen, EyeIconClosed } from '@/components/UI/icons/EyeIcons';
+
+import { AuthService } from '@/services/auth.service';
 
 import authStyles from './AuthForm.module.css';
-
-const EyeIconOpen = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-    focusable="false"
-  >
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-    <circle cx="12" cy="12" r="3"></circle>
-  </svg>
-);
-
-const EyeIconClosed = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-    focusable="false"
-  >
-    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-    <line x1="1" y1="1" x2="23" y2="23"></line>
-  </svg>
-);
 
 export const ResetPasswordForm = () => {
   const { t } = useTranslation();
@@ -96,13 +66,10 @@ export const ResetPasswordForm = () => {
         }}
       >
         <h1 className={authStyles.formTitle}>
-          {t('landing.resetPassword.successTitle', 'Password Reset!')}
+          {t('landing.resetPassword.successTitle')}
         </h1>
         <p className={authStyles.successMessage}>
-          {t(
-            'landing.resetPassword.successText',
-            'Your password has been successfully updated. You can now log in with your new password.',
-          )}
+          {t('landing.resetPassword.successText')}
         </p>
         <DefaultButton
           variant="primary"
@@ -110,7 +77,7 @@ export const ResetPasswordForm = () => {
           onClick={() => navigate('/')}
           style={{ marginTop: '20px' }}
         >
-          {t('landing.auth.backToLogin', 'Go to Login')}
+          {t('landing.auth.backToLogin')}
         </DefaultButton>
       </div>
     );
@@ -122,11 +89,11 @@ export const ResetPasswordForm = () => {
       onSubmit={handleSubmit((data) => mutate(data))}
       noValidate
       autoComplete="off"
-      aria-label={t('landing.resetPassword.title', 'Reset Password')}
+      aria-label={t('landing.resetPassword.title')}
       style={{ maxWidth: '520px' }}
     >
       <h1 className={authStyles.formTitle}>
-        {t('landing.resetPassword.title', 'Reset Password')}
+        {t('landing.resetPassword.title')}
       </h1>
 
       {activeError && (
@@ -164,8 +131,8 @@ export const ResetPasswordForm = () => {
             onClick={() => setShowPassword((p) => !p)}
             aria-label={
               showPassword
-                ? t('landing.auth.hidePassword', 'Hide password')
-                : t('landing.auth.showPassword', 'Show password')
+                ? t('landing.auth.hidePassword')
+                : t('landing.auth.showPassword')
             }
             aria-pressed={showPassword}
           >
@@ -215,8 +182,8 @@ export const ResetPasswordForm = () => {
             onClick={() => setShowConfirmPassword((p) => !p)}
             aria-label={
               showConfirmPassword
-                ? t('landing.auth.hidePassword', 'Hide password')
-                : t('landing.auth.showPassword', 'Show password')
+                ? t('landing.auth.hidePassword')
+                : t('landing.auth.showPassword')
             }
             aria-pressed={showConfirmPassword}
           >
@@ -242,9 +209,7 @@ export const ResetPasswordForm = () => {
           style={{ width: '100%' }}
           disabled={isPending || !token}
         >
-          {isPending
-            ? t('common.loading')
-            : t('landing.resetPassword.submit', 'Update Password')}
+          {isPending ? t('common.loading') : t('landing.resetPassword.submit')}
         </DefaultButton>
       </div>
     </form>

@@ -121,7 +121,6 @@ export const ActionControl = React.memo(function ActionControl({
     });
 
     const unsubDebug = GameEvents.on('debug', () => {
-      // Re-trigger update if debug changes within same mount
       updateReelBtn(currentTension, currentBite);
     });
 

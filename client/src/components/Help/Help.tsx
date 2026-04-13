@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
-import { ScreenContainer } from '../UI/ScreenContainer/ScreenContainer';
-import { ExpandButton } from '../UI/ExpandButton/ExpandButton';
+import { ScreenContainer } from '@/components/UI/ScreenContainer/ScreenContainer';
+import { ExpandButton } from '@/components/UI/buttons/ExpandButton/ExpandButton';
 
 import helpIcon from '@/assets/ui/help.webp';
 

@@ -2,7 +2,7 @@ import { useEffect, useRef, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { prepareWithSegments, measureLineStats } from '@chenglou/pretext';
 
-import { useBottomInfoAnimation } from '../../hooks/ui/useBottomInfoAnimation';
+import { useBottomInfoAnimation } from '@/hooks/ui/useBottomInfoAnimation';
 import { useFishController } from '@/hooks/game/useFishController';
 import { useScrollReveal } from '@/hooks/ui/useScrollReveal';
 

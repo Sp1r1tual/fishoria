@@ -6,7 +6,9 @@ interface IScrollRevealOptions {
   triggerOnce?: boolean;
 }
 
-export const useScrollReveal = (options: IScrollRevealOptions = {}) => {
+export const useScrollReveal = <T extends HTMLElement = HTMLElement>(
+  options: IScrollRevealOptions = {},
+) => {
   const [isVisible, setIsVisible] = useState(() => {
     if (typeof window !== 'undefined') {
       return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -14,7 +16,7 @@ export const useScrollReveal = (options: IScrollRevealOptions = {}) => {
     return false;
   });
 
-  const elementRef = useRef<HTMLElement>(null);
+  const elementRef = useRef<T>(null);
 
   useEffect(() => {
     if (isVisible && options.triggerOnce !== false) return;

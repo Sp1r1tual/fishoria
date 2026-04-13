@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import styles from './Fireflies.module.css';
 
-interface Firefly {
+interface IFirefly {
   id: number;
   size: number;
   left: number;
@@ -12,16 +12,16 @@ interface Firefly {
   opacity: number;
 }
 
-interface FirefliesProps {
+interface IFirefliesProps {
   count?: number;
-  spawnRangeY?: [number, number]; // [min%, max%]
+  spawnRangeY?: [number, number];
 }
 
 export const Fireflies = ({
   count = 15,
   spawnRangeY = [80, 90],
-}: FirefliesProps) => {
-  const [fireflies] = useState<Firefly[]>(() => {
+}: IFirefliesProps) => {
+  const [fireflies] = useState<IFirefly[]>(() => {
     const [minY, maxY] = spawnRangeY;
     const range = maxY - minY;
 
@@ -38,7 +38,7 @@ export const Fireflies = ({
 
   return (
     <div className={styles['fireflies-container']}>
-      {fireflies.map((f: Firefly) => (
+      {fireflies.map((f: IFirefly) => (
         <div
           key={f.id}
           className={styles['firefly-wrapper']}

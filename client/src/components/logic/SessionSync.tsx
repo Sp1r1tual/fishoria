@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { useAppSelector, useAppDispatch } from '@/hooks/core/useAppStore';
+
 import type { WeatherType } from '@/common/types';
 
+import { useAppSelector, useAppDispatch } from '@/hooks/core/useAppStore';
 import {
   setWeather,
   setWeatherForecast,
@@ -32,7 +33,6 @@ export function SessionSync() {
     stateRef.current = { weatherForecast, lastWeatherUpdateHour };
   }, [weatherForecast, lastWeatherUpdateHour]);
 
-  // Restore weather from session storage on mount and do immediate catch-up
   useEffect(() => {
     const session = TimeManager.loadSessionData();
     const loadedForecast = session?.weatherForecast as
@@ -52,11 +52,9 @@ export function SessionSync() {
       }
     }
 
-    // Do an immediate catch-up to prevent the 1s delay flicker
     const gTime = TimeManager.getGameTimeHours();
     const currentHour = Math.floor(gTime);
 
-    // We use the loaded state if available, else what we have in Ref (which should be initial state)
     const curForecast = loadedForecast || stateRef.current.weatherForecast;
     const lastUpdate =
       loadedLastHour !== undefined
@@ -93,7 +91,6 @@ export function SessionSync() {
       const gTime = TimeManager.getGameTimeHours();
       const currentHour = Math.floor(gTime);
 
-      // AutoSave Logic
       const diffAutoSave = Math.abs(gTime - lastAutoSaveRef.current);
       if (diffAutoSave >= 0.5) {
         TimeManager.saveSessionData(
@@ -107,7 +104,6 @@ export function SessionSync() {
         );
       }
 
-      // Weather Update Logic
       const {
         weatherForecast: curForecast,
         lastWeatherUpdateHour: lastUpdate,

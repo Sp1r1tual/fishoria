@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
+import { ScreenContainer } from '@/components/UI/ScreenContainer/ScreenContainer';
+import { SkeletonImage } from '@/components/UI/skeletons/SkeletonImage/SkeletonImage';
+import { AchievementsSkeleton } from './AchievementsSkeleton';
+
 import { usePlayerQuery } from '@/queries/player.queries';
 import { useAchievements } from '@/queries/achievement.queries';
-import { ScreenContainer } from '../UI/ScreenContainer/ScreenContainer';
-import { SkeletonImage } from '../UI/skeletons/SkeletonImage/SkeletonImage';
-import { AchievementsSkeleton } from './AchievementsSkeleton';
 
 import achievementsIcon from '@/assets/ui/achievements.webp';
 
@@ -65,10 +66,6 @@ export function Achievements() {
                           src={ach.imageUrl}
                           alt=""
                           wrapperClassName={styles.achievement_card__image}
-                          style={{
-                            filter: isCompleted ? 'none' : 'grayscale(100%)',
-                            opacity: isCompleted ? 1 : 0.5,
-                          }}
                         />
                       )}
                       <div className={styles.achievement_card__info}>
@@ -84,13 +81,11 @@ export function Achievements() {
                     <div className={styles.achievement_card__footer}>
                       {isCompleted ? (
                         <div className={styles.claimed_badge}>
-                          <span>
-                            ✓ {t('achievements.completed', 'Completed')}
-                          </span>
+                          <span>✓ {t('achievements.completed')}</span>
                         </div>
                       ) : (
-                        <div style={{ color: 'var(--text-secondary)' }}>
-                          <span>{t('achievements.locked', 'Locked')}</span>
+                        <div className={styles.locked_badge}>
+                          <span>{t('achievements.locked')}</span>
                         </div>
                       )}
                     </div>
@@ -100,8 +95,8 @@ export function Achievements() {
             )}
           </div>
         ) : (
-          <article className={`glass fade-in`} style={{ padding: '16px' }}>
-            <p>No achievements available.</p>
+          <article className={`glass fade-in ${styles.empty_state}`}>
+            <p>{t('achievements.empty')}</p>
           </article>
         )}
       </section>

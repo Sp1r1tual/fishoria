@@ -6,7 +6,7 @@ import type {
   IQuestCondition,
 } from '@/common/types/player.types';
 
-import { ExpandButton } from '../UI/ExpandButton/ExpandButton';
+import { ExpandButton } from '../UI/buttons/ExpandButton/ExpandButton';
 import { SkeletonImage } from '../UI/skeletons/SkeletonImage/SkeletonImage';
 import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
 

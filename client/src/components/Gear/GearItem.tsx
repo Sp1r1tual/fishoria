@@ -2,8 +2,8 @@ import type { TFunction } from 'i18next';
 
 import type { IGearItemBase } from '@/common/types';
 
-import { CircleButton } from '../UI/buttons/CircleButton/CircleButton';
-import { ConditionBar } from './ConditionBar';
+import { CircleButton } from '@/components/UI/buttons/CircleButton/CircleButton';
+import { ConditionBar } from '@/components/Gear/ConditionBar';
 
 interface IGearItemProps {
   item: IGearItemBase;

@@ -1,12 +1,11 @@
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useAppDispatch } from '@/hooks/core/useAppStore';
-import { usePlayerQuery } from '@/queries/player.queries';
-
 import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
 import { ScreenContainer } from '../UI/ScreenContainer/ScreenContainer';
 
+import { useAppDispatch } from '@/hooks/core/useAppStore';
+import { usePlayerQuery } from '@/queries/player.queries';
 import { navigateTo } from '@/store/slices/uiSlice';
 import { setCurrentLake } from '@/store/slices/gameSlice';
 

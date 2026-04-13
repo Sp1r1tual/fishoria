@@ -1,20 +1,21 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import type { IPlayerProfile } from '@/common/types';
+
 import { useClickSound } from '@/hooks/audio/useSoundEffect';
 
-import profile01 from '@/assets/ui/profile.webp';
-import profile02 from '@/assets/ui/profile_02.webp';
-import profile03 from '@/assets/ui/profile_03.webp';
-import profile04 from '@/assets/ui/profile_04.webp';
+import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
 
 import {
   usePlayerQuery,
   useUpdateProfileMutation,
 } from '@/queries/player.queries';
-import type { IPlayerProfile } from '@/common/types/player.types';
 
-import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
+import profile01 from '@/assets/ui/profile.webp';
+import profile02 from '@/assets/ui/profile_02.webp';
+import profile03 from '@/assets/ui/profile_03.webp';
+import profile04 from '@/assets/ui/profile_04.webp';
 
 import styles from './ProfileEdit.module.css';
 
@@ -66,7 +67,7 @@ function ProfileEditForm({ player }: { player: IPlayerProfile }) {
           className={styles.input}
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          placeholder={t('profile.namePlaceholder', 'Enter your name')}
+          placeholder={t('profile.namePlaceholder')}
           disabled={isPending}
           autoComplete="off"
         />

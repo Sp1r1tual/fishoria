@@ -2,18 +2,18 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
-import { usePlayerQuery } from '@/queries/player.queries';
+import type { ILakeStatMetadata } from '@/common/types';
 
 import { ScreenContainer } from '../UI/ScreenContainer/ScreenContainer';
-import { ExpandButton } from '../UI/ExpandButton/ExpandButton';
+import { ExpandButton } from '../UI/buttons/ExpandButton/ExpandButton';
+
+import { usePlayerQuery } from '@/queries/player.queries';
 
 import { LAKES } from '@/common/configs/game';
 
 import forestLakeDay from '@/assets/locations/01_forest_lake_day.webp';
 import reservoirDay from '@/assets/locations/02_reservoir_day.webp';
 import statisticsIcon from '@/assets/ui/statistics.webp';
-
-import type { ILakeStatMetadata } from '@/common/types';
 
 import styles from './Statistics.module.css';
 

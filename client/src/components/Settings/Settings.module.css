@@ -116,7 +116,7 @@
     url('https://www.transparenttextures.com/patterns/wood-pattern.png'),
     linear-gradient(#386641, #386641);
   cursor: pointer;
-  margin-top: -8px; /* (12px track - 24px thumb) / 2 - adjustment */
+  margin-top: -8px;
   border: 2px solid #fff;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.7);
   transition: transform 0.1s ease;

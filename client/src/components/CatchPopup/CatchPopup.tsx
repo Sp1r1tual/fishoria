@@ -1,35 +1,33 @@
 import { useTranslation } from 'react-i18next';
 
-import { useClickSound } from '../../hooks/audio/useSoundEffect';
-import { useAppDispatch } from '../../hooks/core/useAppStore';
+import type { IFishCatch, CatchResultType } from '@/common/types';
 
-import type { IFishCatch, CatchResultType } from '../../common/types';
+import { useClickSound } from '@/hooks/audio/useSoundEffect';
+import { useAppDispatch } from '@/hooks/core/useAppStore';
 
-import { UniversalModal } from '../UI/modals/UniversalModal/UniversalModal';
-import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
+import { UniversalModal } from '@/components/UI/modals/UniversalModal/UniversalModal';
+import { WoodyButton } from '@/components/UI/buttons/WoodyButton/WoodyButton';
 
 import {
   useCatchFishMutation,
   useBreakGearMutation,
 } from '@/queries/game.queries';
-import { clearCatch, resetGame } from '../../store/slices/gameSlice';
+import { clearCatch, resetGame } from '@/store/slices/gameSlice';
 
-import type { LakeScene } from '../../game/engine/scenes/LakeScene';
+import type { LakeScene } from '@/game/engine/scenes/LakeScene';
 
-import {
-  getFishQuality,
-  getFishQualityLabel,
-} from '../../common/utils/fish.utils';
+import { getFishQuality, getFishQualityLabel } from '@/common/utils/fish.utils';
 
 import trashIcon from '@/assets/ui/trash_icon.webp';
+
 import styles from './CatchPopup.module.css';
 
-interface Props {
+interface ICatchPopupProps {
   result: CatchResultType;
   sceneRef: React.RefObject<LakeScene | null>;
 }
 
-export function CatchPopup({ result, sceneRef }: Props) {
+export function CatchPopup({ result, sceneRef }: ICatchPopupProps) {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const playClick = useClickSound();

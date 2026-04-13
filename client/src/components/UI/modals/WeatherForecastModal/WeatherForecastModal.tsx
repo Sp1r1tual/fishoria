@@ -4,8 +4,9 @@ import { useAppSelector } from '@/hooks/core/useAppStore';
 
 import { Modal } from '../Modal/Modal';
 
-import styles from './WeatherForecastModal.module.css';
 import { TimeManager } from '@/game/managers/TimeManager';
+
+import styles from './WeatherForecastModal.module.css';
 
 interface IWeatherForecastModalProps {
   isOpen: boolean;
@@ -23,8 +24,6 @@ export function WeatherForecastModal({
   );
   const day = weatherForecast.slice(0, 24);
 
-  // Sync labels with the baseline hour of the forecast in the store.
-  // This baseline corresponds to the first element of the forecast array.
   const startHour =
     lastWeatherUpdateHour !== null
       ? new Date(lastWeatherUpdateHour * 3600000).getHours()

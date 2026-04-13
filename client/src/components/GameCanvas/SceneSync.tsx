@@ -127,14 +127,12 @@ export function SceneSync({ sceneRef }: ISceneSyncProps) {
       reelConfig,
       lineConfig,
       hookConfig,
-      // Pass UIDs for wear tracking
       equippedRodUid: player.equippedRodUid,
       equippedReelUid: player.equippedReelUid,
       equippedLineUid: player.equippedLineUid,
       equippedHookUid: player.equippedHookUid,
     });
 
-    // Keep available line length in sync with actual server-side meters
     sceneRef.current.setAvailableLineLength(
       lineInstance?.meters ?? lineShopConfig?.totalLength ?? 0,
     );

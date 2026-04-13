@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 
-import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import { useIsPortrait } from '@/hooks/ui/useIsPortrait';
 
 import { MainMenu } from '@/components/MainMenu/MainMenu';
@@ -11,6 +10,7 @@ import { Gear } from '@/components/Gear/Gear';
 import { Modal } from '@/components/UI/modals/Modal/Modal';
 import { PortraitOverlay } from '@/components/GameCanvas/PortraitOverlay';
 
+import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import { navigateTo } from '@/store/slices/uiSlice';
 
 export function GameScreen() {

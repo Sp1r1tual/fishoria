@@ -4,11 +4,8 @@ import { useState, useEffect, useCallback } from 'react';
 
 import type { IOwnedGearItem } from '@/common/types';
 
-import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
-
 import { WoodyButton } from '@/components/UI/buttons/WoodyButton/WoodyButton';
 import { DebugTerminal } from './DebugTerminal/DebugTerminal';
-
 import { LakeInfo } from './LakeInfo/LakeInfo';
 import { TensionIndicator } from './TensionIndicator/TensionIndicator';
 import { ActionControl } from './ActionControl/ActionControl';
@@ -16,6 +13,7 @@ import { HUDActionButtons } from './HUDActionButtons/HUDActionButtons';
 import { LevelBar } from '@/components/UI/LevelBar/LevelBar';
 import { DebugLegend } from '@/components/UI/DebugLegend/DebugLegend';
 
+import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import { navigateTo } from '@/store/slices/uiSlice';
 import {
   resetGame,
@@ -23,6 +21,8 @@ import {
   setCurrentLake,
   clearPendingEquips,
 } from '@/store/slices/gameSlice';
+import { usePlayerQuery } from '@/queries/player.queries';
+import { store } from '@/store/store';
 
 import { InventoryService } from '@/services/inventory.service';
 import { GameEvents } from '@/game/engine/GameEvents';
@@ -33,9 +33,6 @@ import { getLakeById } from '@/common/configs/game';
 import { SHOP_HOOKS, SHOP_RODS } from '@/common/configs/game';
 
 import jeepIcon from '@/assets/ui/jeep.webp';
-
-import { usePlayerQuery } from '@/queries/player.queries';
-import { store } from '@/store/store';
 
 import styles from './HUD.module.css';
 

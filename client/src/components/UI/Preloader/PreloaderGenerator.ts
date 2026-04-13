@@ -3,8 +3,8 @@ import type { PreloadStep, AssetContext } from '@/common/types';
 import {
   discoverAssets,
   ProgressTracker,
-} from '../../../common/preloader/preloader.utils';
-import { loadAsset } from '../../../common/preloader/preloader.handler';
+} from '@/common/preloader/preloader.utils';
+import { loadAsset } from '@/common/preloader/preloader.handler';
 
 export async function preloadGameAssets(
   onProgress: (step: PreloadStep) => void,

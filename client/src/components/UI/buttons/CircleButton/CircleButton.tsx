@@ -1,9 +1,9 @@
-import React from 'react';
+import type { MouseEvent } from 'react';
 
 import styles from './CircleButton.module.css';
 
 interface ICircleButtonProps {
-  onClick: (e: React.MouseEvent) => void;
+  onClick: (e: MouseEvent) => void;
   variant?: 'red' | 'brown' | 'glass' | 'danger' | 'wooden';
   size?: 'xs' | 'sm' | 'md' | 'lg';
   icon?: React.ReactNode;

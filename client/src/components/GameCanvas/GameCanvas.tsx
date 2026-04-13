@@ -1,13 +1,13 @@
-import { useAppSelector } from '@/hooks/core/useAppStore';
 import { useGameScene } from '@/hooks/game/useGameScene';
+import { useAppSelector } from '@/hooks/core/useAppStore';
 
 import { HUD } from '@/components/HUD/HUD';
-import { SnagMinigame } from '../UI/SnagMinigame/SnagMinigame';
+import { GlobalPreloader } from '@/components/UI/GlobalPreloader/GlobalPreloader';
+import { SnagMinigame } from '@/components/UI/SnagMinigame/SnagMinigame';
 import { SceneSync } from './SceneSync';
 import { CatchSync } from './CatchSync';
 import { LossSync } from './LossSync';
 
-import { GlobalPreloader } from '../UI/GlobalPreloader/GlobalPreloader';
 import styles from './GameCanvas.module.css';
 
 export function GameCanvas() {

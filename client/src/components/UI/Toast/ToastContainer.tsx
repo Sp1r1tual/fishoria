@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
-import { useDingSound } from '@/hooks/audio/useSoundEffect';
 import type {
   IPlayerProfile,
   IPlayerQuest,
   IPlayerAchievement,
-} from '@/common/types/player.types';
+  IToast,
+} from '@/common/types';
 
-import type { IToast } from '@/common/types';
+import { useDingSound } from '@/hooks/audio/useSoundEffect';
 
+import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import { removeToast, addToast } from '@/store/slices/uiSlice';
 import { usePlayerQuery } from '@/queries/player.queries';
 
