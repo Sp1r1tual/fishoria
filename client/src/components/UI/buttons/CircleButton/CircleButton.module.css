@@ -90,8 +90,7 @@
       rgba(255, 253, 230, 0.3) 0%,
       rgba(255, 253, 230, 0) 75%
     ),
-    url('https://www.transparenttextures.com/patterns/wood-pattern.png'),
-    linear-gradient(#5d432e, #4a3424);
+    var(--pattern-wood-url), linear-gradient(#5d432e, #4a3424);
   border: 1px solid #3d2b1f;
   border-bottom: 3px solid #2b1d12;
   color: #fff;

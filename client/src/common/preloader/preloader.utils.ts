@@ -41,39 +41,52 @@ export class ProgressTracker {
   }
 }
 
+export const WOOD_PATTERN_URL =
+  'https://www.transparenttextures.com/patterns/wood-pattern.png';
+
 export function discoverAssets(): string[] {
-  const imageAssets = (
-    Object.values(
-      import.meta.glob('/src/assets/**/*.{png,jpg,jpeg,svg,webp,gif}', {
-        eager: true,
-        query: '?url',
-        import: 'default',
-      }),
-    ) as string[]
-  ).filter(
-    (path) =>
-      !path.toLowerCase().includes('global') &&
-      !path.toLowerCase().includes('landing') &&
-      !path.toLowerCase().includes('/fish/'),
+  const imageGlob = import.meta.glob(
+    '/src/assets/**/*.{png,jpg,jpeg,svg,webp,gif}',
+    {
+      eager: true,
+      query: '?url',
+      import: 'default',
+    },
   );
 
-  const audioAssets = (
-    Object.values(
-      import.meta.glob('/src/assets/**/*.{mp3,wav,ogg}', {
-        eager: true,
-        query: '?url',
-        import: 'default',
-      }),
-    ) as string[]
-  ).filter(
-    (path) =>
-      !path.toLowerCase().includes('global') &&
-      !path.toLowerCase().includes('landing'),
+  const imageAssets = Object.entries(imageGlob)
+    .filter(([path]) => {
+      const p = path.toLowerCase();
+      return (
+        !p.includes('assets/global') &&
+        !p.includes('assets/landing') &&
+        !p.includes('assets/fish')
+      );
+    })
+    .map(([, url]) => url as string);
+
+  const audioGlob = import.meta.glob('/src/assets/**/*.{mp3,wav,ogg}', {
+    eager: true,
+    query: '?url',
+    import: 'default',
+  });
+
+  const audioAssets = Object.entries(audioGlob)
+    .filter(([path]) => {
+      const p = path.toLowerCase();
+      return (
+        !p.includes('assets/global') &&
+        !p.includes('assets/landing') &&
+        !p.includes('assets/fish')
+      );
+    })
+    .map(([, url]) => url as string);
+
+  const externalAssets = [WOOD_PATTERN_URL];
+
+  const uniqueAssets = Array.from(
+    new Set([...imageAssets, ...audioAssets, ...externalAssets]),
   );
 
-  const externalAssets = [
-    'https://www.transparenttextures.com/patterns/wood-pattern.png',
-  ];
-
-  return [...imageAssets, ...audioAssets, ...externalAssets];
+  return uniqueAssets;
 }

@@ -52,8 +52,7 @@
       rgba(255, 253, 230, 0.45) 0%,
       rgba(255, 253, 230, 0) 75%
     ),
-    url('https://www.transparenttextures.com/patterns/wood-pattern.png'),
-    linear-gradient(#386641, #386641);
+    var(--pattern-wood-url), linear-gradient(#386641, #386641);
   border-bottom: 5px solid #1a3a1f;
   border-right: 2px solid #2b4d2d;
   color: #000;
@@ -70,8 +69,7 @@
       rgba(255, 253, 230, 0.4) 0%,
       rgba(255, 253, 230, 0) 75%
     ),
-    url('https://www.transparenttextures.com/patterns/wood-pattern.png'),
-    linear-gradient(#4a3424, #4a3424);
+    var(--pattern-wood-url), linear-gradient(#4a3424, #4a3424);
   border-bottom: 5px solid #2b1d12;
   border-right: 2px solid #3d2b1f;
   color: #fff;
@@ -88,8 +86,7 @@
       rgba(255, 253, 230, 0.3) 0%,
       rgba(255, 253, 230, 0) 75%
     ),
-    url('https://www.transparenttextures.com/patterns/wood-pattern.png'),
-    linear-gradient(#7f1d1d, #7f1d1d);
+    var(--pattern-wood-url), linear-gradient(#7f1d1d, #7f1d1d);
   border-bottom: 5px solid #450a0a;
   border-right: 2px solid #500707;
   color: #fff;

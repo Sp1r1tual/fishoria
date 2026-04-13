@@ -107,7 +107,7 @@
       rgba(255, 253, 230, 0.8) 0%,
       transparent 100%
     ),
-    url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+    var(--pattern-wood-url);
   background-color: #5d432e;
   border: 1px solid #7a543b;
   border-bottom: 5px solid #2b1d12;

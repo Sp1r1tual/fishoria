@@ -29,7 +29,6 @@ export async function preloadGameAssets(
     return;
   }
 
-  await new Promise((r) => setTimeout(r, 400));
   if (signal?.aborted) return;
 
   const emitProgress = () => {

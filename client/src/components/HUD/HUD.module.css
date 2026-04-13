@@ -74,9 +74,7 @@
   justify-content: center;
   gap: 25px;
   height: 100%;
-  background:
-    url('https://www.transparenttextures.com/patterns/wood-pattern.png'),
-    #3d2b1f;
+  background: var(--pattern-wood-url), #3d2b1f;
   border-top: 4px solid #2b1d12;
   padding: 8px 12px calc(12px + env(safe-area-inset-bottom)) 12px;
   box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
