@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type {
@@ -9,11 +9,7 @@ import type {
   IOwnedGearItem,
 } from '@/common/types';
 
-export type { GearItemType, GearTypeType };
-
-import { useAppDispatch } from '@/hooks/core/useAppStore';
 import { useGameAudio } from '@/hooks/audio/useGameAudio';
-import { addToast } from '@/store/slices/uiSlice';
 
 import {
   BAITS,
@@ -22,6 +18,8 @@ import {
   GROUNDBAIT_IDS,
 } from '@/common/configs/game';
 
+import { addToast } from '@/store/slices/uiSlice';
+import { useAppDispatch } from '@/hooks/core/useAppStore';
 import { usePlayerQuery } from '@/queries/player.queries';
 import { useBuyMutation } from '@/queries/shop.queries';
 
@@ -36,18 +34,30 @@ export function useShop() {
   const { onPurchase } = useGameAudio(false);
   const { t } = useTranslation();
 
-  // If player is not loaded yet, use default values for UI
   const money = player?.money ?? 0;
-  const consumables = player?.consumables ?? [];
 
-  const getConsumableCount = (id: string, type: string) => {
-    return (
-      consumables.find(
-        (c: { itemId: string; itemType: string }) =>
-          c.itemId === id && c.itemType === type,
-      )?.quantity ?? 0
-    );
-  };
+  const { baitCounts, groundbaitCounts } = useMemo(() => {
+    const b: Record<string, number> = {};
+    const gb: Record<string, number> = {};
+    const consumables = player?.consumables ?? [];
+
+    for (const c of consumables) {
+      if (c.itemType === 'bait') b[c.itemId] = c.quantity;
+      else if (c.itemType === 'groundbait') gb[c.itemId] = c.quantity;
+    }
+
+    return { baitCounts: b, groundbaitCounts: gb };
+  }, [player?.consumables]);
+
+  const gearCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    const items = player?.gearItems ?? [];
+    for (const g of items) {
+      const key = `${g.itemType}_${g.itemId}`;
+      counts[key] = (counts[key] || 0) + 1;
+    }
+    return counts;
+  }, [player?.gearItems]);
 
   const [qtys, setQtys] = useState<Record<string, number>>({
     ...Object.fromEntries(BAIT_IDS.map((id) => [id, 5])),
@@ -88,23 +98,25 @@ export function useShop() {
 
   // ─── Owned count ──────────────────────────────────────────────────────────
 
-  const getOwnedCount = (type: GearTypeType, id: string): number => {
-    if (!player) return 0;
-    if (type === 'bait' || type === 'groundbait') {
-      return getConsumableCount(id, type);
-    }
-    if (type === 'gadget') {
-      if (id === 'echo_sounder') return player.hasEchoSounder ? 1 : 0;
-      if (id === 'repair_kit')
-        return player.gearItems.filter(
-          (g: IOwnedGearItem) => g.itemId === 'repair_kit',
-        ).length;
-      return 0;
-    }
-    return player.gearItems.filter(
-      (g: IOwnedGearItem) => g.itemType === type && g.itemId === id,
-    ).length;
-  };
+  const getOwnedCount = useCallback(
+    (type: GearTypeType, id: string): number => {
+      if (!player) return 0;
+      if (type === 'bait') return baitCounts[id] ?? 0;
+      if (type === 'groundbait') return groundbaitCounts[id] ?? 0;
+
+      if (type === 'gadget') {
+        if (id === 'echo_sounder') return player.hasEchoSounder ? 1 : 0;
+        if (id === 'repair_kit') {
+          return player.gearItems.filter(
+            (g: IOwnedGearItem) => g.itemId === 'repair_kit',
+          ).length;
+        }
+        return 0;
+      }
+      return gearCounts[`${type}_${id}`] ?? 0;
+    },
+    [player, baitCounts, groundbaitCounts, gearCounts],
+  );
 
   // ─── Buy consumable (bait / groundbait) ───────────────────────────────────
 
@@ -147,8 +159,8 @@ export function useShop() {
             }),
           );
           onPurchase();
-        } catch (e: unknown) {
-          const err = e as { response?: { data?: { message?: string } } };
+        } catch (error: unknown) {
+          const err = error as { response?: { data?: { message?: string } } };
           notifyError(err.response?.data?.message || t('errors.unknown'));
         }
       },
@@ -197,8 +209,8 @@ export function useShop() {
             }),
           );
           onPurchase();
-        } catch (e: unknown) {
-          const err = e as { response?: { data?: { message?: string } } };
+        } catch (error: unknown) {
+          const err = error as { response?: { data?: { message?: string } } };
           notifyError(err.response?.data?.message || t('errors.unknown'));
         }
       },
@@ -242,8 +254,8 @@ export function useShop() {
             }),
           );
           onPurchase();
-        } catch (e: unknown) {
-          const err = e as { response?: { data?: { message?: string } } };
+        } catch (error: unknown) {
+          const err = error as { response?: { data?: { message?: string } } };
           notifyError(err.response?.data?.message || t('errors.unknown'));
         }
       },
@@ -254,25 +266,10 @@ export function useShop() {
     player,
     isLoading,
     money,
-    baitCounts: Object.fromEntries(
-      consumables
-        .filter((c: { itemType: string }) => c.itemType === 'bait')
-        .map((c: { itemId: string; quantity: number }) => [
-          c.itemId,
-          c.quantity,
-        ]),
-    ),
-    groundbaitCounts: Object.fromEntries(
-      consumables
-        .filter((c: { itemType: string }) => c.itemType === 'groundbait')
-        .map((c: { itemId: string; quantity: number }) => [
-          c.itemId,
-          c.quantity,
-        ]),
-    ),
+    baitCounts,
+    groundbaitCounts,
     qtys,
     modal,
-
     closeModal,
     decreaseQty,
     increaseQty,

@@ -9,12 +9,12 @@ import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import { WoodyButton } from '@/components/UI/buttons/WoodyButton/WoodyButton';
 import { DebugTerminal } from './DebugTerminal/DebugTerminal';
 
-import { LakeInfo } from './components/LakeInfo/LakeInfo';
-import { TensionIndicator } from './components/TensionIndicator/TensionIndicator';
-import { ActionControl } from './components/ActionControl/ActionControl';
-import { HUDActionButtons } from './components/HUDActionButtons/HUDActionButtons';
-import { LevelBar } from '../UI/LevelBar/LevelBar';
-import { DebugLegend } from '../UI/DebugLegend/DebugLegend';
+import { LakeInfo } from './LakeInfo/LakeInfo';
+import { TensionIndicator } from './TensionIndicator/TensionIndicator';
+import { ActionControl } from './ActionControl/ActionControl';
+import { HUDActionButtons } from './HUDActionButtons/HUDActionButtons';
+import { LevelBar } from '@/components/UI/LevelBar/LevelBar';
+import { DebugLegend } from '@/components/UI/DebugLegend/DebugLegend';
 
 import { navigateTo } from '@/store/slices/uiSlice';
 import {

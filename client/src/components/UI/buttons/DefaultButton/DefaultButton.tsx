@@ -1,4 +1,4 @@
-import { useClickSound } from '@/hooks/audio/useClickSound';
+import { useClickSound } from '@/hooks/audio/useSoundEffect';
 
 import styles from './DefaultButton.module.css';
 

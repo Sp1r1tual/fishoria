@@ -25,7 +25,8 @@ export function useNewsState() {
   }, [news, dispatch]);
 
   const unreadCount = useMemo(() => {
-    return news.filter((n) => !readIds.includes(n.id)).length;
+    const readSet = new Set(readIds);
+    return news.filter((n) => !readSet.has(n.id)).length;
   }, [news, readIds]);
 
   return {

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useClickSound } from '@/hooks/audio/useClickSound';
+import { useClickSound } from '@/hooks/audio/useSoundEffect';
 
 import styles from './WoodyButton.module.css';
 

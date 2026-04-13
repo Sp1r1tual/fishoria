@@ -94,3 +94,14 @@ export const GLOBAL_CONSTANTS = {
   /** Base width used for scaling calculations */
   baseWidth: 1200,
 } as const;
+
+export const GAME_CHANCES = {
+  /** Chance for bait to fall off when manually extracting float/feeder rigs */
+  baitFallOffOnReset: 0.05,
+
+  /** Chance for bait to be lost on escape if NOT hooked */
+  baitLossOnEscapeNotHooked: 0.5,
+
+  /** Chance for hook to be lost on escape if WAS hooked */
+  hookLossOnEscapeHooked: 0.1,
+} as const;

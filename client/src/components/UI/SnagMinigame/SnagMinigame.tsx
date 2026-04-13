@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useClickSound } from '@/hooks/audio/useClickSound';
+import { useClickSound } from '@/hooks/audio/useSoundEffect';
 
 import { UniversalModal } from '../modals/UniversalModal/UniversalModal';
 import { WoodyButton } from '../buttons/WoodyButton/WoodyButton';

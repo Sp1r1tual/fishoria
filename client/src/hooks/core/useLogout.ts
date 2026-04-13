@@ -1,9 +1,9 @@
 import { useAppDispatch } from './useAppStore';
-
 import { logout } from '@/store/slices/authSlice';
-import { queryClient } from '@/common/configs/libs/reactQuery';
 
 import { AuthService } from '@/services/auth.service';
+
+import { queryClient } from '@/common/configs/libs/reactQuery';
 
 export const useLogout = () => {
   const dispatch = useAppDispatch();

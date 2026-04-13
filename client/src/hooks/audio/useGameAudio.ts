@@ -1,21 +1,19 @@
 import { useEffect, useRef, useCallback } from 'react';
 
-import { useAppSelector } from '@/hooks/core/useAppStore';
-
 import type { GamePhaseType, TimeOfDayType } from '@/common/types';
 
-// ---------------------------------------------------------------------------
-// Web Audio API engine — pre-decoded buffers for zero-latency SFX
-// ---------------------------------------------------------------------------
+import { preloadClickBuffer } from './useSoundEffect';
+import { preloadDingBuffer } from './useSoundEffect';
+import { preloadAchievementBuffer } from './useSoundEffect';
+
+import { useAppSelector } from '@/hooks/core/useAppStore';
+
 import {
   getSharedAudioContext,
   resumeSharedAudioContext,
   getSharedSfxGainNode,
   isIOS,
 } from '@/common/media/audio-context';
-import { preloadClickBuffer } from './useClickSound';
-import { preloadDingBuffer } from './useDingSound';
-import { preloadAchievementBuffer } from './useAchievementSound';
 
 // ---------------------------------------------------------------------------
 // SFX source URLs (resolved at build time by Vite)
@@ -32,33 +30,6 @@ const SFX_URLS = {
     .href,
   click: new URL('../../assets/music/click.wav', import.meta.url).href,
 } as const;
-
-type SfxKey = keyof typeof SFX_URLS;
-
-// Pre-decoded AudioBuffers (filled by loadSfxBuffers)
-const sfxBuffers: Partial<Record<SfxKey, AudioBuffer>> = {};
-
-// Active looping source nodes (so we can .stop() them)
-const activeLoops: Partial<
-  Record<SfxKey, { source: AudioBufferSourceNode; gain: GainNode }>
-> = {};
-
-/** Fetch + decode all SFX into AudioBuffers for instant playback */
-async function loadSfxBuffers() {
-  const ctx = getSharedAudioContext();
-  const entries = Object.entries(SFX_URLS) as [SfxKey, string][];
-  await Promise.allSettled(
-    entries.map(async ([key, url]) => {
-      try {
-        const res = await fetch(url);
-        const ab = await res.arrayBuffer();
-        sfxBuffers[key] = await ctx.decodeAudioData(ab);
-      } catch (e) {
-        console.warn(`Failed to pre-decode SFX: ${key}`, e);
-      }
-    }),
-  );
-}
 
 // ---------------------------------------------------------------------------
 // Ambient tracks — HTMLAudioElement is fine (long music, latency irrelevant)
@@ -80,6 +51,33 @@ const AMBIENT: Record<string, HTMLAudioElement> = {
     'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/sounds/scenes/rain.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL3NvdW5kcy9zY2VuZXMvcmFpbi5tcDMiLCJpYXQiOjE3NzU0NjcwODQsImV4cCI6NDg5NzUzMTA4NH0.fppFBHNBC-mEdyXHHrxJ7dDuzm_7z_DXRwMH0GTbASU',
   ),
 };
+
+type SfxKey = keyof typeof SFX_URLS;
+
+// Pre-decoded AudioBuffers (filled by loadSfxBuffers)
+const sfxBuffers: Partial<Record<SfxKey, AudioBuffer>> = {};
+
+// Active looping source nodes (so we can .stop() them)
+const activeLoops: Partial<
+  Record<SfxKey, { source: AudioBufferSourceNode; gain: GainNode }>
+> = {};
+
+/** Fetch + decode all SFX into AudioBuffers for instant playback */
+async function loadSfxBuffers() {
+  const ctx = getSharedAudioContext();
+  const entries = Object.entries(SFX_URLS) as [SfxKey, string][];
+  await Promise.allSettled(
+    entries.map(async ([key, url]) => {
+      try {
+        const res = await fetch(url);
+        const ab = await res.arrayBuffer();
+        sfxBuffers[key] = await ctx.decodeAudioData(ab);
+      } catch (error) {
+        console.warn(`Failed to pre-decode SFX: ${key}`, error);
+      }
+    }),
+  );
+}
 
 Object.values(AMBIENT).forEach((a) => {
   a.loop = true;
@@ -109,8 +107,8 @@ function ensureAmbientConnected(audio: HTMLAudioElement) {
       source.connect(ambientGainNode);
       connectedAmbients.add(audio);
     }
-  } catch (e) {
-    console.warn('Failed to connect ambient to AudioContext:', e);
+  } catch (error) {
+    console.warn('Failed to connect ambient to AudioContext:', error);
   }
   return ambientGainNode;
 }

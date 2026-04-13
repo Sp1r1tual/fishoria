@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { useDingSound } from '@/hooks/audio/useDingSound';
+import { useDingSound } from '@/hooks/audio/useSoundEffect';
 
 import { usePlayerQuery } from '@/queries/player.queries';
 

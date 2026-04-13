@@ -1,24 +1,28 @@
-import { useEffect, useState, type RefObject } from 'react';
+import { useLayoutEffect, useState, type RefObject } from 'react';
 
-/**
- * Uses a ResizeObserver to track the height of an element, returning the height
- * plus an optional safe gap. Useful for creating dynamic constraints or bounding boxes.
- */
 export const useDynamicBounds = (
   targetRef: RefObject<HTMLElement | null>,
   safeGap: number = 60,
   fallbackHeight: number = 500,
   dependencies: unknown[] = [],
 ) => {
-  const [minAllowedHeight, setMinAllowedHeight] = useState(fallbackHeight);
+  const [minAllowedHeight, setMinAllowedHeight] = useState(() => {
+    return targetRef.current
+      ? targetRef.current.offsetHeight + safeGap
+      : fallbackHeight;
+  });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!targetRef.current) return;
+
+    setMinAllowedHeight(targetRef.current.offsetHeight + safeGap);
+
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        setMinAllowedHeight(
-          (entry.target as HTMLElement).offsetHeight + safeGap,
-        );
+        const height =
+          entry.borderBoxSize?.[0]?.blockSize ??
+          (entry.target as HTMLElement).offsetHeight;
+        setMinAllowedHeight(height + safeGap);
       }
     });
 

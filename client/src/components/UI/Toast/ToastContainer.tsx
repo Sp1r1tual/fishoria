@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
-import { useDingSound } from '@/hooks/audio/useDingSound';
+import { useDingSound } from '@/hooks/audio/useSoundEffect';
 import type {
   IPlayerProfile,
   IPlayerQuest,
@@ -104,7 +104,7 @@ export function ToastContainer() {
   );
 }
 
-import { useAchievementSound } from '@/hooks/audio/useAchievementSound';
+import { useAchievementSound } from '@/hooks/audio/useSoundEffect';
 
 function ToastItem({ id, message, type, duration = 3000, imageUrl }: IToast) {
   const dispatch = useAppDispatch();

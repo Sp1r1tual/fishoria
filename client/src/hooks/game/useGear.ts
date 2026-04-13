@@ -10,6 +10,8 @@ import type {
   IGearAction,
 } from '@/common/types';
 
+import { useClickSound } from '@/hooks/audio/useSoundEffect';
+
 import { useAppSelector, useAppDispatch } from '@/hooks/core/useAppStore';
 import { usePlayerQuery } from '@/queries/player.queries';
 import {
@@ -18,7 +20,6 @@ import {
   useDeleteMutation,
 } from '@/queries/inventory.queries';
 import { addToast } from '@/store/slices/uiSlice';
-import { useClickSound } from '@/hooks/audio/useClickSound';
 
 import { InventoryService } from '@/services/inventory.service';
 import {
@@ -73,6 +74,19 @@ export function useGear() {
   const activeGroundbait = player?.activeGroundbait || 'none';
   const { t } = useTranslation();
 
+  const { baitCounts, gbCounts } = useMemo(() => {
+    const b: Record<string, number> = {};
+    const g: Record<string, number> = {};
+
+    if (player?.consumables) {
+      for (const c of player.consumables) {
+        if (c.itemType === 'bait') b[c.itemId] = c.quantity;
+        if (c.itemType === 'groundbait') g[c.itemId] = c.quantity;
+      }
+    }
+    return { baitCounts: b, gbCounts: g };
+  }, [player]);
+
   const equipMutation = useEquipMutation();
   const repairMutation = useRepairMutation();
   const deleteMutation = useDeleteMutation();
@@ -98,10 +112,12 @@ export function useGear() {
       if (type === 'bait') {
         const baitId = _item.id as BaitTypeType;
         let equips: IGearAction[] = [];
+
         if (baitId.startsWith('lure_')) {
           const inst = player?.gearItems.find(
             (h: IOwnedGearItem) => h.itemId === baitId,
           );
+
           if (inst) {
             equips = [
               { targetType: 'hook', uid: inst.uid },
@@ -143,7 +159,6 @@ export function useGear() {
         return;
       }
 
-      // Standard gear equip
       try {
         const equips: {
           targetType: 'rod' | 'reel' | 'line' | 'hook' | 'bait';
@@ -163,7 +178,6 @@ export function useGear() {
           equips.push({ targetType: 'bait', targetId: _item.id });
         }
 
-        // Auto-equip compatible bait/hook if rod swapped
         if (type === 'rod') {
           const _ownedItem = _item as unknown as IOwnedGearItem;
           const rodConfig = SHOP_RODS.find(
@@ -212,16 +226,11 @@ export function useGear() {
                 equips.push({ targetType: 'hook', uid: matching.uid });
               }
             } else {
-              // Unequip the lure hook if no classic hook is available
               equips.push({ targetType: 'hook', uid: null });
             }
 
             const firstClassic = Object.keys(BAITS).find(
-              (id) =>
-                (player?.consumables.find(
-                  (c: { itemId: string; itemType: string }) =>
-                    c.itemId === id && c.itemType === 'bait',
-                )?.quantity ?? 0) > 0,
+              (id) => (baitCounts[id] ?? 0) > 0,
             );
             if (firstClassic) {
               equips.push({ targetType: 'bait', targetId: firstClassic });
@@ -241,11 +250,19 @@ export function useGear() {
         } else {
           equipMutation.mutate({ equips });
         }
-      } catch (e) {
-        console.error('Failed to equip', e);
+      } catch (error) {
+        console.error('Failed to equip', error);
       }
     },
-    [player, phase, activeBait, currentLakeId, equipMutation, playClick],
+    [
+      player,
+      phase,
+      activeBait,
+      currentLakeId,
+      equipMutation,
+      playClick,
+      baitCounts,
+    ],
   );
 
   const handleDelete = useCallback(
@@ -259,8 +276,8 @@ export function useGear() {
     if (phase !== 'idle') return;
     try {
       await deleteMutation.mutateAsync({ uid: deleteModal.uid });
-    } catch (e) {
-      console.error('Failed to delete', e);
+    } catch (error) {
+      console.error('Failed to delete', error);
     }
     setDeleteModal((p) => ({ ...p, isOpen: false }));
   }, [phase, deleteModal.uid, deleteMutation]);
@@ -277,8 +294,8 @@ export function useGear() {
             type: 'success',
           }),
         );
-      } catch (e) {
-        console.error('Failed to repair', e);
+      } catch (error) {
+        console.error('Failed to repair', error);
       }
       setRepairModal({ isOpen: false, kitUid: null });
     },
@@ -299,280 +316,257 @@ export function useGear() {
     [navigate, bufferedEquips, equipMutation],
   );
 
-  // ── Memoized Inventory lists ────────────────────────────────────────────────────
-
-  const memoizedRods = useMemo(() => {
-    if (!player) return [];
-    const categoryOrder: Record<string, number> = {
-      float: 0,
-      spinning: 1,
-      feeder: 2,
+  /**
+   * Main block for building inventory lists, optimized for performance (O(N)).
+   * It iterates over `player.gearItems` exactly ONCE, sorting items into their respective categories,
+   * and immediately stacks (combines) new/undamaged items.
+   */
+  const lists = useMemo(() => {
+    const defaultRes = {
+      rods: [] as IGearItemBase[],
+      reels: [] as IGearItemBase[],
+      lines: [] as (IGearItemBase & { count?: number })[],
+      hooks: [] as (IGearItemBase & { count?: number })[],
+      gadgets: [] as (IGearItemBase & { count?: number })[],
+      repairable: [] as IGearItemBase[],
+      baits: [] as (IGearItemBase & { count?: number })[],
+      groundbaits: [] as (IGearItemBase & { count?: number })[],
+      isSpinningRod: false,
     };
-    return player.gearItems
-      .filter((g: IOwnedGearItem) => g.itemType === 'rod')
-      .map((inst: IOwnedGearItem) => ({
-        ...SHOP_RODS.find((r) => r.id === inst.itemId),
-        ...inst,
-        id: inst.itemId,
-      }))
-      .sort((aBrief: IGearItemBase, bBrief: IGearItemBase) => {
-        const orderA = aBrief.rodCategory
-          ? categoryOrder[aBrief.rodCategory]
-          : 99;
-        const orderB = bBrief.rodCategory
-          ? categoryOrder[bBrief.rodCategory]
-          : 99;
-        if (orderA !== orderB) return orderA - orderB;
-        return (aBrief.price ?? 0) - (bBrief.price ?? 0);
-      });
-  }, [player]);
+    if (!player) return defaultRes;
 
-  const memoizedReels = useMemo(() => {
-    if (!player) return [];
-    return player.gearItems
-      .filter((g: IOwnedGearItem) => g.itemType === 'reel')
-      .map((inst: IOwnedGearItem) => ({
-        ...SHOP_REELS.find((r) => r.id === inst.itemId),
-        ...inst,
-        id: inst.itemId,
-      }))
-      .sort(
-        (aBrief: IGearItemBase, bBrief: IGearItemBase) =>
-          (aBrief.price ?? 0) - (bBrief.price ?? 0),
-      );
-  }, [player]);
-
-  const memoizedLines = useMemo(() => {
-    if (!player) return [];
-    const rawLines = player.gearItems
-      .filter((g: IOwnedGearItem) => g.itemType === 'line')
-      .map((inst: IOwnedGearItem) => ({
-        ...SHOP_LINES.find((r) => r.id === inst.itemId),
-        ...inst,
-        id: inst.itemId,
-      }));
-
-    const grouped: (IGearItemBase & { count?: number })[] = [];
-    const counts: Record<string, number> = {};
-    const firstUids: Record<string, string> = {};
-
-    rawLines.forEach((item: IGearItemBase & IOwnedGearItem) => {
-      const isEquipped = item.uid === player.equippedLineUid;
-      const currentMeters = item.meters ?? 0;
-      const totalLength = item.totalLength ?? 300;
-      const isFull = item.meters === null || currentMeters >= totalLength;
-
-      // Group all items that are at full length
-      if (isFull) {
-        counts[item.id] = (counts[item.id] || 0) + 1;
-        // If this part of group is equipped, prioritize its UID
-        if (isEquipped && item.uid) firstUids[item.id] = item.uid;
-        else if (!firstUids[item.id] && item.uid) firstUids[item.id] = item.uid;
-      } else {
-        grouped.push(item);
-      }
-    });
-
-    Object.keys(counts).forEach((itemId) => {
-      const base = SHOP_LINES.find((r) => r.id === itemId);
-      if (base) {
-        grouped.push({
-          ...base,
-          id: itemId,
-          uid: firstUids[itemId],
-          count: counts[itemId],
-        } as IGearItemBase);
-      }
-    });
-
-    return grouped.sort(
-      (aBrief: IGearItemBase, bBrief: IGearItemBase) =>
-        (aBrief.price ?? 0) - (bBrief.price ?? 0),
-    );
-  }, [player]);
-
-  const memoizedHooks = useMemo(() => {
-    if (!player) return [];
-    const equippedRod = player.gearItems.find(
-      (g: IOwnedGearItem) => g.uid === player.equippedRodUid,
-    );
-    const rodConfig = SHOP_RODS.find((r) => r.id === equippedRod?.itemId);
-    const rodCategory = rodConfig?.rodCategory || 'float';
-
-    const rigOrder: Record<string, number> = {
-      float: 0,
-      spinning: 1,
-      feeder: 2,
-    };
-
-    const rawHooks = player.gearItems
-      .filter((g: IOwnedGearItem) => g.itemType === 'hook')
-      .map((inst: IOwnedGearItem) => ({
-        ...SHOP_HOOKS.find((h) => h.id === inst.itemId),
-        ...inst,
-        id: inst.itemId,
-      }))
-      .filter((h: IGearItemBase) => {
-        if (!h.rigType) return true;
-        if (rodCategory === 'spinning') return h.rigType === 'spinning';
-        return h.rigType !== 'spinning';
-      });
-
-    const grouped: (IGearItemBase & { count?: number })[] = [];
-    const counts: Record<string, number> = {};
-    const firstUids: Record<string, string> = {};
-
-    rawHooks.forEach((item: IGearItemBase & IOwnedGearItem) => {
-      const isEquipped = item.uid === player.equippedHookUid;
-      const currentCondition = item.condition ?? 100;
-      const isPerfect = item.condition === null || currentCondition >= 100;
-
-      // Group all items in perfect condition
-      if (isPerfect) {
-        counts[item.id] = (counts[item.id] || 0) + 1;
-        // If this part of group is equipped, prioritize its UID
-        if (isEquipped && item.uid) firstUids[item.id] = item.uid;
-        else if (!firstUids[item.id] && item.uid) firstUids[item.id] = item.uid;
-      } else {
-        grouped.push(item);
-      }
-    });
-
-    Object.keys(counts).forEach((itemId) => {
-      const base = SHOP_HOOKS.find((h) => h.id === itemId);
-      if (base) {
-        grouped.push({
-          ...base,
-          id: itemId,
-          uid: firstUids[itemId],
-          count: counts[itemId],
-        } as IGearItemBase);
-      }
-    });
-
-    return grouped.sort((aBrief: IGearItemBase, bBrief: IGearItemBase) => {
-      const orderA = aBrief.rigType ? rigOrder[aBrief.rigType] : 99;
-      const orderB = bBrief.rigType ? rigOrder[bBrief.rigType] : 99;
-      if (orderA !== orderB) return orderA - orderB;
-      return (aBrief.price ?? 0) - (bBrief.price ?? 0);
-    });
-  }, [player]);
-
-  const memoizedBaits = useMemo(() => {
-    if (!player) return [];
+    // We fetch the currently equipped rod to know its configuration (e.g., if it's a spinning rod).
+    // This dictates whether we should display floats, lures, or standard hooks.
     const equippedRod = player.gearItems.find(
       (g: IOwnedGearItem) => g.uid === player.equippedRodUid,
     );
     const rodConfig = SHOP_RODS.find((r) => r.id === equippedRod?.itemId);
     const isSpinningRod = rodConfig?.rodCategory === 'spinning';
+    const rodCategory = rodConfig?.rodCategory || 'float';
 
-    return Object.keys(BAITS)
-      .filter((id) => {
-        const count =
-          player.consumables.find(
-            (c: { itemId: string; itemType: string }) =>
-              c.itemId === id && c.itemType === 'bait',
-          )?.quantity ?? 0;
-        if (count <= 0) return false;
-        const isLure = id.startsWith('lure_');
-        return isSpinningRod ? isLure : !isLure;
-      })
-      .map((id) => ({
-        ...BAITS[id],
-        id,
-        count:
-          player.consumables.find(
-            (c: { itemId: string; itemType: string }) =>
-              c.itemId === id && c.itemType === 'bait',
-          )?.quantity ?? 0,
-      }));
-  }, [player]);
+    const categoryOrder: Record<string, number> = {
+      float: 0,
+      spinning: 1,
+      feeder: 2,
+    };
+    const rigOrder = categoryOrder;
 
-  const memoizedGroundbaits = useMemo(() => {
-    if (!player) return [];
-    return Object.keys(GROUNDBAITS)
-      .filter((id) => {
-        const count =
-          player.consumables.find(
-            (c: { itemId: string; itemType: string }) =>
-              c.itemId === id && c.itemType === 'groundbait',
-          )?.quantity ?? 0;
-        return count > 0 || id === 'none';
-      })
-      .map((id) => ({
-        ...GROUNDBAITS[id as keyof typeof GROUNDBAITS],
-        id,
-        count:
-          player.consumables.find(
-            (c: { itemId: string; itemType: string }) =>
-              c.itemId === id && c.itemType === 'groundbait',
-          )?.quantity ?? 0,
-      }));
-  }, [player]);
+    const rods: IGearItemBase[] = [];
+    const reels: IGearItemBase[] = [];
+    const repairable: IGearItemBase[] = [];
 
-  const isSpinningRod = useMemo(() => {
-    if (!player) return false;
-    const equippedRod = player.gearItems.find(
-      (g: IOwnedGearItem) => g.uid === player.equippedRodUid,
-    );
-    const rodConfig = SHOP_RODS.find((r) => r.id === equippedRod?.itemId);
-    return rodConfig?.rodCategory === 'spinning';
-  }, [player]);
+    // These arrays will store the final consolidated items
+    const linesGrouped: (IGearItemBase & { count?: number })[] = [];
+    const hooksGrouped: (IGearItemBase & { count?: number })[] = [];
 
-  const memoizedGadgets = useMemo(() => {
-    if (!player) return [];
-    const r = SHOP_GADGETS.find((i) => i.id === 'repair_kit');
+    // Helper object for counting and stacking identical "new" items.
+    // firstUids is needed to store the UID of the item that is currently equipped
+    // (so the UI can correctly mark it with a checkmark even when stacked).
+    const groupTracking = {
+      lines: {
+        counts: {} as Record<string, number>,
+        firstUids: {} as Record<string, string>,
+      },
+      hooks: {
+        counts: {} as Record<string, number>,
+        firstUids: {} as Record<string, string>,
+      },
+    };
 
-    const kits = player.gearItems
-      .filter((g: IOwnedGearItem) => g.itemId === 'repair_kit')
-      .map((kit: IOwnedGearItem) => ({
-        ...r,
-        uid: kit.uid,
-        id: kit.itemId,
-        condition: kit.condition,
-      }));
+    let repairKitCount = 0;
+    let repairKitUid = '';
+    const brokenRepairKits: IGearItemBase[] = [];
 
-    const grouped: (IGearItemBase & { count?: number })[] = [];
-    let perfectCount = 0;
-    let perfectUid = '';
+    // === SINGLE MASTER LOOP OVER ENTIRE INVENTORY ===
+    for (const inst of player.gearItems) {
+      if (inst.itemType === 'rod') {
+        const base = SHOP_RODS.find((r) => r.id === inst.itemId);
 
-    kits.forEach((kit: IGearItemBase & { uid?: string }) => {
-      const currentCondition = kit.condition ?? 100;
-      const isPerfect = kit.condition === null || currentCondition >= 100;
-      if (isPerfect) {
-        perfectCount++;
-        if (!perfectUid) perfectUid = kit.uid || '';
-      } else {
-        grouped.push(kit as IGearItemBase);
+        if (base) {
+          const item = { ...base, ...inst, id: inst.itemId } as IGearItemBase;
+
+          rods.push(item);
+
+          if (item.condition !== undefined && item.condition < 100)
+            repairable.push({ ...item, itemType: 'rod' as const });
+        }
+      } else if (inst.itemType === 'reel') {
+        const base = SHOP_REELS.find((r) => r.id === inst.itemId);
+
+        if (base) {
+          const item = { ...base, ...inst, id: inst.itemId } as IGearItemBase;
+
+          reels.push(item);
+
+          if (item.condition !== undefined && item.condition < 100)
+            repairable.push({ ...item, itemType: 'reel' as const });
+        }
+      } else if (inst.itemType === 'line') {
+        const base = SHOP_LINES.find((r) => r.id === inst.itemId);
+        if (base) {
+          const item = { ...base, ...inst, id: inst.itemId } as IGearItemBase &
+            IOwnedGearItem;
+          const isEquipped = item.uid === player.equippedLineUid;
+          const currentMeters = item.meters ?? 0;
+          const totalLength = item.totalLength ?? 300;
+
+          // If the fishing line is completely unused (equals the initial length),
+          // increment its counter for stacked display (x1, x2, x3, etc.).
+          // Otherwise, we store it as a separate distinct slot in the backpack.
+          if (item.meters === null || currentMeters >= totalLength) {
+            groupTracking.lines.counts[item.id] =
+              (groupTracking.lines.counts[item.id] || 0) + 1;
+
+            if (isEquipped && item.uid)
+              groupTracking.lines.firstUids[item.id] = item.uid;
+            else if (!groupTracking.lines.firstUids[item.id] && item.uid)
+              groupTracking.lines.firstUids[item.id] = item.uid;
+          } else {
+            linesGrouped.push(item);
+          }
+        }
+      } else if (inst.itemType === 'hook') {
+        const base = SHOP_HOOKS.find((h) => h.id === inst.itemId);
+
+        if (base) {
+          if (
+            !base.rigType ||
+            (rodCategory === 'spinning'
+              ? base.rigType === 'spinning'
+              : base.rigType !== 'spinning')
+          ) {
+            const item = {
+              ...base,
+              ...inst,
+              id: inst.itemId,
+            } as IGearItemBase & IOwnedGearItem;
+            const isEquipped = item.uid === player.equippedHookUid;
+            const currentCondition = item.condition ?? 100;
+
+            if (item.condition === null || currentCondition >= 100) {
+              groupTracking.hooks.counts[item.id] =
+                (groupTracking.hooks.counts[item.id] || 0) + 1;
+
+              if (isEquipped && item.uid)
+                groupTracking.hooks.firstUids[item.id] = item.uid;
+              else if (!groupTracking.hooks.firstUids[item.id] && item.uid)
+                groupTracking.hooks.firstUids[item.id] = item.uid;
+            } else {
+              hooksGrouped.push(item);
+            }
+          }
+        }
+      } else if (inst.itemId === 'repair_kit') {
+        const base = SHOP_GADGETS.find((i) => i.id === 'repair_kit');
+        if (base) {
+          const item = {
+            ...base,
+            uid: inst.uid,
+            id: inst.itemId,
+            condition: inst.condition,
+          } as IGearItemBase;
+
+          if (item.condition === null || (item.condition ?? 100) >= 100) {
+            repairKitCount++;
+            if (!repairKitUid && item.uid) repairKitUid = item.uid;
+          } else {
+            brokenRepairKits.push(item);
+          }
+        }
+      }
+    }
+
+    // === CONVERT DICTIONARY STACKS BACK TO ARRAYS ===
+
+    // Take the calculated groupTracking.lines dictionary and convert it into objects with a `count` property
+    Object.keys(groupTracking.lines.counts).forEach((itemId) => {
+      const base = SHOP_LINES.find((r) => r.id === itemId);
+      if (base) {
+        linesGrouped.push({
+          ...base,
+          id: itemId,
+          uid: groupTracking.lines.firstUids[itemId],
+          count: groupTracking.lines.counts[itemId],
+        } as IGearItemBase);
       }
     });
 
-    if (perfectCount > 0 && r) {
-      grouped.push({
-        ...r,
-        uid: perfectUid,
-        id: 'repair_kit',
-        count: perfectCount,
-        condition: 100,
-      } as IGearItemBase);
+    Object.keys(groupTracking.hooks.counts).forEach((itemId) => {
+      const base = SHOP_HOOKS.find((h) => h.id === itemId);
+      if (base) {
+        hooksGrouped.push({
+          ...base,
+          id: itemId,
+          uid: groupTracking.hooks.firstUids[itemId],
+          count: groupTracking.hooks.counts[itemId],
+        } as IGearItemBase);
+      }
+    });
+
+    // Merge damaged repair kits and the stack of perfect repair kits into the gadgets list
+    const gadgets = [...brokenRepairKits] as (IGearItemBase & {
+      count?: number;
+    })[];
+    if (repairKitCount > 0) {
+      const base = SHOP_GADGETS.find((i) => i.id === 'repair_kit');
+
+      if (base) {
+        gadgets.push({
+          ...base,
+          id: 'repair_kit',
+          uid: repairKitUid,
+          count: repairKitCount,
+          condition: 100,
+        } as IGearItemBase);
+      }
     }
 
-    return grouped;
-  }, [player]);
+    const sortPrice = (a: IGearItemBase, b: IGearItemBase) =>
+      (a.price ?? 0) - (b.price ?? 0);
 
-  const memoizedRepairable = useMemo(() => {
-    const rods = memoizedRods
-      .filter(
-        (r: IGearItemBase) => r.condition !== undefined && r.condition < 100,
-      )
-      .map((r: IGearItemBase) => ({ ...r, itemType: 'rod' as const }));
-    const reels = memoizedReels
-      .filter(
-        (r: IGearItemBase) => r.condition !== undefined && r.condition < 100,
-      )
-      .map((r: IGearItemBase) => ({ ...r, itemType: 'reel' as const }));
-    return [...rods, ...reels];
-  }, [memoizedRods, memoizedReels]);
+    rods.sort((a, b) => {
+      const orderA = a.rodCategory ? categoryOrder[a.rodCategory] : 99;
+      const orderB = b.rodCategory ? categoryOrder[b.rodCategory] : 99;
+      if (orderA !== orderB) return orderA - orderB;
+      return sortPrice(a, b);
+    });
+
+    reels.sort(sortPrice);
+    linesGrouped.sort(sortPrice);
+    hooksGrouped.sort((a, b) => {
+      const orderA = a.rigType ? rigOrder[a.rigType] : 99;
+      const orderB = b.rigType ? rigOrder[b.rigType] : 99;
+      if (orderA !== orderB) return orderA - orderB;
+      return sortPrice(a, b);
+    });
+
+    const baits = Object.keys(BAITS)
+      .filter((id) => {
+        const isLure = id.startsWith('lure_');
+        return (baitCounts[id] ?? 0) > 0 && (isSpinningRod ? isLure : !isLure);
+      })
+      .map((id) => ({ ...BAITS[id], id, count: baitCounts[id] ?? 0 }));
+
+    const groundbaits = Object.keys(GROUNDBAITS)
+      .filter((id) => (gbCounts[id] ?? 0) > 0 || id === 'none')
+      .map((id) => ({
+        ...GROUNDBAITS[id as keyof typeof GROUNDBAITS],
+        id,
+        count: gbCounts[id] ?? 0,
+      }));
+
+    return {
+      rods,
+      reels,
+      lines: linesGrouped,
+      hooks: hooksGrouped,
+      gadgets,
+      repairable,
+      baits,
+      groundbaits,
+      isSpinningRod,
+    };
+  }, [player, baitCounts, gbCounts]);
 
   return {
     t,
@@ -589,14 +583,14 @@ export function useGear() {
     confirmDelete,
     handleRepair,
     handleBack,
-    getRodInstances: () => memoizedRods,
-    getReelInstances: () => memoizedReels,
-    getLineInstances: () => memoizedLines,
-    getHookInstances: () => memoizedHooks,
-    getGadgetInstances: () => memoizedGadgets,
-    getOwnedBaits: () => memoizedBaits,
-    getOwnedGroundbaits: () => memoizedGroundbaits,
-    getRepairableItems: () => memoizedRepairable,
-    isSpinningRod,
+    getRodInstances: () => lists.rods,
+    getReelInstances: () => lists.reels,
+    getLineInstances: () => lists.lines,
+    getHookInstances: () => lists.hooks,
+    getGadgetInstances: () => lists.gadgets,
+    getOwnedBaits: () => lists.baits,
+    getOwnedGroundbaits: () => lists.groundbaits,
+    getRepairableItems: () => lists.repairable,
+    isSpinningRod: lists.isSpinningRod,
   };
 }

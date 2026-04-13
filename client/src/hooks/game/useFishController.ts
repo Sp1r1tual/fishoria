@@ -75,14 +75,13 @@ export function useFishController() {
           const desiredVx = (dx / dist) * targetSpeed;
           const desiredVy = (dy / dist) * targetSpeed;
 
-          // Steer towards desired velocity smoothly
           const steerFactor = isSmall ? 0.07 : 0.1;
           fish.vx += (desiredVx - fish.vx) * steerFactor * timeScale;
           fish.vy += (desiredVy - fish.vy) * steerFactor * timeScale;
         }
       } else {
         fish.opacity = Math.max(0, fish.opacity - 0.02 * timeScale);
-        // Exponential decay for friction, adjusted for framerate
+
         const friction = Math.pow(0.96, timeScale);
         fish.vx *= friction;
         fish.vy *= friction;
@@ -91,7 +90,6 @@ export function useFishController() {
       fish.x += fish.vx * timeScale;
       fish.y += fish.vy * timeScale;
 
-      // Soft bounding box bounce
       const r = isSmall ? 20 : 40;
       if (fish.x < r) {
         fish.x = r;
@@ -110,20 +108,15 @@ export function useFishController() {
         fish.vy = -Math.abs(fish.vy) * 0.8;
       }
 
-      // Smoothly rotate body towards the actual movement vector
       if (Math.abs(fish.vx) > 0.05 || Math.abs(fish.vy) > 0.05) {
         const targetAngle = Math.atan2(fish.vy, fish.vx);
-        let diff = targetAngle - fish.angle;
-        while (diff < -Math.PI) diff += Math.PI * 2;
-        while (diff > Math.PI) diff -= Math.PI * 2;
+        const diff =
+          ((targetAngle - fish.angle + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
 
         const turnSpeed = isSmall ? 0.14 : 0.2;
         fish.angle += diff * turnSpeed * timeScale;
 
-        // Keep angle in [-PI, PI] range to prevent "upside down" rendering bugs
-        // that occur when cumulative angle exceeds standard bounds.
-        while (fish.angle < -Math.PI) fish.angle += Math.PI * 2;
-        while (fish.angle > Math.PI) fish.angle -= Math.PI * 2;
+        fish.angle = ((fish.angle + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
       }
 
       return fish;

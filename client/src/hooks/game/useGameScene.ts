@@ -10,8 +10,8 @@ import type {
 } from '@/common/types';
 
 import { useGameAudio } from '@/hooks/audio/useGameAudio';
-import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 
+import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import { store } from '@/store/store';
 import {
   setPhase,
@@ -33,6 +33,7 @@ import {
 import { Game } from '@/game/engine/Game';
 import { LakeScene } from '@/game/engine/scenes/LakeScene';
 import { GameEvents } from '@/game/engine/GameEvents';
+import { TimeManager } from '@/game/managers/TimeManager';
 
 import {
   getLakeById,
@@ -41,8 +42,8 @@ import {
   SHOP_REELS,
   SHOP_LINES,
   SHOP_HOOKS,
+  GAME_CHANCES,
 } from '@/common/configs/game';
-import { TimeManager } from '@/game/managers/TimeManager';
 
 interface UseGameSceneOptions {
   currentLakeId: string | null;
@@ -388,8 +389,12 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
             const activeBait = player.activeBait;
             const isLure = activeBait?.startsWith('lure_');
 
-            // 5% chance for bait to fall off when extracting float/feeder rigs
-            if (activeBait && !isLure && Math.random() < 0.05) {
+            // Use centralized chance for bait to fall off when extracting float/feeder rigs
+            if (
+              activeBait &&
+              !isLure &&
+              Math.random() < GAME_CHANCES.baitFallOffOnReset
+            ) {
               breakMutationRef.current.mutate({
                 type: 'bait',
                 baitId: activeBait,
@@ -558,7 +563,7 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
       baitName,
       baitCount > 0,
     );
-  }, [player, player?.activeBait, player?.consumables, player?.gearItems]);
+  }, [player]);
 
   useEffect(() => {
     if (!player || !sceneRef.current) return;
@@ -594,14 +599,7 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
     sceneRef.current.setAvailableLineLength(
       lineInst?.meters ?? lineCfg?.totalLength ?? 0,
     );
-  }, [
-    player,
-    player?.equippedRodUid,
-    player?.equippedReelUid,
-    player?.equippedLineUid,
-    player?.equippedHookUid,
-    player?.gearItems,
-  ]);
+  }, [player]);
 
   return {
     containerRef,

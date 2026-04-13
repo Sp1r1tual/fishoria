@@ -1,22 +1,11 @@
 import { useEffect, type RefObject } from 'react';
 
-/**
- * Listens to window scroll and writes the scroll position as a CSS custom property
- * directly on the target element. Avoids React re-renders for high-performance
- * parallax / scroll-shrink effects.
- *
- * NOTE: Always uses window.scrollY regardless of the containerRef, because
- * `#root { overflow-x: hidden }` causes browsers to compute overflow-y: auto,
- * making findScroller incorrectly pick #root instead of window.
- */
 export const useScrollCssVar = (
   _containerRef: RefObject<HTMLElement | null>,
   targetRef: RefObject<HTMLElement | null>,
   cssVarName: string = '--scroll-y',
 ) => {
   useEffect(() => {
-    if (!targetRef.current) return;
-
     let ticking = false;
 
     const handleScroll = () => {
@@ -35,11 +24,13 @@ export const useScrollCssVar = (
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    // Establish the initial value immediately on mount
+    window.addEventListener('resize', handleScroll, { passive: true });
+
     handleScroll();
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
     };
   }, [targetRef, cssVarName]);
 };

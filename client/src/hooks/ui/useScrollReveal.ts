@@ -1,20 +1,33 @@
 import { useState, useEffect, useRef } from 'react';
 
-interface ScrollRevealOptions {
-  threshold?: number;
+interface IScrollRevealOptions {
+  threshold?: number | number[];
   rootMargin?: string;
+  triggerOnce?: boolean;
 }
 
-export const useScrollReveal = (options: ScrollRevealOptions = {}) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const elementRef = useRef<HTMLDivElement>(null);
+export const useScrollReveal = (options: IScrollRevealOptions = {}) => {
+  const [isVisible, setIsVisible] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    }
+    return false;
+  });
+
+  const elementRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    if (isVisible && options.triggerOnce !== false) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.unobserve(entry.target);
+          if (options.triggerOnce !== false) {
+            observer.unobserve(entry.target);
+          }
+        } else if (options.triggerOnce === false) {
+          setIsVisible(false);
         }
       },
       {
@@ -34,7 +47,7 @@ export const useScrollReveal = (options: ScrollRevealOptions = {}) => {
       }
       observer.disconnect();
     };
-  }, [options.threshold, options.rootMargin]);
+  }, [options.threshold, options.rootMargin, options.triggerOnce, isVisible]);
 
   return { elementRef, isVisible };
 };

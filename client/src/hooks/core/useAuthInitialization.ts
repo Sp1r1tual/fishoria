@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
+import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
 import { useAppDispatch, useAppSelector } from './useAppStore';
@@ -9,11 +10,10 @@ import {
   setLoading,
   setUser,
   logout,
-} from '../../store/slices/authSlice';
+} from '@/store/slices/authSlice';
+import { PLAYER_KEYS } from '@/queries/player.queries';
 
-import { useQueryClient } from '@tanstack/react-query';
-import { PLAYER_KEYS } from '../../queries/player.queries';
-import { PlayerService } from '../../services/player.service';
+import { PlayerService } from '@/services/player.service';
 
 export const useAuthInitialization = () => {
   const dispatch = useAppDispatch();

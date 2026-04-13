@@ -9,7 +9,7 @@ import type { IFishVisualState } from '@/common/types';
 
 import { drawFish } from '@/common/graphic/draw-fish';
 
-interface UseBottomInfoAnimationProps {
+interface IUseBottomInfoAnimationProps {
   isVisible: boolean;
   prepared: ReturnType<typeof prepareWithSegments> | null;
   fontsLoaded: boolean;
@@ -47,46 +47,118 @@ export const useBottomInfoAnimation = ({
   padY,
   fontSize,
   maxLines,
-}: UseBottomInfoAnimationProps) => {
+}: IUseBottomInfoAnimationProps) => {
   useEffect(() => {
     if (!isVisible || !prepared || !fontsLoaded) return;
 
     const canvas = canvasRef.current;
+    const wrap = wrapRef.current;
     const ctx = canvas?.getContext('2d', { alpha: true });
-    if (!canvas || !ctx) return;
+    if (!canvas || !ctx || !wrap) return;
+
+    const textColor =
+      getComputedStyle(wrap).getPropertyValue('--clr-text').trim() || '#fff';
+
+    const wrapW = containerWidth || wrap.clientWidth;
+    const H = wrap.clientHeight;
+    const dpr = window.devicePixelRatio || 1;
+
+    if (
+      canvas.width !== Math.floor(wrapW * dpr) ||
+      canvas.height !== Math.floor(H * dpr)
+    ) {
+      canvas.width = Math.floor(wrapW * dpr);
+      canvas.height = Math.floor(H * dpr);
+    }
+
+    ctx.font = fontStr;
+    const textWidth = wrapW - horizontalPad * 2;
+
+    type Glyph = {
+      char: string;
+      x: number;
+      y: number;
+      w: number;
+      cx: number;
+      nx: number;
+      ny: number;
+      nr: number;
+      ph: number;
+    };
+    const glyphs: Glyph[] = [];
+
+    let cursor: LayoutCursor = { segmentIndex: 0, graphemeIndex: 0 };
+    let y = padY + (lineH - fontSize) / 2;
+    let lineIdx = 0;
+    let textExhausted = false;
+
+    while (lineIdx < maxLines && !textExhausted) {
+      const line = layoutNextLine(prepared, cursor, textWidth);
+      if (line && line.text) {
+        const fullLineText = line.text;
+        const naturalWidth = line.width;
+
+        const nextLine = layoutNextLine(prepared, line.end, textWidth);
+        const isLastLine = !nextLine || !nextLine.text;
+
+        const textToDisplay = fullLineText.trim();
+        const numGaps = (textToDisplay.match(/\s+/g) || []).length;
+
+        let gapExtra = 0;
+        if (
+          !isLastLine &&
+          naturalWidth > 0 &&
+          naturalWidth < textWidth &&
+          numGaps > 0
+        ) {
+          gapExtra = (textWidth - naturalWidth) / numGaps;
+        }
+
+        let currentX = horizontalPad;
+        const spaceW = ctx.measureText(' ').width;
+        let inWhitespace = false;
+
+        for (const char of textToDisplay) {
+          if (/\s/.test(char)) {
+            if (!inWhitespace) {
+              currentX += spaceW + gapExtra;
+              inWhitespace = true;
+            }
+          } else {
+            inWhitespace = false;
+            const charW = ctx.measureText(char).width;
+            glyphs.push({
+              char,
+              x: currentX,
+              y,
+              w: charW,
+              cx: currentX + charW / 2,
+              nx: Math.sin(currentX * 0.5 + y * 0.2),
+              ny: Math.cos(currentX * 0.2 + y * 0.5),
+              nr:
+                Math.sin(currentX * 0.1) * 0.5 +
+                Math.sin(currentX * 0.1 + y * 0.1),
+              ph: currentX * 0.01,
+            });
+            currentX += charW;
+          }
+        }
+
+        cursor = line.end;
+        lineIdx++;
+      } else {
+        textExhausted = true;
+      }
+      y += lineH;
+    }
 
     let rafId = 0;
     let lastTime: number | null = null;
-    let textColor = '';
 
     const animate = (time: number) => {
       if (lastTime === null) lastTime = time;
       const dt = Math.min((time - lastTime) / 1000, 0.1);
       lastTime = time;
-
-      const wrap = wrapRef.current;
-      if (!wrap) {
-        rafId = requestAnimationFrame(animate);
-        return;
-      }
-
-      if (!textColor) {
-        textColor =
-          getComputedStyle(wrap).getPropertyValue('--clr-text').trim() ||
-          '#fff';
-      }
-
-      const wrapW = containerWidth || wrap.clientWidth;
-      const H = wrap.clientHeight;
-      const dpr = window.devicePixelRatio || 1;
-
-      if (
-        canvas.width !== Math.floor(wrapW * dpr) ||
-        canvas.height !== Math.floor(H * dpr)
-      ) {
-        canvas.width = Math.floor(wrapW * dpr);
-        canvas.height = Math.floor(H * dpr);
-      }
 
       ctx.save();
       ctx.scale(dpr, dpr);
@@ -98,7 +170,6 @@ export const useBottomInfoAnimation = ({
       drawFish(ctx, fish, fishSize);
 
       const fishOp = Math.min(1, fish.opacity * 3);
-      const textWidth = wrapW - horizontalPad * 2;
       const facingLeft = Math.abs(fish.angle) > Math.PI / 2;
 
       const A = fishSize * 1.35;
@@ -122,102 +193,56 @@ export const useBottomInfoAnimation = ({
       ctx.fillStyle = textColor;
       ctx.textBaseline = 'top';
 
-      let cursor: LayoutCursor = { segmentIndex: 0, graphemeIndex: 0 };
-      let y = padY + (lineH - fontSize) / 2;
-      let lineIdx = 0;
-      let textExhausted = false;
+      const effectRadius = maskRX * 1.8;
+      const effectRadiusSq = effectRadius * effectRadius;
+      const fishActive = fish.opacity > 0.01;
+      const baseBreathingPhase = fish.t * 2;
+      const fOp50 = 50 * fishOp;
 
-      while (lineIdx < maxLines && !textExhausted) {
-        const line = layoutNextLine(prepared, cursor, textWidth);
-        if (line && line.text) {
-          const fullLineText = line.text;
-          const naturalWidth = line.width;
+      for (const glyph of glyphs) {
+        let displayX = glyph.x;
+        let displayY = glyph.y;
+        let displayRotate = 0;
+        let displayAlpha = 1;
 
-          const nextLine = layoutNextLine(prepared, line.end, textWidth);
-          const isLastLine = !nextLine || !nextLine.text;
+        if (fishActive) {
+          const dx = glyph.cx - centerX;
+          const dy = glyph.y - centerY;
+          const distSq = dx * dx + dy * dy;
 
-          let gapExtra = 0;
-          if (!isLastLine && naturalWidth > 0 && naturalWidth < textWidth) {
-            const words = fullLineText.trim().split(/\s+/).filter(Boolean);
-            const numGaps = Math.max(0, words.length - 1);
-            if (numGaps > 0) {
-              const extraSpace = textWidth - naturalWidth;
-              gapExtra = extraSpace / numGaps;
-            }
+          if (distSq < effectRadiusSq) {
+            const dist = Math.sqrt(distSq);
+            const ratio = 1 - dist / effectRadius;
+            const power = ratio * ratio;
+
+            const repulsion = power * fOp50;
+
+            displayX += (dx / dist) * repulsion;
+            displayY += (dy / dist) * repulsion;
+
+            displayRotate = glyph.nr * power * 1.5 * fishOp;
+            displayAlpha = Math.max(0, 1 - power * 0.95 * fishOp);
+
+            const shift =
+              power *
+              (20 * fishOp + Math.sin(baseBreathingPhase + glyph.ph) * 2);
+            displayX += glyph.nx * shift;
+            displayY += glyph.ny * shift;
           }
-
-          let currentX = horizontalPad;
-          const words = fullLineText.trim().split(/\s+/).filter(Boolean);
-
-          for (let wordIdx = 0; wordIdx < words.length; wordIdx++) {
-            const word = words[wordIdx];
-            const wordChars = Array.from(word);
-
-            for (const char of wordChars) {
-              const charW = ctx.measureText(char).width;
-
-              let displayX = currentX;
-              let displayY = y;
-              let displayRotate = 0;
-              let displayAlpha = 1;
-
-              if (fish.opacity > 0.01) {
-                const dx = currentX + charW / 2 - centerX;
-                const dy = y - centerY;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                const effectRadius = maskRX * 1.8;
-
-                if (dist < effectRadius) {
-                  const power = Math.pow(1 - dist / effectRadius, 2);
-                  const repulsion = power * 50 * fishOp;
-
-                  displayX += (dx / dist) * repulsion;
-                  displayY += (dy / dist) * repulsion;
-
-                  const noiseX = Math.sin(currentX * 0.5 + y * 0.2);
-                  const noiseY = Math.cos(currentX * 0.2 + y * 0.5);
-                  const noiseRot = Math.sin(currentX * 0.1 + y * 0.1);
-
-                  displayRotate =
-                    (Math.sin(currentX * 0.1) * 0.5 + noiseRot) *
-                    power *
-                    1.5 *
-                    fishOp;
-                  displayAlpha = Math.max(0, 1 - power * 0.95 * fishOp);
-
-                  displayX += noiseX * power * 20 * fishOp;
-                  displayY += noiseY * power * 20 * fishOp;
-
-                  const breathing = Math.sin(fish.t * 2 + currentX * 0.01) * 2;
-                  displayX += noiseX * breathing * power;
-                  displayY += noiseY * breathing * power;
-                }
-              }
-
-              if (displayAlpha > 0.01) {
-                ctx.save();
-                ctx.translate(displayX + charW / 2, displayY);
-                ctx.rotate(displayRotate);
-                ctx.globalAlpha = displayAlpha;
-                ctx.fillText(char, -charW / 2, 0);
-                ctx.restore();
-              }
-
-              currentX += charW;
-            }
-
-            if (wordIdx < words.length - 1) {
-              const spaceW = ctx.measureText(' ').width;
-              currentX += spaceW + gapExtra;
-            }
-          }
-
-          cursor = line.end;
-          lineIdx++;
-        } else {
-          textExhausted = true;
         }
-        y += lineH;
+
+        if (displayAlpha > 0.01) {
+          if (displayRotate === 0 && displayAlpha === 1) {
+            ctx.fillText(glyph.char, displayX, displayY);
+          } else {
+            ctx.save();
+            ctx.translate(displayX + glyph.w / 2, displayY);
+            if (displayRotate !== 0) ctx.rotate(displayRotate);
+            if (displayAlpha !== 1) ctx.globalAlpha = displayAlpha;
+            ctx.fillText(glyph.char, -glyph.w / 2, 0);
+            ctx.restore();
+          }
+        }
       }
 
       ctx.restore();

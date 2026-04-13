@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
 
+import { useClickSound } from './useSoundEffect';
+
 import { useAppSelector } from '@/hooks/core/useAppStore';
+
 import {
   getSharedAudioContext,
   resumeSharedAudioContext,
   isIOS,
 } from '@/common/media/audio-context';
-import { useClickSound } from './useClickSound';
 
 // ---------------------------------------------------------------------------
 // Music playlist — tracks rotate after each one finishes
@@ -49,8 +51,8 @@ function ensureAllTracksConnected() {
         const source = ctx.createMediaElementSource(track);
         source.connect(musicGainNode);
         connectedTracks.add(track);
-      } catch (e) {
-        console.warn('Failed to connect music track:', e);
+      } catch (error) {
+        console.warn('Failed to connect music track:', error);
       }
     }
   }

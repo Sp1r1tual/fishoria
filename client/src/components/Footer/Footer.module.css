@@ -1,7 +1,7 @@
 .footer {
   width: 100%;
   padding: 12px 16px;
-  padding-bottom: calc(px + env(safe-area-inset-bottom));
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
   margin-top: auto;
 
   background: linear-gradient(

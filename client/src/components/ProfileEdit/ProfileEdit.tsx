@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useClickSound } from '@/hooks/audio/useClickSound';
+import { useClickSound } from '@/hooks/audio/useSoundEffect';
 
 import profile01 from '@/assets/ui/profile.webp';
 import profile02 from '@/assets/ui/profile_02.webp';

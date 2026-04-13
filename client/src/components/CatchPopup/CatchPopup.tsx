@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { useClickSound } from '../../hooks/audio/useClickSound';
+import { useClickSound } from '../../hooks/audio/useSoundEffect';
 import { useAppDispatch } from '../../hooks/core/useAppStore';
 
 import type { IFishCatch, CatchResultType } from '../../common/types';

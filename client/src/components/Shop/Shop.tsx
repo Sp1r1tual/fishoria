@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import type { IGadgetConfig } from '@/common/types';
 
 import { useShop } from '@/hooks/game/useShop';
-import { useClickSound } from '@/hooks/audio/useClickSound';
+import { useClickSound } from '@/hooks/audio/useSoundEffect';
 
 import { ConfirmChoiceModal } from '../UI/modals/ConfirmChoiceModal/ConfirmChoiceModal';
 import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';

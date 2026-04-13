@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
-import { useClickSound } from '@/hooks/audio/useClickSound';
+import { useClickSound } from '@/hooks/audio/useSoundEffect';
 import { useGameAudio } from '@/hooks/audio/useGameAudio';
 import { useAppDispatch } from '@/hooks/core/useAppStore';
 
