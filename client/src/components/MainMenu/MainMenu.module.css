@@ -22,16 +22,6 @@
   z-index: 0;
 }
 
-@media (max-width: 1024px) {
-  .main-menu__bg,
-  .main-menu__bg-overlay {
-    top: -100px;
-    bottom: -100px;
-    left: -20px;
-    right: -20px;
-  }
-}
-
 .main-menu__news-btn {
   position: absolute;
   top: 20px;
