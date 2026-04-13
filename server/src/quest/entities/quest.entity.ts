@@ -132,16 +132,22 @@ export class QuestEntity {
 
       for (const cond of conditions) {
         if (cond.type === 'CATCH_METHOD' && cond.value === catchData.method) {
-          currentProgress[cond.id] = (currentProgress[cond.id] || 0) + 1;
-          updated = true;
+          const prev = currentProgress[cond.id] || 0;
+          if (prev < cond.target) {
+            currentProgress[cond.id] = prev + 1;
+            updated = true;
+          }
         }
 
         if (
           cond.type === 'CATCH_SPECIES' &&
           cond.value === catchData.speciesId
         ) {
-          currentProgress[cond.id] = (currentProgress[cond.id] || 0) + 1;
-          updated = true;
+          const prev = currentProgress[cond.id] || 0;
+          if (prev < cond.target) {
+            currentProgress[cond.id] = prev + 1;
+            updated = true;
+          }
         }
 
         if (
@@ -149,8 +155,11 @@ export class QuestEntity {
           cond.value === catchData.speciesId &&
           cond.lakeId === catchData.lakeId
         ) {
-          currentProgress[cond.id] = (currentProgress[cond.id] || 0) + 1;
-          updated = true;
+          const prev = currentProgress[cond.id] || 0;
+          if (prev < cond.target) {
+            currentProgress[cond.id] = prev + 1;
+            updated = true;
+          }
         }
       }
 
