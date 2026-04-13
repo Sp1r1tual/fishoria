@@ -20,7 +20,7 @@ export const useLogout = () => {
       localStorage.removeItem('hasSession');
       localStorage.removeItem('authExpiry');
 
-      localStorage.removeItem('wfg_settings');
+      localStorage.removeItem('fishoria_settings');
       localStorage.removeItem('fishing_session_data');
 
       queryClient.clear();

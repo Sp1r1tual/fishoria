@@ -20,7 +20,9 @@ export function DangerZoneSection() {
   const confirmReset = useCallback(async () => {
     try {
       await resetProfile();
-      localStorage.removeItem('wfg_settings');
+      localStorage.removeItem('fishoria_settings');
+      localStorage.removeItem('fishing_session_data');
+      localStorage.removeItem('fishoria_read_news_ids');
       window.location.reload();
     } catch (error) {
       console.error('Reset failed:', error);
