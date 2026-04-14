@@ -15,7 +15,7 @@ import { navigateTo, addToast } from '@/store/slices/uiSlice';
 import { usePlayerQuery } from '@/queries/player.queries';
 import { useSellMutation } from '@/queries/shop.queries';
 
-import { FISH_SPECIES } from '@/common/configs/game';
+import { FISH_SPECIES, ECONOMY } from '@/common/configs/game';
 
 import coinIcon from '@/assets/ui/coin.webp';
 import keepnetIcon from '@/assets/ui/keepnet.webp';
@@ -44,7 +44,7 @@ export function Inventory({ isModal = false }: { isModal?: boolean }) {
   const totalValue = inventory.reduce((s: number, f: IFishCatchMetadata) => {
     const species = FISH_SPECIES[f.speciesId as keyof typeof FISH_SPECIES];
     const multiplier = species?.priceMultiplier || 1.0;
-    return s + Math.ceil(f.weight * 15 * multiplier);
+    return s + Math.ceil(f.weight * ECONOMY.baseFishPricePerKg * multiplier);
   }, 0);
 
   const handleBack = () => {
@@ -213,7 +213,9 @@ export function Inventory({ isModal = false }: { isModal?: boolean }) {
                               f.speciesId as keyof typeof FISH_SPECIES
                             ];
                           const multiplier = species?.priceMultiplier || 1.0;
-                          return Math.ceil(f.weight * 15 * multiplier);
+                          return Math.ceil(
+                            f.weight * ECONOMY.baseFishPricePerKg * multiplier,
+                          );
                         })()}
                       </td>
                     </tr>
