@@ -35,7 +35,7 @@ export interface ILakeSceneCallbacks {
   onEchoSounderToggle?: (visible: boolean) => void;
   onGearDamaged?: (rodDamage: number, reelDamage: number) => void;
   onCastError?: (msgId: string) => void;
-  onResetCast?: (phase: GamePhaseType) => void;
+  onResetCast?: (phase: GamePhaseType) => void | boolean;
 }
 
 export interface IScene {

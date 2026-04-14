@@ -388,9 +388,12 @@ export class LakeScene implements IScene {
     }
 
     if (this.phase !== 'idle') {
-      this.callbacks.onResetCast?.(this.phase);
+      const shouldAbort = this.callbacks.onResetCast?.(this.phase);
+      const isSnagged = this.resetCast(true);
+      if (shouldAbort || isSnagged) return;
+    } else {
+      this.resetCast(true);
     }
-    this.resetCast(true);
 
     const W = this.app.renderer.width;
     const H = this.app.renderer.height;
@@ -625,14 +628,13 @@ export class LakeScene implements IScene {
     }
   }
 
-  resetCast(suppressPhaseEvent = false): void {
+  resetCast(suppressPhaseEvent = false): boolean {
     if (!suppressPhaseEvent) {
       this.callbacks.onResetCast?.(this.phase);
     }
     this.clearResetTimer();
 
     if (
-      !suppressPhaseEvent &&
       (this.phase === 'waiting' || this.phase === 'bite') &&
       this.isBaitOnBottom()
     ) {
@@ -640,7 +642,7 @@ export class LakeScene implements IScene {
         this.phase = 'snagged';
         this.callbacks.onPhaseChange(this.phase);
         this.callbacks.onSnagStart?.();
-        return;
+        return true;
       }
     }
 
@@ -679,6 +681,7 @@ export class LakeScene implements IScene {
       this.accumRodWear = 0;
       this.accumReelWear = 0;
     }
+    return false;
   }
 
   isBaitOnBottom(): boolean {

@@ -409,7 +409,9 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
               dispatch(
                 addToast({ type: 'info', message: t('game.bait_fell_off') }),
               );
+              return true;
             }
+            return false;
           },
           onGroundbaitExpired: () => {
             dispatch(
