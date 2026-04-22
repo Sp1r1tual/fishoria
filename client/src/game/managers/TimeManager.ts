@@ -35,13 +35,6 @@ export const TimeManager = {
     return new Date(virtualStartTime + elapsedVirtual);
   },
 
-  resetGameTime() {
-    realStartTime = Date.now();
-    const date = new Date();
-    date.setHours(TIME_SYSTEM.gameStartHour, 0, 0, 0);
-    virtualStartTime = date.getTime();
-  },
-
   setGameTime(hour: number) {
     realStartTime = Date.now();
     const date = new Date();

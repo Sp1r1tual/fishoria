@@ -2,21 +2,11 @@ import type { IDepthMapConfig } from '@/common/types';
 
 export class DepthSystem {
   private config: IDepthMapConfig;
-  private canvasHeight: number;
 
   private depthCache = new Map<string, number>();
 
-  constructor(config: IDepthMapConfig, canvasHeight: number) {
+  constructor(config: IDepthMapConfig) {
     this.config = config;
-    this.canvasHeight = canvasHeight;
-  }
-
-  pixelYToDepth(pixelY: number): number {
-    const normY = Math.max(0, Math.min(1, pixelY / this.canvasHeight));
-    return (
-      this.config.minDepth +
-      normY * (this.config.maxDepth - this.config.minDepth)
-    );
   }
 
   getDepthAt(normX: number, normY: number): number {
@@ -73,12 +63,5 @@ export class DepthSystem {
     return (
       this.config.minDepth + t * (this.config.maxDepth - this.config.minDepth)
     );
-  }
-
-  depthToPixelY(depthM: number): number {
-    const t =
-      (depthM - this.config.minDepth) /
-      Math.max(1, this.config.maxDepth - this.config.minDepth);
-    return Math.max(0, Math.min(1, t)) * this.canvasHeight;
   }
 }

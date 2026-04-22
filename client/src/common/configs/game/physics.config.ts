@@ -4,21 +4,6 @@
  * ═══════════════════════════════════════════════════════════════════════════════
  */
 
-export const ATTRACTION = {
-  /** Groundbait attraction range base (pixels, pre-scale, divided by distance) */
-  baseAttractionRange: 80,
-
-  /** Jitter threshold: interestLevel above which tugging jitter kicks in */
-  jitterInterestThreshold: 0.7,
-  /** Max distance for jitter to apply */
-  jitterMaxDist: 40,
-  /** Jitter amplitude multiplier */
-  jitterAmplitude: 15.0,
-
-  /** Obstacle avoidance extra margin (pixels) */
-  obstacleAvoidanceExtraMargin: 36,
-} as const;
-
 export const REELING_PHYSICS = {
   /** Weight penalty: Math.pow(maxWeight, 0.6) * weightPenaltyFactor */
   weightPenaltyFactor: 0.95,
@@ -42,15 +27,8 @@ export const TENSION = {
   /** Tension drop rate when player is relaxing */
   relaxRate: 2.2,
 
-  /** Idle rod: tension build rate from fighting fish */
-  idleFightingRate: 0.3,
   /** Idle rod: tension drop rate from tired fish */
   idleTiredDropRate: 0.5,
-
-  /** Gear overload probability (line stronger than rod → rod breaks) */
-  gearOverloadChance: 0.15,
-  /** Gear overload ratio threshold: lineStrength > gearLimit * this */
-  gearOverloadRatio: 1.3,
 
   /** Escape progress: accumulation rate per second (inactive) — target ~8s to escape */
   escapeAccumulationRate: 15.0,

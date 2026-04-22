@@ -20,6 +20,7 @@ export interface IFishSpeciesConfig {
   description: string;
   weightRange: { min: number; max: number };
   activityByTimeOfDay: IActivityByTimeOfDay;
+  activityByWeather: Record<WeatherType, number>;
   preferredBaits: BaitTypeType[];
   preferredGroundbait: GroundbaitTypeType;
   baseCatchChance: number;

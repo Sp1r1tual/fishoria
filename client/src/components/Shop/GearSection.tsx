@@ -85,32 +85,39 @@ export function GearSection({
                 </div>
               </div>
 
-              <div className={styles['shop-item__desc']}>
-                {t(`gear_items.${item.id}.description`)}
-              </div>
+              {t(`gear_items.${item.id}.description`) !==
+                `gear_items.${item.id}.description` && (
+                <div className={styles['shop-item__desc']}>
+                  {t(`gear_items.${item.id}.description`)}
+                </div>
+              )}
 
-              <div className={styles['shop-item__stats']}>
-                {displayItem.maxWeight !== undefined && (
-                  <div className={styles['shop-item__stat']}>
-                    {t('gear.stats.maxWeight')}:{' '}
-                    <span>
-                      {displayItem.maxWeight}
-                      {t('gear.stats.kg')}
-                    </span>
-                  </div>
-                )}
-                {displayItem.speed !== undefined && (
-                  <div className={styles['shop-item__stat']}>
-                    {t('gear.stats.speed')}: <span>{displayItem.speed}x</span>
-                  </div>
-                )}
-                {displayItem.quality !== undefined && (
-                  <div className={styles['shop-item__stat']}>
-                    {t('gear.stats.quality')}:{' '}
-                    <span>{Math.round(displayItem.quality * 100)}%</span>
-                  </div>
-                )}
-              </div>
+              {(displayItem.maxWeight !== undefined ||
+                displayItem.speed !== undefined ||
+                displayItem.quality !== undefined) && (
+                <div className={styles['shop-item__stats']}>
+                  {displayItem.maxWeight !== undefined && (
+                    <div className={styles['shop-item__stat']}>
+                      {t('gear.stats.maxWeight')}:{' '}
+                      <span>
+                        {displayItem.maxWeight}
+                        {t('gear.stats.kg')}
+                      </span>
+                    </div>
+                  )}
+                  {displayItem.speed !== undefined && (
+                    <div className={styles['shop-item__stat']}>
+                      {t('gear.stats.speed')}: <span>{displayItem.speed}x</span>
+                    </div>
+                  )}
+                  {displayItem.quality !== undefined && (
+                    <div className={styles['shop-item__stat']}>
+                      {t('gear.stats.quality')}:{' '}
+                      <span>{Math.round(displayItem.quality * 100)}%</span>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className={styles['shop-item__footer']}>
                 <div className={styles['shop-item__owned']}>

@@ -15,6 +15,7 @@
   box-shadow:
     0 4px 16px rgba(0, 0, 0, 0.3),
     inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  position: relative;
 }
 
 .levelNumber {
@@ -31,6 +32,13 @@
   flex-shrink: 0;
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.barWrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .bar {
@@ -95,6 +103,95 @@
 
   .bar {
     height: 10px;
+  }
+}
+
+.xpText {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  z-index: 10;
+  letter-spacing: 0.2px;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.xpText.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.xpFloater {
+  position: absolute;
+  left: var(--xp-pct);
+  top: 0px;
+  color: #10b981;
+  font-weight: 900;
+  font-size: 1.1rem;
+  text-shadow:
+    0 0 10px rgba(16, 185, 129, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+  animation: floatUp 1.8s ease-out forwards;
+  z-index: 100;
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateX(5px) translateY(5px) scale(0.4);
+    opacity: 0;
+  }
+  20% {
+    transform: translateX(5px) translateY(-3px) scale(1.2);
+    opacity: 1;
+  }
+  40% {
+    transform: translateX(5px) translateY(-5px) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(5px) translateY(-15px) scale(0.9);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 850px), (max-height: 450px) {
+  .container {
+    gap: 6px;
+    min-width: 120px;
+    padding: 2px 6px 2px 2px;
+    border-radius: 14px;
+  }
+
+  .levelNumber {
+    width: 28px;
+    height: 16px;
+    font-size: 0.7rem;
+    border-radius: 8px;
+  }
+
+  .bar {
+    height: 11px;
+    border-radius: 6px;
+  }
+
+  .fill {
+    border-radius: 6px;
+  }
+
+  .xpText {
+    font-size: 0.5rem;
+    font-weight: 700;
+  }
+
+  .xpFloater {
+    font-size: 0.5rem;
   }
 }
 

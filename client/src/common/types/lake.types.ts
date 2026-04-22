@@ -12,26 +12,12 @@ export interface IDepthMapConfig {
 
 export interface ISpeciesSpawnRate {
   speciesId: string;
-  weight: number; // relative probability of this species spawning
-  preferredDepthRange: { min: number; max: number }; // preferred depth range in meters
-  weightRange?: { min: number; max: number }; // override default species weight range
-}
-
-export interface ISpawnZone {
-  id: string;
-  type: 'circle' | 'polygon';
-  center?: IVec2;
-  radius?: number;
-  points?: IVec2[];
-  species: ISpeciesSpawnRate[];
-  spawnWeight: number;
+  preferredDepthRange: { min: number; max: number };
+  baseCatchChance?: number;
 }
 
 export interface IFishSpawnsConfig {
-  zones?: ISpawnZone[];
   species?: ISpeciesSpawnRate[];
-  spawnRatePerSecond: number;
-  maxFishCount: number;
 }
 
 export interface IAllowedCastArea {
@@ -50,15 +36,11 @@ export interface IObstacle {
 }
 
 export interface ITimeOfDayLakeConfig {
-  ambientLight: number;
-  fishActivityMultiplier: number;
   waterColor: number;
-  skyColor: number;
   bgImageUrl: string;
 }
 
 export interface IEnvironmentConfig {
-  visibility: number;
   waterBoundaryY: number;
 }
 

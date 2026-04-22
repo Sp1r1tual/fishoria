@@ -29,33 +29,31 @@ export const LAKES: ILakeConfig[] = [
       ],
     },
     fishSpawns: {
-      spawnRatePerSecond: 0.4,
-      maxFishCount: 80,
       species: [
         {
           speciesId: 'crucian',
-          weight: 35, // ~25% (was 35%)
           preferredDepthRange: { min: 1, max: 2.3 },
+          baseCatchChance: 0.08,
         },
         {
           speciesId: 'roach',
-          weight: 15, // ~15% (was 20%)
           preferredDepthRange: { min: 0.3, max: 1.45 },
+          baseCatchChance: 0.04,
         },
         {
           speciesId: 'perch',
-          weight: 15,
           preferredDepthRange: { min: 0.2, max: 2.2 },
+          baseCatchChance: 0.05,
         },
         {
           speciesId: 'pike',
-          weight: 30, // ~40% (was 22%)
           preferredDepthRange: { min: 0.2, max: 2.5 },
+          baseCatchChance: 0.03,
         },
         {
           speciesId: 'ruffe',
-          weight: 5, // ~5% (was 8%)
           preferredDepthRange: { min: 0.75, max: 2.7 },
+          baseCatchChance: 0.06,
         },
       ],
     },
@@ -71,36 +69,27 @@ export const LAKES: ILakeConfig[] = [
     obstacles: [],
     timeOfDayConfig: {
       morning: {
-        ambientLight: 0.75,
-        fishActivityMultiplier: 0.9,
         waterColor: 0x1e5c42,
-        skyColor: 0xffa07a,
+
         bgImageUrl: forestDayImg,
       },
       day: {
-        ambientLight: 1.0,
-        fishActivityMultiplier: 0.6,
         waterColor: 0x1e6b8a,
-        skyColor: 0x87ceeb,
+
         bgImageUrl: forestDayImg,
       },
       evening: {
-        ambientLight: 0.6,
-        fishActivityMultiplier: 0.85,
         waterColor: 0x1a3a4a,
-        skyColor: 0xff6347,
+
         bgImageUrl: forestDayImg,
       },
       night: {
-        ambientLight: 0.25,
-        fishActivityMultiplier: 0.7,
         waterColor: 0x0a1a12,
-        skyColor: 0x070720,
+
         bgImageUrl: forestNightImg,
       },
     },
     environment: {
-      visibility: 0.65,
       waterBoundaryY: 0.55,
     },
     trashChance: 0.08,
@@ -127,43 +116,41 @@ export const LAKES: ILakeConfig[] = [
       ],
     },
     fishSpawns: {
-      spawnRatePerSecond: 0.45,
-      maxFishCount: 100,
       species: [
         {
           speciesId: 'carp',
-          weight: 30,
           preferredDepthRange: { min: 2.2, max: 4.0 },
+          baseCatchChance: 0.06,
         },
         {
           speciesId: 'grass_carp',
-          weight: 18,
           preferredDepthRange: { min: 1.0, max: 2.5 },
+          baseCatchChance: 0.04,
         },
         {
           speciesId: 'crucian',
-          weight: 12,
           preferredDepthRange: { min: 0.5, max: 1.5 },
+          baseCatchChance: 0.12,
         },
         {
           speciesId: 'zander',
-          weight: 11,
           preferredDepthRange: { min: 2, max: 4.0 },
+          baseCatchChance: 0.04,
         },
         {
           speciesId: 'catfish',
-          weight: 7,
           preferredDepthRange: { min: 3, max: 4.0 },
+          baseCatchChance: 0.02,
         },
         {
           speciesId: 'roach',
-          weight: 10,
           preferredDepthRange: { min: 0.5, max: 2 },
+          baseCatchChance: 0.08,
         },
         {
           speciesId: 'perch',
-          weight: 12,
           preferredDepthRange: { min: 1, max: 3 },
+          baseCatchChance: 0.1,
         },
       ],
     },
@@ -182,36 +169,27 @@ export const LAKES: ILakeConfig[] = [
     obstacles: [],
     timeOfDayConfig: {
       morning: {
-        ambientLight: 0.8,
-        fishActivityMultiplier: 0.85,
         waterColor: 0x1a5a7a,
-        skyColor: 0xffc87c,
+
         bgImageUrl: farmDayImg,
       },
       day: {
-        ambientLight: 1.0,
-        fishActivityMultiplier: 0.7,
         waterColor: 0x1e7fb0,
-        skyColor: 0x6db5e8,
+
         bgImageUrl: farmDayImg,
       },
       evening: {
-        ambientLight: 0.65,
-        fishActivityMultiplier: 0.9,
         waterColor: 0x124560,
-        skyColor: 0xff8c65,
+
         bgImageUrl: farmDayImg,
       },
       night: {
-        ambientLight: 0.3,
-        fishActivityMultiplier: 0.5,
         waterColor: 0x071828,
-        skyColor: 0x050520,
+
         bgImageUrl: farmNightImg,
       },
     },
     environment: {
-      visibility: 0.9,
       waterBoundaryY: 0.46,
     },
     trashChance: 0.02,

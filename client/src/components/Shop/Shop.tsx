@@ -130,9 +130,12 @@ export function Shop() {
                           </div>
                         </div>
 
-                        <div className={styles['shop-item__desc']}>
-                          {t(`baits.${bait.id}.description`)}
-                        </div>
+                        {t(`baits.${bait.id}.description`) !==
+                          `baits.${bait.id}.description` && (
+                          <div className={styles['shop-item__desc']}>
+                            {t(`baits.${bait.id}.description`)}
+                          </div>
+                        )}
                         <div className={styles['shop-item__owned']}>
                           {t('shop.available')}:{' '}
                           <span>{baitCounts[id] ?? 0}</span>
@@ -213,9 +216,12 @@ export function Shop() {
                           </div>
                         </div>
 
-                        <div className={styles['shop-item__desc']}>
-                          {t(`groundbaits.${gb.id}.description`)}
-                        </div>
+                        {t(`groundbaits.${gb.id}.description`) !==
+                          `groundbaits.${gb.id}.description` && (
+                          <div className={styles['shop-item__desc']}>
+                            {t(`groundbaits.${gb.id}.description`)}
+                          </div>
+                        )}
                         <div className={styles['shop-item__owned']}>
                           {t('shop.available')}:{' '}
                           <span>{groundbaitCounts[id] ?? 0}</span>

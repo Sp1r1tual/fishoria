@@ -18,6 +18,7 @@ interface IHookRenderState {
   debugActive?: boolean;
   escapeProgress?: number;
   isSmall?: boolean;
+  biteTimer?: number;
 }
 
 export class HookEntity {
@@ -82,6 +83,7 @@ export class HookEntity {
       debugActive = false,
       escapeProgress = 0,
       isSmall = false,
+      biteTimer = 0,
     } = state;
 
     this.x = x;
@@ -102,6 +104,7 @@ export class HookEntity {
       maxInterest,
       hookDepthM,
       groundDepthM,
+      biteTimer,
     );
 
     if (debugActive && isCast) {
@@ -140,6 +143,7 @@ export class HookEntity {
     maxInterest: number,
     hookDepthM: number,
     groundDepthM: number,
+    biteTimer: number,
   ): void {
     this.gfx.clear();
 
@@ -160,8 +164,8 @@ export class HookEntity {
       let tilt = isLayingOnSide
         ? Math.PI / 2.1
         : bobCycle * 0.15 +
-          (maxInterest > 0.3 && !isLayingOnSide
-            ? (Math.random() - 0.5) * 0.1
+          (maxInterest > 0.05 && !isLayingOnSide
+            ? Math.sin(time * 0.1) * 0.05 * maxInterest
             : 0);
 
       let sinkY = 0;
@@ -170,24 +174,25 @@ export class HookEntity {
       if (this.rigType === 'feeder') {
         sinkY = 0;
       } else if (phase === 'waiting') {
-        if (maxInterest > 0.15) {
-          const pulse = Math.sin(time * 0.05) * maxInterest;
-          const dipThreshold = 0.09;
+        if (maxInterest > 0.05) {
+          const pulse = maxInterest;
+          const dipThreshold = 0.07;
 
           if (isLayingOnSide) {
-            tilt -= pulse * 0.3;
+            tilt -= pulse * 0.1;
             sinkY = pulse * 2 * this.scale;
           } else {
-            sinkY = Math.max(0, pulse * 14 * this.scale);
+            sinkY = Math.max(0, pulse * 25 * this.scale);
             if (pulse > dipThreshold) bulbAlphaOverride = 0;
           }
         } else if (!isLayingOnSide) {
           sinkY = bobCycle * 3 * this.scale;
         }
       } else if (phase === 'bite') {
-        sinkY = 5 * this.scale;
-        tilt = 0;
-        bulbAlphaOverride = 0;
+        const sinkProgress = Math.min(1, biteTimer / 0.3);
+        sinkY = (sinkProgress * 25 + Math.sin(time * 0.08) * 3) * this.scale;
+        tilt = Math.sin(time * 0.05) * 0.1;
+        bulbAlphaOverride = Math.max(0, 1 - sinkProgress * 1.5);
       }
 
       const totalY = by + sinkY;
@@ -293,25 +298,6 @@ export class HookEntity {
           2.8,
           0xff4411,
         );
-
-        const botStemStart = 4 * this.scale + bulbRadius;
-        const botStemEnd = 12 * this.scale;
-        drawClippedSegment(
-          bx + sinT * botStemStart,
-          totalY + cosT * botStemStart,
-          bx + sinT * botStemEnd,
-          totalY + cosT * botStemEnd,
-          2,
-          0x333333,
-        );
-
-        this.gfx.moveTo(bx + sinT * botStemEnd, totalY + cosT * botStemEnd);
-        this.gfx.lineTo(0, 0);
-        this.gfx.stroke({
-          width: 0.5 * this.scale,
-          color: 0xffffff,
-          alpha: 0.2,
-        });
       }
     }
 
@@ -321,9 +307,7 @@ export class HookEntity {
       phase !== 'caught' &&
       phase !== 'broken'
     ) {
-      const depthOffset = 0;
-
-      this.gfx.circle(0, depthOffset, 3 * this.scale);
+      this.gfx.circle(0, 0, 3 * this.scale);
       this.gfx.fill({ color: 0xcccccc, alpha: 0.8 });
       this.gfx.stroke({ width: 0.5 * this.scale, color: 0xffffff });
     }

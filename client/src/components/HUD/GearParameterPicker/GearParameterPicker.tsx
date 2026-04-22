@@ -3,7 +3,11 @@ import { useTranslation } from 'react-i18next';
 
 import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 
-import type { GamePhaseType, IOwnedGearItem } from '@/common/types';
+import type {
+  GamePhaseType,
+  IOwnedGearItem,
+  RetrieveSpeedType,
+} from '@/common/types';
 
 import { HUDSlot } from '../HUDSlot/HUDSlot';
 
@@ -37,9 +41,7 @@ export function GearParameterPicker({
   const currentLakeId = useAppSelector((s) => s.game.currentLakeId);
   const { data: player } = usePlayerQuery();
 
-  const [currentSpeed, setCurrentSpeed] = useState<'slow' | 'normal' | 'fast'>(
-    'normal',
-  );
+  const [currentSpeed, setCurrentSpeed] = useState<RetrieveSpeedType>('normal');
 
   const rodInstance = player?.gearItems.find(
     (g: IOwnedGearItem) => g.uid === player.equippedRodUid,
@@ -71,7 +73,6 @@ export function GearParameterPicker({
 
   useEffect(() => {
     if (isOpen && pickerRef.current) {
-      // Small timeout to ensure the dropdown is rendered
       setTimeout(() => {
         const activeItem = pickerRef.current?.querySelector(
           `.${styles['picker__step--active']}`,
@@ -97,7 +98,7 @@ export function GearParameterPicker({
 
   if (!isSpinning && !isDepthRod) return null;
 
-  const onSetSpeed = (s: 'slow' | 'normal' | 'fast') => {
+  const onSetSpeed = (s: RetrieveSpeedType) => {
     setCurrentSpeed(s);
     sceneRef.current?.setRetrieveSpeed(s);
     setIsOpen(false);
@@ -109,7 +110,7 @@ export function GearParameterPicker({
     setIsOpen(false);
   };
 
-  const speedSteps: { label: string; val: 'slow' | 'normal' | 'fast' }[] = [
+  const speedSteps: { label: string; val: RetrieveSpeedType }[] = [
     { label: t('hud.speed.slow'), val: 'slow' },
     { label: t('hud.speed.normal'), val: 'normal' },
     { label: t('hud.speed.fast'), val: 'fast' },

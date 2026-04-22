@@ -28,6 +28,7 @@ interface IBird {
   wingSpan: number;
   flapSpeed: number;
   time: number;
+  scale: number;
 }
 
 interface IMeteor {
@@ -121,6 +122,9 @@ export class WeatherLayer {
 
   private spawnBird(W: number, H: number) {
     const isLeft = Math.random() > 0.5;
+    const isSmall = W < 768;
+    const scale = isSmall ? 0.6 : 1.0;
+
     this.birds.push({
       x: isLeft ? -50 : W + 50,
       y: Math.random() * (H * 0.12) + 5,
@@ -129,6 +133,7 @@ export class WeatherLayer {
       wingSpan: 6 + Math.random() * 6,
       flapSpeed: 0.1 + Math.random() * 0.1,
       time: Math.random() * 100,
+      scale,
     });
   }
 
@@ -275,7 +280,12 @@ export class WeatherLayer {
       });
 
       const dirX = b.vx > 0 ? 1 : -1;
-      this.ambientGfx.ellipse(b.x + dirX * 1.5, b.y, 2.8, 1.4);
+      this.ambientGfx.ellipse(
+        b.x + dirX * 1.5,
+        b.y,
+        2.8 * b.scale,
+        1.4 * b.scale,
+      );
       this.ambientGfx.fill({ color: 0x1a202c, alpha });
 
       if (b.x < -100 || b.x > W + 100) {
@@ -298,12 +308,12 @@ export class WeatherLayer {
       m.life -= dt * 0.02;
 
       this.ambientGfx.moveTo(m.x, m.y);
-      this.ambientGfx.lineTo(m.x - m.vx * 3, m.y - m.vy * 3);
+      this.ambientGfx.lineTo(m.x - m.vx * 4.5, m.y - m.vy * 4.5);
 
-      const alpha = m.life * Math.max(0, 1 - Math.max(0, m.y) / (H * 0.1));
+      const alpha = m.life * Math.max(0, 1 - Math.max(0, m.y) / (H * 0.3));
       this.ambientGfx.stroke({ width: 2, color: 0xfffbea, alpha });
 
-      if (m.life <= 0 || m.y > H * 0.1) {
+      if (m.life <= 0 || m.y > H * 0.3) {
         this.meteors.splice(i, 1);
       }
     }

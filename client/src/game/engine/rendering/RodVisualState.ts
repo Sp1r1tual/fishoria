@@ -1,7 +1,5 @@
 import type { GamePhaseType, ITensionState } from '@/common/types';
 
-import type { Fish } from '@/game/domain/fish/Fish';
-
 interface IRodVisualInput {
   phase: GamePhaseType;
   isCast: boolean;
@@ -9,10 +7,12 @@ interface IRodVisualInput {
   hookY: number;
   castX: number;
   castY: number;
+  bobberX?: number;
+  bobberY?: number;
+  canvasWidth: number;
   canvasHeight: number;
   renderScale: number;
   tension: ITensionState;
-  hookedFish: Fish | null;
   isSpinning: boolean;
   playerReeling: boolean;
   hookDepthM: number;
@@ -22,6 +22,7 @@ interface IRodVisualInput {
   maxInterest: number;
   time: number;
   timeSinceCast: number;
+  fishMovingTowardsPlayer: boolean;
 }
 
 interface IRodVisualOutput {
@@ -43,10 +44,11 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
     hookY,
     castX,
     castY,
+    bobberX,
+    bobberY,
     canvasHeight: H,
     renderScale,
     tension,
-    hookedFish,
     isSpinning,
     playerReeling,
     hookDepthM,
@@ -56,10 +58,17 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
     maxInterest,
     time,
     timeSinceCast,
+    fishMovingTowardsPlayer,
   } = input;
 
+  const isCombat = phase === 'reeling' || phase === 'bite';
   const baseX = isCast
-    ? Math.max(70 * renderScale, hookX - 150 * renderScale)
+    ? isCombat
+      ? Math.max(
+          70 * renderScale,
+          castX - 150 * renderScale + (hookX - castX) * 0.15,
+        )
+      : Math.max(70 * renderScale, hookX - 150 * renderScale)
     : 70 * renderScale;
   const baseY = H;
 
@@ -72,14 +81,14 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
 
   const lineTargetX =
     isCast && !isSpinning && (phase === 'waiting' || phase === 'bite')
-      ? castX
+      ? (bobberX ?? castX)
       : isCast
         ? hookX
         : baseX;
 
   let lineTargetY =
     isCast && !isSpinning && (phase === 'waiting' || phase === 'bite')
-      ? castY
+      ? (bobberY ?? castY)
       : isCast
         ? hookY
         : baseY;
@@ -95,19 +104,19 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
 
     if (!isLayingOnSide) {
       if (phase === 'waiting') {
-        if (maxInterest > 0.15) {
-          const pulse = Math.sin(time * 0.05) * maxInterest;
-          sinkY = Math.max(0, pulse * 14 * renderScale);
+        if (maxInterest > 0.05) {
+          const pulse = maxInterest;
+          sinkY = Math.max(0, pulse * 25 * renderScale);
         } else {
           const bobCycle = Math.sin(time * 0.005);
           sinkY = bobCycle * 3 * renderScale;
         }
       } else if (phase === 'bite') {
-        sinkY = 5 * renderScale;
+        sinkY = (5 + Math.sin(time * 0.08) * 3) * renderScale;
       }
     } else {
       if (phase === 'waiting') {
-        if (maxInterest > 0.15) {
+        if (maxInterest > 0.05) {
           const pulse = Math.sin(time * 0.05) * maxInterest;
           sinkY = pulse * 2 * renderScale;
         }
@@ -124,8 +133,7 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
 
   if (phase === 'reeling') {
     rodTension = tension.value;
-    const vy = hookedFish?.velocity.y ?? 0;
-    lineSlack = vy > 0.1 ? Math.min(1.0, vy * 0.4) : 0;
+    lineSlack = fishMovingTowardsPlayer && tension.value < 0.1 ? 0.5 : 0;
   } else if (phase === 'bite') {
     rodTension = tension.value;
     lineSlack = 0;
@@ -138,7 +146,7 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
 
       const depthFactor = Math.min(1.0, 0.3 + (groundDepthM / 4.0) * 0.7);
       const baseSlack = (0.1 + Math.pow(depthRatio, 1.2) * 0.75) * depthFactor;
-      const subtleWave = Math.sin(time * 1.5) * 0.02 * depthRatio;
+      const subtleWave = Math.sin(time * 0.015) * 0.01 * depthRatio;
       lineSlack = Math.max(0, Math.min(1.0, baseSlack + subtleWave));
       rodTension = 0;
     }
@@ -146,7 +154,7 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
     const depthFactor = Math.min(1.0, 0.3 + (groundDepthM / 4.0) * 0.7);
     const baseSlack = rigType === 'feeder' ? 0.04 : 0.85 * depthFactor;
 
-    const currentWave = Math.sin(time * 1.2) * 0.015;
+    const currentWave = Math.sin(time * 0.01) * 0.008;
     const nibbleJitter =
       maxInterest > 0.4 ? Math.sin(time * 15) * (maxInterest - 0.4) * 0.04 : 0;
 
@@ -157,13 +165,13 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
 
     if (rigType === 'feeder') {
       const shakeAmount =
-        maxInterest > 0.3
-          ? (maxInterest - 0.3) *
-            0.04 *
-            (1 + Math.sin(time * (0.1 + maxInterest * 0.15)))
+        maxInterest > 0.2
+          ? (maxInterest - 0.2) *
+            0.12 *
+            (1 + Math.sin(time * (0.15 + maxInterest * 0.25)))
           : 0;
       rodTension = shakeAmount;
-      lineSlack = Math.max(0, lineSlack - shakeAmount * 0.1);
+      lineSlack = Math.max(0, lineSlack - shakeAmount * 0.2);
     }
   } else if (isCast && phase === 'escaped') {
     rodTension = 0;

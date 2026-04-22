@@ -1,4 +1,4 @@
-import type { TimeOfDayType } from './index';
+import type { TimeOfDayType, RetrieveSpeedType } from './index';
 
 export type GamePhaseType =
   | 'idle'
@@ -48,11 +48,6 @@ export interface IScene {
   destroy(): void;
 }
 
-export interface ISpawnedFish {
-  fish: import('../../game/domain/fish/Fish').Fish; // keep reference to Fish class
-  entity: import('../../game/engine/entities/FishEntity').FishEntity;
-}
-
 export interface IVec2 {
   x: number;
   y: number;
@@ -66,7 +61,7 @@ export type GameUiEventMap = {
   echoSounder: boolean;
   snagStart: null;
   snagEnd: boolean;
-  retrieveSpeed: 'slow' | 'normal' | 'fast';
+  retrieveSpeed: RetrieveSpeedType;
   phase: GamePhaseType;
   timeUpdate: { hour: number; mode: 'real' | 'game' };
 };

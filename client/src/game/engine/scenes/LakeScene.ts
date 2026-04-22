@@ -15,11 +15,11 @@ import type {
   ILakeSceneCallbacks,
   IUpdateContext,
   WeatherType,
+  RetrieveSpeedType,
 } from '@/common/types';
 
-import { FishSpawnSystem } from '../systems/FishSpawnSystem';
+import { SectorSystem } from '../systems/SectorSystem';
 import { DepthSystem } from '../systems/DepthSystem';
-import { FishEntity } from '../entities/FishEntity';
 import { RodEntity } from '../entities/RodEntity';
 import { HookEntity } from '../entities/HookEntity';
 import { DebugLayer } from '../systems/DebugLayer';
@@ -27,17 +27,17 @@ import { BackgroundRenderer } from '../rendering/BackgroundRenderer';
 import { GroundbaitEffect } from '../systems/GroundbaitEffect';
 import { InputHandler } from '../input/InputHandler';
 import { validateCast } from '@/game/domain/mechanics/CastingSystem';
-import { detectBite } from '@/game/domain/mechanics/BiteDetection';
+import { detectSectorBite } from '@/game/domain/mechanics/SectorBiteDetection';
+import { LureFollower } from '@/game/domain/mechanics/LureFollower';
 import { updateSpinningLure } from '@/game/domain/mechanics/SpinningLureSystem';
 import { updateReelingPhase } from '@/game/domain/mechanics/ReelingSession';
 import { computeRodVisuals } from '../rendering/RodVisualState';
-import type { Fish } from '@/game/domain/fish/Fish';
+import { Fish } from '@/game/domain/fish/Fish';
 import { FISH_STATES } from '@/game/domain/fish/constants/FishState';
 import { TimeManager } from '@/game/managers/TimeManager';
 import { WeatherLayer } from '../systems/WeatherLayer';
 import { GameEvents } from '../GameEvents';
 import { SnagMechanic } from '@/game/domain/mechanics/SnagMechanic';
-import { MigrationRegistry } from '@/game/domain/fish/registers/MigrationRegistry';
 
 import {
   FISH_SPECIES,
@@ -46,7 +46,6 @@ import {
   EARLY_HOOK,
   SCENE_TIMING,
   INTEREST_RATES,
-  FISH_AI,
 } from '@/common/configs/game';
 
 interface ISyncStateData {
@@ -74,7 +73,7 @@ export class LakeScene implements IScene {
   private uiLayer!: Container;
 
   private bgRenderer!: BackgroundRenderer;
-  private spawnSystem!: FishSpawnSystem;
+  private sectorSystem!: SectorSystem;
   private depthSystem!: DepthSystem;
   private rod!: RodEntity;
   private hook!: HookEntity;
@@ -83,6 +82,7 @@ export class LakeScene implements IScene {
 
   private phase: GamePhaseType = 'idle';
   private hookedFish: Fish | null = null;
+  private potentialBiter: Fish | null = null;
   private tension: ITensionState = {
     value: 0,
     isBroken: false,
@@ -97,8 +97,6 @@ export class LakeScene implements IScene {
   private hookY = 0;
   private hookDepthM = 1.0;
   private timeSinceCast = 0;
-  private pullCount = 0;
-  private lastPlayerReeling = false;
   private timeOfDay: TimeOfDayType = 'day';
   private activeBait: BaitTypeType = 'worm';
   private activeBaitName = 'Worm';
@@ -139,17 +137,16 @@ export class LakeScene implements IScene {
   private retrieveReelTime = 0;
   private retrievePauseTime = 0;
   private currentRetrieveType = 'steady';
-  private currentRetrieveSpeed: 'slow' | 'normal' | 'fast' = 'normal';
-  private lastRetrieveType = '';
+  private currentRetrieveSpeed: RetrieveSpeedType = 'normal';
+  private activeFollower: LureFollower | null = null;
+  private targetInterest = 0;
 
   private castDistanceM = 0;
   private availableLineM = 100;
 
   private resetDelayTimer: ReturnType<typeof setTimeout> | null = null;
-  private schoolUpdateTimer = 0;
   private biteUpdateTimer = 0;
 
-  private cachedObstacles: { x: number; y: number; radius: number }[] = [];
   private updateCtx: Partial<IUpdateContext> = {};
 
   constructor(
@@ -173,10 +170,7 @@ export class LakeScene implements IScene {
     Object.values(this.config.timeOfDayConfig).forEach((t) =>
       urlsToLoad.add(t.bgImageUrl),
     );
-    const allSpeciesConfigs = [
-      ...(this.config.fishSpawns.species || []),
-      ...(this.config.fishSpawns.zones || []).flatMap((z) => z.species),
-    ];
+    const allSpeciesConfigs = this.config.fishSpawns.species || [];
 
     for (const spConfig of allSpeciesConfigs) {
       const imageUrl = FISH_SPECIES[spConfig.speciesId]?.imageUrl;
@@ -205,25 +199,25 @@ export class LakeScene implements IScene {
     const W = app.renderer.width;
     const H = app.renderer.height;
 
-    this.depthSystem = new DepthSystem(this.config.depthMap, H);
+    this.depthSystem = new DepthSystem(this.config.depthMap);
     this.rod = new RodEntity(this.uiLayer);
+    this.sectorSystem = new SectorSystem(
+      this.config.fishSpawns,
+      this.config.allowedCastArea,
+      (nx, ny) => this.depthSystem.getDepthAt(nx, ny),
+      W,
+      H,
+      20,
+    );
+
     this.debugLayer = new DebugLayer(
-      this.uiLayer,
-      app,
+      this.stage,
+      this.app,
       this.depthSystem,
+      this.sectorSystem,
       this.config,
     );
     this.hook = new HookEntity(this.fishLayer);
-
-    this.spawnSystem = new FishSpawnSystem(
-      this.config.fishSpawns,
-      this.fishLayer,
-      W,
-      H,
-      this.config.environment.waterBoundaryY,
-      (nx, ny) => this.depthSystem.getDepthAt(nx, ny),
-      this.config.allowedCastArea,
-    );
 
     this.weatherLayer = new WeatherLayer(this.stage, app);
     this.groundbaitEffect = new GroundbaitEffect(this.stage);
@@ -252,11 +246,7 @@ export class LakeScene implements IScene {
       () => this.resetCast(),
       () => this.toggleDebug(),
       (speedIdx) => {
-        const levels: ('slow' | 'normal' | 'fast')[] = [
-          'slow',
-          'normal',
-          'fast',
-        ];
+        const levels: RetrieveSpeedType[] = ['slow', 'normal', 'fast'];
         this.currentRetrieveSpeed = levels[speedIdx - 1];
         GameEvents.emit('retrieveSpeed', this.currentRetrieveSpeed);
         if (this.debugActive) {
@@ -360,7 +350,7 @@ export class LakeScene implements IScene {
 
   private updateLayerVisibility(): void {
     const isVisible = this.debugActive || this.echoSounderActive;
-    this.debugLayer.setVisible(isVisible);
+    this.debugLayer.setVisible(isVisible, this.debugActive);
     this.debugLayer.setLabelsVisible(this.debugActive);
     this.bgRenderer.setDebugVisible(this.debugActive);
   }
@@ -444,8 +434,8 @@ export class LakeScene implements IScene {
 
     this.phase = 'waiting';
     this.timeSinceCast = 0;
-    this.pullCount = 0;
-    this.lastPlayerReeling = false;
+    this.biteUpdateTimer = 0;
+    this.targetInterest = 0;
     this.currentLureDepthM = 0.0;
     this.callbacks.onCast?.();
     this.callbacks.onPhaseChange(this.phase);
@@ -560,26 +550,8 @@ export class LakeScene implements IScene {
     this.callbacks.onPlayerReeling?.(v);
   }
 
-  setPlayerRelaxing(v: boolean): void {
-    this.playerRelaxing = v;
-  }
-
-  setRetrieveSpeed(speed: 'slow' | 'normal' | 'fast'): void {
+  setRetrieveSpeed(speed: RetrieveSpeedType): void {
     this.currentRetrieveSpeed = speed;
-  }
-
-  setDepthExternal(depthM: number): void {
-    const isSpinning = this.hookConfig?.rigType === 'spinning';
-    const canChangeMidCast =
-      isSpinning && (this.phase === 'waiting' || this.phase === 'reeling');
-
-    if (
-      (this.phase === 'idle' || canChangeMidCast) &&
-      this.hookConfig?.rigType !== 'feeder'
-    ) {
-      this.hookDepthM = Math.max(0.1, depthM);
-      this.callbacks.onDepthChange(this.hookDepthM);
-    }
   }
 
   hookFishExternal(): void {
@@ -594,13 +566,17 @@ export class LakeScene implements IScene {
     let bestFish: Fish | null = null;
     let maxInterest = 0;
 
-    for (const fish of this.spawnSystem.fish) {
-      if (
-        fish.interestLevel > maxInterest &&
-        fish.state === FISH_STATES.Interested
-      ) {
-        maxInterest = fish.interestLevel;
-        bestFish = fish;
+    if (
+      this.activeFollower &&
+      this.activeFollower.interest > EARLY_HOOK.minInterest
+    ) {
+      maxInterest = this.activeFollower.interest;
+
+      const config = FISH_SPECIES[this.activeFollower.speciesId];
+      if (config) {
+        bestFish = new Fish(config, this.hookX, this.hookY, { min: 1, max: 2 });
+        bestFish.interestLevel = maxInterest;
+        bestFish.setState(FISH_STATES.Interested);
       }
     }
 
@@ -656,25 +632,21 @@ export class LakeScene implements IScene {
     this.castY = this.hookY;
     this.currentLureDepthM = 0;
 
-    for (const fish of this.spawnSystem.fish) {
-      fish.setState(FISH_STATES.Idle);
-      fish.interestLevel = 0;
-      fish.hasLostInterest = false;
-    }
+    this.activeFollower = null;
     this.hookedFish = null;
+    this.potentialBiter = null;
     this.playerRelaxing = false;
     this.callbacks.onTensionChange(0, false);
     if (!suppressPhaseEvent) {
       this.callbacks.onPhaseChange(this.phase);
     }
-    this.pullCount = 0;
-    this.lastPlayerReeling = false;
     this.smoothedInterest = 0;
+    this.targetInterest = 0;
+    this.biteUpdateTimer = 0;
     this.snagMechanic.reset();
     this.retrieveReelTime = 0;
     this.retrievePauseTime = 0;
     this.currentRetrieveType = 'steady';
-    this.lastRetrieveType = '';
 
     if (this.accumRodWear > 0 || this.accumReelWear > 0) {
       this.callbacks.onGearDamaged?.(this.accumRodWear, this.accumReelWear);
@@ -721,12 +693,6 @@ export class LakeScene implements IScene {
 
   // ─── Update ────────────────────────────────────────────────────────────────
   update(deltaTime: number): void {
-    this.schoolUpdateTimer += deltaTime;
-    if (this.schoolUpdateTimer >= 60) {
-      this.schoolUpdateTimer = 0;
-      this.updateSchoolDensity();
-    }
-
     const isCast = this.phase !== 'idle';
     const W = this.app.renderer.width;
     const H = this.app.renderer.height;
@@ -743,24 +709,6 @@ export class LakeScene implements IScene {
     }
 
     this.updateCtx.deltaTime = deltaTime;
-    this.updateCtx.canvasWidth = W;
-    this.updateCtx.canvasHeight = H;
-    this.updateCtx.waterBoundaryY = this.config.environment.waterBoundaryY;
-    this.updateCtx.baitPosition = isCast
-      ? { x: this.hookX, y: this.hookY }
-      : { x: W / 2, y: H * 0.75 };
-    this.updateCtx.baitDepth = this.hookDepthM;
-    this.updateCtx.timeOfDay = this.timeOfDay;
-    this.updateCtx.weather = this.weather;
-    this.updateCtx.obstacles = this.cachedObstacles;
-    this.updateCtx.playerReeling = this.playerReeling;
-    this.updateCtx.lakeMaxDepth = this.config.depthMap.maxDepth;
-    this.updateCtx.getDepthAt = (nx: number, ny: number) =>
-      this.depthSystem.getDepthAt(nx, ny);
-    this.updateCtx.timeSinceCast = this.timeSinceCast;
-    this.updateCtx.activeGroundbait = GROUNDBAITS[this.activeGroundbaitType];
-    this.updateCtx.allowedCastArea = this.config.allowedCastArea;
-    this.updateCtx.rigType = this.hookConfig?.rigType;
 
     this.timeSinceCast += deltaTime / 60;
 
@@ -769,8 +717,6 @@ export class LakeScene implements IScene {
       this.bgRenderer.setBackgroundTexture(bgUrl);
       this.bgRenderer.drawBackground(W, H, this.timeOfDay, this.weather);
     }
-
-    this.spawnSystem.update(deltaTime);
 
     if (this.phase === 'waiting' && this.hookConfig?.rigType === 'spinning') {
       const dtSec = deltaTime / 60;
@@ -800,10 +746,6 @@ export class LakeScene implements IScene {
       ) {
         this.currentRetrieveType = 'jigging';
       }
-
-      if (this.currentRetrieveType !== this.lastRetrieveType) {
-        this.lastRetrieveType = this.currentRetrieveType;
-      }
     } else {
       this.currentRetrieveType = 'steady';
       this.retrieveReelTime = 0;
@@ -813,7 +755,14 @@ export class LakeScene implements IScene {
     const isFishHookedOrBiting =
       this.phase === 'bite' || this.phase === 'reeling';
 
-    this.debugLayer.update();
+    if (this.debugLayer.isVisible()) {
+      this.debugLayer.setEnv(
+        this.timeOfDay,
+        this.weather,
+        GROUNDBAITS[this.activeGroundbaitType],
+      );
+      this.debugLayer.update();
+    }
     this.debugLayer.updateSnag(
       isFishHookedOrBiting ? 0 : this.snagMechanic.getSnagProgress(),
       this.hookX,
@@ -852,44 +801,6 @@ export class LakeScene implements IScene {
     this.weatherLayer.update(deltaTime, this.timeOfDay);
     this.bgRenderer.update(deltaTime);
 
-    for (const { fish, entity } of this.spawnSystem.entities) {
-      fish.update(this.updateCtx as IUpdateContext);
-
-      let intensity = 0;
-      if (this.echoSounderActive && !isFishHookedOrBiting) {
-        const isSpinning = this.hookConfig?.rigType === 'spinning';
-        if (isCast) {
-          const dx = fish.position.x - this.hookX;
-          const dy = fish.position.y - this.hookY;
-          const distSq = dx * dx + dy * dy;
-          const radius = (isSpinning ? 200 : 350) * (W / 800);
-
-          intensity = Math.max(0, 1 - Math.sqrt(distSq) / radius);
-
-          if (
-            fish.state === FISH_STATES.Interested ||
-            fish.state === FISH_STATES.Biting
-          ) {
-            intensity = Math.max(intensity, 0.6 + fish.interestLevel * 0.4);
-          }
-        } else {
-          intensity = 0.25;
-        }
-      }
-
-      const isThisHookedFish = this.hookedFish === fish;
-
-      (entity as FishEntity).update(deltaTime, {
-        debug: isFishHookedOrBiting
-          ? isThisHookedFish && this.debugActive
-          : this.debugActive,
-        echo: isFishHookedOrBiting ? false : this.echoSounderActive,
-        isCast,
-        intensity,
-        isSmall: W < 768,
-      });
-    }
-
     let maxInterest = 0;
 
     if (isCast && this.phase === 'waiting') {
@@ -913,8 +824,8 @@ export class LakeScene implements IScene {
       isCast,
       phase: this.phase,
       time: this.totalTime,
-      castX: this.castX,
-      castY: this.castY,
+      castX: this.hookX,
+      castY: this.hookY,
       maxInterest,
       hookDepthM: this.hookDepthM,
       groundDepthM: this.groundDepthM,
@@ -927,7 +838,17 @@ export class LakeScene implements IScene {
       debugActive: this.debugActive,
       escapeProgress: this.tension.escapeProgress,
       isSmall: W < 768,
+      biteTimer:
+        this.hookedFish && this.phase === 'bite'
+          ? this.hookedFish.stateTimer
+          : 0,
     });
+
+    const fishMovingTowardsPlayer = !!(
+      this.hookedFish &&
+      !this.playerReeling &&
+      Math.sin(this.hookedFish.combatAngle) > 0.2
+    );
 
     const rodVisuals = computeRodVisuals({
       phase: this.phase,
@@ -936,10 +857,12 @@ export class LakeScene implements IScene {
       hookY: this.hookY,
       castX: this.castX,
       castY: this.castY,
+      bobberX: this.hookX,
+      bobberY: this.hookY,
+      canvasWidth: W,
       canvasHeight: H,
       renderScale,
       tension: this.tension,
-      hookedFish: this.hookedFish,
       isSpinning: this.hookConfig?.rigType === 'spinning',
       playerReeling: this.playerReeling,
       hookDepthM: this.hookDepthM,
@@ -949,6 +872,7 @@ export class LakeScene implements IScene {
       maxInterest,
       time: this.totalTime,
       timeSinceCast: this.timeSinceCast,
+      fishMovingTowardsPlayer,
     });
 
     const lerpT = 1 - Math.pow(0.001, deltaTime / 60);
@@ -986,40 +910,26 @@ export class LakeScene implements IScene {
     this.castX *= scaleX;
     this.castY *= scaleY;
 
-    this.spawnSystem.resize(newW, newH);
-    this.depthSystem = new DepthSystem(this.config.depthMap, newH);
+    this.depthSystem = new DepthSystem(this.config.depthMap);
     this.debugLayer.resize();
     this.weatherLayer.resize();
 
     this.bgRenderer.drawBackground(newW, newH, this.timeOfDay, this.weather);
     this.bgRenderer.drawObstacles(newW, newH);
-    this.updateCachedObstacles(newW, newH);
 
     this.lastW = newW;
     this.lastH = newH;
-  }
-
-  private updateCachedObstacles(W: number, H: number): void {
-    this.cachedObstacles = this.config.obstacles
-      .filter((o) => o.type === 'circle' && o.radius != null)
-      .map((o) => ({
-        x: o.position.x * W,
-        y: o.position.y * H,
-        radius: (o.radius ?? 0.03) * W,
-      }));
   }
 
   // ─── Destroy ───────────────────────────────────────────────────────────────
   destroy(): void {
     this.clearResetTimer();
     this.inputHandler.destroy();
-    this.spawnSystem.destroy();
     this.rod.destroy();
     this.hook.destroy();
     this.debugLayer.destroy();
     this.weatherLayer.destroy();
     this.groundbaitEffect.destroy();
-    MigrationRegistry.activeMigrations = 0;
   }
 
   setDebugVisible(visible: boolean): void {
@@ -1028,15 +938,6 @@ export class LakeScene implements IScene {
     GameEvents.emit('debug', visible);
   }
   private updateWaitingPhase(W: number, H: number, deltaTime: number): number {
-    if (
-      this.playerReeling &&
-      !this.lastPlayerReeling &&
-      this.hookConfig?.rigType === 'spinning'
-    ) {
-      this.pullCount++;
-    }
-    this.lastPlayerReeling = this.playerReeling;
-
     if (this.hookConfig?.rigType === 'spinning') {
       const lureState = updateSpinningLure({
         hookX: this.hookX,
@@ -1067,40 +968,123 @@ export class LakeScene implements IScene {
       }
     }
 
-    this.biteUpdateTimer += deltaTime;
+    this.biteUpdateTimer += deltaTime / 60;
+    const isSpinning = this.hookConfig?.rigType === 'spinning';
+    const updateInterval = isSpinning ? 0 : this.potentialBiter ? 1.2 : 1.0;
+
     let biter: Fish | null = null;
 
-    if (this.biteUpdateTimer >= 5) {
-      const elapsedBiteFrames = this.biteUpdateTimer;
+    if (this.biteUpdateTimer >= updateInterval) {
+      const elapsedBiteFrames = this.biteUpdateTimer * 60;
       this.biteUpdateTimer = 0;
-      const biteResult = detectBite({
-        fish: this.spawnSystem.fish,
+      const biteResult = detectSectorBite({
+        sectorSystem: this.sectorSystem,
+        follower: this.activeFollower,
         baitType: this.activeBait,
         hookPixelX: this.hookX,
         hookPixelY: this.hookY,
+        canvasWidth: W,
         canvasHeight: H,
+        waterBoundaryY: this.config.environment.waterBoundaryY,
         timeOfDay: this.timeOfDay,
-        visibility: this.config.environment.visibility,
-        deltaTime: elapsedBiteFrames,
-        hookDepthM:
-          this.hookConfig?.rigType === 'spinning'
-            ? this.currentLureDepthM
-            : Math.min(this.hookDepthM, this.groundDepthM),
-        isAnyFishHooked: false,
-        timeSinceCast: this.timeSinceCast,
         weather: this.weather,
+        deltaTime: elapsedBiteFrames,
+        hookDepthM: isSpinning
+          ? this.currentLureDepthM
+          : Math.min(this.hookDepthM, this.groundDepthM),
         rigType: this.hookConfig?.rigType,
-        isMoving: this.playerReeling && this.hookConfig?.rigType === 'spinning',
+        isMoving: this.playerReeling && isSpinning,
         isOnBottom: this.isBaitOnBottom(),
-        pullCount: this.pullCount,
         retrieveType: this.currentRetrieveType,
-        retrieveSpeed: this.currentRetrieveSpeed,
+        activeGroundbait: GROUNDBAITS[this.activeGroundbaitType],
+        getPreferredDepthRange: (speciesId: string) =>
+          this.getPreferredDepthRange(speciesId),
+        getSpeciesBaseCatchChance: (speciesId: string) => {
+          const spawn = this.config.fishSpawns.species?.find(
+            (s) => s.speciesId === speciesId,
+          );
+          return spawn?.baseCatchChance;
+        },
+        hasPotentialBiter: !!this.potentialBiter,
+        potentialBiterSpeciesId: this.potentialBiter?.config.id,
       });
-      biter = biteResult.biter;
-      const maxInterest = 1 - biteResult.progress;
-      const lerpT = 1 - Math.pow(0.001, (deltaTime * 5) / 60);
-      this.smoothedInterest +=
-        (maxInterest - this.smoothedInterest) * Math.min(1, lerpT * 10.0);
+      this.activeFollower = biteResult.newFollower;
+
+      if (
+        this.smoothedInterest < 0.05 &&
+        !biteResult.biteSpeciesId &&
+        !biteResult.progressSpeciesId
+      ) {
+        this.potentialBiter = null;
+      }
+
+      if (biteResult.biteSpeciesId) {
+        const config = FISH_SPECIES[biteResult.biteSpeciesId];
+        biter = new Fish(config, this.hookX, this.hookY);
+        if (Math.random() < this.config.trashChance) {
+          biter.isTrash = true;
+        }
+        this.potentialBiter = null;
+      } else if (biteResult.progressSpeciesId && !isSpinning) {
+        const activeSpeciesId = biteResult.progressSpeciesId;
+        const config = FISH_SPECIES[activeSpeciesId];
+
+        if (
+          !this.potentialBiter ||
+          this.potentialBiter.config.id !== activeSpeciesId
+        ) {
+          this.potentialBiter = new Fish(config, this.hookX, this.hookY);
+          if (Math.random() < this.config.trashChance) {
+            this.potentialBiter.isTrash = true;
+          }
+        }
+
+        this.potentialBiter.nibblesDone++;
+        this.callbacks.onBite();
+
+        if (Math.random() < 0.15) {
+          this.potentialBiter = null;
+        } else {
+          const forceBite =
+            this.potentialBiter.nibblesDone > 2 && Math.random() < 0.8;
+
+          if (
+            forceBite ||
+            this.potentialBiter.nibblesDone >= this.potentialBiter.targetNibbles
+          ) {
+            biter = this.potentialBiter;
+            this.potentialBiter = null;
+          } else {
+            this.targetInterest = 0.5;
+          }
+        }
+      }
+
+      if (biteResult.progress > 0 && !biteResult.biteSpeciesId) {
+        this.targetInterest = Math.max(
+          this.targetInterest,
+          biteResult.progress,
+        );
+      }
+    }
+
+    if (this.activeFollower && isSpinning) {
+      this.targetInterest = this.activeFollower.interest;
+    }
+
+    const lerpT = 1 - Math.pow(0.0001, deltaTime / 60);
+    this.smoothedInterest +=
+      (this.targetInterest - this.smoothedInterest) * Math.min(1, lerpT * 0.25);
+
+    if (this.targetInterest > 0 && !isSpinning) {
+      this.targetInterest = Math.max(
+        0,
+        this.targetInterest - 0.5 * (deltaTime / 60),
+      );
+    }
+
+    if (this.targetInterest === 0 && this.smoothedInterest < 0.01) {
+      this.smoothedInterest = 0;
     }
 
     this.callbacks.onBiteProgress(this.smoothedInterest);
@@ -1158,10 +1142,32 @@ export class LakeScene implements IScene {
 
   private updateBitePhase(): void {
     if (!this.hookedFish) return;
-    this.hookX = this.hookedFish.position.x;
-    this.hookY = this.hookedFish.position.y;
-    this.castX = this.hookX;
-    this.castY = this.hookY;
+
+    const dtSec = (this.updateCtx.deltaTime ?? 1) / 60;
+    const fish = this.hookedFish;
+    fish.stateTimer += dtSec;
+
+    fish.biteDriftTimer -= dtSec;
+
+    if (fish.biteDriftTimer <= 0) {
+      const isPulling = Math.random() < 0.75;
+      if (isPulling) {
+        const speed = 15 + Math.random() * 20;
+        const angle = Math.random() * Math.PI * 2;
+        fish.biteDriftX = Math.cos(angle) * speed;
+        fish.biteDriftY = Math.sin(angle) * (speed * 0.3);
+      } else {
+        fish.biteDriftX = 0;
+        fish.biteDriftY = 0;
+      }
+      fish.biteDriftTimer = 0.8 + Math.random() * 1.2;
+    }
+
+    fish.position.x += fish.biteDriftX * dtSec;
+    fish.position.y += fish.biteDriftY * dtSec;
+
+    this.hookX = fish.position.x;
+    this.hookY = fish.position.y;
 
     this.syncEnvironmentDepth();
 
@@ -1203,7 +1209,6 @@ export class LakeScene implements IScene {
         lakeId: this.config.id,
         lakeName: this.config.name,
         trashChance: this.config.trashChance,
-        spawnSystem: this.spawnSystem,
         waterBoundaryY: this.config.environment.waterBoundaryY,
         getDepthAt: (nx, ny) => this.depthSystem.getDepthAt(nx, ny),
       },
@@ -1240,40 +1245,14 @@ export class LakeScene implements IScene {
     }
   }
 
-  private updateSchoolDensity(): void {
-    const fish = this.spawnSystem.fish;
-    if (fish.length < 2) return;
-
-    const radiusSq = 120 * 120;
-    const sepRadiusSq = FISH_AI.separation.radius ** 2;
-
-    for (let i = 0; i < fish.length; i++) {
-      const f1 = fish[i];
-      let neighbors = 0;
-      let sx = 0;
-      let sy = 0;
-
-      for (let j = 0; j < fish.length; j++) {
-        if (i === j) continue;
-        const f2 = fish[j];
-        const dx = f1.position.x - f2.position.x;
-        const dy = f1.position.y - f2.position.y;
-        const dSq = dx * dx + dy * dy;
-
-        if (dSq < radiusSq) {
-          neighbors++;
-          if (dSq < sepRadiusSq && dSq > 0) {
-            const d = Math.sqrt(dSq);
-            const push =
-              (FISH_AI.separation.radius - d) / FISH_AI.separation.radius;
-            sx += (dx / d) * push;
-            sy += (dy / d) * push;
-          }
-        }
-      }
-      f1.nearbyFishCount = neighbors;
-      f1.separationForce.x = sx;
-      f1.separationForce.y = sy;
+  private getPreferredDepthRange(speciesId: string): {
+    min: number;
+    max: number;
+  } {
+    for (const s of this.config.fishSpawns.species || []) {
+      if (s.speciesId === speciesId) return s.preferredDepthRange;
     }
+
+    return { min: 0, max: 100 };
   }
 }

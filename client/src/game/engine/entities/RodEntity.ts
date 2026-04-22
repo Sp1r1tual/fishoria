@@ -153,7 +153,7 @@ export class RodEntity {
 
   private drawLine(): void {
     this.lineGfx.clear();
-    if (!this.isCast || this.guidePoints.length < 2) return;
+    if (this.guidePoints.length < 2) return;
 
     const isCritical = this.tension > 0.7;
     const color = isCritical ? 0xff0000 : 0xdddddd;
@@ -174,56 +174,58 @@ export class RodEntity {
 
     this.lineGfx.stroke({ width: lineWidth, color, alpha: alpha });
 
-    const tip = this.guidePoints[this.guidePoints.length - 1];
-    const dx = this.hookX - tip.x;
-    const dy = this.hookY - tip.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (this.isCast) {
+      const tip = this.guidePoints[this.guidePoints.length - 1];
+      const dx = this.hookX - tip.x;
+      const dy = this.hookY - tip.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
 
-    if (dist > 1) {
-      const finalSlack = this.lineSlack * 90 * this.scale;
+      if (dist > 1) {
+        const finalSlack = this.lineSlack * 90 * this.scale;
 
-      this.lineGfx.moveTo(tip.x, tip.y);
+        this.lineGfx.moveTo(tip.x, tip.y);
 
-      const segments = 12;
-      const points: { x: number; y: number }[] = [];
-      points.push({ x: tip.x, y: tip.y });
+        const segments = 12;
+        const points: { x: number; y: number }[] = [];
+        points.push({ x: tip.x, y: tip.y });
 
-      for (let i = 1; i <= segments; i++) {
-        const t = i / segments;
+        for (let i = 1; i <= segments; i++) {
+          const t = i / segments;
 
-        let px = tip.x + dx * t;
-        let py = tip.y + dy * t;
+          let px = tip.x + dx * t;
+          let py = tip.y + dy * t;
 
-        const sag = Math.sin(t * Math.PI) * finalSlack;
+          const sag = Math.sin(t * Math.PI) * finalSlack;
 
-        let nx = -dy / dist;
-        let ny = dx / dist;
+          let nx = -dy / dist;
+          let ny = dx / dist;
 
-        if (ny < 0) {
-          nx = -nx;
-          ny = -ny;
+          if (ny < 0) {
+            nx = -nx;
+            ny = -ny;
+          }
+
+          px += nx * sag;
+          py += ny * sag;
+
+          points.push({ x: px, y: py });
         }
 
-        px += nx * sag;
-        py += ny * sag;
+        for (let i = 1; i < points.length; i++) {
+          const p0 = points[i - 1];
+          const p1 = points[i];
+          const mx = (p0.x + p1.x) / 2;
+          const my = (p0.y + p1.y) / 2;
+          this.lineGfx.quadraticCurveTo(p0.x, p0.y, mx, my);
+        }
+        this.lineGfx.lineTo(this.hookX, this.hookY);
 
-        points.push({ x: px, y: py });
+        this.lineGfx.stroke({
+          width: lineWidth * 1.1,
+          color,
+          alpha: isCritical ? 0.95 : 0.6,
+        });
       }
-
-      for (let i = 1; i < points.length; i++) {
-        const p0 = points[i - 1];
-        const p1 = points[i];
-        const mx = (p0.x + p1.x) / 2;
-        const my = (p0.y + p1.y) / 2;
-        this.lineGfx.quadraticCurveTo(p0.x, p0.y, mx, my);
-      }
-      this.lineGfx.lineTo(this.hookX, this.hookY);
-
-      this.lineGfx.stroke({
-        width: lineWidth * 1.1,
-        color,
-        alpha: isCritical ? 0.95 : 0.6,
-      });
     }
   }
 

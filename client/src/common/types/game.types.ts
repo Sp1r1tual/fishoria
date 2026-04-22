@@ -8,6 +8,8 @@ export interface ILossEvent {
 
 export type WeatherType = 'clear' | 'cloudy' | 'rain';
 
+export type RetrieveSpeedType = 'slow' | 'normal' | 'fast';
+
 export interface IGameState {
   currentLakeId: string | null;
   phase: GamePhaseType;

@@ -11,9 +11,10 @@ export function generateCatch(
   lakeId: string,
   lakeName: string,
   trashChance: number,
+  isTrashOverride?: boolean,
 ): CatchResultType {
   const { isTrophy } = getFishQuality(weight, fish.weightRange.max);
-  const isTrash = !isTrophy && Math.random() < trashChance;
+  const isTrash = isTrashOverride ?? (!isTrophy && Math.random() < trashChance);
 
   if (isTrash) {
     const item =

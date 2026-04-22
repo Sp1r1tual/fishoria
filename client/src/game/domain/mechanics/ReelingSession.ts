@@ -9,10 +9,9 @@ import type {
 } from '@/common/types';
 
 import { TensionSystem } from './TensionSystem';
-import { pullFishToShore } from './ReelingPhysics';
+import { pullFishToShore, applyFishAutonomousMovement } from './ReelingPhysics';
 import { generateCatch } from './CatchResult';
 import type { Fish } from '@/game/domain/fish/Fish';
-import type { FishSpawnSystem } from '@/game/engine/systems/FishSpawnSystem';
 
 import { GEAR_WEAR, REELING_PHYSICS } from '@/common/configs/game';
 
@@ -35,7 +34,6 @@ interface IReelingUpdateParams {
   lakeId: string;
   lakeName: string;
   trashChance: number;
-  spawnSystem: FishSpawnSystem;
   waterBoundaryY: number;
   getDepthAt: (nx: number, ny: number) => number;
 }
@@ -59,7 +57,6 @@ export function updateReelingPhase(
     lakeId,
     lakeName,
     trashChance,
-    spawnSystem,
   } = params;
 
   const tension = TensionSystem.update({
@@ -156,6 +153,21 @@ export function updateReelingPhase(
       params.waterBoundaryY * H,
       params.canvasWidth,
     );
+    hookedFish.combatTimer = 0;
+  } else {
+    applyFishAutonomousMovement(
+      hookedFish,
+      deltaTime,
+      params.canvasWidth,
+      H,
+      params.waterBoundaryY,
+    );
+
+    const waterHeight = Math.max(1, H * (1 - params.waterBoundaryY));
+    const nx = hookedFish.position.x / params.canvasWidth;
+    const ny =
+      (hookedFish.position.y - H * params.waterBoundaryY) / waterHeight;
+    hookedFish.depth = params.getDepthAt(nx, ny);
   }
 
   const hookX = hookedFish.position.x;
@@ -181,8 +193,9 @@ export function updateReelingPhase(
       lakeId,
       lakeName,
       trashChance,
+      hookedFish.isTrash,
     );
-    spawnSystem.removeFish(hookedFish);
+
     return {
       tension,
       accumRodWear,

@@ -47,7 +47,6 @@
 
 @media (max-width: 1044px) {
   .lake-info {
-    width: 155px;
     min-width: 155px;
     max-width: 450px;
     padding: 6px 8px;

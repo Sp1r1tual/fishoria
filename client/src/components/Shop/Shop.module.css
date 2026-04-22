@@ -168,7 +168,6 @@
   font-size: 0.85rem;
   color: var(--clr-muted);
   line-height: 1.4;
-  min-height: 2.8em;
 }
 
 .shop-item__owned {
@@ -320,7 +319,6 @@ button.shop-item__buy-btn {
   .shop-item__desc {
     font-size: 0.7rem;
     line-height: 1.3;
-    min-height: auto;
   }
 
   .shop-item__owned {

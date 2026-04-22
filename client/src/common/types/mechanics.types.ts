@@ -1,9 +1,4 @@
-import type {
-  IFishSpeciesConfig,
-  BaitTypeType,
-  TimeOfDayType,
-  WeatherType,
-} from './index';
+import type { IFishSpeciesConfig } from './index';
 
 export interface ITensionState {
   value: number;
@@ -59,32 +54,6 @@ export interface ITrashCatch {
 }
 
 export type CatchResultType = IFishCatch | ITrashCatch;
-
-export interface IBiteDetectionParams {
-  fish: import('../../game/domain/fish/Fish').Fish[];
-  baitType: BaitTypeType;
-  hookPixelX: number;
-  hookPixelY: number;
-  canvasHeight: number;
-  timeOfDay: TimeOfDayType;
-  visibility: number;
-  deltaTime: number;
-  hookDepthM: number;
-  isAnyFishHooked?: boolean;
-  timeSinceCast: number;
-  weather: WeatherType;
-  rigType?: string;
-  isMoving?: boolean;
-  isOnBottom?: boolean;
-  pullCount?: number;
-  retrieveType?: string;
-  retrieveSpeed?: 'slow' | 'normal' | 'fast';
-}
-
-export interface IBiteResult {
-  biter: import('../../game/domain/fish/Fish').Fish | null;
-  progress: number;
-}
 
 export interface IReelingResult {
   tension: ITensionState;
