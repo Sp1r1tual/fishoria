@@ -147,10 +147,23 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
               dispatch(setDepth(depthM));
             }
           },
+          onLureDepthChange: (depth, groundDepth) => {
+            GameEvents.emit('lureDepth', { depth, groundDepth });
+          },
           onBite: () => {
             audioRef.current.onBite();
             if (typeof navigator !== 'undefined' && navigator.vibrate) {
               navigator.vibrate([200, 100, 200]);
+            }
+          },
+          onInterest: (isSpinning) => {
+            audioRef.current.onInterest?.(isSpinning);
+            if (
+              isSpinning &&
+              typeof navigator !== 'undefined' &&
+              navigator.vibrate
+            ) {
+              navigator.vibrate(30);
             }
           },
           onCatch: (result) => {

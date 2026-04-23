@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
@@ -20,7 +20,6 @@ import { usePlayerQuery } from '@/queries/player.queries';
 
 import { getXpNeededForLevel } from '@/common/utils/experience.util';
 
-import bannerIcon from '@/assets/ui/main_menu_banner.webp';
 import mainBg from '@/assets/ui/main_menu_background.webp';
 import keepnetIcon from '@/assets/ui/keepnet.webp';
 import equipmentIcon from '@/assets/ui/equipment.webp';
@@ -126,28 +125,6 @@ export function MainMenu() {
     },
   ];
 
-  const bannerRef = useRef<HTMLImageElement>(null);
-
-  const handleBannerMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!bannerRef.current) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    const rotateY = ((x - centerX) / centerX) * 8;
-    const rotateX = ((centerY - y) / centerY) * 8;
-
-    bannerRef.current.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-  };
-
-  const handleBannerMouseLeave = () => {
-    if (!bannerRef.current) return;
-    bannerRef.current.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
-  };
-
   if (isLoading)
     return (
       <div
@@ -189,25 +166,6 @@ export function MainMenu() {
       </WoodyButton>
 
       <div className={`${styles['main-menu__content']} fade-in`}>
-        <div
-          className={styles['main-menu__banner-container']}
-          onMouseMove={handleBannerMouseMove}
-          onMouseLeave={handleBannerMouseLeave}
-        >
-          <div className={styles['main-menu__rays']} />
-          <img
-            ref={bannerRef}
-            src={bannerIcon}
-            alt="Angler Simulator"
-            className={styles['main-menu__banner']}
-            style={{
-              width: '100%',
-              maxHeight: '400px',
-              objectFit: 'contain',
-            }}
-          />
-        </div>
-
         <section className={`glass ${styles['main-menu__player']}`}>
           <div className={styles['main-menu__player-top']}>
             <img
@@ -224,8 +182,13 @@ export function MainMenu() {
                   title={t('profile.editTitle')}
                 />
               </div>
-              <div className={styles['main-menu__player-meta']}>
-                {t('mainMenu.level', { level })}
+              <div className={styles['main-menu__level-row']}>
+                <div className={styles['main-menu__player-meta']}>
+                  {t('mainMenu.level', { level })}
+                </div>
+                <div className={styles['main-menu__xp-counter']}>
+                  {Math.floor(xp)} / {xpNeeded}
+                </div>
               </div>
               <div className={styles['main-menu__xp-bar']}>
                 <div

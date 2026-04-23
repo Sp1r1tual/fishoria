@@ -27,23 +27,6 @@ interface ILakeInfoProps {
 
 export function LakeInfo({ sceneRef, isDebugActive }: ILakeInfoProps) {
   const [isWeatherModalOpen, setIsWeatherModalOpen] = useState(false);
-  const clickCountRef = useRef(0);
-  const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleLakeInfoClick = () => {
-    clickCountRef.current += 1;
-    if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
-
-    clickTimerRef.current = setTimeout(() => {
-      clickCountRef.current = 0;
-    }, 400);
-
-    if (clickCountRef.current >= 3) {
-      sceneRef.current?.toggleDebug();
-      clickCountRef.current = 0;
-      if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
-    }
-  };
 
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -169,7 +152,6 @@ export function LakeInfo({ sceneRef, isDebugActive }: ILakeInfoProps) {
       ]
         .filter(Boolean)
         .join(' ')}
-      onClick={handleLakeInfoClick}
     >
       <div className={styles['lake-info__name']}>
         {currentLakeId ? t(`lakes.${currentLakeId}.name`) : '—'}

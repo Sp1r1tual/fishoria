@@ -103,6 +103,7 @@ export function Inventory({ isModal = false }: { isModal?: boolean }) {
             titleIcon={keepnetIcon}
             onBack={handleBack}
             headerExtra={sellButton}
+            sticky
           />
         </>
       )}

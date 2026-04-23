@@ -642,6 +642,14 @@ export class LakeScene implements IScene {
     }
     this.smoothedInterest = 0;
     this.targetInterest = 0;
+    this.callbacks.onBiteProgress(0);
+    this.callbacks.onLureDepthChange?.(0, 0);
+    GameEvents.emit('lureDepth', {
+      depth: 0,
+      groundDepth: 0,
+      x: W / 2,
+      canvasWidth: W,
+    });
     this.biteUpdateTimer = 0;
     this.snagMechanic.reset();
     this.retrieveReelTime = 0;
@@ -963,6 +971,17 @@ export class LakeScene implements IScene {
       this.currentLureDepthM = lureState.currentLureDepthM;
       this.groundDepthM = lureState.groundDepthM;
 
+      this.callbacks.onLureDepthChange?.(
+        this.currentLureDepthM,
+        this.groundDepthM,
+      );
+      GameEvents.emit('lureDepth', {
+        depth: this.currentLureDepthM,
+        groundDepth: this.groundDepthM,
+        x: this.hookX,
+        canvasWidth: W,
+      });
+
       if (lureState.reachedShore) {
         this.resetCast();
       }
@@ -1008,7 +1027,11 @@ export class LakeScene implements IScene {
         hasPotentialBiter: !!this.potentialBiter,
         potentialBiterSpeciesId: this.potentialBiter?.config.id,
       });
-      if (biteResult.newFollower && !this.activeFollower) {
+      if (
+        biteResult.newFollower &&
+        !this.activeFollower &&
+        !biteResult.biteSpeciesId
+      ) {
         this.callbacks.onInterest?.(isSpinning);
       }
       this.activeFollower = biteResult.newFollower;
@@ -1073,6 +1096,8 @@ export class LakeScene implements IScene {
 
     if (this.activeFollower && isSpinning) {
       this.targetInterest = this.activeFollower.interest;
+    } else if (isSpinning) {
+      this.targetInterest = 0;
     }
 
     const lerpT = 1 - Math.pow(0.0001, deltaTime / 60);
@@ -1141,6 +1166,17 @@ export class LakeScene implements IScene {
     if (this.hookedFish) {
       this.currentLureDepthM = this.hookedFish.depth;
     }
+
+    this.callbacks.onLureDepthChange?.(
+      this.currentLureDepthM,
+      this.groundDepthM,
+    );
+    GameEvents.emit('lureDepth', {
+      depth: this.currentLureDepthM,
+      groundDepth: this.groundDepthM,
+      x: this.hookX,
+      canvasWidth: W,
+    });
   }
 
   private updateBitePhase(): void {

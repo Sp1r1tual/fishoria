@@ -160,12 +160,17 @@ export function detectSectorBite(params: ISectorBiteParams): ISectorBiteResult {
       groundbaitMultiplier;
 
     if (isSpinning) {
-      if (params.isMoving && Math.random() < baseChance * dtSec * 18.0) {
+      if (params.isMoving && Math.random() < baseChance * dtSec * 20.0) {
         const isImmediateBite = Math.random() < 0.3;
-        activeFollower = new LureFollower(
-          speciesId,
-          isImmediateBite ? 1.0 : 0.2 + Math.random() * 0.25,
-        );
+        if (isImmediateBite) {
+          return {
+            biteSpeciesId: speciesId,
+            newFollower: null,
+            progress: 1,
+            progressSpeciesId: speciesId,
+          };
+        }
+        activeFollower = new LureFollower(speciesId, 0.1 + Math.random() * 0.2);
         break;
       }
     } else {

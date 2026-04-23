@@ -121,8 +121,18 @@ export function applyFishAutonomousMovement(
     }
   }
 
-  const vx = Math.cos(fish.combatAngle) * fish.combatSpeed * dtSec;
-  const vy = Math.sin(fish.combatAngle) * fish.combatSpeed * dtSec;
+  const perspectiveScale = fish.position.y / canvasHeight;
+  const baseSpeed =
+    fish.combatSpeed *
+    dtSec *
+    perspectiveScale *
+    REELING_PHYSICS.autonomousSpeedScale;
+
+  const vx =
+    Math.cos(fish.combatAngle) *
+    baseSpeed *
+    REELING_PHYSICS.sideMovementSpeedMult;
+  const vy = Math.sin(fish.combatAngle) * baseSpeed;
 
   fish.position.x += vx;
   fish.position.y += vy;

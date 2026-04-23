@@ -89,15 +89,19 @@ export class WeatherLayer {
   private createRainDrop(randomY = false): IRainDrop {
     const W = this.app.renderer.width;
     const H = this.app.renderer.height > 0 ? this.app.renderer.height : 1000;
+    const isSmall = W < 1000;
 
     const startY = randomY ? Math.random() * H : -(Math.random() * H) - 50;
+
+    const speedScale = isSmall ? 0.6 : 1.0;
+    const lengthScale = isSmall ? 0.5 : 1.0;
 
     return {
       x: Math.random() * W,
       y: startY,
-      vx: -1 - Math.random() * 1.5,
-      vy: 12 + Math.random() * 6,
-      length: 15 + Math.random() * 20,
+      vx: (-1 - Math.random() * 1.5) * speedScale,
+      vy: (12 + Math.random() * 6) * speedScale,
+      length: (15 + Math.random() * 20) * lengthScale,
     };
   }
 
@@ -159,7 +163,13 @@ export class WeatherLayer {
       this.rainGfx.clear();
       this.rainGfx.setStrokeStyle({ color: 0x94a3b8, width: 1, alpha: 0.4 });
 
-      for (let i = 0; i < this.rainDrops.length; i++) {
+      const maxVisibleDrops = W < 1000 ? 70 : this.MAX_RAIN_DROPS;
+
+      for (
+        let i = 0;
+        i < Math.min(this.rainDrops.length, maxVisibleDrops);
+        i++
+      ) {
         const drop = this.rainDrops[i];
 
         if (this.weatherType === 'rain' || drop.y > -50) {
@@ -310,10 +320,10 @@ export class WeatherLayer {
       this.ambientGfx.moveTo(m.x, m.y);
       this.ambientGfx.lineTo(m.x - m.vx * 4.5, m.y - m.vy * 4.5);
 
-      const alpha = m.life * Math.max(0, 1 - Math.max(0, m.y) / (H * 0.3));
+      const alpha = m.life * Math.max(0, 1 - Math.max(0, m.y) / (H * 0.2));
       this.ambientGfx.stroke({ width: 2, color: 0xfffbea, alpha });
 
-      if (m.life <= 0 || m.y > H * 0.3) {
+      if (m.life <= 0 || m.y > H * 0.2) {
         this.meteors.splice(i, 1);
       }
     }

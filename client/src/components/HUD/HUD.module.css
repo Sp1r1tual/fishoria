@@ -118,8 +118,8 @@
 
 .hud__legend-container {
   position: fixed;
-  bottom: 100px;
-  right: 14px;
+  bottom: 110px;
+  right: 65px;
   z-index: 10000;
   pointer-events: all;
 }
@@ -153,8 +153,8 @@
 
 @media (max-width: 1044px) {
   .hud__legend-container {
-    bottom: 74px;
-    right: 12px;
+    bottom: 190px;
+    right: 30px;
   }
   .hud__debug-btn {
     width: 22px;

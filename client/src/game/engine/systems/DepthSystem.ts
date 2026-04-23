@@ -3,8 +3,6 @@ import type { IDepthMapConfig } from '@/common/types';
 export class DepthSystem {
   private config: IDepthMapConfig;
 
-  private depthCache = new Map<string, number>();
-
   constructor(config: IDepthMapConfig) {
     this.config = config;
   }
@@ -18,13 +16,7 @@ export class DepthSystem {
     }
 
     if (this.config.type === 'grid' && this.config.data) {
-      const key = `${(normX * 100) | 0},${(normY * 100) | 0}`;
-      const cached = this.depthCache.get(key);
-      if (cached !== undefined) return cached;
-
-      const result = this.computeGridDepth(normX, normY);
-      this.depthCache.set(key, result);
-      return result;
+      return this.computeGridDepth(normX, normY);
     }
 
     return this.config.minDepth;

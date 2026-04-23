@@ -6,13 +6,18 @@
 
 export const REELING_PHYSICS = {
   /** Weight penalty: Math.pow(maxWeight, 0.6) * weightPenaltyFactor */
-  weightPenaltyFactor: 0.95,
+  weightPenaltyFactor: 0.85,
 
   /** Pixels-per-second base scale */
-  pullSpeedScale: 75.0,
+  pullSpeedScale: 110.0,
   /** Absolute minimum pixels-per-second pull guarantee even with terrible gear */
-  minPullSpeed: 20.0,
+  minPullSpeed: 30.0,
   shoreBoundaryPx: 4,
+
+  /** Side movement speed multiplier during fight */
+  sideMovementSpeedMult: 0.7,
+  /** Overall autonomous movement speed scale during fight */
+  autonomousSpeedScale: 0.8,
 } as const;
 
 export const TENSION = {
@@ -58,7 +63,7 @@ export const SNAG = {
 
 export const SPINNING_LURE = {
   /** Shore boundary: fraction of canvas height (lure stops here) */
-  shoreBoundaryFraction: 0.96,
+  shoreBoundaryFraction: 0.99,
 
   /** Wobbler dive speed when reeling (depth per second multiplier) */
   wobblerDiveSpeed: 0.15,

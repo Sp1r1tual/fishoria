@@ -36,6 +36,8 @@ export interface ILakeSceneCallbacks {
   onGearDamaged?: (rodDamage: number, reelDamage: number) => void;
   onCastError?: (msgId: string) => void;
   onResetCast?: (phase: GamePhaseType) => void | boolean;
+  onInterest?: (isSpinning: boolean) => void;
+  onLureDepthChange?: (depthM: number, groundDepthM: number) => void;
 }
 
 export interface IScene {
@@ -57,6 +59,12 @@ export type GameUiEventMap = {
   tension: number;
   bite: number;
   depth: number;
+  lureDepth: {
+    depth: number;
+    groundDepth: number;
+    x?: number;
+    canvasWidth?: number;
+  };
   debug: boolean;
   echoSounder: boolean;
   snagStart: null;

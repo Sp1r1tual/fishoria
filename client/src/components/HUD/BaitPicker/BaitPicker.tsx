@@ -66,17 +66,20 @@ export function BaitPicker({
     : null;
 
   const isLure = activeBait.startsWith('lure_');
-  const activeCount = isLure
+  const activeCountValue = isLure
     ? gearItems.filter((g: IOwnedGearItem) => g.itemId === activeBait).length
     : (consumables.find(
         (c: { itemId: string; itemType: string; quantity: number }) =>
           c.itemId === activeBait && c.itemType === 'bait',
       )?.quantity ?? 0);
 
+  const activeCount = isLure && !currentHook ? undefined : activeCountValue;
+
   const baitNeedsAttention =
-    activeCount === 0 ||
+    activeCountValue === 0 ||
     (isSpinningRod && !isLure) ||
-    (!isSpinningRod && isLure);
+    (!isSpinningRod && isLure) ||
+    (isLure && !currentHook);
 
   const currentBaitConfig = isLure
     ? currentHook

@@ -29,6 +29,8 @@ const SFX_URLS = {
   purchase: new URL('../../assets/music/metal_coin_rattle.mp3', import.meta.url)
     .href,
   click: new URL('../../assets/music/click.wav', import.meta.url).href,
+  spinningDing: new URL('../../assets/music/spining_ding.mp3', import.meta.url)
+    .href,
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -383,6 +385,15 @@ export function useGameAudio(manageAmbient = true) {
     playBell();
   }, [playBell]);
 
+  const onInterest = useCallback(
+    (isSpinning: boolean) => {
+      if (isSpinning) {
+        playOnce('spinningDing');
+      }
+    },
+    [playOnce],
+  );
+
   const onHook = useCallback(() => {}, []);
 
   const onCatch = useCallback(() => {
@@ -489,5 +500,6 @@ export function useGameAudio(manageAmbient = true) {
     onReelingState,
     onPhaseChange,
     onTimeOfDayChange,
+    onInterest,
   };
 }

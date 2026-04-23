@@ -14,6 +14,7 @@ interface ScreenHeaderProps {
   showBack?: boolean;
   onInfo?: () => void;
   infoText?: string;
+  sticky?: boolean;
 }
 
 export function ScreenHeader({
@@ -24,11 +25,12 @@ export function ScreenHeader({
   showBack = true,
   onInfo,
   infoText,
+  sticky = false,
 }: ScreenHeaderProps) {
   const { t } = useTranslation();
 
   return (
-    <div className={styles.wrapper}>
+    <div className={`${styles.wrapper} ${sticky ? styles.sticky : ''}`}>
       <div className={`mobile-only ${styles.mobile_actions}`}>
         <div className={styles.back_wrapper}>
           {showBack && onBack && (

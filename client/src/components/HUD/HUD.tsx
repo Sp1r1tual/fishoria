@@ -8,6 +8,7 @@ import { WoodyButton } from '@/components/UI/buttons/WoodyButton/WoodyButton';
 import { DebugTerminal } from './DebugTerminal/DebugTerminal';
 import { LakeInfo } from './LakeInfo/LakeInfo';
 import { TensionIndicator } from './TensionIndicator/TensionIndicator';
+import { LureDepthIndicator } from './LureDepthIndicator/LureDepthIndicator';
 import { ActionControl } from './ActionControl/ActionControl';
 import { HUDActionButtons } from './HUDActionButtons/HUDActionButtons';
 import { LevelBar } from '@/components/UI/LevelBar/LevelBar';
@@ -215,7 +216,10 @@ export function HUD({
             onToggleEchoSounder={handleToggleEchoSounder}
           />
 
-          <TensionIndicator debugActive={localDebugActive} />
+          <TensionIndicator
+            debugActive={localDebugActive}
+            isSpinning={isSpinningRod}
+          />
 
           <ActionControl
             sceneRef={sceneRef}
@@ -232,6 +236,8 @@ export function HUD({
           </div>
         </div>
       )}
+
+      <LureDepthIndicator />
 
       {bottomOnly && (debugActive || localEchoActive) && curLake && (
         <div className={styles['hud__legend-container']}>

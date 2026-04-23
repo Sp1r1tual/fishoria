@@ -66,6 +66,7 @@ export function Gear({ onClose }: { onClose?: () => void }) {
             onBack={() => handleBack(onClose)}
             onInfo={handleShowInfo}
             infoText={guideText}
+            sticky
           />
         </>
       )}

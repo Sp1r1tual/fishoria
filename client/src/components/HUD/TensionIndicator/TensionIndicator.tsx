@@ -8,8 +8,10 @@ import styles from './TensionIndicator.module.css';
 
 export function TensionIndicator({
   debugActive = false,
+  isSpinning = false,
 }: {
   debugActive?: boolean;
+  isSpinning?: boolean;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const tensionBarsRef = useRef<HTMLDivElement>(null);
@@ -69,8 +71,10 @@ export function TensionIndicator({
       const useColorful = isReelingOrBite || currentTension > 0.01;
 
       let fillValue = isReelingOrBite ? currentTension : 0;
-      if (currentPhase === 'waiting' && localDebugActive) {
-        fillValue = currentBite;
+      if (currentPhase === 'waiting') {
+        if (isSpinning || localDebugActive) {
+          fillValue = currentBite;
+        }
       }
 
       for (let i = 0; i < 20; i++) {
@@ -134,7 +138,7 @@ export function TensionIndicator({
       if (unsubPhase) unsubPhase();
       unsubStore();
     };
-  }, [debugActive]);
+  }, [debugActive, isSpinning]);
 
   return (
     <div className={styles['tension__wrap']} ref={wrapRef}>
