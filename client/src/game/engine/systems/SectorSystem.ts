@@ -190,8 +190,14 @@ export class SectorSystem {
     const { minX, maxX, minY, maxY } = this.bounds;
     if (nx < minX || nx > maxX || ny < minY || ny > maxY) return null;
 
-    const c = Math.floor(((nx - minX) / (maxX - minX)) * this.cols);
-    const r = Math.floor(((ny - minY) / (maxY - minY)) * this.rows);
+    const c = Math.min(
+      this.cols - 1,
+      Math.floor(((nx - minX) / (maxX - minX)) * this.cols),
+    );
+    const r = Math.min(
+      this.rows - 1,
+      Math.floor(((ny - minY) / (maxY - minY)) * this.rows),
+    );
 
     if (c >= 0 && c < this.cols && r >= 0 && r < this.rows) {
       const sector = this.grid[c][r];

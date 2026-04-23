@@ -899,6 +899,14 @@ export class LakeScene implements IScene {
     this.castY *= scaleY;
 
     this.depthSystem = new DepthSystem(this.config.depthMap);
+    this.sectorSystem = new SectorSystem(
+      this.config.fishSpawns,
+      this.config.allowedCastArea,
+      (nx, ny) => this.depthSystem.getDepthAt(nx, ny),
+      newW,
+      newH,
+      50,
+    );
     this.debugLayer.resize();
     this.weatherLayer.resize();
 
@@ -1010,14 +1018,6 @@ export class LakeScene implements IScene {
       }
       this.activeFollower = biteResult.newFollower;
 
-      if (
-        this.smoothedInterest < 0.05 &&
-        !biteResult.biteSpeciesId &&
-        !biteResult.progressSpeciesId
-      ) {
-        this.potentialBiter = null;
-      }
-
       if (biteResult.biteSpeciesId) {
         const config = FISH_SPECIES[biteResult.biteSpeciesId];
         biter = new Fish(config, this.hookX, this.hookY);
@@ -1045,7 +1045,7 @@ export class LakeScene implements IScene {
           this.potentialBiter = null;
         } else {
           const forceBite =
-            this.potentialBiter.nibblesDone > 2 && Math.random() < 0.8;
+            this.potentialBiter.nibblesDone > 5 && Math.random() < 0.4;
 
           if (
             forceBite ||
@@ -1078,9 +1078,10 @@ export class LakeScene implements IScene {
       (this.targetInterest - this.smoothedInterest) * Math.min(1, lerpT * 1.0);
 
     if (this.targetInterest > 0 && !isSpinning) {
+      const decayRate = this.potentialBiter ? 0.08 : 0.5;
       this.targetInterest = Math.max(
         0,
-        this.targetInterest - 0.5 * (deltaTime / 60),
+        this.targetInterest - decayRate * (deltaTime / 60),
       );
     }
 

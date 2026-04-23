@@ -177,7 +177,7 @@ export class HookEntity {
             if (pulse > dipThreshold) bulbAlphaOverride = 0;
           }
         } else if (!isLayingOnSide) {
-          sinkY = bobCycle * 3 * this.scale;
+          sinkY = 0;
         }
       } else if (phase === 'bite') {
         sinkY = 5 * this.scale;

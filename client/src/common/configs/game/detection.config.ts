@@ -10,6 +10,13 @@ export const BITE_DETECTION = {
 
   /** Chance for a predator to strike a spinning lure instantly vs starting a follow phase */
   spinningImmediateBiteChance: 0.15,
+
+  /**
+   * Probability of an actual hook-up when the "direct bite" action branch fires
+   * and there is NO established potentialBiter yet.
+   * Keeps early bites rare because the action itself already has a low probability.
+   */
+  directBiteChance: 0.25,
 } as const;
 
 export const INTEREST_RATES = {

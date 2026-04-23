@@ -68,7 +68,8 @@ export class GroundbaitEffect {
       p.alpha = Math.min(1.0, p.life * 4.0);
 
       if (p.life <= 0) {
-        this.particles.splice(i, 1);
+        this.particles[i] = this.particles[this.particles.length - 1];
+        this.particles.pop();
         continue;
       }
 

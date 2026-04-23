@@ -233,7 +233,9 @@ export class WeatherLayer {
       this.dropletsGfx.fill({ color: 0xffffff, alpha: d.alpha * 1.5 });
 
       if (d.life <= 0 || d.alpha < 0.01) {
-        this.screenDroplets.splice(i, 1);
+        this.screenDroplets[i] =
+          this.screenDroplets[this.screenDroplets.length - 1];
+        this.screenDroplets.pop();
       }
     }
 
@@ -299,7 +301,8 @@ export class WeatherLayer {
       this.ambientGfx.fill({ color: 0x1a202c, alpha });
 
       if (b.x < -100 || b.x > W + 100) {
-        this.birds.splice(i, 1);
+        this.birds[i] = this.birds[this.birds.length - 1];
+        this.birds.pop();
       }
     }
 
@@ -324,7 +327,8 @@ export class WeatherLayer {
       this.ambientGfx.stroke({ width: 2, color: 0xfffbea, alpha });
 
       if (m.life <= 0 || m.y > H * 0.2) {
-        this.meteors.splice(i, 1);
+        this.meteors[i] = this.meteors[this.meteors.length - 1];
+        this.meteors.pop();
       }
     }
   }

@@ -26,10 +26,6 @@ export class TensionSystem {
       }
     }
 
-    if (!gearToBreak) {
-      gearToBreak = gears[0].type;
-    }
-
     const tackleMaxWeight = gears[0].maxWeight;
     const tackleStrength = Math.max(0.01, tackleMaxWeight / 60);
 

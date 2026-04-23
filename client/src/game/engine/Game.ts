@@ -112,6 +112,7 @@ export class Game {
       this.worker = null;
     }
     this.currentScene?.destroy();
+    this.currentScene = null;
     try {
       if (this.app?.renderer && this.app.canvas) {
         this.app.canvas.remove();

@@ -48,7 +48,7 @@ export class Fish {
 
     this.targetNibbles = Math.max(
       1,
-      Math.floor(2.2 - config.behavior.aggression * 2.5 + Math.random() * 2),
+      Math.floor(2.5 - config.behavior.aggression * 2.0 + Math.random() * 2.5),
     );
   }
 

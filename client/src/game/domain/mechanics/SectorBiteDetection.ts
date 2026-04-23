@@ -93,71 +93,58 @@ export function detectSectorBite(params: ISectorBiteParams): ISectorBiteResult {
     }
   }
 
-  for (const [speciesId, baseAvailability] of speciesList) {
-    if (baseAvailability < 0.01) continue;
+  if (isSpinning) {
+    for (const [speciesId, baseAvailability] of speciesList) {
+      if (baseAvailability < 0.01) continue;
 
-    const config = FISH_SPECIES[speciesId];
-    if (!config) continue;
+      const config = FISH_SPECIES[speciesId];
+      if (!config) continue;
 
-    const depthRange = params.getPreferredDepthRange(speciesId);
-    const minD = depthRange.min;
-    const maxD = depthRange.max;
-    let depthScore =
-      params.hookDepthM >= minD && params.hookDepthM <= maxD ? 1.0 : 0.0;
+      const depthRange = params.getPreferredDepthRange(speciesId);
+      const minD = depthRange.min;
+      const maxD = depthRange.max;
+      let depthScore =
+        params.hookDepthM >= minD && params.hookDepthM <= maxD ? 1.0 : 0.0;
 
-    if (depthScore === 0) {
-      const gap = Math.min(
-        Math.abs(params.hookDepthM - minD),
-        Math.abs(params.hookDepthM - maxD),
-      );
-      depthScore = Math.max(
-        0,
-        1 - gap * BITE_DETECTION.verticalGapPenaltyFactor,
-      );
-    }
-    if (depthScore < 0.1) continue;
-
-    let lureTypeMultiplier = 1.0;
-    if (isSpinning) {
-      const lureType = params.baitType.replace('lure_', '') as LureTypeType;
-      lureTypeMultiplier = config.lureMultipliers?.[lureType] ?? 1.0;
-    }
-
-    const baitScore = isSpinning
-      ? config.isPredator
-        ? 1.0 * lureTypeMultiplier
-        : 0.0
-      : config.preferredBaits.includes(params.baitType)
-        ? 1.0
-        : 0.0;
-
-    if (baitScore <= 0) continue;
-
-    const timeScore = config.activityByTimeOfDay[params.timeOfDay] ?? 0.5;
-    const weatherScore = config.activityByWeather[params.weather] ?? 1.0;
-
-    let groundbaitMultiplier = 1.0;
-    if (params.activeGroundbait) {
-      const g = params.activeGroundbait;
-      if (g.fishedSpeciesMultiplier && g.fishedSpeciesMultiplier[speciesId]) {
-        groundbaitMultiplier = g.fishedSpeciesMultiplier[speciesId];
-      } else {
-        groundbaitMultiplier = 1.0;
+      if (depthScore === 0) {
+        const gap = Math.min(
+          Math.abs(params.hookDepthM - minD),
+          Math.abs(params.hookDepthM - maxD),
+        );
+        depthScore = Math.max(
+          0,
+          1 - gap * BITE_DETECTION.verticalGapPenaltyFactor,
+        );
       }
-    }
+      if (depthScore < 0.1) continue;
 
-    const baseChance =
-      baseAvailability *
-      depthScore *
-      timeScore *
-      weatherScore *
-      baitScore *
-      groundbaitMultiplier;
+      const lureType = params.baitType.replace('lure_', '') as LureTypeType;
+      const lureTypeMultiplier = config.lureMultipliers?.[lureType] ?? 1.0;
+      const baitScore = config.isPredator ? 1.0 * lureTypeMultiplier : 0.0;
+      if (baitScore <= 0) continue;
 
-    if (baseChance < 0.001) continue;
+      const timeScore = config.activityByTimeOfDay[params.timeOfDay] ?? 0.5;
+      const weatherScore = config.activityByWeather[params.weather] ?? 1.0;
 
-    if (isSpinning) {
-      if (params.isMoving && Math.random() < baseChance * dtSec * 20.0) {
+      let groundbaitMultiplier = 1.0;
+      if (params.activeGroundbait) {
+        const g = params.activeGroundbait;
+        if (g.fishedSpeciesMultiplier && g.fishedSpeciesMultiplier[speciesId]) {
+          groundbaitMultiplier = g.fishedSpeciesMultiplier[speciesId];
+        }
+      }
+
+      const baseChance =
+        baseAvailability *
+        depthScore *
+        timeScore *
+        weatherScore *
+        baitScore *
+        groundbaitMultiplier;
+
+      if (baseChance < 0.001) continue;
+
+      if (params.isMoving && Math.random() < baseChance * dtSec) {
         const isImmediateBite =
           Math.random() < BITE_DETECTION.spinningImmediateBiteChance;
         if (isImmediateBite) {
@@ -171,36 +158,115 @@ export function detectSectorBite(params: ISectorBiteParams): ISectorBiteResult {
         activeFollower = new LureFollower(speciesId, 0.1 + Math.random() * 0.2);
         break;
       }
-    } else {
-      const nibbleChancePerSec = baseChance * 5.0;
-      if (Math.random() < nibbleChancePerSec * dtSec) {
-        const p = 0.3 + Math.random() * 0.5;
-        if (p > maxProgress) {
-          maxProgress = p;
-          progressSpeciesId = speciesId;
+    }
+  } else {
+    interface ISpeciesChance {
+      id: string;
+      baseChance: number;
+    }
+    const candidates: ISpeciesChance[] = [];
+    let totalBaseChance = 0;
+
+    for (const [speciesId, baseAvailability] of speciesList) {
+      if (baseAvailability < 0.01) continue;
+      const config = FISH_SPECIES[speciesId];
+      if (!config) continue;
+
+      const depthRange = params.getPreferredDepthRange(speciesId);
+      const minD = depthRange.min;
+      const maxD = depthRange.max;
+      let depthScore =
+        params.hookDepthM >= minD && params.hookDepthM <= maxD ? 1.0 : 0.0;
+
+      if (depthScore === 0) {
+        const gap = Math.min(
+          Math.abs(params.hookDepthM - minD),
+          Math.abs(params.hookDepthM - maxD),
+        );
+        depthScore = Math.max(
+          0,
+          1 - gap * BITE_DETECTION.verticalGapPenaltyFactor,
+        );
+      }
+      if (depthScore < 0.1) continue;
+
+      const baitScore = config.preferredBaits.includes(params.baitType)
+        ? 1.0
+        : 0.0;
+      if (baitScore <= 0) continue;
+
+      const timeScore = config.activityByTimeOfDay[params.timeOfDay] ?? 0.5;
+      const weatherScore = config.activityByWeather[params.weather] ?? 1.0;
+
+      let groundbaitMultiplier = 1.0;
+      if (params.activeGroundbait) {
+        const g = params.activeGroundbait;
+        if (g.fishedSpeciesMultiplier && g.fishedSpeciesMultiplier[speciesId]) {
+          groundbaitMultiplier = g.fishedSpeciesMultiplier[speciesId];
         }
       }
 
-      let biteChancePerSec = baseChance;
+      const baseChance =
+        baseAvailability *
+        depthScore *
+        timeScore *
+        weatherScore *
+        baitScore *
+        groundbaitMultiplier;
 
-      if (params.potentialBiterSpeciesId === speciesId) {
-        biteChancePerSec *= 10.0;
-      } else if (params.hasPotentialBiter) {
-        biteChancePerSec *= 0.1;
+      if (baseChance >= 0.001) {
+        candidates.push({ id: speciesId, baseChance });
+        totalBaseChance += baseChance;
       }
+    }
 
-      const depthRange = params.getPreferredDepthRange(speciesId);
-      if (params.isOnBottom && depthRange.min < params.hookDepthM - 1) {
-        biteChancePerSec *= 0.1;
-      }
+    if (totalBaseChance > 0) {
+      const nibbleMultiplier = 2.5;
 
-      if (Math.random() < biteChancePerSec * dtSec) {
-        return {
-          biteSpeciesId: speciesId,
-          newFollower: null,
-          progress: 1,
-          progressSpeciesId: speciesId,
-        };
+      const totalActionChance = totalBaseChance * dtSec;
+
+      if (Math.random() < totalActionChance) {
+        let r = Math.random() * totalBaseChance;
+        let selected: ISpeciesChance | null = null;
+        for (const c of candidates) {
+          r -= c.baseChance;
+          if (r <= 0) {
+            selected = c;
+            break;
+          }
+        }
+
+        if (selected) {
+          const actionRoll = Math.random();
+          if (actionRoll < nibbleMultiplier / (nibbleMultiplier + 1.0)) {
+            maxProgress = 0.3 + Math.random() * 0.5;
+            progressSpeciesId = selected.id;
+          } else {
+            let biteProb: number = BITE_DETECTION.directBiteChance;
+            if (params.potentialBiterSpeciesId === selected.id) {
+              biteProb = Math.min(1.0, biteProb * 4.0);
+            } else if (params.hasPotentialBiter) {
+              biteProb *= 0.15;
+            }
+
+            const depthRange = params.getPreferredDepthRange(selected.id);
+            if (params.isOnBottom && depthRange.min < params.hookDepthM - 1) {
+              biteProb *= 0.1;
+            }
+
+            if (Math.random() < biteProb) {
+              return {
+                biteSpeciesId: selected.id,
+                newFollower: null,
+                progress: 1,
+                progressSpeciesId: selected.id,
+              };
+            } else {
+              maxProgress = 0.4 + Math.random() * 0.4;
+              progressSpeciesId = selected.id;
+            }
+          }
+        }
       }
     }
   }

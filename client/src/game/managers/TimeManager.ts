@@ -44,6 +44,11 @@ export const TimeManager = {
     GameEvents.emit('timeUpdate', { hour, mode: 'game' });
   },
 
+  /**
+   * Returns the absolute game time in years since the Unix era.
+   * Used to compare timestamps (e.g., end of baiting).
+   * For the hour of the day (0-23) use getTime('game').getHours().
+   */
   getGameTimeHours(): number {
     const d = this.getTime('game');
     return d.getTime() / (1000 * 60 * 60);

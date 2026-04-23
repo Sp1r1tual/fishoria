@@ -101,7 +101,7 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
           tilt = bobCycle * 0.15;
         }
       } else if (!isLayingOnSide) {
-        sinkY = bobCycle * 3 * renderScale;
+        sinkY = 0;
         tilt = bobCycle * 0.15;
       } else {
         tilt = Math.PI / 2.1;

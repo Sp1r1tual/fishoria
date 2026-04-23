@@ -6,6 +6,7 @@ export class InputHandler {
   private castClickBound: (e: MouseEvent | TouchEvent) => void;
   private keyDownBound: (e: KeyboardEvent) => void;
   private keyUpBound: (e: KeyboardEvent) => void;
+  private touchEndBound: ((e: TouchEvent) => void) | null = null;
   private canvas: HTMLCanvasElement;
 
   constructor(
@@ -119,14 +120,13 @@ export class InputHandler {
         this.castClickBound as EventListener,
       );
     } else {
-      canvas.addEventListener(
-        'touchend',
-        (e) => {
-          this.castClickBound(e);
-          e.preventDefault();
-        },
-        { passive: false },
-      );
+      this.touchEndBound = (e: TouchEvent) => {
+        this.castClickBound(e);
+        e.preventDefault();
+      };
+      canvas.addEventListener('touchend', this.touchEndBound as EventListener, {
+        passive: false,
+      });
       canvas.addEventListener('click', this.castClickBound as EventListener);
     }
     window.addEventListener('keydown', this.keyDownBound);
@@ -140,6 +140,12 @@ export class InputHandler {
         this.castClickBound as EventListener,
       );
     } else {
+      if (this.touchEndBound) {
+        this.canvas.removeEventListener(
+          'touchend',
+          this.touchEndBound as EventListener,
+        );
+      }
       this.canvas.removeEventListener(
         'click',
         this.castClickBound as EventListener,
