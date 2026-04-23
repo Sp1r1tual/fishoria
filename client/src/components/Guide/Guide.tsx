@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ScreenContainer } from '../UI/ScreenContainer/ScreenContainer';
 import { SkeletonImage } from '../UI/skeletons/SkeletonImage/SkeletonImage';
 
-import { FISH_SPECIES } from '@/common/configs/game';
+import { FISH_SPECIES, LAKES } from '@/common/configs/game';
 
 import guideIcon from '@/assets/ui/guide.webp';
 
@@ -14,6 +14,12 @@ export function Guide() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const fishList = Object.values(FISH_SPECIES);
+
+  const getFishHabitats = (fishId: string) => {
+    return LAKES.filter((lake) =>
+      lake.fishSpawns.species?.some((s) => s.speciesId === fishId),
+    ).map((lake) => t(`lakes.${lake.id}.name`));
+  };
 
   return (
     <ScreenContainer
@@ -38,14 +44,20 @@ export function Guide() {
                   objectFit="contain"
                   wrapperClassName={styles['guide__fish-icon']}
                 />
-                <h3 className={styles['guide__fish-name']}>
-                  {t(`fish.${fish.id}.name`)}
-                </h3>
+                <div className={styles['guide__fish-title-wrapper']}>
+                  <h3 className={styles['guide__fish-name']}>
+                    {t(`fish.${fish.id}.name`)}
+                  </h3>
+                </div>
               </div>
               <div className={styles['guide__fish-details']}>
                 <p>
                   <strong>{t('guide.description')}:</strong>{' '}
                   {t(`fish.${fish.id}.description`)}
+                </p>
+                <p>
+                  <strong>{t('guide.habitats')}:</strong>{' '}
+                  {getFishHabitats(fish.id).join(', ') || t('guide.any')}
                 </p>
                 <p>
                   <strong>{t('guide.weightRange')}:</strong>{' '}

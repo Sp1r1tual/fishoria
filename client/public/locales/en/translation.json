@@ -89,7 +89,7 @@
     "favoredBaits": "Favored Baits",
     "favoredMix": "Favored Groundbait",
     "any": "Any",
-    "noPreference": "No specific preference"
+    "habitats": "Habitats"
   },
   "quests": {
     "title": "Active Quests",
@@ -133,6 +133,10 @@
           {
             "q": "How is the Fish Farm different?",
             "a": "It's an artificial reservoir with crystal clear water and high fish density. It holds valuable species like Carp, Grass Carp, and large predators. There is no current, and the chance of catching trash here is very low."
+          },
+          {
+            "q": "What should I know about the Pasture Canal?",
+            "a": "The canal has a steady current and a deep central channel. It's the best place for Asp and Bream. Be careful with casting near the steep banks, as they can be tricky."
           }
         ]
       },
@@ -216,6 +220,18 @@
           {
             "q": "How to handle Grass Carp?",
             "a": "It's a very shy and cautious fish. It requires careful casting and high endurance during the fight due to its natural strength and stamina."
+          },
+          {
+            "q": "What is the secret to catching Asp?",
+            "a": "Asp is a fast-water predator. Use spoons or wobblers and retrieve them quickly in the upper water layers. It strikes hard, so be ready!"
+          },
+          {
+            "q": "How to target Bream in the canal?",
+            "a": "Bream loves the deep channel at the bottom. Use a feeder rig with 'Vanillin Mix' and target depths between 1-2 meters."
+          },
+          {
+            "q": "How to find the mysterious Eel?",
+            "a": "Eel is strictly nocturnal. Fish for it at night in the canal using worms or live bait on the bottom. It's incredibly strong despite its shape."
           }
         ]
       },
@@ -440,6 +456,42 @@
     "grass_carp": {
       "name": "Grass Carp",
       "description": "Large herbivorous resident. Fights fiercely when hooked."
+    },
+    "american_catfish": {
+      "name": "American Catfish",
+      "description": "A small but extremely active and curious bottom dweller. Often bites in groups."
+    },
+    "asp": {
+      "name": "Asp",
+      "description": "A lightning-fast predator of the upper water layers. Known for powerful surface strikes."
+    },
+    "bream": {
+      "name": "Bream",
+      "description": "A flat-bodied bottom dweller. Very cautious and prefers deep, quiet areas."
+    },
+    "crayfish": {
+      "name": "Crayfish",
+      "description": "A bottom-dwelling crustacean. Usually a sign of clean water."
+    },
+    "eel": {
+      "name": "Eel",
+      "description": "A mysterious, snake-like fish. Strictly nocturnal and very strong."
+    },
+    "gudgeon": {
+      "name": "Gudgeon",
+      "description": "A small, schooling fish that loves sandy bottoms and clear water."
+    },
+    "silver_carp": {
+      "name": "Silver Carp",
+      "description": "A huge plankton eater. Can jump out of the water when startled."
+    },
+    "tench": {
+      "name": "Tench",
+      "description": "The 'doctor' fish of the reservoir. Very shy and lives in thick weeds."
+    },
+    "weatherfish": {
+      "name": "Weatherfish",
+      "description": "Can predict weather changes. Becomes very active before a storm."
     }
   },
   "baits": {
@@ -503,6 +555,10 @@
     "fish_farm": {
       "name": "Fish Farm",
       "description": "Artificial reservoir for breeding. Even bottom, clear water, high fish density."
+    },
+    "pasture_canal": {
+      "name": "Pasture Canal",
+      "description": "A long irrigation canal passing through lush green pastures. Steady current and steep grassy banks."
     }
   },
   "gear_items": {

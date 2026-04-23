@@ -49,6 +49,12 @@ const AMBIENT: Record<string, HTMLAudioElement> = {
   fish_farm_night: new Audio(
     'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/sounds/scenes/resirvour_night.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL3NvdW5kcy9zY2VuZXMvcmVzaXJ2b3VyX25pZ2h0Lm1wMyIsImlhdCI6MTc3NTQ2NzA2NywiZXhwIjo0ODk3NTMxMDY3fQ.XzqGgJv15mmDe0-59TxMyjOx8wevzJ5guKuDmeLPzB8',
   ),
+  pasture_canal_day: new Audio(
+    'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/sounds/scenes/pasture_canal_day.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL3NvdW5kcy9zY2VuZXMvcGFzdHVyZV9jYW5hbF9kYXkubXAzIiwiaWF0IjoxNzc2OTc4OTk2LCJleHAiOjQ4OTkwNDI5OTZ9.iQtToNbbEBoCb-hV9VBPj8PTpdlyp7dnZdzZ1acBIGA',
+  ),
+  pasture_canal_night: new Audio(
+    'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/sounds/scenes/pasture_canal_night.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL3NvdW5kcy9zY2VuZXMvcGFzdHVyZV9jYW5hbF9uaWdodC5tcDMiLCJpYXQiOjE3NzY5NzY2MzksImV4cCI6NDg5OTA0MDYzOX0.gWyV8OaGdY0aVb76To_Gvm-4cKSJ50AfwKZSLaQdIpk',
+  ),
   rain: new Audio(
     'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/sounds/scenes/rain.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL3NvdW5kcy9zY2VuZXMvcmFpbi5tcDMiLCJpYXQiOjE3NzU0NjcwODQsImV4cCI6NDg5NzUzMTA4NH0.fppFBHNBC-mEdyXHHrxJ7dDuzm_7z_DXRwMH0GTbASU',
   ),

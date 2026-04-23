@@ -2,8 +2,10 @@ import type { ILakeConfig } from '../../types';
 
 import forestDayImg from '@/assets/locations/01_forest_lake_day.webp';
 import forestNightImg from '@/assets/locations/01_forest_lake_night.webp';
-import farmDayImg from '@/assets/locations/02_reservoir_day.webp';
-import farmNightImg from '@/assets/locations/02_reservoir_night.webp';
+import canalDayImg from '@/assets/locations/02_pasture_canal_day.webp';
+import canalNightImg from '@/assets/locations/02_pasture_canal_night.webp';
+import farmDayImg from '@/assets/locations/03_reservoir_day.webp';
+import farmNightImg from '@/assets/locations/03_reservoir_night.webp';
 
 //! The configuration allows you to override the weight range for fish using the property weightRange: { min: 0.1, max: 10 },
 
@@ -31,16 +33,6 @@ export const LAKES: ILakeConfig[] = [
     fishSpawns: {
       species: [
         {
-          speciesId: 'crucian',
-          preferredDepthRange: { min: 1, max: 2.3 },
-          baseCatchChance: 0.04,
-        },
-        {
-          speciesId: 'roach',
-          preferredDepthRange: { min: 0.3, max: 1.45 },
-          baseCatchChance: 0.04,
-        },
-        {
           speciesId: 'perch',
           preferredDepthRange: { min: 0.2, max: 2.2 },
           baseCatchChance: 0.04,
@@ -51,8 +43,28 @@ export const LAKES: ILakeConfig[] = [
           baseCatchChance: 0.015,
         },
         {
+          speciesId: 'roach',
+          preferredDepthRange: { min: 0.3, max: 1.45 },
+          baseCatchChance: 0.04,
+        },
+        {
+          speciesId: 'crucian',
+          preferredDepthRange: { min: 1, max: 2.3 },
+          baseCatchChance: 0.04,
+        },
+        {
+          speciesId: 'tench',
+          preferredDepthRange: { min: 0.5, max: 1.8 },
+          baseCatchChance: 0.02,
+        },
+        {
           speciesId: 'ruffe',
           preferredDepthRange: { min: 0.75, max: 2.7 },
+          baseCatchChance: 0.03,
+        },
+        {
+          speciesId: 'weatherfish',
+          preferredDepthRange: { min: 0.5, max: 1.5 },
           baseCatchChance: 0.03,
         },
       ],
@@ -94,6 +106,114 @@ export const LAKES: ILakeConfig[] = [
     },
     trashChance: 0.08,
     unlockLevel: 1,
+  },
+  {
+    id: 'pasture_canal',
+    name: 'Pasture Canal',
+    description:
+      'A long irrigation canal passing through lush green pastures. Steady current and steep grassy banks.',
+    backgroundColor: 0x1a3a3a,
+    depthMap: {
+      type: 'grid',
+      minDepth: 0.2,
+      maxDepth: 2,
+      data: [
+        [0.0, 0.1, 0.05, 0.1, 0.0, 0.0, 0.1, 0.05],
+        [0.3, 0.5, 0.4, 0.6, 0.3, 0.4, 0.6, 0.5],
+        [0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9],
+        [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        [0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9],
+        [0.3, 0.5, 0.4, 0.6, 0.3, 0.4, 0.6, 0.5],
+        [0.1, 0.0, 0.1, 0.05, 0.1, 0.0, 0.1, 0.0],
+      ],
+    },
+    fishSpawns: {
+      species: [
+        {
+          speciesId: 'asp',
+          preferredDepthRange: { min: 0.4, max: 1.2 },
+          baseCatchChance: 0.02,
+        },
+        {
+          speciesId: 'bream',
+          preferredDepthRange: { min: 0.8, max: 2.0 },
+          baseCatchChance: 0.04,
+        },
+        {
+          speciesId: 'american_catfish',
+          preferredDepthRange: { min: 0.5, max: 2.0 },
+          baseCatchChance: 0.08,
+        },
+        {
+          speciesId: 'eel',
+          preferredDepthRange: { min: 1.0, max: 2.0 },
+          baseCatchChance: 0.01,
+        },
+        {
+          speciesId: 'gudgeon',
+          preferredDepthRange: { min: 0.2, max: 1.0 },
+          baseCatchChance: 0.02,
+        },
+        {
+          speciesId: 'crayfish',
+          preferredDepthRange: { min: 0.2, max: 1.2 },
+          baseCatchChance: 0.02,
+        },
+        {
+          speciesId: 'pike',
+          preferredDepthRange: { min: 0.4, max: 1.8 },
+          baseCatchChance: 0.02,
+        },
+        {
+          speciesId: 'perch',
+          preferredDepthRange: { min: 0.3, max: 1.5 },
+          baseCatchChance: 0.05,
+        },
+        {
+          speciesId: 'roach',
+          preferredDepthRange: { min: 0.3, max: 1.2 },
+          baseCatchChance: 0.06,
+        },
+        {
+          speciesId: 'crucian',
+          preferredDepthRange: { min: 0.5, max: 1.5 },
+          baseCatchChance: 0.05,
+        },
+      ],
+    },
+    allowedCastArea: {
+      type: 'polygon',
+      points: [
+        { x: 0.01, y: 0.59 },
+        { x: 0.99, y: 0.6 },
+        { x: 0.99, y: 1.0 },
+        { x: 0.01, y: 1.0 },
+      ],
+    },
+    obstacles: [],
+    timeOfDayConfig: {
+      morning: {
+        waterColor: 0x2a5a5a,
+        bgImageUrl: canalDayImg,
+      },
+      day: {
+        waterColor: 0x2e6b6b,
+        bgImageUrl: canalDayImg,
+      },
+      evening: {
+        waterColor: 0x1a3a3a,
+        bgImageUrl: canalDayImg,
+      },
+      night: {
+        waterColor: 0x0a1a1a,
+        bgImageUrl: canalNightImg,
+      },
+    },
+    environment: {
+      waterBoundaryY: 0.48,
+    },
+    trashChance: 0.05,
+    unlockLevel: 2,
   },
   {
     id: 'fish_farm',
@@ -152,6 +272,21 @@ export const LAKES: ILakeConfig[] = [
           preferredDepthRange: { min: 1, max: 3 },
           baseCatchChance: 0.05,
         },
+        {
+          speciesId: 'silver_carp',
+          preferredDepthRange: { min: 0.5, max: 2.5 },
+          baseCatchChance: 0.03,
+        },
+        {
+          speciesId: 'crayfish',
+          preferredDepthRange: { min: 0.5, max: 3.5 },
+          baseCatchChance: 0.01,
+        },
+        {
+          speciesId: 'bream',
+          preferredDepthRange: { min: 2.5, max: 4.0 },
+          baseCatchChance: 0.04,
+        },
       ],
     },
     allowedCastArea: {
@@ -193,7 +328,7 @@ export const LAKES: ILakeConfig[] = [
       waterBoundaryY: 0.46,
     },
     trashChance: 0.02,
-    unlockLevel: 1,
+    unlockLevel: 2,
   },
 ];
 

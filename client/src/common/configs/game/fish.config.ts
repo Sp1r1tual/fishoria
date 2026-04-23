@@ -9,6 +9,15 @@ import zanderImg from '@/assets/fish/zander.webp';
 import ruffeImg from '@/assets/fish/ruffe.webp';
 import catfishImg from '@/assets/fish/catfish.webp';
 import grassCarpImg from '@/assets/fish/grass_carp.webp';
+import americanCatfishImg from '@/assets/fish/american_catfish.webp';
+import aspImg from '@/assets/fish/asp.webp';
+import breamImg from '@/assets/fish/bream.webp';
+import crayfishImg from '@/assets/fish/crayfish.webp';
+import eelImg from '@/assets/fish/eel.webp';
+import gudgeonImg from '@/assets/fish/gudgeon.webp';
+import silverCarpImg from '@/assets/fish/silver_carp.webp';
+import tenchImg from '@/assets/fish/tench.webp';
+import weatherfishImg from '@/assets/fish/weatherfish.webp';
 
 export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
   perch: {
@@ -63,7 +72,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     color: 0x52b788,
     imageUrl: pikeImg,
     isPredator: true,
-    priceMultiplier: 1.8,
+    priceMultiplier: 1.9,
     lureMultipliers: {
       vibrotail: 1,
       spoon: 1.4,
@@ -153,7 +162,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     color: 0x6d8ea0,
     imageUrl: zanderImg,
     isPredator: true,
-    priceMultiplier: 1.7,
+    priceMultiplier: 2.1,
     lureMultipliers: {
       vibrotail: 1.5,
       spoon: 0.75,
@@ -228,5 +237,206 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     color: 0x7fb069,
     imageUrl: grassCarpImg,
     priceMultiplier: 1.7,
+  },
+  american_catfish: {
+    id: 'american_catfish',
+    name: 'American Catfish',
+    description:
+      'A small but extremely active and curious bottom dweller. Often bites in groups.',
+    weightRange: { min: 0.1, max: 2.5 },
+    activityByTimeOfDay: { morning: 0.7, day: 1.0, evening: 1.2, night: 0.6 },
+    activityByWeather: { clear: 0.9, cloudy: 1.1, rain: 1.2 },
+    preferredBaits: ['worm', 'maggot'],
+    preferredGroundbait: 'dried_blood',
+    baseCatchChance: 0.35,
+    behavior: {
+      aggression: 0.6,
+      curiosity: 1.0,
+      fear: 0.1,
+      mobility: 0.4,
+    },
+    color: 0x5a4a3a,
+    imageUrl: americanCatfishImg,
+    isPredator: true,
+    priceMultiplier: 0.7,
+    lureMultipliers: {
+      vibrotail: 1.1,
+      spoon: 0.5,
+      wobbler: 0.1,
+    },
+  },
+  asp: {
+    id: 'asp',
+    name: 'Asp',
+    description:
+      'A lightning-fast predator of the upper water layers. Known for powerful surface strikes.',
+    weightRange: { min: 0.5, max: 7.0 },
+    activityByTimeOfDay: { morning: 1.2, day: 1.3, evening: 1.0, night: 0.1 },
+    activityByWeather: { clear: 1.2, cloudy: 0.9, rain: 0.7 },
+    preferredBaits: ['live_bait'],
+    preferredGroundbait: 'dried_blood',
+    baseCatchChance: 0.1,
+    behavior: {
+      aggression: 0.9,
+      curiosity: 0.6,
+      fear: 0.6,
+      mobility: 1.0,
+    },
+    color: 0xe0e0e0,
+    imageUrl: aspImg,
+    isPredator: true,
+    priceMultiplier: 2.4,
+    lureMultipliers: {
+      vibrotail: 0.6,
+      spoon: 1.8,
+      wobbler: 1.5,
+    },
+  },
+  bream: {
+    id: 'bream',
+    name: 'Bream',
+    description:
+      'A flat-bodied bottom dweller. Very cautious and prefers deep, quiet areas.',
+    weightRange: { min: 0.4, max: 6.0 },
+    activityByTimeOfDay: { morning: 0.8, day: 0.3, evening: 1.1, night: 1.2 },
+    activityByWeather: { clear: 0.7, cloudy: 1.2, rain: 1.1 },
+    preferredBaits: ['maggot', 'worm', 'dough'],
+    preferredGroundbait: 'vanillin',
+    baseCatchChance: 0.18,
+    behavior: {
+      aggression: 0.3,
+      curiosity: 0.5,
+      fear: 0.9,
+      mobility: 0.3,
+    },
+    color: 0xc0c0c0,
+    imageUrl: breamImg,
+    priceMultiplier: 1.3,
+  },
+  crayfish: {
+    id: 'crayfish',
+    name: 'Crayfish',
+    description: 'A bottom-dwelling crustacean. Usually a sign of clean water.',
+    weightRange: { min: 0.05, max: 0.35 },
+    activityByTimeOfDay: { morning: 0.3, day: 0.1, evening: 0.9, night: 1.5 },
+    activityByWeather: { clear: 1.0, cloudy: 1.1, rain: 1.3 },
+    preferredBaits: ['worm', 'bread'],
+    preferredGroundbait: 'none',
+    baseCatchChance: 0.12,
+    behavior: {
+      aggression: 0.2,
+      curiosity: 0.9,
+      fear: 0.5,
+      mobility: 0.1,
+    },
+    color: 0x4b3621,
+    imageUrl: crayfishImg,
+    priceMultiplier: 1.5,
+  },
+  eel: {
+    id: 'eel',
+    name: 'Eel',
+    description:
+      'A mysterious, snake-like fish. Strictly nocturnal and very strong.',
+    weightRange: { min: 0.4, max: 4.5 },
+    activityByTimeOfDay: { morning: 0.1, day: 0.05, evening: 0.8, night: 1.6 },
+    activityByWeather: { clear: 0.6, cloudy: 1.2, rain: 1.5 },
+    preferredBaits: ['worm', 'live_bait'],
+    preferredGroundbait: 'dried_blood',
+    baseCatchChance: 0.05,
+    behavior: {
+      aggression: 0.8,
+      curiosity: 0.3,
+      fear: 0.3,
+      mobility: 0.4,
+    },
+    color: 0x2f4f4f,
+    imageUrl: eelImg,
+    isPredator: true,
+    priceMultiplier: 3.5,
+  },
+  gudgeon: {
+    id: 'gudgeon',
+    name: 'Gudgeon',
+    description:
+      'A small, schooling fish that loves sandy bottoms and clear water.',
+    weightRange: { min: 0.02, max: 0.15 },
+    activityByTimeOfDay: { morning: 1.1, day: 1.2, evening: 0.8, night: 0.1 },
+    activityByWeather: { clear: 1.2, cloudy: 0.9, rain: 0.8 },
+    preferredBaits: ['worm', 'maggot'],
+    preferredGroundbait: 'vanillin',
+    baseCatchChance: 0.4,
+    behavior: {
+      aggression: 0.2,
+      curiosity: 1.0,
+      fear: 0.4,
+      mobility: 0.7,
+    },
+    color: 0x8b4513,
+    imageUrl: gudgeonImg,
+    priceMultiplier: 0.8,
+  },
+  silver_carp: {
+    id: 'silver_carp',
+    name: 'Silver Carp',
+    description:
+      'A huge plankton eater. Can jump out of the water when startled.',
+    weightRange: { min: 2.0, max: 35.0 },
+    activityByTimeOfDay: { morning: 0.8, day: 1.2, evening: 0.9, night: 0.3 },
+    activityByWeather: { clear: 1.3, cloudy: 0.8, rain: 0.5 },
+    preferredBaits: ['bread', 'dough'],
+    preferredGroundbait: 'peas',
+    baseCatchChance: 0.06,
+    behavior: {
+      aggression: 0.4,
+      curiosity: 0.4,
+      fear: 0.9,
+      mobility: 0.6,
+    },
+    color: 0xe5e5e5,
+    imageUrl: silverCarpImg,
+    priceMultiplier: 1.4,
+  },
+  tench: {
+    id: 'tench',
+    name: 'Tench',
+    description:
+      'The "doctor" fish of the reservoir. Very shy and lives in thick weeds.',
+    weightRange: { min: 0.3, max: 4.5 },
+    activityByTimeOfDay: { morning: 1.3, day: 0.3, evening: 1.4, night: 0.4 },
+    activityByWeather: { clear: 0.6, cloudy: 1.4, rain: 1.2 },
+    preferredBaits: ['worm', 'maggot'],
+    preferredGroundbait: 'vanillin',
+    baseCatchChance: 0.12,
+    behavior: {
+      aggression: 0.3,
+      curiosity: 0.3,
+      fear: 1.0,
+      mobility: 0.2,
+    },
+    color: 0x3d5229,
+    imageUrl: tenchImg,
+    priceMultiplier: 2.0,
+  },
+  weatherfish: {
+    id: 'weatherfish',
+    name: 'Weatherfish',
+    description:
+      'Can predict weather changes. Becomes very active before a storm.',
+    weightRange: { min: 0.05, max: 0.3 },
+    activityByTimeOfDay: { morning: 0.5, day: 0.3, evening: 1.1, night: 1.4 },
+    activityByWeather: { clear: 0.5, cloudy: 1.1, rain: 1.8 },
+    preferredBaits: ['worm'],
+    preferredGroundbait: 'vanillin',
+    baseCatchChance: 0.25,
+    behavior: {
+      aggression: 0.2,
+      curiosity: 0.8,
+      fear: 0.3,
+      mobility: 0.5,
+    },
+    color: 0x5c4033,
+    imageUrl: weatherfishImg,
+    priceMultiplier: 0.9,
   },
 };

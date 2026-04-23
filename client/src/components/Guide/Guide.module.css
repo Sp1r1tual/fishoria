@@ -51,3 +51,9 @@
 .guide__fish-details strong {
   color: #fbbf24;
 }
+
+.guide__fish-title-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}

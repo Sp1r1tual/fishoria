@@ -12,13 +12,16 @@ import { usePlayerQuery } from '@/queries/player.queries';
 import { LAKES } from '@/common/configs/game';
 
 import forestLakeDay from '@/assets/locations/01_forest_lake_day.webp';
-import reservoirDay from '@/assets/locations/02_reservoir_day.webp';
+import canalDay from '@/assets/locations/02_pasture_canal_day.webp';
+import reservoirDay from '@/assets/locations/03_reservoir_day.webp';
+
 import statisticsIcon from '@/assets/ui/statistics.webp';
 
 import styles from './Statistics.module.css';
 
 const LAKE_PREVIEWS: Record<string, string> = {
   forest_lake: forestLakeDay,
+  pasture_canal: canalDay,
   fish_farm: reservoirDay,
 };
 
