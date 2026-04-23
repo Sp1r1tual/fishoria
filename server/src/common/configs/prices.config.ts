@@ -64,14 +64,23 @@ const FISH_SELL_MULTIPLIER = 3;
 /** Species-specific multipliers to match client fish.config.ts */
 export const FISH_SPECIES_MULTIPLIERS: Record<string, number> = {
   perch: 1.1,
-  pike: 1.8,
+  pike: 1.9,
   carp: 1.6,
   crucian: 1.0,
   roach: 1.0,
-  zander: 1.7,
+  zander: 2.1,
   ruffe: 0.75,
   catfish: 2.5,
   grass_carp: 1.7,
+  american_catfish: 0.7,
+  asp: 2.4,
+  bream: 1.3,
+  crayfish: 1.5,
+  eel: 3.5,
+  gudgeon: 0.8,
+  silver_carp: 1.4,
+  tench: 2.0,
+  weatherfish: 0.9,
 };
 
 export function getItemPrice(itemId: string): number {
