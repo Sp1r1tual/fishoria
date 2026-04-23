@@ -298,7 +298,6 @@ export class DebugLayer {
       this.sectorInfoLabel.visible = true;
 
       const speciesList = Object.entries(sector.availability)
-        .filter(([, availability]) => availability > 0.05)
         .map(([id, availability]) => {
           const config = this.sectorSystem.getConfigForSpecies(id);
           const globalConfig = FISH_SPECIES[id];

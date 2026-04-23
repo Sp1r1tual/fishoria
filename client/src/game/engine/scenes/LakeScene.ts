@@ -207,7 +207,7 @@ export class LakeScene implements IScene {
       (nx, ny) => this.depthSystem.getDepthAt(nx, ny),
       W,
       H,
-      20,
+      50,
     );
 
     this.debugLayer = new DebugLayer(
@@ -1008,6 +1008,9 @@ export class LakeScene implements IScene {
         hasPotentialBiter: !!this.potentialBiter,
         potentialBiterSpeciesId: this.potentialBiter?.config.id,
       });
+      if (biteResult.newFollower && !this.activeFollower) {
+        this.callbacks.onInterest?.(isSpinning);
+      }
       this.activeFollower = biteResult.newFollower;
 
       if (

@@ -28,7 +28,7 @@ export class SectorSystem {
     getDepthAt: (nx: number, ny: number) => number,
     canvasWidth: number,
     canvasHeight: number,
-    gridResolution: number = 20,
+    gridResolution: number = 50,
   ) {
     this.config = config;
     this.allowedArea = allowedArea;
@@ -86,13 +86,40 @@ export class SectorSystem {
     for (let c = 0; c < this.cols; c++) {
       this.grid[c] = [];
       for (let r = 0; r < this.rows; r++) {
-        const nx = minX + (c + 0.5) * cellW;
-        const ny = minY + (r + 0.5) * cellH;
+        const x1 = minX + c * cellW;
+        const y1 = minY + r * cellH;
+        const x2 = x1 + cellW;
+        const y2 = y1 + cellH;
+        const cx = x1 + cellW * 0.5;
+        const cy = y1 + cellH * 0.5;
 
-        if (!this.isPointInAllowedArea({ x: nx, y: ny })) {
+        let isAllowed =
+          this.isPointInAllowedArea({ x: x1, y: y1 }) ||
+          this.isPointInAllowedArea({ x: x2, y: y1 }) ||
+          this.isPointInAllowedArea({ x: x1, y: y2 }) ||
+          this.isPointInAllowedArea({ x: x2, y: y2 }) ||
+          this.isPointInAllowedArea({ x: cx, y: cy });
+
+        if (
+          !isAllowed &&
+          this.allowedArea.type === 'polygon' &&
+          this.allowedArea.points
+        ) {
+          for (const p of this.allowedArea.points) {
+            if (p.x >= x1 && p.x <= x2 && p.y >= y1 && p.y <= y2) {
+              isAllowed = true;
+              break;
+            }
+          }
+        }
+
+        if (!isAllowed) {
           this.grid[c][r] = null;
           continue;
         }
+
+        const nx = cx;
+        const ny = cy;
 
         const depthM = this.getDepthAt(nx, ny);
         const availability = this.calculateAvailabilityAt(depthM);
