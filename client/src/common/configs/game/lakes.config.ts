@@ -38,12 +38,12 @@ export const LAKES: ILakeConfig[] = [
         {
           speciesId: 'roach',
           preferredDepthRange: { min: 0.3, max: 1.45 },
-          baseCatchChance: 0.04,
+          baseCatchChance: 0.08,
         },
         {
           speciesId: 'perch',
           preferredDepthRange: { min: 0.2, max: 2.2 },
-          baseCatchChance: 0.05,
+          baseCatchChance: 0.08,
         },
         {
           speciesId: 'pike',
@@ -120,7 +120,7 @@ export const LAKES: ILakeConfig[] = [
         {
           speciesId: 'carp',
           preferredDepthRange: { min: 2.2, max: 4.0 },
-          baseCatchChance: 0.06,
+          baseCatchChance: 0.13,
         },
         {
           speciesId: 'grass_carp',
@@ -135,12 +135,12 @@ export const LAKES: ILakeConfig[] = [
         {
           speciesId: 'zander',
           preferredDepthRange: { min: 2, max: 4.0 },
-          baseCatchChance: 0.04,
+          baseCatchChance: 0.045,
         },
         {
           speciesId: 'catfish',
           preferredDepthRange: { min: 3, max: 4.0 },
-          baseCatchChance: 0.02,
+          baseCatchChance: 0.035,
         },
         {
           speciesId: 'roach',

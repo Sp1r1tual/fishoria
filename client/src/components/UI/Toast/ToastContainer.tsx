@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 
 import type {
@@ -95,13 +96,19 @@ export function ToastContainer() {
     }
   }, [player?.playerQuests, dispatch, t]);
 
-  return (
+  const portalRoot = document.getElementById('portal-root');
+
+  const content = (
     <div className={styles.container}>
       {toasts.map((toast) => (
         <ToastItem key={toast.id} {...toast} />
       ))}
     </div>
   );
+
+  if (!portalRoot) return content;
+
+  return createPortal(content, portalRoot);
 }
 
 import { useAchievementSound } from '@/hooks/audio/useSoundEffect';

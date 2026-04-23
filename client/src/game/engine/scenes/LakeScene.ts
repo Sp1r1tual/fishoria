@@ -455,6 +455,18 @@ export class LakeScene implements IScene {
 
     this.hookedFish.setState(FISH_STATES.Hooked);
     this.phase = 'reeling';
+
+    const gearMaxWeight = Math.min(
+      this.rodConfig?.maxWeight ?? Infinity,
+      this.reelConfig?.maxWeight ?? Infinity,
+      this.lineConfig?.maxWeight ?? Infinity,
+      this.hookConfig?.maxWeight ?? Infinity,
+    );
+
+    if (this.hookedFish.weight > gearMaxWeight) {
+      this.setPlayerReeling(false);
+    }
+
     this.tension = {
       value: 0.0,
       isBroken: false,
@@ -636,7 +648,7 @@ export class LakeScene implements IScene {
     this.hookedFish = null;
     this.potentialBiter = null;
     this.playerRelaxing = false;
-    this.callbacks.onTensionChange(0, false);
+    this.callbacks.onTensionChange(0, false, false);
     if (!suppressPhaseEvent) {
       this.callbacks.onPhaseChange(this.phase);
     }
@@ -778,34 +790,6 @@ export class LakeScene implements IScene {
       isCast,
     );
 
-    if (
-      this.debugActive &&
-      this.activeGroundbaitType !== 'none' &&
-      this.groundbaitExpiresAt !== null &&
-      TimeManager.getGameTimeHours() < this.groundbaitExpiresAt &&
-      this.hookConfig?.rigType !== 'spinning'
-    ) {
-      const gbCfg = GROUNDBAITS[this.activeGroundbaitType];
-      if (gbCfg) {
-        const baseRadius = 80;
-        const coreRadius = baseRadius * (gbCfg.attractionRadiusScale || 1.0);
-        const maxRadius = coreRadius * 2.2;
-
-        const isVisibleInPhase = ![
-          'idle',
-          'caught',
-          'broken',
-          'escaped',
-        ].includes(this.phase);
-
-        this.debugLayer.updateGroundbait(
-          this.hookX,
-          this.hookY,
-          maxRadius,
-          isVisibleInPhase,
-        );
-      }
-    }
     this.weatherLayer.update(deltaTime, this.timeOfDay);
     this.bgRenderer.update(deltaTime);
 
@@ -846,10 +830,6 @@ export class LakeScene implements IScene {
       debugActive: this.debugActive,
       escapeProgress: this.tension.escapeProgress,
       isSmall: W < 768,
-      biteTimer:
-        this.hookedFish && this.phase === 'bite'
-          ? this.hookedFish.stateTimer
-          : 0,
     });
 
     const fishMovingTowardsPlayer = !!(
@@ -1018,12 +998,6 @@ export class LakeScene implements IScene {
         activeGroundbait: GROUNDBAITS[this.activeGroundbaitType],
         getPreferredDepthRange: (speciesId: string) =>
           this.getPreferredDepthRange(speciesId),
-        getSpeciesBaseCatchChance: (speciesId: string) => {
-          const spawn = this.config.fishSpawns.species?.find(
-            (s) => s.speciesId === speciesId,
-          );
-          return spawn?.baseCatchChance;
-        },
         hasPotentialBiter: !!this.potentialBiter,
         potentialBiterSpeciesId: this.potentialBiter?.config.id,
       });
@@ -1066,7 +1040,6 @@ export class LakeScene implements IScene {
         }
 
         this.potentialBiter.nibblesDone++;
-        this.callbacks.onBite();
 
         if (Math.random() < 0.15) {
           this.potentialBiter = null;
@@ -1227,6 +1200,8 @@ export class LakeScene implements IScene {
     deltaTime: number,
   ): void {
     if (!this.hookedFish) return;
+
+    this.hookedFish.stateTimer += deltaTime / 60;
 
     const reelingResult = updateReelingPhase(
       {

@@ -13,15 +13,17 @@ import { ActionControl } from './ActionControl/ActionControl';
 import { HUDActionButtons } from './HUDActionButtons/HUDActionButtons';
 import { LevelBar } from '@/components/UI/LevelBar/LevelBar';
 import { DebugLegend } from '@/components/UI/DebugLegend/DebugLegend';
+import { OverloadOverlay } from './OverloadOverlay/OverloadOverlay';
 
 import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import { navigateTo } from '@/store/slices/uiSlice';
 import {
-  resetGame,
-  setGroundbaitExpiry,
-  setCurrentLake,
   clearPendingEquips,
+  setCurrentLake,
+  setGroundbaitExpiry,
+  resetGame,
 } from '@/store/slices/gameSlice';
+import { useEquipMutation } from '@/queries/inventory.queries';
 import { usePlayerQuery } from '@/queries/player.queries';
 import { store } from '@/store/store';
 
@@ -54,6 +56,7 @@ export function HUD({
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { data: player } = usePlayerQuery();
+  const equipMutation = useEquipMutation();
 
   const currentLakeId = useAppSelector((s) => s.game.currentLakeId);
 
@@ -138,8 +141,17 @@ export function HUD({
     sceneRef.current?.resetCast();
     dispatch(setGroundbaitExpiry(null));
     sceneRef.current?.setActiveGroundbait('none', null);
-    dispatch(resetGame());
+
     dispatch(setCurrentLake(null));
+
+    if (player?.activeGroundbait && player.activeGroundbait !== 'none') {
+      equipMutation.mutate({
+        targetType: 'groundbait',
+        targetId: 'none',
+      });
+    }
+
+    dispatch(resetGame());
     dispatch(navigateTo('mainMenu'));
     navigate('/');
   };
@@ -238,6 +250,7 @@ export function HUD({
       )}
 
       <LureDepthIndicator />
+      <OverloadOverlay />
 
       {bottomOnly && (debugActive || localEchoActive) && curLake && (
         <div className={styles['hud__legend-container']}>

@@ -12,7 +12,6 @@ export const GROUNDBAITS: Record<string, IGroundbaitConfig> = {
       'Sweet aroma that quickly attracts small schooling fish like roach and crucian.',
     price: 45,
     icon: vanillinIcon,
-    attractionRadiusScale: 0.85,
     fishedSpeciesMultiplier: { roach: 1.6, crucian: 1.6, ruffe: 1.2 },
   },
 
@@ -23,7 +22,6 @@ export const GROUNDBAITS: Record<string, IGroundbaitConfig> = {
       'Heavy mix that stays on the bottom. Excellent for carp and grass carp.',
     price: 99,
     icon: peasIcon,
-    attractionRadiusScale: 0.85,
     fishedSpeciesMultiplier: { carp: 1.8, grass_carp: 1.7, crucian: 1.2 },
   },
 
@@ -34,7 +32,6 @@ export const GROUNDBAITS: Record<string, IGroundbaitConfig> = {
       'Strong trailing scent. Drives predators like perch, pike, and catfish crazy.',
     price: 150,
     icon: bloodIcon,
-    attractionRadiusScale: 0.85,
     fishedSpeciesMultiplier: {
       perch: 1.3,
       catfish: 1.2,

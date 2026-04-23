@@ -86,8 +86,8 @@
 
 .action__reel-btn--pulse {
   animation: reel-pulse 1s infinite;
-  background: #ef4444;
-  border-color: #450a0a;
+  background: white;
+  border-color: #6b4d32;
 }
 
 @keyframes reel-pulse {
@@ -97,7 +97,7 @@
   }
   50% {
     transform: scale(1.05);
-    box-shadow: 0 0 15px #ef4444;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
   }
   100% {
     transform: scale(1);

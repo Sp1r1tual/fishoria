@@ -25,7 +25,6 @@ export interface IGroundbaitConfig {
   description: string;
   price: number;
   icon: string;
-  attractionRadiusScale: number;
   intensityMultiplier?: number;
   fishedSpeciesMultiplier?: Record<string, number>;
 }
@@ -62,7 +61,7 @@ export interface ILineConfig {
   description: string;
   price: number;
   maxWeight: number;
-  totalLength: number; // meters per spool
+  totalLength: number;
   icon?: string;
 }
 

@@ -29,6 +29,7 @@ import {
   useCatchFishMutation,
   useBreakGearMutation,
 } from '@/queries/game.queries';
+import { useEquipMutation } from '@/queries/inventory.queries';
 
 import { Game } from '@/game/engine/Game';
 import { LakeScene } from '@/game/engine/scenes/LakeScene';
@@ -77,6 +78,8 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
   const [isSnagActive, setIsSnagActive] = useState(false);
   const [isEchoSounderActive, setIsEchoSounderActive] = useState(false);
 
+  const equipMutation = useEquipMutation();
+
   const weather = useAppSelector((s) => s.game.weather);
 
   // Dynamic weather update
@@ -89,13 +92,15 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
   // Sync refs for mutations to be used in callbacks
   const catchMutationRef = useRef(catchMutation);
   const breakMutationRef = useRef(breakMutation);
+  const equipMutationRef = useRef(equipMutation);
   const playerRef = useRef(player);
 
   useEffect(() => {
     catchMutationRef.current = catchMutation;
     breakMutationRef.current = breakMutation;
+    equipMutationRef.current = equipMutation;
     playerRef.current = player;
-  }, [catchMutation, breakMutation, player]);
+  }, [catchMutation, breakMutation, equipMutation, player]);
 
   const handleResize = useCallback(() => {
     if (!containerRef.current || !gameRef.current) return;
@@ -133,8 +138,18 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
       const scene = new LakeScene(
         lakeConfig,
         {
-          onTensionChange: (value, broken) => {
-            GameEvents.emit('tension', value);
+          onTensionChange: (value, broken, isOverloaded, escapeProgress) => {
+            GameEvents.emit('tension', { value, isOverloaded, escapeProgress });
+            if (isOverloaded && !shownWarningsRef.current.has('overload')) {
+              shownWarningsRef.current.add('overload');
+              scene.setPlayerReeling(false);
+              dispatch(
+                addToast({
+                  type: 'warning',
+                  message: t('game.overload_warning'),
+                }),
+              );
+            }
             if (Math.abs(lastTension - value) > 0.05 || broken) {
               lastTension = value;
               dispatch(setTension({ value, broken }));
@@ -331,10 +346,14 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
             rodDamageRef.current = 0;
             reelDamageRef.current = 0;
           },
-          onHookFish: () => audioRef.current.onHook(),
+          onHookFish: () => {
+            shownWarningsRef.current.delete('overload');
+            audioRef.current.onHook();
+          },
           onPlayerReeling: (isReeling) => {
             isReelingRef.current = isReeling;
             audioRef.current.onReelingState(isReeling);
+            GameEvents.emit('playerReeling', isReeling);
           },
           onTimeOfDayChange: (tod) => {
             audioRef.current.onTimeOfDayChange(currentLakeId, tod);
@@ -475,7 +494,6 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
 
         const state = store.getState();
         const activeBait = p.activeBait || 'worm';
-        const activeGroundbait = p.activeGroundbait || 'none';
 
         const isLure = activeBait.startsWith('lure_');
         const baitName = isLure
@@ -493,10 +511,6 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
           activeBait as BaitTypeType,
           baitName,
           baitAvailable,
-        );
-        scene.setActiveGroundbait(
-          activeGroundbait as GroundbaitTypeType,
-          state.game.groundbaitExpiresAt,
         );
         scene.setWeather(state.game.weather);
         scene.setAvailableLineLength(
@@ -529,8 +543,21 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
       sceneRef.current?.resetCast();
       dispatch(setGroundbaitExpiry(null));
       sceneRef.current?.setActiveGroundbait('none', null);
-      dispatch(resetGame());
+
+      // Clear lake ID first to ensure mutation bypasses buffering and hits the server
       dispatch(setCurrentLake(null));
+
+      if (
+        playerRef.current?.activeGroundbait &&
+        playerRef.current.activeGroundbait !== 'none'
+      ) {
+        equipMutationRef.current.mutate({
+          targetType: 'groundbait',
+          targetId: 'none',
+        });
+      }
+
+      dispatch(resetGame());
       dispatch(navigateTo('mainMenu'));
     };
 
@@ -583,6 +610,17 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
       baitCount > 0,
     );
   }, [player]);
+
+  const groundbaitExpiresAt = useAppSelector((s) => s.game.groundbaitExpiresAt);
+
+  useEffect(() => {
+    if (!player || !sceneRef.current) return;
+
+    sceneRef.current.setActiveGroundbait(
+      (player.activeGroundbait || 'none') as GroundbaitTypeType,
+      groundbaitExpiresAt,
+    );
+  }, [player, groundbaitExpiresAt]);
 
   useEffect(() => {
     if (!player || !sceneRef.current) return;

@@ -47,18 +47,18 @@ export const TENSION = {
 
 export const SNAG = {
   /** Spinning snag: accumulation speed when dragging on the bottom */
-  spinningAccumulationRate: 1.5,
+  spinningAccumulationRate: 2.5,
   /** Spinning snag: seconds of dragging before snag rolls start */
-  spinningSnagGracePeriod: 3.0,
+  spinningSnagGracePeriod: 1.5,
   /** Spinning snag: probability multiplier (per tick, normalized) */
-  spinningSnagProbMultiplier: 0.005,
+  spinningSnagProbMultiplier: 0.015,
   /** Spinning snag: decay rate when not dragging */
   spinningDecayRate: 0.5,
 
   /** Static snag chance for float rig on bottom */
-  floatOnBottomSnagChance: 0.15,
+  floatOnBottomSnagChance: 0.2,
   /** Static snag chance for feeder rig on bottom */
-  feederOnBottomSnagChance: 0.03,
+  feederOnBottomSnagChance: 0.5,
 } as const;
 
 export const SPINNING_LURE = {

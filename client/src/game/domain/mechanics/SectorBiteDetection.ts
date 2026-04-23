@@ -31,7 +31,6 @@ interface ISectorBiteParams {
   retrieveType: string;
   activeGroundbait: IGroundbaitConfig | null;
   getPreferredDepthRange: (speciesId: string) => { min: number; max: number };
-  getSpeciesBaseCatchChance?: (speciesId: string) => number | undefined;
   hasPotentialBiter?: boolean;
   potentialBiterSpeciesId?: string | null;
 }
@@ -143,15 +142,11 @@ export function detectSectorBite(params: ISectorBiteParams): ISectorBiteResult {
       if (g.fishedSpeciesMultiplier && g.fishedSpeciesMultiplier[speciesId]) {
         groundbaitMultiplier = g.fishedSpeciesMultiplier[speciesId];
       } else {
-        groundbaitMultiplier = g.attractionRadiusScale || 1.5;
+        groundbaitMultiplier = 1.0;
       }
     }
 
-    const lakeBaseChance = params.getSpeciesBaseCatchChance?.(speciesId);
-    const baseCatchChance = lakeBaseChance ?? config.baseCatchChance;
-
     const baseChance =
-      baseCatchChance *
       baseAvailability *
       depthScore *
       timeScore *

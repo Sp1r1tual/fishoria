@@ -841,7 +841,8 @@
   },
   "game": {
     "groundbait_expired": "Groundbait effect has expired!",
-    "bait_fell_off": "Bait fell off!"
+    "bait_fell_off": "Bait fell off!",
+    "overload_warning": "This fish is too heavy! Your gear might not hold!"
   },
   "auth": {
     "resetLinkSent": "If an account exists, a reset link has been sent",

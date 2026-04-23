@@ -53,7 +53,6 @@ export interface IUpdateContext {
   rigType?: string;
   activeGroundbait?: {
     id: string;
-    attractionRadiusScale: number;
     intensityMultiplier?: number;
     fishedSpeciesMultiplier?: Record<string, number>;
   };

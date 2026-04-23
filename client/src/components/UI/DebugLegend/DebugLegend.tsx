@@ -29,7 +29,7 @@ export function DebugLegend({ minDepth, maxDepth }: IDebugLegendProps) {
     const depthNorm = (d - minDepth) / Math.max(0.1, maxDepth - minDepth);
     const hue = 60 + depthNorm * 180;
     const color = `hsl(${hue}, 90%, 45%)`;
-    const label = isLast ? `Max: ${d.toFixed(1)}m` : `${d.toFixed(1)}m`;
+    const label = `${d.toFixed(1)}m`;
     items.push({ label, color });
   }
 
@@ -52,7 +52,7 @@ export function DebugLegend({ minDepth, maxDepth }: IDebugLegendProps) {
       if (!isDragging || !legendRef.current) return;
       position.current.x = pendingX;
       position.current.y = pendingY;
-      legendRef.current.style.transform = `translate(${pendingX}px, ${pendingY}px) scale(0.68) rotate(1deg)`;
+      legendRef.current.style.transform = `translate(${pendingX}px, ${pendingY}px) scale(0.88) rotate(1deg)`;
     };
 
     const handleMove = (e: MouseEvent | TouchEvent) => {
@@ -88,7 +88,7 @@ export function DebugLegend({ minDepth, maxDepth }: IDebugLegendProps) {
 
         position.current.x = 0;
         position.current.y = 0;
-        legendRef.current.style.transform = `translate(0px, 0px) scale(0.65)`;
+        legendRef.current.style.transform = `translate(0px, 0px) scale(0.85)`;
 
         legendRef.current.style.position = 'fixed';
         legendRef.current.style.left = `${newLeft}px`;
@@ -117,7 +117,7 @@ export function DebugLegend({ minDepth, maxDepth }: IDebugLegendProps) {
 
   useEffect(() => {
     if (legendRef.current) {
-      legendRef.current.style.transform = `translate(${position.current.x}px, ${position.current.y}px) scale(0.65)`;
+      legendRef.current.style.transform = `translate(${position.current.x}px, ${position.current.y}px) scale(0.85)`;
     }
   }, []);
 

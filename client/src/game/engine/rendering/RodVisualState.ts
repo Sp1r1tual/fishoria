@@ -79,54 +79,57 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
       : castY
     : baseY - 100 * renderScale;
 
+  const isLayingOnSide =
+    !isSpinning &&
+    rigType !== 'feeder' &&
+    hookDepthM > groundDepthM &&
+    phase !== 'bite';
+
+  const bobCycle = Math.sin(time * 0.005);
+  let sinkY = 0;
+  let tilt = 0;
+
+  if (isCast && !isSpinning && rigType !== 'feeder') {
+    if (phase === 'waiting') {
+      const pulse = Math.sin(time * 0.05) * maxInterest;
+      if (maxInterest > 0.15) {
+        if (isLayingOnSide) {
+          sinkY = pulse * 2 * renderScale;
+          tilt = Math.PI / 2.1 - pulse * 0.3;
+        } else {
+          sinkY = Math.max(0, pulse * 14 * renderScale);
+          tilt = bobCycle * 0.15;
+        }
+      } else if (!isLayingOnSide) {
+        sinkY = bobCycle * 3 * renderScale;
+        tilt = bobCycle * 0.15;
+      } else {
+        tilt = Math.PI / 2.1;
+      }
+    } else if (phase === 'bite') {
+      sinkY = 5 * renderScale;
+      tilt = 0;
+    }
+  }
+
+  const stemAttachmentOffset =
+    rigType === 'feeder' || isSpinning ? 0 : -0.5 * renderScale;
+  const cosT = Math.cos(tilt);
+  const sinT = Math.sin(tilt);
+
   const lineTargetX =
     isCast && !isSpinning && (phase === 'waiting' || phase === 'bite')
-      ? (bobberX ?? castX)
+      ? (bobberX ?? castX) + sinT * stemAttachmentOffset
       : isCast
         ? hookX
         : baseX;
 
-  let lineTargetY =
+  const lineTargetY =
     isCast && !isSpinning && (phase === 'waiting' || phase === 'bite')
-      ? (bobberY ?? castY)
+      ? (bobberY ?? castY) + sinkY + cosT * stemAttachmentOffset
       : isCast
         ? hookY
         : baseY;
-
-  if (
-    isCast &&
-    !isSpinning &&
-    rigType !== 'feeder' &&
-    (phase === 'waiting' || phase === 'bite')
-  ) {
-    const isLayingOnSide = hookDepthM > groundDepthM;
-    let sinkY = 0;
-
-    if (!isLayingOnSide) {
-      if (phase === 'waiting') {
-        if (maxInterest > 0.05) {
-          const pulse = maxInterest;
-          sinkY = Math.max(0, pulse * 25 * renderScale);
-        } else {
-          const bobCycle = Math.sin(time * 0.005);
-          sinkY = bobCycle * 3 * renderScale;
-        }
-      } else if (phase === 'bite') {
-        sinkY = (5 + Math.sin(time * 0.08) * 3) * renderScale;
-      }
-    } else {
-      if (phase === 'waiting') {
-        if (maxInterest > 0.05) {
-          const pulse = Math.sin(time * 0.05) * maxInterest;
-          sinkY = pulse * 2 * renderScale;
-        }
-      } else if (phase === 'bite') {
-        sinkY = (4 + Math.sin(time * 0.15) * 2) * renderScale;
-      }
-    }
-
-    lineTargetY += sinkY;
-  }
 
   let rodTension = 0;
   let lineSlack = 0;

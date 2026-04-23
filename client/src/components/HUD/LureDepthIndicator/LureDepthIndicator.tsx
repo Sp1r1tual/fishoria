@@ -27,7 +27,7 @@ export function LureDepthIndicator({ shifted = false }: { shifted?: boolean }) {
   useEffect(() => {
     const updateUI = () => {
       const s = stateRef.current;
-      const activePhases = ['waiting', 'bite', 'reeling'];
+      const activePhases = ['waiting'];
       const shouldBeVisible =
         activePhases.includes(s.currentPhase) && s.targetGroundDepth > 0;
 

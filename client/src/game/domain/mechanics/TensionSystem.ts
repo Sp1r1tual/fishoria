@@ -41,11 +41,19 @@ export class TensionSystem {
     const normalizedForce =
       baseForce / TENSION.forceNormalizer / tackleStrength;
 
+    const isOverloaded = params.fishWeight > tackleMaxWeight;
+
     if (params.playerReeling) {
       let buildRate =
         (normalizedForce + TENSION.reelingBase) * TENSION.reelingRate;
 
-      buildRate = Math.min(buildRate, 2.5);
+      if (isOverloaded) {
+        const overloadRatio = params.fishWeight / tackleMaxWeight;
+        buildRate *= 1.2 + overloadRatio * 0.5;
+      }
+
+      const maxBuildRate = isOverloaded ? 12.0 : 3.0;
+      buildRate = Math.min(buildRate, maxBuildRate);
 
       tension += buildRate * dtSec;
     } else if (params.playerRelaxing) {
@@ -63,12 +71,13 @@ export class TensionSystem {
           value: 1.0,
           isBroken: true,
           brokenGearType: gearToBreak,
-          isOverloaded: gearToBreak === 'rod' || gearToBreak === 'reel',
+          isOverloaded: true,
         };
       } else {
         tension = tensionCap;
       }
     }
+
     let escapeProgress = params.current.escapeProgress || 0;
 
     const isInactive = !params.playerReeling && !params.playerRelaxing;
@@ -97,6 +106,7 @@ export class TensionSystem {
       ...params.current,
       value: tension,
       isBroken: false,
+      isOverloaded,
       escapeProgress,
     };
   }

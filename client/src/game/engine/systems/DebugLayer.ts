@@ -180,19 +180,6 @@ export class DebugLayer {
     }
   }
 
-  public updateGroundbait(
-    x: number,
-    y: number,
-    radius: number,
-    isVisible: boolean,
-  ): void {
-    if (!this.container.visible || !isVisible || radius <= 0) return;
-
-    this.dynamicGfx.circle(x, y, radius);
-    this.dynamicGfx.stroke({ color: 0x60a5fa, width: 1.5, alpha: 0.35 });
-    this.dynamicGfx.fill({ color: 0x60a5fa, alpha: 0.1 });
-  }
-
   public resize(): void {
     this.fpsLabel.position.set(10, this.app.renderer.height - 20);
 
@@ -320,7 +307,7 @@ export class DebugLayer {
               ) {
                 gMult = gb.fishedSpeciesMultiplier[id];
               } else {
-                gMult = gb.attractionRadiusScale || 1.5;
+                gMult = 1.0;
               }
             }
 

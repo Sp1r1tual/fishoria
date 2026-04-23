@@ -94,6 +94,7 @@ const gameSlice = createSlice({
       state.phase = 'idle';
       state.tension = 0;
       state.isBroken = false;
+      state.groundbaitExpiresAt = null;
       state.lastCatch = null;
       state.lossEvent = null;
     },

@@ -46,3 +46,26 @@
   opacity: 1;
   box-shadow: 0 0 5px currentColor;
 }
+
+.tension__wrap--overloaded {
+  background: rgba(0, 0, 0, 0.65);
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.8);
+}
+
+@keyframes tension-shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(2px);
+  }
+  50% {
+    transform: translateX(0);
+  }
+  75% {
+    transform: translateX(-2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}

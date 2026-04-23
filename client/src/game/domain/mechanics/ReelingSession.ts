@@ -74,7 +74,12 @@ export function updateReelingPhase(
     deltaTime,
   });
 
-  callbacks.onTensionChange(tension.value, tension.isBroken);
+  callbacks.onTensionChange(
+    tension.value,
+    tension.isBroken,
+    tension.isOverloaded,
+    tension.escapeProgress,
+  );
 
   const wearMulti = 1.0 + tension.value * GEAR_WEAR.tensionWearMultiplier;
   const dtSec = deltaTime / 60;

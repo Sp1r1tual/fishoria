@@ -19,6 +19,7 @@ export function TensionIndicator({
   useEffect(() => {
     let currentTension = 0;
     let currentBite = 0;
+    let currentEscapeProgress = 0;
 
     const currentState = store.getState();
     let currentPhase = currentState.game.phase;
@@ -26,7 +27,10 @@ export function TensionIndicator({
 
     let lastDrawnTension = -1;
     let lastDrawnBite = -1;
+    let lastDrawnEscape = -1;
     let lastDrawnPhase = '';
+
+    let isOverloaded = false;
 
     const updateUI = () => {
       if (wrapRef.current) {
@@ -39,6 +43,12 @@ export function TensionIndicator({
         } else {
           wrapRef.current.classList.remove(styles['tension__wrap--visible']);
         }
+
+        if (isOverloaded && currentPhase === 'reeling') {
+          wrapRef.current.classList.add(styles['tension__wrap--overloaded']);
+        } else {
+          wrapRef.current.classList.remove(styles['tension__wrap--overloaded']);
+        }
       }
 
       if (!tensionBarsRef.current) return;
@@ -50,11 +60,14 @@ export function TensionIndicator({
 
       const hasSignificantBiteChange =
         Math.abs(currentBite - lastDrawnBite) > 0.005;
+      const hasSignificantEscapeChange =
+        Math.abs(currentEscapeProgress - lastDrawnEscape) > 0.5;
       const hasPhaseChanged = currentPhase !== lastDrawnPhase;
 
       if (
         !hasSignificantTensionChange &&
         !hasSignificantBiteChange &&
+        !hasSignificantEscapeChange &&
         !hasPhaseChanged
       ) {
         return;
@@ -62,6 +75,7 @@ export function TensionIndicator({
 
       lastDrawnTension = currentTension;
       lastDrawnBite = currentBite;
+      lastDrawnEscape = currentEscapeProgress;
       lastDrawnPhase = currentPhase;
 
       const segments = tensionBarsRef.current.children;
@@ -104,8 +118,10 @@ export function TensionIndicator({
       }
     };
 
-    const unsubTension = GameEvents.on('tension', (val) => {
-      currentTension = val;
+    const unsubTension = GameEvents.on('tension', (data) => {
+      currentTension = data.value;
+      isOverloaded = !!data.isOverloaded;
+      currentEscapeProgress = data.escapeProgress || 0;
       updateUI();
     });
     const unsubBite = GameEvents.on('bite', (val) => {

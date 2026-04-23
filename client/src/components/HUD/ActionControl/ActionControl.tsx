@@ -29,7 +29,6 @@ export const ActionControl = React.memo(function ActionControl({
   useEffect(() => {
     let currentTension = 0;
     let currentBite = 0;
-
     let lastDrawnTension = -1;
     let lastDrawnBite = -1;
 
@@ -85,9 +84,9 @@ export const ActionControl = React.memo(function ActionControl({
           styles['action__reel-btn--interest-pulse'],
         );
       } else if (phase === 'bite') {
-        bg = '#ef4444';
-        border = '#450a0a';
-        glow = '0 0 15px #ef4444';
+        bg = 'white';
+        border = '#6b4d32';
+        glow = '0 0 15px rgba(0, 0, 0, 0.2)';
       } else {
         bg = 'white';
         border = '#6b4d32';
@@ -110,8 +109,8 @@ export const ActionControl = React.memo(function ActionControl({
 
     updateReelBtn(0, 0);
 
-    const unsubTension = GameEvents.on('tension', (val: number) => {
-      currentTension = val;
+    const unsubTension = GameEvents.on('tension', (data) => {
+      currentTension = data.value;
       updateReelBtn(currentTension, currentBite);
     });
 

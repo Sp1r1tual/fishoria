@@ -12,7 +12,12 @@ export type GamePhaseType =
   | 'snagged';
 
 export interface ILakeSceneCallbacks {
-  onTensionChange: (tension: number, broken: boolean) => void;
+  onTensionChange: (
+    tension: number,
+    broken: boolean,
+    isOverloaded?: boolean,
+    escapeProgress?: number,
+  ) => void;
   onDepthChange: (depthM: number) => void;
   onBite: () => void;
   onCatch: (result: import('./mechanics.types').CatchResultType) => void;
@@ -56,7 +61,7 @@ export interface IVec2 {
 }
 
 export type GameUiEventMap = {
-  tension: number;
+  tension: { value: number; isOverloaded?: boolean; escapeProgress?: number };
   bite: number;
   depth: number;
   lureDepth: {
@@ -72,4 +77,5 @@ export type GameUiEventMap = {
   retrieveSpeed: RetrieveSpeedType;
   phase: GamePhaseType;
   timeUpdate: { hour: number; mode: 'real' | 'game' };
+  playerReeling: boolean;
 };
