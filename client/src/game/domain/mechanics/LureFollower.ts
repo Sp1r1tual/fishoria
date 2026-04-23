@@ -9,24 +9,28 @@ export class LureFollower {
     this.interest = initialInterest;
   }
 
-  public update(
-    deltaTime: number,
-    isMoving: boolean,
-    isCorrectTechnique: boolean,
-  ) {
+  private continuousReelTime: number = 0;
+
+  public update(deltaTime: number, isMoving: boolean) {
     const dtSec = deltaTime / 60;
 
     if (isMoving) {
       this.timeSinceLastMovement = 0;
-      if (isCorrectTechnique) {
-        this.interest += 0.55 * dtSec;
+      this.continuousReelTime += dtSec;
+
+      if (this.continuousReelTime > 1.4) {
+        this.interest -= 0.85 * dtSec;
       } else {
-        this.interest += 0.15 * dtSec;
+        this.interest += 0.32 * dtSec;
       }
     } else {
+      this.continuousReelTime = 0;
       this.timeSinceLastMovement += dtSec;
-      if (this.timeSinceLastMovement > 1.5) {
-        this.interest -= 0.3 * dtSec;
+
+      if (this.timeSinceLastMovement < 0.8) {
+        this.interest += 0.05 * dtSec;
+      } else if (this.timeSinceLastMovement > 1.6) {
+        this.interest -= 1.2 * dtSec;
       }
     }
 

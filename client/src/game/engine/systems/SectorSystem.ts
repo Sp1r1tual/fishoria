@@ -163,7 +163,7 @@ export class SectorSystem {
 
       if (depthM > range.max) {
         const gap = depthM - range.max;
-        return Math.max(0.05, 1 - gap * 0.4);
+        return Math.max(0, 1 - gap * 0.8);
       }
 
       return 1.0;

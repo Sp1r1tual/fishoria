@@ -7,6 +7,9 @@
 export const BITE_DETECTION = {
   /** Vertical gap penalty factor */
   verticalGapPenaltyFactor: 1.0,
+
+  /** Chance for a predator to strike a spinning lure instantly vs starting a follow phase */
+  spinningImmediateBiteChance: 0.15,
 } as const;
 
 export const INTEREST_RATES = {

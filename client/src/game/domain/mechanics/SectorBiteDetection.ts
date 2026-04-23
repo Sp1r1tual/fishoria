@@ -59,7 +59,7 @@ export function detectSectorBite(params: ISectorBiteParams): ISectorBiteResult {
   let activeFollower = params.follower;
 
   if (activeFollower) {
-    activeFollower.update(params.deltaTime, params.isMoving, true);
+    activeFollower.update(params.deltaTime, params.isMoving);
     if (activeFollower.state === 'attacking') {
       return {
         biteSpeciesId: activeFollower.speciesId,
@@ -154,9 +154,12 @@ export function detectSectorBite(params: ISectorBiteParams): ISectorBiteResult {
       baitScore *
       groundbaitMultiplier;
 
+    if (baseChance < 0.001) continue;
+
     if (isSpinning) {
       if (params.isMoving && Math.random() < baseChance * dtSec * 20.0) {
-        const isImmediateBite = Math.random() < 0.3;
+        const isImmediateBite =
+          Math.random() < BITE_DETECTION.spinningImmediateBiteChance;
         if (isImmediateBite) {
           return {
             biteSpeciesId: speciesId,

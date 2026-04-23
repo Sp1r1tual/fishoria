@@ -325,8 +325,10 @@ export class DebugLayer {
           const rangeStr = config
             ? `(${config.preferredDepthRange.min}-${config.preferredDepthRange.max}m)`
             : '';
-          const effectiveAvailability = availability * tMult * wMult * gMult;
-          const chancePercent = (effectiveAvailability * 100).toFixed(0);
+          let effectiveAvailability = availability * tMult * wMult * gMult;
+          if (effectiveAvailability < 0.001) effectiveAvailability = 0;
+
+          const chancePercent = (effectiveAvailability * 100).toFixed(1);
           return `${id} ${rangeStr}: Chance: ${chancePercent}%${factorsStr}`;
         })
         .join('\n');

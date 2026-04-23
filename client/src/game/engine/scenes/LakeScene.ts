@@ -1075,7 +1075,7 @@ export class LakeScene implements IScene {
 
     const lerpT = 1 - Math.pow(0.0001, deltaTime / 60);
     this.smoothedInterest +=
-      (this.targetInterest - this.smoothedInterest) * Math.min(1, lerpT * 0.25);
+      (this.targetInterest - this.smoothedInterest) * Math.min(1, lerpT * 1.0);
 
     if (this.targetInterest > 0 && !isSpinning) {
       this.targetInterest = Math.max(
