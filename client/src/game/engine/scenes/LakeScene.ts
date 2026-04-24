@@ -922,6 +922,7 @@ export class LakeScene implements IScene {
       newH,
       50,
     );
+    this.debugLayer.setSystems(this.depthSystem, this.sectorSystem);
     this.debugLayer.resize();
     this.weatherLayer.resize();
 

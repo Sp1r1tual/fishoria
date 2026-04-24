@@ -129,6 +129,14 @@ export class DebugLayer {
     }
   }
 
+  public setSystems(
+    depthSystem: DepthSystem,
+    sectorSystem: SectorSystem,
+  ): void {
+    this.depthSystem = depthSystem;
+    this.sectorSystem = sectorSystem;
+  }
+
   public isVisible(): boolean {
     return this.container.visible;
   }
