@@ -25,6 +25,12 @@ export function generateCatch(
       type: 'trash',
       name: item,
       description: item,
+      weight: 0,
+      length: 0,
+      baitUsed,
+      method,
+      lakeId,
+      lakeName,
     };
   }
 

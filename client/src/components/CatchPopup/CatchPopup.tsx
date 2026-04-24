@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { SkeletonImage } from '@/components/UI/skeletons/SkeletonImage/SkeletonImage';
 
-import type { IFishCatch, CatchResultType } from '@/common/types';
+import type { IFishCatch, ITrashCatch, CatchResultType } from '@/common/types';
 
 import { useClickSound } from '@/hooks/audio/useSoundEffect';
 import { useAppDispatch } from '@/hooks/core/useAppStore';
@@ -82,7 +82,22 @@ export function CatchPopup({ result, sceneRef }: ICatchPopupProps) {
         reelDamage: fish.reelDamage || 0,
       });
     } else if (result.type === 'trash') {
-      const trash = result as import('../../common/types').ITrashCatch;
+      const trash = result as ITrashCatch;
+
+      catchMutation.mutate({
+        speciesId: trash.name,
+        speciesName: trash.name,
+        weight: trash.weight,
+        length: trash.length,
+        lakeId: trash.lakeId,
+        lakeName: trash.lakeName,
+        baitUsed: trash.baitUsed,
+        method: trash.method,
+        isReleased: true, // Discarding trash is like releasing it (not keeping it)
+        rodDamage: trash.rodDamage || 0,
+        reelDamage: trash.reelDamage || 0,
+      });
+
       if (trash.rodDamage || trash.reelDamage) {
         breakMutation.mutate({
           type: 'bait',

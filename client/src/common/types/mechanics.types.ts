@@ -49,6 +49,12 @@ export interface ITrashCatch {
   type: 'trash';
   name: string;
   description: string;
+  weight: number;
+  length: number;
+  baitUsed: string;
+  method: string;
+  lakeId: string;
+  lakeName: string;
   rodDamage?: number;
   reelDamage?: number;
 }
