@@ -8,6 +8,7 @@ import { PlayerEntity } from '../../player/entities/player.entity';
 import { FULL_PROFILE_INCLUDE } from '../../player/constants/player.constants';
 import { CatchDto } from '../dto/catch.dto';
 import { BreakDto } from '../dto/break-gear.dto';
+import { TRASH_ITEMS } from '../../common/configs/game.config';
 
 @Injectable()
 export class GameEntity {
@@ -144,58 +145,63 @@ export class GameEntity {
         }
       }
 
-      const existingStat = await tx.lakeStatistic.findUnique({
-        where: {
-          profileId_lakeId: { profileId: profile.id, lakeId: body.lakeId },
-        },
-      });
+      const isTrash = TRASH_ITEMS.includes(body.speciesId);
 
-      if (existingStat) {
-        const records = (existingStat.records as Record<string, number>) || {};
-        const minWeights =
-          (existingStat.minWeights as Record<string, number>) || {};
-        const speciesCounts =
-          (existingStat.speciesCounts as Record<string, number>) || {};
-        const speciesWeights =
-          (existingStat.speciesWeights as Record<string, number>) || {};
-
-        records[body.speciesId] = Math.max(
-          records[body.speciesId] || 0,
-          body.weight,
-        );
-        minWeights[body.speciesId] =
-          minWeights[body.speciesId] !== undefined
-            ? Math.min(minWeights[body.speciesId], body.weight)
-            : body.weight;
-        speciesCounts[body.speciesId] =
-          (speciesCounts[body.speciesId] || 0) + 1;
-        speciesWeights[body.speciesId] =
-          (speciesWeights[body.speciesId] || 0) + body.weight;
-
-        await tx.lakeStatistic.update({
-          where: { id: existingStat.id },
-          data: {
-            totalCaught: existingStat.totalCaught + 1,
-            totalWeight: existingStat.totalWeight + body.weight,
-            records,
-            minWeights,
-            speciesCounts,
-            speciesWeights,
+      if (!isTrash) {
+        const existingStat = await tx.lakeStatistic.findUnique({
+          where: {
+            profileId_lakeId: { profileId: profile.id, lakeId: body.lakeId },
           },
         });
-      } else {
-        await tx.lakeStatistic.create({
-          data: {
-            profileId: profile.id,
-            lakeId: body.lakeId,
-            totalCaught: 1,
-            totalWeight: body.weight,
-            records: { [body.speciesId]: body.weight },
-            minWeights: { [body.speciesId]: body.weight },
-            speciesCounts: { [body.speciesId]: 1 },
-            speciesWeights: { [body.speciesId]: body.weight },
-          },
-        });
+
+        if (existingStat) {
+          const records =
+            (existingStat.records as Record<string, number>) || {};
+          const minWeights =
+            (existingStat.minWeights as Record<string, number>) || {};
+          const speciesCounts =
+            (existingStat.speciesCounts as Record<string, number>) || {};
+          const speciesWeights =
+            (existingStat.speciesWeights as Record<string, number>) || {};
+
+          records[body.speciesId] = Math.max(
+            records[body.speciesId] || 0,
+            body.weight,
+          );
+          minWeights[body.speciesId] =
+            minWeights[body.speciesId] !== undefined
+              ? Math.min(minWeights[body.speciesId], body.weight)
+              : body.weight;
+          speciesCounts[body.speciesId] =
+            (speciesCounts[body.speciesId] || 0) + 1;
+          speciesWeights[body.speciesId] =
+            (speciesWeights[body.speciesId] || 0) + body.weight;
+
+          await tx.lakeStatistic.update({
+            where: { id: existingStat.id },
+            data: {
+              totalCaught: existingStat.totalCaught + 1,
+              totalWeight: existingStat.totalWeight + body.weight,
+              records,
+              minWeights,
+              speciesCounts,
+              speciesWeights,
+            },
+          });
+        } else {
+          await tx.lakeStatistic.create({
+            data: {
+              profileId: profile.id,
+              lakeId: body.lakeId,
+              totalCaught: 1,
+              totalWeight: body.weight,
+              records: { [body.speciesId]: body.weight },
+              minWeights: { [body.speciesId]: body.weight },
+              speciesCounts: { [body.speciesId]: 1 },
+              speciesWeights: { [body.speciesId]: body.weight },
+            },
+          });
+        }
       }
 
       const isTrophy =

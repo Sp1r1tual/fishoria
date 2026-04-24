@@ -4,6 +4,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { FULL_PROFILE_INCLUDE } from '../../player/constants/player.constants';
 import { getXpNeededForLevel } from '../../player/utils/player-experience.util';
+import { TRASH_ITEMS } from '../../common/configs/game.config';
 
 export interface IQuestCondition {
   id: string;
@@ -173,6 +174,17 @@ export class QuestEntity {
           cond.type === 'CATCH_SPECIES_ON_LAKE' &&
           cond.value === catchData.speciesId &&
           cond.lakeId === catchData.lakeId
+        ) {
+          const prev = currentProgress[cond.id] || 0;
+          if (prev < cond.target) {
+            currentProgress[cond.id] = prev + 1;
+            updated = true;
+          }
+        }
+
+        if (
+          cond.type === 'CATCH_TRASH' &&
+          TRASH_ITEMS.includes(catchData.speciesId)
         ) {
           const prev = currentProgress[cond.id] || 0;
           if (prev < cond.target) {
