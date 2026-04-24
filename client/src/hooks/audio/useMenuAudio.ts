@@ -70,13 +70,23 @@ function pauseAllTracks() {
 
 export function unlockMusicTracks() {
   musicTracks.forEach((track) => {
-    track
-      .play()
-      .then(() => {
-        track.pause();
-        track.currentTime = 0;
-      })
-      .catch(() => {});
+    track.muted = true;
+    const p = track.play();
+
+    // Pause synchronously so it doesn't actually output sound,
+    // but Safari still registers the user-interaction unlock.
+    track.pause();
+    track.currentTime = 0;
+
+    if (p !== undefined) {
+      p.then(() => {
+        track.muted = false;
+      }).catch(() => {
+        track.muted = false;
+      });
+    } else {
+      track.muted = false;
+    }
   });
 }
 
