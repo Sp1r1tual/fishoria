@@ -284,7 +284,7 @@ export function useGameAudio(manageAmbient = true) {
 
   /** Play a one-shot SFX – near-zero latency via pre-decoded AudioBuffer */
   const playOnce = useCallback((key: SfxKey) => {
-    if (!sfxEnabledRef.current) return;
+    if (!sfxEnabledRef.current || (isIOS && document.hidden)) return;
     const buffer = sfxBuffers[key];
     if (!buffer) return;
 
@@ -301,7 +301,7 @@ export function useGameAudio(manageAmbient = true) {
 
   /** Start a looping SFX (winding/unwinding) */
   const startLoop = useCallback((key: SfxKey) => {
-    if (!sfxEnabledRef.current) return;
+    if (!sfxEnabledRef.current || (isIOS && document.hidden)) return;
     if (activeLoops[key]) return; // already playing
 
     const buffer = sfxBuffers[key];
@@ -350,7 +350,14 @@ export function useGameAudio(manageAmbient = true) {
   // Visibility change handler – registered once per mount, uses refs for current state.
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (!document.hidden) {
+      if (document.hidden) {
+        stopAllLoops();
+        if (manageAmbient) {
+          Object.values(AMBIENT).forEach((a) => {
+            a.pause();
+          });
+        }
+      } else {
         // Just ensure context gets un-suspended if the OS natively paused it.
         // We use a masking technique: drop volume to 0 instantly, wait a moment
         // for Safari to process its "catch-up" glitch buffer from backgrounding,
@@ -358,6 +365,12 @@ export function useGameAudio(manageAmbient = true) {
         if (isIOS && ambientGainNode && manageAmbient) {
           currentAmbientLevel = 0;
           ambientGainNode.gain.value = 0;
+          // Nudge currentTime slightly to clear any stuck buffers on iOS
+          Object.values(AMBIENT).forEach((a) => {
+            if (a.currentTime > 0.1) {
+              a.currentTime += 0.05;
+            }
+          });
         }
         resumeSharedAudioContext().then(() => {
           setTimeout(syncAmbientTracks, isIOS ? 250 : 50);
@@ -399,10 +412,6 @@ export function useGameAudio(manageAmbient = true) {
     },
     [playOnce],
   );
-
-  const onHook = useCallback(() => {
-    playBell();
-  }, [playBell]);
 
   const onCatch = useCallback(() => {
     stopAllLoops();
@@ -501,7 +510,6 @@ export function useGameAudio(manageAmbient = true) {
   return {
     onCast,
     onBite,
-    onHook,
     onCatch,
     onPurchase,
     onClick,

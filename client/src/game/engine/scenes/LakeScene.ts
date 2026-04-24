@@ -807,7 +807,7 @@ export class LakeScene implements IScene {
 
     this.groundbaitEffect.update(deltaTime);
 
-    const renderScale = W < 768 ? 0.5 : W < 1045 ? 0.7 : 1.0;
+    const renderScale = W < 768 ? 0.45 : W < 1045 ? 0.65 : 1.0;
 
     this.hook.update({
       x: this.hookX,
@@ -890,13 +890,28 @@ export class LakeScene implements IScene {
     const oldH = this.lastH || newH;
     if (oldW === newW && oldH === newH) return;
 
-    const scaleX = newW / oldW;
-    const scaleY = newH / oldH;
+    const oldWaterY = oldH * this.config.environment.waterBoundaryY;
+    const oldWaterHeight = Math.max(1, oldH - oldWaterY);
+    const newWaterY = newH * this.config.environment.waterBoundaryY;
+    const newWaterHeight = Math.max(1, newH - newWaterY);
 
-    this.hookX *= scaleX;
-    this.hookY *= scaleY;
-    this.castX *= scaleX;
-    this.castY *= scaleY;
+    const normX = this.hookX / oldW;
+    const normY = (this.hookY - oldWaterY) / oldWaterHeight;
+    this.hookX = normX * newW;
+    this.hookY = newWaterY + normY * newWaterHeight;
+
+    const castNormX = this.castX / oldW;
+    const castNormY = (this.castY - oldWaterY) / oldWaterHeight;
+    this.castX = castNormX * newW;
+    this.castY = newWaterY + castNormY * newWaterHeight;
+
+    if (this.hookedFish) {
+      const fishNormX = this.hookedFish.position.x / oldW;
+      const fishNormY =
+        (this.hookedFish.position.y - oldWaterY) / oldWaterHeight;
+      this.hookedFish.position.x = fishNormX * newW;
+      this.hookedFish.position.y = newWaterY + fishNormY * newWaterHeight;
+    }
 
     this.depthSystem = new DepthSystem(this.config.depthMap);
     this.sectorSystem = new SectorSystem(

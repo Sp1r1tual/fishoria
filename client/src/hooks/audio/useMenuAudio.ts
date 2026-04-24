@@ -168,10 +168,17 @@ export function useMenuAudio(musicActive = true) {
     }
 
     const handleVisibilityChange = () => {
-      if (!document.hidden) {
+      if (document.hidden) {
+        pauseAllTracks();
+      } else {
         if (isIOS && musicGainNode) {
           currentMenuVolume = 0;
           musicGainNode.gain.value = 0;
+          // Nudge currentTime slightly to clear any stuck buffers on iOS
+          const track = getCurrentTrack();
+          if (track.currentTime > 0.1) {
+            track.currentTime += 0.05;
+          }
         }
 
         resumeSharedAudioContext();

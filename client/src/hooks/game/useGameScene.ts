@@ -348,7 +348,6 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
           },
           onHookFish: () => {
             shownWarningsRef.current.delete('overload');
-            audioRef.current.onHook();
           },
           onPlayerReeling: (isReeling) => {
             isReelingRef.current = isReeling;

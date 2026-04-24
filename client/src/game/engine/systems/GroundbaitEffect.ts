@@ -43,7 +43,7 @@ export class GroundbaitEffect {
         vx: (Math.random() - 0.5) * (50 * scale),
         vy: (-12 - Math.random() * 38) * scale,
         life: 1.0,
-        size: (1.2 + Math.random() * 3.8) * scale,
+        size: (2.5 + Math.random() * 4.5) * scale,
         alpha: 1.0,
         color,
       });
@@ -57,7 +57,8 @@ export class GroundbaitEffect {
     }
 
     this.gfx.clear();
-    const spd = dt / 6;
+    const frameScalar = dt * 60; // Normalize dt (seconds) to a ~60fps scalar
+    const spd = frameScalar / 6;
 
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];

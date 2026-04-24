@@ -65,14 +65,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   animation: rotateHint 2s ease-in-out infinite;
+}
+
+.game-canvas__portrait-overlay .rotate-icon::after {
+  content: '';
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 210, 127, 0.25) 0%,
+    rgba(255, 210, 127, 0) 60%
+  );
+  z-index: -1;
+  border-radius: 50%;
 }
 
 .game-canvas__portrait-overlay .rotate-icon-img {
   width: 80px;
   height: 80px;
   object-fit: contain;
-  filter: drop-shadow(0 0 10px rgba(255, 210, 127, 0.3));
 }
 
 .game-canvas__portrait-overlay h2 {

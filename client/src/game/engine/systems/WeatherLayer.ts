@@ -126,7 +126,7 @@ export class WeatherLayer {
 
   private spawnBird(W: number, H: number) {
     const isLeft = Math.random() > 0.5;
-    const isSmall = W < 768;
+    const isSmall = W < 1000;
     const scale = isSmall ? 0.6 : 1.0;
 
     this.birds.push({
@@ -134,7 +134,7 @@ export class WeatherLayer {
       y: Math.random() * (H * 0.12) + 5,
       vx: (isLeft ? 1 : -1) * (1 + Math.random() * 2),
       vy: (Math.random() - 0.5) * 0.2,
-      wingSpan: 6 + Math.random() * 6,
+      wingSpan: (6 + Math.random() * 6) * scale,
       flapSpeed: 0.1 + Math.random() * 0.1,
       time: Math.random() * 100,
       scale,
@@ -285,7 +285,7 @@ export class WeatherLayer {
         wingY,
       );
       this.ambientGfx.stroke({
-        width: 1.5,
+        width: 1.5 * b.scale,
         color: 0x1a202c,
         alpha,
         cap: 'round',
@@ -294,7 +294,7 @@ export class WeatherLayer {
 
       const dirX = b.vx > 0 ? 1 : -1;
       this.ambientGfx.ellipse(
-        b.x + dirX * 1.5,
+        b.x + dirX * 1.5 * b.scale,
         b.y,
         2.8 * b.scale,
         1.4 * b.scale,
