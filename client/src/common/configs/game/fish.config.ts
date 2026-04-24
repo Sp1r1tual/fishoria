@@ -30,7 +30,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     activityByWeather: { clear: 0.8, cloudy: 1.0, rain: 1.1 },
     preferredBaits: ['worm', 'maggot'],
     preferredGroundbait: 'dried_blood',
-    baseCatchChance: 0.25,
+
     behavior: {
       aggression: 0.7,
       curiosity: 0.8,
@@ -62,7 +62,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     activityByWeather: { clear: 0.8, cloudy: 1.1, rain: 1.2 },
     preferredBaits: ['live_bait'],
     preferredGroundbait: 'dried_blood',
-    baseCatchChance: 0.12,
+
     behavior: {
       aggression: 0.95,
       curiosity: 0.5,
@@ -89,7 +89,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     activityByWeather: { clear: 1.0, cloudy: 0.9, rain: 1.05 },
     preferredBaits: ['corn', 'dough'],
     preferredGroundbait: 'peas',
-    baseCatchChance: 0.15,
+
     behavior: {
       aggression: 0.5,
       curiosity: 0.6,
@@ -110,7 +110,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     activityByWeather: { clear: 0.8, cloudy: 1.0, rain: 1.1 },
     preferredBaits: ['worm', 'bread'],
     preferredGroundbait: 'vanillin',
-    baseCatchChance: 0.32,
+
     behavior: {
       aggression: 0.2,
       curiosity: 0.6,
@@ -131,7 +131,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     activityByWeather: { clear: 1.0, cloudy: 0.9, rain: 1.1 },
     preferredBaits: ['maggot', 'bread'],
     preferredGroundbait: 'vanillin',
-    baseCatchChance: 0.2,
+
     behavior: {
       aggression: 0.2,
       curiosity: 0.95,
@@ -152,7 +152,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     activityByWeather: { clear: 0.8, cloudy: 1.0, rain: 1.05 },
     preferredBaits: ['live_bait'],
     preferredGroundbait: 'dried_blood',
-    baseCatchChance: 0.07,
+
     behavior: {
       aggression: 0.8,
       curiosity: 0.4,
@@ -179,7 +179,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     activityByWeather: { clear: 1.0, cloudy: 1.0, rain: 1.1 },
     preferredBaits: ['worm', 'maggot'],
     preferredGroundbait: 'vanillin',
-    baseCatchChance: 0.18,
+
     behavior: {
       aggression: 0.3,
       curiosity: 1,
@@ -200,7 +200,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     activityByWeather: { clear: 0.8, cloudy: 1.0, rain: 1.2 },
     preferredBaits: ['live_bait'],
     preferredGroundbait: 'dried_blood',
-    baseCatchChance: 0.03,
+
     behavior: {
       aggression: 0.9,
       curiosity: 0.3,
@@ -227,7 +227,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     activityByWeather: { clear: 1.2, cloudy: 0.8, rain: 0.6 },
     preferredBaits: ['corn', 'dough', 'bread'],
     preferredGroundbait: 'peas',
-    baseCatchChance: 0.08,
+
     behavior: {
       aggression: 0.4,
       curiosity: 0.5,
@@ -248,7 +248,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     activityByWeather: { clear: 0.9, cloudy: 1.1, rain: 1.2 },
     preferredBaits: ['worm', 'maggot'],
     preferredGroundbait: 'dried_blood',
-    baseCatchChance: 0.35,
+
     behavior: {
       aggression: 0.6,
       curiosity: 1.0,
@@ -275,7 +275,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     activityByWeather: { clear: 1.2, cloudy: 0.9, rain: 0.7 },
     preferredBaits: ['live_bait'],
     preferredGroundbait: 'dried_blood',
-    baseCatchChance: 0.1,
+
     behavior: {
       aggression: 0.9,
       curiosity: 0.6,
@@ -302,7 +302,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     activityByWeather: { clear: 0.7, cloudy: 1.2, rain: 1.1 },
     preferredBaits: ['maggot', 'worm', 'dough'],
     preferredGroundbait: 'vanillin',
-    baseCatchChance: 0.18,
+
     behavior: {
       aggression: 0.3,
       curiosity: 0.5,
@@ -322,7 +322,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     activityByWeather: { clear: 1.0, cloudy: 1.1, rain: 1.3 },
     preferredBaits: ['worm', 'bread'],
     preferredGroundbait: 'none',
-    baseCatchChance: 0.12,
+
     behavior: {
       aggression: 0.2,
       curiosity: 0.9,
@@ -343,7 +343,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     activityByWeather: { clear: 0.6, cloudy: 1.2, rain: 1.5 },
     preferredBaits: ['worm', 'live_bait'],
     preferredGroundbait: 'dried_blood',
-    baseCatchChance: 0.05,
+
     behavior: {
       aggression: 0.8,
       curiosity: 0.3,
@@ -365,7 +365,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     activityByWeather: { clear: 1.2, cloudy: 0.9, rain: 0.8 },
     preferredBaits: ['worm', 'maggot'],
     preferredGroundbait: 'vanillin',
-    baseCatchChance: 0.4,
+
     behavior: {
       aggression: 0.2,
       curiosity: 1.0,
@@ -386,7 +386,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     activityByWeather: { clear: 1.3, cloudy: 0.8, rain: 0.5 },
     preferredBaits: ['bread', 'dough'],
     preferredGroundbait: 'peas',
-    baseCatchChance: 0.06,
+
     behavior: {
       aggression: 0.4,
       curiosity: 0.4,
@@ -407,7 +407,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     activityByWeather: { clear: 0.6, cloudy: 1.4, rain: 1.2 },
     preferredBaits: ['worm', 'maggot'],
     preferredGroundbait: 'vanillin',
-    baseCatchChance: 0.12,
+
     behavior: {
       aggression: 0.3,
       curiosity: 0.3,
@@ -428,7 +428,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     activityByWeather: { clear: 0.5, cloudy: 1.1, rain: 1.8 },
     preferredBaits: ['worm'],
     preferredGroundbait: 'vanillin',
-    baseCatchChance: 0.25,
+
     behavior: {
       aggression: 0.2,
       curiosity: 0.8,

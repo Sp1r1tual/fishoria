@@ -85,13 +85,13 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
     hookDepthM > groundDepthM &&
     phase !== 'bite';
 
-  const bobCycle = Math.sin(time * 0.005);
+  const bobCycle = Math.sin(time * 0.3);
   let sinkY = 0;
   let tilt = 0;
 
   if (isCast && !isSpinning && rigType !== 'feeder') {
     if (phase === 'waiting') {
-      const pulse = Math.sin(time * 0.05) * maxInterest;
+      const pulse = Math.sin(time * 3.0) * maxInterest;
       if (maxInterest > 0.15) {
         if (isLayingOnSide) {
           sinkY = pulse * 2 * renderScale;
@@ -149,7 +149,7 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
 
       const depthFactor = Math.min(1.0, 0.3 + (groundDepthM / 4.0) * 0.7);
       const baseSlack = (0.1 + Math.pow(depthRatio, 1.2) * 0.75) * depthFactor;
-      const subtleWave = Math.sin(time * 0.015) * 0.01 * depthRatio;
+      const subtleWave = Math.sin(time * 0.9) * 0.01 * depthRatio;
       lineSlack = Math.max(0, Math.min(1.0, baseSlack + subtleWave));
       rodTension = 0;
     }
@@ -157,9 +157,9 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
     const depthFactor = Math.min(1.0, 0.3 + (groundDepthM / 4.0) * 0.7);
     const baseSlack = rigType === 'feeder' ? 0.04 : 0.85 * depthFactor;
 
-    const currentWave = Math.sin(time * 0.01) * 0.008;
+    const currentWave = Math.sin(time * 0.6) * 0.008;
     const nibbleJitter =
-      maxInterest > 0.4 ? Math.sin(time * 15) * (maxInterest - 0.4) * 0.04 : 0;
+      maxInterest > 0.4 ? Math.sin(time * 900) * (maxInterest - 0.4) * 0.04 : 0;
 
     lineSlack = Math.max(
       0.01,
@@ -171,7 +171,7 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
         maxInterest > 0.2
           ? (maxInterest - 0.2) *
             0.12 *
-            (1 + Math.sin(time * (0.15 + maxInterest * 0.25)))
+            (1 + Math.sin(time * (9.0 + maxInterest * 15)))
           : 0;
       rodTension = shakeAmount;
       lineSlack = Math.max(0, lineSlack - shakeAmount * 0.2);

@@ -56,7 +56,6 @@ export function updateReelingPhase(
     activeBaitId,
     lakeId,
     lakeName,
-    trashChance,
   } = params;
 
   const tension = TensionSystem.update({
@@ -82,7 +81,7 @@ export function updateReelingPhase(
   );
 
   const wearMulti = 1.0 + tension.value * GEAR_WEAR.tensionWearMultiplier;
-  const dtSec = deltaTime / 60;
+  const dtSec = deltaTime;
   let accumRodWear =
     params.accumRodWear + dtSec * GEAR_WEAR.rodWearPerSecond * wearMulti;
   let accumReelWear =
@@ -197,7 +196,6 @@ export function updateReelingPhase(
       method,
       lakeId,
       lakeName,
-      trashChance,
       hookedFish.isTrash,
     );
 

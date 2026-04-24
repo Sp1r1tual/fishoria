@@ -55,7 +55,7 @@ export function detectSectorBite(params: ISectorBiteParams): ISectorBiteResult {
       progressSpeciesId: null,
     };
 
-  const dtSec = params.deltaTime / 60;
+  const dtSec = params.deltaTime;
   let activeFollower = params.follower;
 
   if (activeFollower) {
@@ -206,13 +206,19 @@ export function detectSectorBite(params: ISectorBiteParams): ISectorBiteResult {
         }
       }
 
+      let rigMultiplier = 1.0;
+      if (params.rigType === 'feeder') {
+        rigMultiplier = BITE_DETECTION.feederBiteMultiplier;
+      }
+
       const baseChance =
         baseAvailability *
         depthScore *
         timeScore *
         weatherScore *
         baitScore *
-        groundbaitMultiplier;
+        groundbaitMultiplier *
+        rigMultiplier;
 
       if (baseChance >= 0.001) {
         candidates.push({ id: speciesId, baseChance });
@@ -221,7 +227,7 @@ export function detectSectorBite(params: ISectorBiteParams): ISectorBiteResult {
     }
 
     if (totalBaseChance > 0) {
-      const nibbleMultiplier = 2.5;
+      const nibbleMultiplier = BITE_DETECTION.nibbleMultiplier;
 
       const totalActionChance = totalBaseChance * dtSec;
 
@@ -250,7 +256,7 @@ export function detectSectorBite(params: ISectorBiteParams): ISectorBiteResult {
             }
 
             const depthRange = params.getPreferredDepthRange(selected.id);
-            if (params.isOnBottom && depthRange.min < params.hookDepthM - 1) {
+            if (params.isOnBottom && depthRange.max < params.hookDepthM - 1) {
               biteProb *= 0.1;
             }
 

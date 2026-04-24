@@ -63,7 +63,8 @@ export class BackgroundRenderer {
     this.bgSprite.tint = (val << 16) | (val << 8) | val;
   }
 
-  public update(dt: number): void {
+  public update(dtSeconds: number): void {
+    const dt = dtSeconds * 60;
     const lerpSpeed = 0.02;
     if (Math.abs(this.currentTintFactor - this.targetTintFactor) > 0.001) {
       this.currentTintFactor +=

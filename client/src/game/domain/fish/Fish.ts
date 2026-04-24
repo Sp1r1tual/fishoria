@@ -57,10 +57,15 @@ export class Fish {
     const wMax = this.weightRange.max;
     const range = wMax - wMin;
 
-    const r = Math.pow(Math.random(), CATCH_RESULT.weightDistributionPower);
-    const jitter = (Math.random() - 0.5) * (range * 0.04);
+    let r = Math.pow(Math.random(), CATCH_RESULT.weightDistributionPower);
 
-    this.weight = Math.max(wMin, Math.min(wMax, wMin + r * range + jitter));
+    const jitter = (Math.random() - 0.5) * 0.02;
+    r = Math.max(0, Math.min(1, r + jitter));
+
+    this.weight = wMin + r * range;
+
+    this.weight += (Math.random() - 0.5) * 0.001;
+    this.weight = Math.max(wMin, Math.min(wMax, this.weight));
   }
 
   setState(state: FishStateType): void {

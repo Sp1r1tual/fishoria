@@ -730,7 +730,7 @@ export class LakeScene implements IScene {
 
     this.updateCtx.deltaTime = deltaTime;
 
-    this.timeSinceCast += deltaTime / 60;
+    this.timeSinceCast += deltaTime;
 
     if (this.updateTimeOfDay()) {
       const bgUrl = this.config.timeOfDayConfig[this.timeOfDay].bgImageUrl;
@@ -739,7 +739,7 @@ export class LakeScene implements IScene {
     }
 
     if (this.phase === 'waiting' && this.hookConfig?.rigType === 'spinning') {
-      const dtSec = deltaTime / 60;
+      const dtSec = deltaTime;
       if (this.playerReeling) {
         this.retrieveReelTime += dtSec;
         this.retrievePauseTime = 0;
@@ -863,7 +863,7 @@ export class LakeScene implements IScene {
       fishMovingTowardsPlayer,
     });
 
-    const lerpT = 1 - Math.pow(0.001, deltaTime / 60);
+    const lerpT = 1 - Math.pow(0.001, deltaTime);
     this.smoothedTension +=
       (rodVisuals.rodTension - this.smoothedTension) * Math.min(1, lerpT * 4.0);
     this.smoothedSlack +=
@@ -975,14 +975,14 @@ export class LakeScene implements IScene {
       }
     }
 
-    this.biteUpdateTimer += deltaTime / 60;
+    this.biteUpdateTimer += deltaTime;
     const isSpinning = this.hookConfig?.rigType === 'spinning';
     const updateInterval = isSpinning ? 0 : this.potentialBiter ? 1.2 : 1.0;
 
     let biter: Fish | null = null;
 
     if (this.biteUpdateTimer >= updateInterval) {
-      const elapsedBiteFrames = this.biteUpdateTimer * 60;
+      const elapsedSec = this.biteUpdateTimer;
       this.biteUpdateTimer = 0;
       const biteResult = detectSectorBite({
         sectorSystem: this.sectorSystem,
@@ -995,7 +995,7 @@ export class LakeScene implements IScene {
         waterBoundaryY: this.config.environment.waterBoundaryY,
         timeOfDay: this.timeOfDay,
         weather: this.weather,
-        deltaTime: elapsedBiteFrames,
+        deltaTime: elapsedSec,
         hookDepthM: isSpinning
           ? this.currentLureDepthM
           : Math.min(this.hookDepthM, this.groundDepthM),
@@ -1073,7 +1073,7 @@ export class LakeScene implements IScene {
       this.targetInterest = 0;
     }
 
-    const lerpT = 1 - Math.pow(0.0001, deltaTime / 60);
+    const lerpT = 1 - Math.pow(0.0001, deltaTime);
     this.smoothedInterest +=
       (this.targetInterest - this.smoothedInterest) * Math.min(1, lerpT * 1.0);
 
@@ -1081,7 +1081,7 @@ export class LakeScene implements IScene {
       const decayRate = this.potentialBiter ? 0.08 : 0.5;
       this.targetInterest = Math.max(
         0,
-        this.targetInterest - decayRate * (deltaTime / 60),
+        this.targetInterest - decayRate * deltaTime,
       );
     }
 
@@ -1114,12 +1114,18 @@ export class LakeScene implements IScene {
     if (biter) {
       biter.generateWeight();
       this.hookedFish = biter;
-      this.phase = 'bite';
-      this.callbacks.onBite();
-      this.callbacks.onPhaseChange(this.phase);
 
-      if (this.playerReeling && this.hookConfig?.rigType === 'spinning') {
+      const isSpinningBite =
+        this.playerReeling && this.hookConfig?.rigType === 'spinning';
+
+      if (isSpinningBite) {
+        // For spinning, we try to hook immediately.
+        // We don't call onBite/onPhaseChange('bite') first to avoid redundant sounds if it fails.
         this.hookFish();
+      } else {
+        this.phase = 'bite';
+        this.callbacks.onBite();
+        this.callbacks.onPhaseChange(this.phase);
       }
     }
 
@@ -1156,7 +1162,7 @@ export class LakeScene implements IScene {
   private updateBitePhase(): void {
     if (!this.hookedFish) return;
 
-    const dtSec = (this.updateCtx.deltaTime ?? 1) / 60;
+    const dtSec = this.updateCtx.deltaTime ?? 0.016;
     const fish = this.hookedFish;
     fish.stateTimer += dtSec;
 
@@ -1202,7 +1208,7 @@ export class LakeScene implements IScene {
   ): void {
     if (!this.hookedFish) return;
 
-    this.hookedFish.stateTimer += deltaTime / 60;
+    this.hookedFish.stateTimer += deltaTime;
 
     const reelingResult = updateReelingPhase(
       {

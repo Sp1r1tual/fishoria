@@ -155,7 +155,7 @@ export class HookEntity {
 
       const isLayingOnSide = hookDepthM > groundDepthM && phase !== 'bite';
 
-      const bobCycle = Math.sin(time * 0.005);
+      const bobCycle = Math.sin(time * 0.3);
 
       let tilt = isLayingOnSide ? Math.PI / 2.1 : bobCycle * 0.15;
 
@@ -166,7 +166,7 @@ export class HookEntity {
         sinkY = 0;
       } else if (phase === 'waiting') {
         if (maxInterest > 0.15) {
-          const pulse = Math.sin(time * 0.05) * maxInterest;
+          const pulse = Math.sin(time * 3.0) * maxInterest;
           const dipThreshold = 0.09;
 
           if (isLayingOnSide) {
@@ -189,8 +189,8 @@ export class HookEntity {
 
       if (phase === 'bite' || bulbAlphaOverride === 0) {
         const isStrike = phase === 'bite';
-        const maxRipple = isStrike ? 50 : 80;
-        const rippleAge = (time % maxRipple) / maxRipple;
+        const maxRippleSec = (isStrike ? 50 : 80) / 60;
+        const rippleAge = (time % maxRippleSec) / maxRippleSec;
         this.gfx.circle(
           bx,
           by,
@@ -232,13 +232,6 @@ export class HookEntity {
           this.gfx.circle(bx, totalY, 3 * this.scale);
           this.gfx.fill({ color: 0xffffff, alpha: bulbAlpha });
         }
-        this.gfx.moveTo(bx, totalY);
-        this.gfx.lineTo(0, 0);
-        this.gfx.stroke({
-          width: 0.5 * this.scale,
-          color: 0xffffff,
-          alpha: 0.2,
-        });
       } else {
         const bulbDist = 4 * this.scale;
         const bulbX = bx + sinT * bulbDist;
@@ -299,14 +292,6 @@ export class HookEntity {
           2,
           0x333333,
         );
-
-        this.gfx.moveTo(bx + sinT * botStemEnd, totalY + cosT * botStemEnd);
-        this.gfx.lineTo(0, 0);
-        this.gfx.stroke({
-          width: 0.5 * this.scale,
-          color: 0xffffff,
-          alpha: 0.2,
-        });
       }
     }
 

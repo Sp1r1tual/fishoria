@@ -6,9 +6,9 @@ self.addEventListener('message', (e: MessageEvent) => {
       let last = performance.now();
       interval = setInterval(() => {
         const now = performance.now();
-        const dtFrames = (now - last) / (1000 / 60);
+        const dtSec = (now - last) / 1000;
         last = now;
-        self.postMessage({ dt: dtFrames });
+        self.postMessage({ dt: dtSec });
       }, 100);
     }
   } else if (e.data === 'stop') {

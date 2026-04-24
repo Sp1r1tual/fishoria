@@ -15,13 +15,13 @@ export class SnagMechanic {
 
     if (params.isOnBottom && params.isMoving) {
       this.snagChanceCounter +=
-        (params.deltaTime / 60) * SNAG.spinningAccumulationRate;
+        params.deltaTime * SNAG.spinningAccumulationRate;
 
       if (this.snagChanceCounter > SNAG.spinningSnagGracePeriod) {
         const snagProb =
           (this.snagChanceCounter - SNAG.spinningSnagGracePeriod) *
           SNAG.spinningSnagProbMultiplier *
-          (params.deltaTime / 60);
+          params.deltaTime;
         if (Math.random() < snagProb) {
           this.snagChanceCounter = 0;
           return true;
@@ -30,8 +30,7 @@ export class SnagMechanic {
     } else {
       this.snagChanceCounter = Math.max(
         0,
-        this.snagChanceCounter -
-          (params.deltaTime / 60) * SNAG.spinningDecayRate,
+        this.snagChanceCounter - params.deltaTime * SNAG.spinningDecayRate,
       );
     }
 

@@ -13,7 +13,7 @@ export function pullFishToShore(
   horizonY: number,
   canvasWidth: number,
 ): void {
-  const dtSec = deltaTime / 60;
+  const dtSec = deltaTime;
   const fishWeight =
     fish.weight ||
     (fish.config.weightRange.min + fish.config.weightRange.max) / 2;
@@ -65,7 +65,7 @@ export function applyFishAutonomousMovement(
   canvasHeight: number,
   waterBoundaryY: number,
 ): void {
-  const dtSec = deltaTime / 60;
+  const dtSec = deltaTime;
 
   fish.combatTimer -= dtSec;
   if (fish.combatTimer <= 0) {

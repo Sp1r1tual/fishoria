@@ -23,7 +23,7 @@ export interface IFishSpeciesConfig {
   activityByWeather: Record<WeatherType, number>;
   preferredBaits: BaitTypeType[];
   preferredGroundbait: GroundbaitTypeType;
-  baseCatchChance: number;
+
   behavior: IFishBehaviorTraits;
   color: number;
   imageUrl: string;

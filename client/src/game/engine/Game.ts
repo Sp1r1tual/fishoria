@@ -52,7 +52,7 @@ export class Game {
 
     this.app.ticker.add((ticker) => {
       if (!document.hidden) {
-        this.currentScene?.update(ticker.deltaTime);
+        this.currentScene?.update(ticker.deltaMS / 1000);
       }
     });
 

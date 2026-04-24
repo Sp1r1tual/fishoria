@@ -41,7 +41,7 @@ export function updateSpinningLure(
   let reachedShore = false;
 
   const lureType = hookConfig.lureType;
-  const dtSec = deltaTime / 60;
+  const dtSec = deltaTime;
 
   const normX = hookX / W;
   const waterY = H * waterBoundaryY;

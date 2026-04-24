@@ -16,6 +16,7 @@ export class DebugLayer {
   private container: Container;
   private terrainGfx: Graphics;
   private dynamicGfx: Graphics;
+  private infoBgGfx: Graphics;
   private fpsLabel: Text;
   private depthSystem: DepthSystem;
   private snagLabel: Text;
@@ -42,6 +43,7 @@ export class DebugLayer {
     this.container = new Container();
     this.terrainGfx = new Graphics();
     this.dynamicGfx = new Graphics();
+    this.infoBgGfx = new Graphics();
     this.app = app;
     this.depthSystem = depthSystem;
     this.sectorSystem = sectorSystem;
@@ -49,49 +51,56 @@ export class DebugLayer {
 
     this.container.addChild(this.terrainGfx);
     this.container.addChild(this.dynamicGfx);
+    this.container.addChild(this.infoBgGfx);
 
     this.fpsLabel = new Text({
       text: 'FPS: 00',
       style: {
-        fontSize: 13,
+        fontSize: 14,
         fill: 0xffffff,
-        stroke: { color: 0x000000, width: 2 },
+        stroke: { color: 0x000000, width: 3 },
       },
     });
+    this.fpsLabel.resolution = window.devicePixelRatio || 1;
     this.fpsLabel.position.set(10, app.renderer.height - 20);
     this.container.addChild(this.fpsLabel);
 
     this.snagLabel = new Text({
       text: 'Snag: 0.0',
       style: {
-        fontSize: 11,
+        fontSize: 12,
         fill: 0xff8888,
-        stroke: { color: 0x000000, width: 2 },
+        stroke: { color: 0x000000, width: 3 },
       },
     });
+    this.snagLabel.resolution = window.devicePixelRatio || 1;
     this.snagLabel.visible = false;
     this.container.addChild(this.snagLabel);
 
     this.envLabel = new Text({
       text: '',
       style: {
-        fontSize: 12,
+        fontSize: 14,
         fill: 0xffffaa,
-        stroke: { color: 0x000000, width: 2 },
+        stroke: { color: 0x000000, width: 3 },
       },
     });
+    this.envLabel.resolution = window.devicePixelRatio || 1;
     this.envLabel.position.set(10, 40);
     this.container.addChild(this.envLabel);
 
     this.sectorInfoLabel = new Text({
       text: '',
       style: {
-        fontSize: 11,
+        fontSize: 12,
         fill: 0xffffff,
-        stroke: { color: 0x000000, width: 2 },
+        fontWeight: 'bold',
+        stroke: { color: 0x000000, width: 3 },
       },
     });
+    this.sectorInfoLabel.resolution = window.devicePixelRatio || 1;
     this.sectorInfoLabel.visible = false;
+    this.infoBgGfx.visible = false;
     this.container.addChild(this.sectorInfoLabel);
 
     this.container.visible = false;
@@ -160,6 +169,7 @@ export class DebugLayer {
         this.updateSectorHover();
       } else {
         this.sectorInfoLabel.visible = false;
+        this.infoBgGfx.visible = false;
       }
     }
   }
@@ -347,9 +357,26 @@ export class DebugLayer {
         targetY = mouse.y - this.sectorInfoLabel.height - 15;
       }
 
+      targetX = Math.round(targetX);
+      targetY = Math.round(targetY);
+
       this.sectorInfoLabel.position.set(targetX, targetY);
+
+      // Update background box
+      this.infoBgGfx.clear();
+      this.infoBgGfx.roundRect(
+        targetX - 10,
+        targetY - 10,
+        Math.round(this.sectorInfoLabel.width) + 20,
+        Math.round(this.sectorInfoLabel.height) + 20,
+        6,
+      );
+      this.infoBgGfx.fill({ color: 0x000000, alpha: 0.6 });
+      this.infoBgGfx.stroke({ color: 0xffffff, width: 1, alpha: 0.2 });
+      this.infoBgGfx.visible = true;
     } else {
       this.sectorInfoLabel.visible = false;
+      this.infoBgGfx.visible = false;
     }
   }
 

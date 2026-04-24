@@ -400,7 +400,9 @@ export function useGameAudio(manageAmbient = true) {
     [playOnce],
   );
 
-  const onHook = useCallback(() => {}, []);
+  const onHook = useCallback(() => {
+    playBell();
+  }, [playBell]);
 
   const onCatch = useCallback(() => {
     stopAllLoops();

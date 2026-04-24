@@ -153,7 +153,8 @@ export class WeatherLayer {
     });
   }
 
-  public update(dt: number, timeOfDay: string = 'day') {
+  public update(dtSeconds: number, timeOfDay: string = 'day') {
+    const dt = dtSeconds * 60;
     const W = this.app.renderer.width;
     const H = this.app.renderer.height;
 

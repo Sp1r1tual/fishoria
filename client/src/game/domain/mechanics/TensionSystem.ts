@@ -4,7 +4,7 @@ import { TENSION, FISH_AI } from '@/common/configs/game';
 
 export class TensionSystem {
   static update(params: ITensionUpdateParams): ITensionState {
-    const dtSec = params.deltaTime / 60;
+    const dtSec = params.deltaTime;
     let tension = params.current.value;
 
     const gears = [
