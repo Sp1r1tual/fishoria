@@ -14,6 +14,16 @@ const PUBLIC_PATHS = [
   '/auth/register',
 ];
 
+const authAxios = axios.create();
+
+const getXsrfHeaders = (): Record<string, string> => {
+  const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]*)/);
+  if (match?.[1]) {
+    return { 'x-xsrf-token': decodeURIComponent(match[1]) };
+  }
+  return {};
+};
+
 let refreshPromise: Promise<IUser> | null = null;
 
 const refreshToken = async (): Promise<IUser> => {
@@ -24,25 +34,16 @@ const refreshToken = async (): Promise<IUser> => {
   if (!refreshPromise) {
     refreshPromise = (async () => {
       try {
-        let headers = {};
-        const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]*)/);
-        if (match && match[1]) {
-          headers = { 'x-xsrf-token': decodeURIComponent(match[1]) };
-        }
-
-        const refreshResponse = await axios.post<{
+        const refreshResponse = await authAxios.post<{
           user: IUser;
           expiresIn: number;
         }>(
           `${import.meta.env.VITE_API_URL}/auth/refresh`,
           {},
-          { withCredentials: true, headers },
+          { withCredentials: true, headers: getXsrfHeaders() },
         );
 
-        console.log('[Auth] Token successfully refreshed');
-
         const user = refreshResponse.data.user;
-
         store.dispatch(setUser(user));
 
         if (
@@ -64,11 +65,6 @@ const refreshToken = async (): Promise<IUser> => {
           localStorage.removeItem('hasSession');
           localStorage.removeItem('authExpiry');
           store.dispatch(clearAuth());
-        } else {
-          console.error(
-            '[Auth] Token refresh failed with non-auth error:',
-            error,
-          );
         }
 
         throw error;
@@ -78,12 +74,35 @@ const refreshToken = async (): Promise<IUser> => {
     })();
   }
 
-  return refreshPromise;
+  return refreshPromise as Promise<IUser>;
 };
 
 const authInterceptors = (axiosInstance: AxiosInstance) => {
   axiosInstance.interceptors.request.use(
-    (config) => config,
+    async (config) => {
+      if (
+        !config.url ||
+        PUBLIC_PATHS.some((path) => config.url?.includes(path))
+      ) {
+        return config;
+      }
+
+      const authExpiry = localStorage.getItem('authExpiry');
+      if (authExpiry && !store.getState().auth.isLoggedOut) {
+        const expiresAt = parseInt(authExpiry, 10);
+        const now = Date.now();
+
+        if (now > expiresAt - 15000) {
+          try {
+            await refreshToken();
+          } catch {
+            // Ignore proactive refresh failures, let the request proceed
+          }
+        }
+      }
+
+      return config;
+    },
     (error) => Promise.reject(error),
   );
 
@@ -108,19 +127,15 @@ const authInterceptors = (axiosInstance: AxiosInstance) => {
       const originalRequest = error.config;
 
       if (
-        originalRequest &&
+        !originalRequest ||
+        !error.response ||
         PUBLIC_PATHS.some((path) => originalRequest.url?.includes(path))
       ) {
         return Promise.reject(error);
       }
 
-      if (store.getState().auth.isLoggedOut) {
-        return Promise.reject(error);
-      }
-
       if (
-        originalRequest &&
-        error.response?.status === 404 &&
+        error.response.status === 404 &&
         originalRequest.url?.includes('/player/profile')
       ) {
         localStorage.removeItem('hasSession');
@@ -129,29 +144,17 @@ const authInterceptors = (axiosInstance: AxiosInstance) => {
         return Promise.reject(error);
       }
 
-      if (
-        originalRequest &&
-        error.response?.status === 401 &&
-        !originalRequest._retry
-      ) {
+      if (error.response.status === 401 && !originalRequest._retry) {
+        if (store.getState().auth.isLoggedOut) {
+          return Promise.reject(error);
+        }
+
         originalRequest._retry = true;
 
         try {
           await refreshToken();
-
           return axiosInstance(originalRequest);
         } catch (refreshError) {
-          if (
-            axios.isAxiosError(refreshError) &&
-            refreshError.response?.status !== 401 &&
-            refreshError.response?.status !== 403
-          ) {
-            console.error(
-              '[Auth] Token refresh failed in response interceptor:',
-              refreshError,
-            );
-          }
-
           return Promise.reject(refreshError);
         }
       }
