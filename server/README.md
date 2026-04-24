@@ -1,4 +1,4 @@
-# Fishoria — API Server
+# Fishoria – API Server
 
 **The robust backend engine powering the Fishoria interactive fishing simulator.** Built with NestJS 11 and Prisma 7 for high performance, scalability, and type-safe database interactions.
 
@@ -14,18 +14,18 @@ The server also features a built-in **Admin Dashboard** at the root URL with rea
 
 ## Features
 
-- 🔐 **Secure Authentication** — multi-strategy auth including Google OAuth 2.0, JWT with refresh token rotation, and Local login with email activation
-- 🛡️ **CSRF Protection** — automatic CSRF token middleware + guard for cookie-based clients, bypassed for Bearer token (mobile)
-- 👤 **Player Management** — comprehensive profile handling, auto-generated starter kits, catch statistics, and XP-based level progression
-- 🎣 **Game Logic Engine** — authoritative handling of fishing results, gear durability, bait consumption, lake diary, and trophy detection
-- 🎒 **Inventory System** — management of rods, reels, lines, hooks, lures, repair kits, bait, and groundbait with batch equip support
-- 🛒 **In-Game Economy** — shop for purchasing gear/consumables and selling fish with species-specific price multipliers
-- 🏆 **Progression Tracking** — achievements (automatic awarding) and quests system (3 condition types) with atomic reward distribution
-- 🌍 **Localization (i18n)** — full multilingual support (Ukrainian / English) at the database level via translation tables
-- 🛡️ **Security & Optimization** — rate limiting (Throttler), password hashing (bcrypt), Redis ban cache, row-level locking for all transactions
-- 📧 **Communication** — automated email notifications (activation, password reset) via Nodemailer with localized HTML templates
-- 📰 **Content Management** — news system with draft/publish status, localized content, and role-based creation (Moderator)
-- 📊 **Admin Dashboard** — server-rendered HTML dashboard with player stats, internal wiki, and Swagger API explorer link
+- **Secure Authentication** – multi-strategy auth including Google OAuth 2.0, JWT with refresh token rotation, and Local login with email activation
+- **CSRF Protection** – automatic CSRF token middleware + guard for cookie-based clients, bypassed for Bearer token (mobile)
+- **Player Management** – comprehensive profile handling, auto-generated starter kits, catch statistics, and XP-based level progression
+- **Game Logic Engine** – authoritative handling of fishing results, gear durability, bait consumption, lake diary, and trophy detection
+- **Inventory System** – management of rods, reels, lines, hooks, lures, repair kits, bait, and groundbait with batch equip support
+- **In-Game Economy** – shop for purchasing gear/consumables and selling fish with species-specific price multipliers
+- **Progression Tracking** – achievements (automatic awarding) and quests system (3 condition types) with atomic reward distribution
+- **Localization (i18n)** – full multilingual support (Ukrainian / English) at the database level via translation tables
+- **Security & Optimization** – rate limiting (Throttler), password hashing (bcrypt), Redis ban cache, row-level locking for all transactions
+- **Communication** – automated email notifications (activation, password reset) via Nodemailer with localized HTML templates
+- **Content Management** – news system with draft/publish status, localized content, and role-based creation (Moderator)
+- **Admin Dashboard** – server-rendered HTML dashboard with player stats, internal wiki, and Swagger API explorer link
 
 ---
 
@@ -36,12 +36,11 @@ The server also features a built-in **Admin Dashboard** at the root URL with rea
 | **Framework**  | [NestJS 11](https://nestjs.com/)                                               |
 | **ORM**        | [Prisma 7](https://www.prisma.io/) with `@prisma/adapter-pg`                   |
 | **Database**   | [PostgreSQL (Supabase)](https://supabase.com/)                                 |
-| **Caching**    | [Redis (Upstash)](https://upstash.com/) — REST-based                           |
+| **Caching**    | [Redis (Upstash)](https://upstash.com/) – REST-based                           |
 | **Validation** | [Zod 4](https://zod.dev/) & [nestjs-zod](https://github.com/risen7/nestjs-zod) |
-| **Auth**       | [Passport.js](https://www.passportjs.org/) — JWT, Google OAuth, Local          |
-| **Mailing**    | [Nodemailer](https://nodemailer.com/) — Gmail SMTP                             |
-| **Docs**       | [Swagger / OpenAPI](https://swagger.io/) via `@nestjs/swagger`                 |
-| **Markdown**   | [marked](https://marked.js.org/) — for admin wiki rendering                    |
+| **Auth**       | [Passport.js](https://www.passportjs.org/) – JWT, Google OAuth, Local          |
+| **Mailing**    | [Nodemailer](https://nodemailer.com/) – Gmail SMTP                             |
+| **Markdown**   | [marked](https://marked.js.org/) – for admin wiki rendering                    |
 | **Language**   | TypeScript 5                                                                   |
 
 ---
@@ -61,7 +60,7 @@ yarn install
 cp .env.example .env
 ```
 
-Configure all required variables — see `.env.example` for descriptions. Key groups:
+Configure all required variables – see `.env.example` for descriptions. Key groups:
 
 | Group        | Variables                                                                                                                     |
 | :----------- | :---------------------------------------------------------------------------------------------------------------------------- |
@@ -147,11 +146,11 @@ All financial and game-critical operations use **row-level locking** (`SELECT ..
 Request → ThrottlerGuard → CsrfMiddleware → CsrfGuard → JwtAuthGuard → RolesGuard → Controller
 ```
 
-1. **ThrottlerGuard** — 100 req/min global, tighter on auth endpoints (5-10 req/min)
-2. **CsrfMiddleware** — generates `XSRF-TOKEN` cookie on first request
-3. **CsrfGuard** — validates `x-xsrf-token` header (skipped for Bearer / GET / public routes)
-4. **JwtAuthGuard** — validates JWT from Cookie or Bearer header, checks Redis ban status
-5. **RolesGuard** — validates `UserRole` (PLAYER / MODERATOR) when `@Roles()` is applied
+1. **ThrottlerGuard** – 100 req/min global, tighter on auth endpoints (5-10 req/min)
+2. **CsrfMiddleware** – generates `XSRF-TOKEN` cookie on first request
+3. **CsrfGuard** – validates `x-xsrf-token` header (skipped for Bearer / GET / public routes)
+4. **JwtAuthGuard** – validates JWT from Cookie or Bearer header, checks Redis ban status
+5. **RolesGuard** – validates `UserRole` (PLAYER / MODERATOR) when `@Roles()` is applied
 
 ---
 

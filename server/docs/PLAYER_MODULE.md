@@ -28,7 +28,7 @@ const xpNeeded = Math.floor(100 * Math.pow(level, 1.5));
 
 Examples: Level 1 → 100 XP, Level 5 → 1118 XP, Level 10 → 3162 XP.
 
-When experience is added (via `addXp`), the system loops: if XP exceeds the threshold, the level is incremented and the remaining XP carries over. This supports **multi-level jumps** — if a single catch or quest reward earns enough XP for multiple levels, all are applied.
+When experience is added (via `addXp`), the system loops: if XP exceeds the threshold, the level is incremented and the remaining XP carries over. This supports **multi-level jumps** – if a single catch or quest reward earns enough XP for multiple levels, all are applied.
 
 ### 2. Profile Creation & Starter Kit
 
@@ -46,7 +46,7 @@ This is the core part of the module. The mapper handles the following:
 - Selects the correct translation for quests and achievements based on the user's language.
 - Processes quest conditions (`conditions`), substituting localized labels from JSON `{ uk: "...", en: "..." }` objects.
 - Falls back to English (`en`) when the user's language translation is missing.
-- Transforms complex Prisma structures into flat objects suitable for the frontend — direct `title` and `description` fields instead of `translations: [...]` arrays.
+- Transforms complex Prisma structures into flat objects suitable for the frontend – direct `title` and `description` fields instead of `translations: [...]` arrays.
 
 ### 4. Automatic Synchronization (`syncQuests`)
 
@@ -71,25 +71,25 @@ The `GET /player/profile` endpoint appends `expiresIn` (JWT access token TTL in 
 
 ## 📡 Endpoints
 
-| Method | Path               | Description                                       | Access    |
-| :----- | :----------------- | :------------------------------------------------ | :-------- |
-| `GET`  | `/player/profile`  | Retrieve the full player profile (with expiresIn) | User      |
-| `POST` | `/player/update`   | Update profile data (username, avatar)            | User      |
-| `POST` | `/player/language` | Change the user's display language                | User      |
-| `POST` | `/player/reset`    | Delete and recreate the player profile            | User      |
-| `POST` | `/player/add-money`| Add currency to a player's balance                | Moderator |
+| Method | Path                | Description                                       | Access    |
+| :----- | :------------------ | :------------------------------------------------ | :-------- |
+| `GET`  | `/player/profile`   | Retrieve the full player profile (with expiresIn) | User      |
+| `POST` | `/player/update`    | Update profile data (username, avatar)            | User      |
+| `POST` | `/player/language`  | Change the user's display language                | User      |
+| `POST` | `/player/reset`     | Delete and recreate the player profile            | User      |
+| `POST` | `/player/add-money` | Add currency to a player's balance                | Moderator |
 
 All endpoints return the updated profile or operation result.
 
 ## 📦 Schemas & DTOs
 
-- **PlayerProfileResponseDto** (Zod): Describes the full profile structure — includes gear items, consumables, fish catches, lake stats, player quests (with localized conditions), player achievements (with localized text), and user info.
+- **PlayerProfileResponseDto** (Zod): Describes the full profile structure – includes gear items, consumables, fish catches, lake stats, player quests (with localized conditions), player achievements (with localized text), and user info.
 - **UpdateProfileDto**: `username?` (string, 3-20 chars), `avatar?` (string URL).
 - **UpdateLanguageDto**: `language` (enum: `en` | `uk`).
-- **AddMoneyDto**: `targetUserId?` (UUID, optional — defaults to the moderator's own account), `amount` (integer, 1–1,000,000).
+- **AddMoneyDto**: `targetUserId?` (UUID, optional – defaults to the moderator's own account), `amount` (integer, 1–1,000,000).
 
 ## 💡 Developer Notes
 
 When adding new relations to the `User` or `PlayerProfile` model in Prisma, always update `FULL_PROFILE_INCLUDE` in `player.constants.ts` and the corresponding schema in `profile-response.dto.ts`.
 
-The profile reset endpoint (`POST /player/reset`) deletes the entire profile and recreates it with the starter kit — all catches, stats, quests, and achievements are lost. Use with caution.
+The profile reset endpoint (`POST /player/reset`) deletes the entire profile and recreates it with the starter kit – all catches, stats, quests, and achievements are lost. Use with caution.

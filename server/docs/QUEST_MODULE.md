@@ -25,12 +25,12 @@ The system supports three core task types, automatically tracked during each cat
 
 ```typescript
 interface IQuestCondition {
-  id: string;                                    // Unique condition ID within the quest
-  type: string;                                  // CATCH_METHOD | CATCH_SPECIES | CATCH_SPECIES_ON_LAKE
-  value: string;                                 // Value to match (method name or species ID)
-  target: number;                                // Required count to complete
-  label: string | { uk: string; en: string };    // Display label (localizable)
-  lakeId?: string;                               // Required lake for CATCH_SPECIES_ON_LAKE
+  id: string; // Unique condition ID within the quest
+  type: string; // CATCH_METHOD | CATCH_SPECIES | CATCH_SPECIES_ON_LAKE
+  value: string; // Value to match (method name or species ID)
+  target: number; // Required count to complete
+  label: string | { uk: string; en: string }; // Display label (localizable)
+  lakeId?: string; // Required lake for CATCH_SPECIES_ON_LAKE
 }
 ```
 
@@ -56,28 +56,28 @@ The `getPlayerQuests` service method:
 
 1. Fetches player quests with quest translations filtered by language.
 2. For each quest, extracts `title` and `description` from the first available translation (empty strings if none found).
-3. For each condition, resolves the `label` — if it's a JSON object `{ uk: "...", en: "..." }`, picks the label matching the user's language with English fallback.
+3. For each condition, resolves the `label` – if it's a JSON object `{ uk: "...", en: "..." }`, picks the label matching the user's language with English fallback.
 4. Returns flattened quest objects with direct `title`, `description`, and localized `conditions`.
 
 ## 📡 Endpoints
 
-| Method | Path            | Description                            | Access |
-| :----- | :-------------- | :------------------------------------- | :----- |
+| Method | Path            | Description                             | Access |
+| :----- | :-------------- | :-------------------------------------- | :----- |
 | `GET`  | `/quests`       | List of the user's quests with progress | User   |
-| `POST` | `/quests/claim` | Claim the reward for a completed quest | User   |
+| `POST` | `/quests/claim` | Claim the reward for a completed quest  | User   |
 
 Both endpoints require JWT authentication. The claim endpoint accepts `playerQuestId` in the request body and returns the updated full player profile.
 
 ## 📦 Schemas & DTOs
 
-- **PlayerQuestResponseDto** (Zod): Returns quest details along with the player's current progress — includes `id`, `profileId`, `questId`, `progress`, `isCompleted`, `isClaimed`, and nested `quest` object with localized `title`, `description`, `conditions`, `xpReward`, `moneyReward`, `imageUrl`.
-- **PlayerProfileResponseDto**: Returned by the claim endpoint — full profile with updated XP, level, and money.
+- **PlayerQuestResponseDto** (Zod): Returns quest details along with the player's current progress – includes `id`, `profileId`, `questId`, `progress`, `isCompleted`, `isClaimed`, and nested `quest` object with localized `title`, `description`, `conditions`, `xpReward`, `moneyReward`, `imageUrl`.
+- **PlayerProfileResponseDto**: Returned by the claim endpoint – full profile with updated XP, level, and money.
 
 ## 💡 Developer Tip
 
 When creating new quest types in the database, make sure:
 
 1. The `value` in the condition JSON exactly matches the fish species ID or method name you are tracking in `GameEntity`.
-2. Each condition has a unique `id` — this ID is used as the key in the `progress` JSON object.
+2. Each condition has a unique `id` – this ID is used as the key in the `progress` JSON object.
 3. The `label` field should be a `{ uk: "...", en: "..." }` object for proper localization on both languages.
 4. For `CATCH_SPECIES_ON_LAKE` conditions, always include the `lakeId` field.

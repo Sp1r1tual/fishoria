@@ -74,13 +74,13 @@ Trophy catches trigger the `sportsman_fisher` achievement check.
 
 The break system handles five types of gear failure:
 
-| Break Type | Effects                                                                |
-| :--------- | :--------------------------------------------------------------------- |
-| `rod`      | Rod set to broken/0%, auto-unequipped. Reckless achievement checked.   |
-| `reel`     | Reel set to broken/0%, auto-unequipped. Reckless achievement checked.  |
+| Break Type | Effects                                                                                                                                                 |
+| :--------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `rod`      | Rod set to broken/0%, auto-unequipped. Reckless achievement checked.                                                                                    |
+| `reel`     | Reel set to broken/0%, auto-unequipped. Reckless achievement checked.                                                                                   |
 | `line`     | Line loses `lostMeters`. If <10m remaining, line is deleted + unequipped. Hook is deleted + auto-replaced. Bait consumed. Reckless achievement checked. |
-| `hook`     | Hook is deleted from inventory. Auto-replacement with same `itemId` from inventory. Bait consumed. Reckless achievement checked. |
-| `bait`     | Bait consumed (1 unit decremented).                                    |
+| `hook`     | Hook is deleted from inventory. Auto-replacement with same `itemId` from inventory. Bait consumed. Reckless achievement checked.                        |
+| `bait`     | Bait consumed (1 unit decremented).                                                                                                                     |
 
 **Collateral damage during break**: When break type is NOT `rod`/`reel`, any `rodDamage`/`reelDamage` values are still applied to the equipped rod/reel respectively (they take wear from the failed attempt).
 
@@ -90,9 +90,9 @@ The break system handles five types of gear failure:
 
 Three fishing methods are supported:
 
-- `FLOAT` — Classic float fishing.
-- `SPINNING` — Spinning rod fishing (uses lures).
-- `FEEDER` — Feeder fishing method.
+- `FLOAT` – Classic float fishing.
+- `SPINNING` – Spinning rod fishing (uses lures).
+- `FEEDER` – Feeder fishing method.
 
 ## 📡 Endpoints
 
@@ -105,7 +105,7 @@ Both endpoints return the updated full player profile.
 
 ## 🛡 Security & Validation
 
-- **Rate Limiting**: To prevent bot usage, a `@Throttle` limit is set — a maximum of 100 game actions per minute per user.
+- **Rate Limiting**: To prevent bot usage, a `@Throttle` limit is set – a maximum of 100 game actions per minute per user.
 - **Zod Validation**: All incoming data (weight, fish ID, method) goes through strict typing and validation via `ZodValidationPipe`. If the client sends invalid data (e.g., a negative weight), the server rejects the request before touching the database.
 
 ## 📦 Schemas

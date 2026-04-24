@@ -36,7 +36,7 @@ All global settings are extracted into separate files:
 
 - **CORS Config** (`cors.config.ts`): Origin is set to `CLIENT_URL` from env (fallback: `http://localhost:5173`). Credentials are enabled. Allowed headers: `Content-Type`, `Authorization`, `x-xsrf-token`.
 - **Swagger Config** (`swagger.config.ts`): API documentation with Cookie auth, Bearer auth, and XSRF token support. Available at `/docs`.
-- **Prices Config** (`prices.config.ts`): Global price registry for all items (rods, reels, lines, hooks, lures, baits, groundbaits, gadgets). Contains `getItemPrice(itemId)` and `getFishSellPrice(speciesId, weight)` functions. Also exports `FISH_SPECIES_MULTIPLIERS` — per-species XP/sell multipliers.
+- **Prices Config** (`prices.config.ts`): Global price registry for all items (rods, reels, lines, hooks, lures, baits, groundbaits, gadgets). Contains `getItemPrice(itemId)` and `getFishSellPrice(speciesId, weight)` functions. Also exports `FISH_SPECIES_MULTIPLIERS` – per-species XP/sell multipliers.
 - **Starter Kit** (`starter-kit.ts`): Defines the default gear and consumables given to new players on profile creation:
   - Starting values: `100` gold, Level `1`, `0` XP.
   - Gear: `rod_starter`, `rod_spinning_basic`, `reel_handmade`, `line_thread` (300m), `hook_rusted`, `lure_vibrotail`, `repair_kit`.
@@ -74,7 +74,7 @@ All environment variables are strictly typed and validated via Zod:
 The root route (`GET /`) serves a server-rendered HTML admin dashboard:
 
 - Displays total registered player count and server version (`v0.3.0`).
-- Sidebar with **Internal Wiki** — lists all `.md` files from the `docs/` directory. Clicking a file fetches its content via `GET /api/docs-content/:filename`, renders it with `marked` (Markdown → HTML), and displays in a modal.
+- Sidebar with **Internal Wiki** – lists all `.md` files from the `docs/` directory. Clicking a file fetches its content via `GET /api/docs-content/:filename`, renders it with `marked` (Markdown → HTML), and displays in a modal.
 - Link to Swagger API documentation (`/docs`).
 - Styled with a dark theme, glassmorphism, Inter font, and accent glow animations.
 
@@ -82,9 +82,9 @@ The root route (`GET /`) serves a server-rendered HTML admin dashboard:
 
 Database seeding is handled by `seed.ts` which orchestrates three seeders:
 
-- `seeders/news.ts` — Populates initial news items with translations.
-- `seeders/quests.ts` — Creates quest definitions with conditions and translations.
-- `seeders/achievements.ts` — Seeds achievement definitions with translations.
+- `seeders/news.ts` – Populates initial news items with translations.
+- `seeders/quests.ts` – Creates quest definitions with conditions and translations.
+- `seeders/achievements.ts` – Seeds achievement definitions with translations.
 
 Uses a separate Prisma client with `@prisma/adapter-pg` for direct PostgreSQL pool access.
 
@@ -116,4 +116,4 @@ The project uses the built-in NestJS Logger to track system state:
 
 If you are adding a new global feature (e.g., a new Guard or Interceptor), make sure to register it in `AppModule` (via `APP_GUARD` / `APP_FILTER` providers or middleware consumer) so that it is available throughout the entire project.
 
-When adding new environment variables, always update `env.schema.ts` to include validation — the server will refuse to start if the variable is missing.
+When adding new environment variables, always update `env.schema.ts` to include validation – the server will refuse to start if the variable is missing.

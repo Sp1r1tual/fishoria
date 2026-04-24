@@ -30,8 +30,8 @@ this.transporter = nodemailer.createTransport({
 
 The email body is not hardcoded in the service. Instead, template functions from the `src/mail/templates` folder are used:
 
-- `getActivationTemplate(link, projectName, lang)` — styled HTML for account activation.
-- `getPasswordResetTemplate(link, projectName, lang)` — styled HTML for password reset.
+- `getActivationTemplate(link, projectName, lang)` – styled HTML for account activation.
+- `getPasswordResetTemplate(link, projectName, lang)` – styled HTML for password reset.
 
 This makes it easy to update email designs without touching the business logic.
 
@@ -45,10 +45,10 @@ const isUa = lang === 'ua'; // Uses 'ua' code for subject selection
 
 The email subject is selected dynamically based on the language:
 
-| Email Type       | English Subject                        | Ukrainian Subject                    |
-| :--------------- | :------------------------------------- | :----------------------------------- |
-| Activation       | `Activate your account - Fishoria`     | `Активація акаунту - Fishoria`       |
-| Password Reset   | `Password Reset - Fishoria`            | `Відновлення паролю - Fishoria`      |
+| Email Type     | English Subject                    | Ukrainian Subject               |
+| :------------- | :--------------------------------- | :------------------------------ |
+| Activation     | `Activate your account - Fishoria` | `Активація акаунту - Fishoria`  |
+| Password Reset | `Password Reset - Fishoria`        | `Відновлення паролю - Fishoria` |
 
 The language parameter is also passed through to the template function for body localization.
 

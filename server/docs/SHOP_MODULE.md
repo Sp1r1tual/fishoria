@@ -26,24 +26,24 @@ Species multipliers (examples): `catfish` 2.5×, `pike` 1.8×, `zander` 1.7×, `
 
 ### 2. Item Purchase Types
 
-| Item Type     | Category   | Behavior                                        |
-| :------------ | :--------- | :---------------------------------------------- |
-| `rod`         | Gear       | Created with `condition: 100`                   |
-| `reel`        | Gear       | Created with `condition: 100`                   |
-| `line`        | Gear       | Created with `meters: 300`                      |
-| `hook`        | Gear       | Created without condition                       |
-| `bait`        | Consumable | Stacked: increments existing or creates new     |
-| `groundbait`  | Consumable | Stacked: increments existing or creates new     |
-| `repair_kit`  | Gear       | Created with `condition: 100`, type forced to `repair_kit` |
-| `gadget`      | Special    | Echo Sounder: sets `hasEchoSounder: true` flag  |
+| Item Type    | Category   | Behavior                                                   |
+| :----------- | :--------- | :--------------------------------------------------------- |
+| `rod`        | Gear       | Created with `condition: 100`                              |
+| `reel`       | Gear       | Created with `condition: 100`                              |
+| `line`       | Gear       | Created with `meters: 300`                                 |
+| `hook`       | Gear       | Created without condition                                  |
+| `bait`       | Consumable | Stacked: increments existing or creates new                |
+| `groundbait` | Consumable | Stacked: increments existing or creates new                |
+| `repair_kit` | Gear       | Created with `condition: 100`, type forced to `repair_kit` |
+| `gadget`     | Special    | Echo Sounder: sets `hasEchoSounder: true` flag             |
 
 ### 3. Consumable Stacking
 
 When buying bait or groundbait:
 
 1. The system checks for an existing `ConsumableItem` with the same `profileId`, `itemId`, and `itemType`.
-2. If found — the `quantity` is incremented by the purchased amount.
-3. If not found — a new consumable record is created.
+2. If found – the `quantity` is incremented by the purchased amount.
+3. If not found – a new consumable record is created.
 
 ### 4. Transaction Security
 

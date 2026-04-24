@@ -28,8 +28,8 @@ The system automatically validates combinations when attempting to equip:
 
 The equip endpoint supports two modes:
 
-- **Single equip**: `{ targetType, uid, targetId }` — equips or selects one item.
-- **Batch equip**: `{ equips: [{ targetType, uid, targetId }, ...] }` — equips multiple items at once.
+- **Single equip**: `{ targetType, uid, targetId }` – equips or selects one item.
+- **Batch equip**: `{ equips: [{ targetType, uid, targetId }, ...] }` – equips multiple items at once.
 
 This consolidates multiple slot changes (e.g., rod + reel + hook) into a single request.
 
@@ -57,23 +57,23 @@ Every mechanical item has a `condition` parameter (0–100%):
 
 ### 6. Target Types
 
-| Target Type   | Equip Slot             | Description           |
-| :------------ | :--------------------- | :-------------------- |
-| `rod`         | `equippedRodUid`       | Fishing rod           |
-| `reel`        | `equippedReelUid`      | Fishing reel          |
-| `line`        | `equippedLineUid`      | Fishing line          |
-| `hook`        | `equippedHookUid`      | Hook or lure          |
-| `bait`        | `activeBait`           | Active bait selection |
-| `groundbait`  | `activeGroundbait`     | Active groundbait     |
+| Target Type  | Equip Slot         | Description           |
+| :----------- | :----------------- | :-------------------- |
+| `rod`        | `equippedRodUid`   | Fishing rod           |
+| `reel`       | `equippedReelUid`  | Fishing reel          |
+| `line`       | `equippedLineUid`  | Fishing line          |
+| `hook`       | `equippedHookUid`  | Hook or lure          |
+| `bait`       | `activeBait`       | Active bait selection |
+| `groundbait` | `activeGroundbait` | Active groundbait     |
 
 ## 📡 Endpoints
 
-| Method | Path                | Description                                 | Access |
-| :----- | :------------------ | :------------------------------------------ | :----- |
-| `POST` | `/inventory/equip`  | Equip tackle or select bait (single/batch)  | User   |
-| `POST` | `/inventory/repair` | Repair gear using a repair kit              | User   |
-| `POST` | `/inventory/delete` | Delete (discard) an item from the inventory | User   |
-| `POST` | `/inventory/consume`| Consume bait or groundbait from inventory   | User   |
+| Method | Path                 | Description                                 | Access |
+| :----- | :------------------- | :------------------------------------------ | :----- |
+| `POST` | `/inventory/equip`   | Equip tackle or select bait (single/batch)  | User   |
+| `POST` | `/inventory/repair`  | Repair gear using a repair kit              | User   |
+| `POST` | `/inventory/delete`  | Delete (discard) an item from the inventory | User   |
+| `POST` | `/inventory/consume` | Consume bait or groundbait from inventory   | User   |
 
 All endpoints return the updated full player profile.
 

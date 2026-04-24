@@ -42,12 +42,12 @@ CSRF validation is skipped in the following cases:
 
 Cookies are configured differently based on the environment:
 
-| Property     | Development   | Production        |
-| :----------- | :------------ | :---------------- |
-| `httpOnly`   | `true`        | `true`            |
-| `secure`     | `false`       | `true`            |
-| `sameSite`   | `lax`         | `none`            |
-| `domain`     | —             | `COOKIE_DOMAIN`   |
+| Property   | Development | Production      |
+| :--------- | :---------- | :-------------- |
+| `httpOnly` | `true`      | `true`          |
+| `secure`   | `false`     | `true`          |
+| `sameSite` | `lax`       | `none`          |
+| `domain`   | –           | `COOKIE_DOMAIN` |
 
 Two cookies are set: `Authentication` (access token, shorter TTL) and `Refresh` (refresh token, longer TTL).
 
@@ -58,43 +58,44 @@ User status check logic (in `JwtStrategy.validate`):
 ```typescript
 // On every JWT validation:
 const isBanned = await this.redis.get(`ban:${payload.sub}`);
-if (isBanned) throw new UnauthorizedException('Your account has been suspended');
+if (isBanned)
+  throw new UnauthorizedException('Your account has been suspended');
 ```
 
-Ban with expiration support: when banning a user, `expiresAt` can be provided. Redis TTL is calculated dynamically; if no expiration — defaults to 7 days. Banning also revokes all active refresh tokens.
+Ban with expiration support: when banning a user, `expiresAt` can be provided. Redis TTL is calculated dynamically; if no expiration – defaults to 7 days. Banning also revokes all active refresh tokens.
 
 ### 5. Google OAuth Flow
 
-1. `GET /auth/google` — Redirects to Google consent screen (uses `passport-google` strategy).
-2. `GET /auth/google/callback` — Google redirects back; the server creates or updates the user, sets cookies, and redirects to `CLIENT_URL`.
+1. `GET /auth/google` – Redirects to Google consent screen (uses `passport-google` strategy).
+2. `GET /auth/google/callback` – Google redirects back; the server creates or updates the user, sets cookies, and redirects to `CLIENT_URL`.
 3. Google users are auto-activated (`isActivated: true`), and their avatar + display name are populated from the Google profile.
 
 ### 6. Password Reset Flow
 
-1. `POST /auth/forgot-password` — generates a reset token, stores it in `PasswordResetToken` table (with `userAgent`, `ip`, `expiresAt`), sends email with a link pointing to `CLIENT_URL/reset-password?token=...`.
-2. `POST /auth/verify-reset-token` — verifies the token hasn't expired.
-3. `POST /auth/reset-password` — validates token, hashes new password, updates the user, and deletes all reset tokens for that user in a single transaction.
+1. `POST /auth/forgot-password` – generates a reset token, stores it in `PasswordResetToken` table (with `userAgent`, `ip`, `expiresAt`), sends email with a link pointing to `CLIENT_URL/reset-password?token=...`.
+2. `POST /auth/verify-reset-token` – verifies the token hasn't expired.
+3. `POST /auth/reset-password` – validates token, hashes new password, updates the user, and deletes all reset tokens for that user in a single transaction.
 
 ### 7. Account Activation
 
-`GET /auth/activate/:link` — looks up the user by `activationLink`, sets `isActivated: true`, clears the link, and redirects to `CLIENT_URL/welcome?activated=true`. On failure — redirects with `?activationError=true`.
+`GET /auth/activate/:link` – looks up the user by `activationLink`, sets `isActivated: true`, clears the link, and redirects to `CLIENT_URL/welcome?activated=true`. On failure – redirects with `?activationError=true`.
 
 ## 📡 Endpoints
 
-| Method | Path                       | Description                                 | Access    |
-| :----- | :------------------------- | :------------------------------------------ | :-------- |
-| `POST` | `/auth/register`           | Register a new fisherman                    | Public    |
-| `POST` | `/auth/login`              | Login (sets Cookie + returns token)         | Public    |
-| `POST` | `/auth/logout`             | Logout (clears cookies, revokes refresh)    | User      |
-| `POST` | `/auth/refresh`            | Refresh session (rotates tokens)            | Cookie/Body |
-| `GET`  | `/auth/activate/:link`     | Activate email via link (redirect)          | Public    |
-| `GET`  | `/auth/google`             | Initiate Google OAuth login                 | Public    |
-| `GET`  | `/auth/google/callback`    | Google OAuth callback (redirect)            | Public    |
-| `POST` | `/auth/forgot-password`    | Request password reset email                | Public    |
-| `POST` | `/auth/verify-reset-token` | Verify password reset token validity        | Public    |
-| `POST` | `/auth/reset-password`     | Set new password using reset token          | Public    |
-| `POST` | `/auth/ban`                | Ban a user (with optional expiration)       | Admin     |
-| `DELETE`| `/auth/ban`               | Unban a user                                | Admin     |
+| Method   | Path                       | Description                              | Access      |
+| :------- | :------------------------- | :--------------------------------------- | :---------- |
+| `POST`   | `/auth/register`           | Register a new fisherman                 | Public      |
+| `POST`   | `/auth/login`              | Login (sets Cookie + returns token)      | Public      |
+| `POST`   | `/auth/logout`             | Logout (clears cookies, revokes refresh) | User        |
+| `POST`   | `/auth/refresh`            | Refresh session (rotates tokens)         | Cookie/Body |
+| `GET`    | `/auth/activate/:link`     | Activate email via link (redirect)       | Public      |
+| `GET`    | `/auth/google`             | Initiate Google OAuth login              | Public      |
+| `GET`    | `/auth/google/callback`    | Google OAuth callback (redirect)         | Public      |
+| `POST`   | `/auth/forgot-password`    | Request password reset email             | Public      |
+| `POST`   | `/auth/verify-reset-token` | Verify password reset token validity     | Public      |
+| `POST`   | `/auth/reset-password`     | Set new password using reset token       | Public      |
+| `POST`   | `/auth/ban`                | Ban a user (with optional expiration)    | Admin       |
+| `DELETE` | `/auth/ban`                | Unban a user                             | Admin       |
 
 ### Rate Limits
 

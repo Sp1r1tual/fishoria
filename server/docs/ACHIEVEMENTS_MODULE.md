@@ -45,15 +45,15 @@ When returning achievements, the service:
 
 ## 📡 Endpoints
 
-| Method | Path            | Description                                     | Access |
-| :----- | :-------------- | :---------------------------------------------- | :----- |
-| `GET`  | `/achievements` | Retrieve all achievements with localized text   | User   |
+| Method | Path            | Description                                   | Access |
+| :----- | :-------------- | :-------------------------------------------- | :----- |
+| `GET`  | `/achievements` | Retrieve all achievements with localized text | User   |
 
 Achievements are also returned as part of the player profile via `GET /player/profile` (through the `playerAchievements` field).
 
 ## 📦 Schemas & DTOs
 
-- **AchievementResponseDto** (Zod): Describes the response structure — `id`, `code`, `imageUrl`, `order`, `title`, `description`, `createdAt`, `updatedAt`.
+- **AchievementResponseDto** (Zod): Describes the response structure – `id`, `code`, `imageUrl`, `order`, `title`, `description`, `createdAt`, `updatedAt`.
 
 ## 💡 Developer Tip
 

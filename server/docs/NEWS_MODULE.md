@@ -26,8 +26,8 @@ The module's distinctive feature is the `mapLocalized` method, which:
 
 News endpoints support language selection via query parameter:
 
-- `GET /news?lang=uk` — returns news with Ukrainian translations.
-- `GET /news?lang=en` — returns news with English translations.
+- `GET /news?lang=uk` – returns news with Ukrainian translations.
+- `GET /news?lang=en` – returns news with English translations.
 - If no `lang` parameter is provided, defaults to `en`.
 
 ### 3. Creating News
@@ -59,7 +59,7 @@ Published news is returned sorted by `createdAt` in descending order (newest fir
 
 ### Query Parameters
 
-- `lang` (optional, string) — Language code for translations (e.g., `uk`, `en`). Defaults to `en`.
+- `lang` (optional, string) – Language code for translations (e.g., `uk`, `en`). Defaults to `en`.
 
 ## 📦 Schemas
 
@@ -67,4 +67,4 @@ Published news is returned sorted by `createdAt` in descending order (newest fir
 
 ## 💡 Developer Tip
 
-When creating news through the admin panel, always provide both languages (`uk`, `en`) to ensure the best experience for all players. The news creation requires the `MODERATOR` role — use `@Roles('MODERATOR')` decorator with `RolesGuard`.
+When creating news through the admin panel, always provide both languages (`uk`, `en`) to ensure the best experience for all players. The news creation requires the `MODERATOR` role – use `@Roles('MODERATOR')` decorator with `RolesGuard`.

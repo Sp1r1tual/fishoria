@@ -10,9 +10,9 @@ The localization system is built on three layers:
 
 Instead of storing text directly in the main tables, we use dedicated translation tables:
 
-- `QuestTranslation` (title, description) — linked to `Quest` via `questId + language` unique key.
-- `AchievementTranslation` (title, description) — linked to `Achievement` via `achievementId + language` unique key.
-- `NewsTranslation` (title, content) — linked to `News` via `newsId + language` unique key.
+- `QuestTranslation` (title, description) – linked to `Quest` via `questId + language` unique key.
+- `AchievementTranslation` (title, description) – linked to `Achievement` via `achievementId + language` unique key.
+- `NewsTranslation` (title, content) – linked to `News` via `newsId + language` unique key.
 
 This allows adding any number of languages without changing the structure of core game entities.
 
@@ -28,17 +28,17 @@ This is the heart of the system. When a client requests data, the mapper:
 
 1. Retrieves translations from the database, pre-filtered by the user's language at the query level (`where: { language }`).
 2. Selects the first available translation from the result set.
-3. If no translation exists for that language — returns empty strings (for profile mapper) or falls back to English (`en`) where applicable.
+3. If no translation exists for that language – returns empty strings (for profile mapper) or falls back to English (`en`) where applicable.
 4. Flattens the structure: instead of a `translations: [...]` array, the frontend receives direct `title` and `description` fields.
 
 This approach is used consistently across all modules:
 
-| Module       | Mapper Method          | Translates                     |
-| :----------- | :--------------------- | :----------------------------- |
-| Player       | `mapPlayerProfile`     | Quest titles, conditions, achievement titles |
-| Quest        | `getPlayerQuests`      | Quest title, description, condition labels |
-| News         | `mapLocalized`         | News title, content            |
-| Achievements | `mapLocalized`         | Achievement title, description |
+| Module       | Mapper Method      | Translates                                   |
+| :----------- | :----------------- | :------------------------------------------- |
+| Player       | `mapPlayerProfile` | Quest titles, conditions, achievement titles |
+| Quest        | `getPlayerQuests`  | Quest title, description, condition labels   |
+| News         | `mapLocalized`     | News title, content                          |
+| Achievements | `mapLocalized`     | Achievement title, description               |
 
 ## 🛠 Technical Details
 
@@ -92,6 +92,6 @@ The language is also passed as part of the JWT payload (`language` claim), enabl
 
 ## 💡 Developer Tip
 
-When adding new quests or achievements to the database (via seeders), always create the corresponding records in the relevant `Translation` tables — otherwise the frontend will receive empty strings.
+When adding new quests or achievements to the database (via seeders), always create the corresponding records in the relevant `Translation` tables – otherwise the frontend will receive empty strings.
 
 For news, the `?lang=` query parameter can override the language for public endpoints without requiring authentication.

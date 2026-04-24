@@ -51,32 +51,32 @@ For entities where text is controlled by the server (`News`, `Quest`, `Achieveme
 
 ### Core Models
 
-| Model              | Table                  | Description                                    |
-| :----------------- | :--------------------- | :--------------------------------------------- |
-| `User`             | `users`                | Authentication, role, language, profile link    |
-| `PlayerProfile`    | `player_profiles`      | Game progress, equipment, currency             |
-| `RefreshToken`     | `refresh_tokens`       | JWT refresh tokens with rotation and revocation |
-| `PasswordResetToken`| `password_reset_tokens`| Password reset tokens with expiration           |
-| `UserBan`          | `user_bans`            | Ban records with reason, issuer, and optional expiration |
+| Model                | Table                   | Description                                              |
+| :------------------- | :---------------------- | :------------------------------------------------------- |
+| `User`               | `users`                 | Authentication, role, language, profile link             |
+| `PlayerProfile`      | `player_profiles`       | Game progress, equipment, currency                       |
+| `RefreshToken`       | `refresh_tokens`        | JWT refresh tokens with rotation and revocation          |
+| `PasswordResetToken` | `password_reset_tokens` | Password reset tokens with expiration                    |
+| `UserBan`            | `user_bans`             | Ban records with reason, issuer, and optional expiration |
 
 ### Game Models
 
-| Model              | Table                  | Description                                    |
-| :----------------- | :--------------------- | :--------------------------------------------- |
-| `GearItem`         | `gear_items`           | Unique items (rod, reel, line, hook, repair_kit) with condition/meters |
-| `ConsumableItem`   | `consumable_items`     | Stackable items (bait, groundbait) with quantity |
-| `FishCatch`        | `fish_catches`         | Catch records with species, weight, length, lake, method, bait |
-| `LakeStatistic`    | `lake_statistics`      | Per-lake stats with JSON fields for records, counts, weights |
+| Model            | Table              | Description                                                            |
+| :--------------- | :----------------- | :--------------------------------------------------------------------- |
+| `GearItem`       | `gear_items`       | Unique items (rod, reel, line, hook, repair_kit) with condition/meters |
+| `ConsumableItem` | `consumable_items` | Stackable items (bait, groundbait) with quantity                       |
+| `FishCatch`      | `fish_catches`     | Catch records with species, weight, length, lake, method, bait         |
+| `LakeStatistic`  | `lake_statistics`  | Per-lake stats with JSON fields for records, counts, weights           |
 
 ### Content Models
 
-| Model              | Table                  | Description                                    |
-| :----------------- | :--------------------- | :--------------------------------------------- |
-| `News`             | `news`                 | Game announcements with publish status         |
-| `Quest`            | `quests`               | Quest definitions with conditions (JSON) and rewards |
-| `Achievement`      | `achievements`         | Achievement definitions with unique codes      |
-| `PlayerQuest`      | `player_quests`        | Player quest progress (JSON) and completion status |
-| `PlayerAchievement`| `player_achievements`  | Earned achievements per player                 |
+| Model               | Table                 | Description                                          |
+| :------------------ | :-------------------- | :--------------------------------------------------- |
+| `News`              | `news`                | Game announcements with publish status               |
+| `Quest`             | `quests`              | Quest definitions with conditions (JSON) and rewards |
+| `Achievement`       | `achievements`        | Achievement definitions with unique codes            |
+| `PlayerQuest`       | `player_quests`       | Player quest progress (JSON) and completion status   |
+| `PlayerAchievement` | `player_achievements` | Earned achievements per player                       |
 
 ### Enums
 
@@ -107,25 +107,25 @@ Achievement (1) <-> (N) PlayerAchievement
 
 ### Key JSON Fields
 
-- **`LakeStatistic.records`**: `{ speciesId: maxWeight }` — per-species max weight records.
-- **`LakeStatistic.minWeights`**: `{ speciesId: minWeight }` — per-species min weight.
-- **`LakeStatistic.speciesCounts`**: `{ speciesId: count }` — per-species catch count.
-- **`LakeStatistic.speciesWeights`**: `{ speciesId: totalWeight }` — per-species cumulative weight.
-- **`Quest.conditions`**: `IQuestCondition[]` — array of condition objects defining quest requirements.
-- **`PlayerQuest.progress`**: `{ conditionId: currentCount }` — per-condition progress tracker.
+- **`LakeStatistic.records`**: `{ speciesId: maxWeight }` – per-species max weight records.
+- **`LakeStatistic.minWeights`**: `{ speciesId: minWeight }` – per-species min weight.
+- **`LakeStatistic.speciesCounts`**: `{ speciesId: count }` – per-species catch count.
+- **`LakeStatistic.speciesWeights`**: `{ speciesId: totalWeight }` – per-species cumulative weight.
+- **`Quest.conditions`**: `IQuestCondition[]` – array of condition objects defining quest requirements.
+- **`PlayerQuest.progress`**: `{ conditionId: currentCount }` – per-condition progress tracker.
 
 ### Key Constraints
 
-- `ConsumableItem`: unique `[profileId, itemId]` — only one stack per item type per player.
-- `LakeStatistic`: unique `[profileId, lakeId]` — one stats object per lake per player.
-- `PlayerQuest`: unique `[profileId, questId]` — one quest assignment per player.
-- `PlayerAchievement`: unique `[profileId, achievementId]` — one achievement per player.
+- `ConsumableItem`: unique `[profileId, itemId]` – only one stack per item type per player.
+- `LakeStatistic`: unique `[profileId, lakeId]` – one stats object per lake per player.
+- `PlayerQuest`: unique `[profileId, questId]` – one quest assignment per player.
+- `PlayerAchievement`: unique `[profileId, achievementId]` – one achievement per player.
 - `NewsTranslation`: unique `[newsId, language]`.
 - `QuestTranslation`: unique `[questId, language]`.
 - `AchievementTranslation`: unique `[achievementId, language]`.
 
 ## 💡 Developer Tip
 
-All models support `onDelete: Cascade`. To delete a player, simply remove the record from the `User` table — all associated game data will be cleaned up automatically at the database level.
+All models support `onDelete: Cascade`. To delete a player, simply remove the record from the `User` table – all associated game data will be cleaned up automatically at the database level.
 
 The `FishCatch` model stores both `speciesId` and `speciesName`, and both `lakeId` and `lakeName`. This denormalization is intentional to avoid JOINs and keep queries fast, since species/lake definitions live on the client.
