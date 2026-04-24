@@ -400,6 +400,15 @@ export async function seedQuests(prisma: PrismaClient) {
     };
 
     if (existing) {
+      await prisma.playerQuest.updateMany({
+        where: { questId: existing.id },
+        data: {
+          isCompleted: false,
+          isClaimed: false,
+          progress: {},
+        },
+      });
+
       await prisma.quest.update({
         where: { id: existing.id },
         data: {
