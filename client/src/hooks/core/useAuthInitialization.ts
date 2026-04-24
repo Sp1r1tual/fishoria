@@ -48,14 +48,12 @@ export const useAuthInitialization = () => {
       dispatch(setLoading());
 
       try {
-        // Use fetchQuery to populate React Query cache and avoid double request
         const data = await queryClient.fetchQuery({
           queryKey: PLAYER_KEYS.profile(),
           queryFn: PlayerService.getProfile,
           staleTime: 5 * 60 * 1000,
         });
 
-        // Use the user info from the player profile to initialize auth state
         dispatch(setUser(data.user));
         localStorage.setItem('hasSession', 'true');
 
@@ -76,6 +74,19 @@ export const useAuthInitialization = () => {
         const status = axios.isAxiosError(error)
           ? error.response?.status
           : null;
+
+        const isBan =
+          status === 403 &&
+          (error as { response?: { data?: { message?: string } } })?.response
+            ?.data?.message === 'ACCOUNT_BANNED';
+
+        if (isBan) {
+          localStorage.removeItem('hasSession');
+          localStorage.removeItem('authExpiry');
+          dispatch(clearAuth());
+          return;
+        }
+
         const isAuthError = status === 401 || status === 403 || status === 404;
 
         if (isAuthError) {

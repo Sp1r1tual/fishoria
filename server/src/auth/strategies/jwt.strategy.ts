@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { Request } from 'express';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -30,10 +30,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     role: string;
     language: string;
   }) {
-    const isBanned = await this.redis.get(`ban:${payload.sub}`);
+    const banReason = await this.redis.get(`ban:${payload.sub}`);
 
-    if (isBanned) {
-      throw new UnauthorizedException('Your account has been suspended');
+    if (banReason) {
+      throw new ForbiddenException(`ACCOUNT_BANNED:::${banReason}`);
     }
 
     return {

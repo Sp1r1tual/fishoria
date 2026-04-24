@@ -1,9 +1,11 @@
+import { AdminDashboardScript } from './admin-dashboard.script';
+
 export const getAdminDashboardTemplate = (
   stats: {
     playersCount: number;
     version: string;
   },
-  docFiles: string[] = [],
+  docFiles: { filename: string; title: string }[] = [],
 ) => {
   return `
     <!DOCTYPE html>
@@ -28,16 +30,20 @@ export const getAdminDashboardTemplate = (
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-          font-family: 'Inter', sans-serif;
+        
+        html, body { 
+          height: 100%; 
+          width: 100%; 
+          overflow: hidden; 
           background: var(--bg);
           color: var(--text);
-          height: 100vh;
-          overflow: hidden;
-          background-image: 
-            radial-gradient(circle at 50% 50%, rgba(0, 242, 255, 0.08) 0%, transparent 60%);
-          display: flex;
-          flex-direction: column;
+          font-family: 'Inter', sans-serif;
+        }
+
+        body {
+          display: grid;
+          grid-template-rows: auto 1fr auto;
+          background-image: radial-gradient(circle at 50% 50%, rgba(0, 242, 255, 0.08) 0%, transparent 60%);
         }
 
         header {
@@ -78,25 +84,31 @@ export const getAdminDashboardTemplate = (
         }
 
         main {
-          flex: 1;
           display: grid;
-          grid-template-columns: 350px 1fr;
+          grid-template-columns: 280px 1fr;
           gap: 2rem;
           padding: 2rem 4rem;
           overflow: hidden;
+          min-height: 0;
         }
 
-        /* Wiki Sidebar */
+    
         .sidebar {
           background: var(--card-bg);
           border: 1px solid var(--border);
-          border-radius: 24px;
+          border-radius: 20px;
           padding: 1.5rem;
           display: flex;
           flex-direction: column;
           gap: 1rem;
           overflow-y: auto;
+          min-height: 0;
         }
+
+        *::-webkit-scrollbar { width: 5px; height: 5px; }
+        *::-webkit-scrollbar-track { background: transparent; }
+        *::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        *::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
         .sidebar-title {
           font-size: 0.8rem;
@@ -130,25 +142,26 @@ export const getAdminDashboardTemplate = (
 
         .doc-link i { color: var(--accent); opacity: 0.7; }
 
-        /* Dashboard Content */
         .dashboard-content {
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
+          overflow-y: auto;
+          min-height: 0;
         }
 
         .card {
           background: var(--card-bg);
           border: 1px solid var(--border);
-          border-radius: 32px;
-          padding: 3rem;
+          border-radius: 24px;
+          padding: 2rem;
           backdrop-filter: blur(5px);
           text-align: center;
           transition: all 0.4s;
-          margin-bottom: 2rem;
+          margin-bottom: 1.5rem;
           width: 100%;
-          max-width: 500px;
+          max-width: 450px;
         }
 
         .card:hover {
@@ -156,8 +169,8 @@ export const getAdminDashboardTemplate = (
            box-shadow: 0 0 30px var(--accent-glow);
         }
 
-        .stat-label { color: var(--text-dim); font-size: 1.1rem; margin-bottom: 1rem; }
-        .stat-value { font-size: 5rem; font-weight: 800; letter-spacing: -2px; }
+        .stat-label { color: var(--text-dim); font-size: 1rem; margin-bottom: 0.5rem; }
+        .stat-value { font-size: 3.5rem; font-weight: 800; letter-spacing: -2px; }
 
         .btn {
           display: inline-block;
@@ -169,11 +182,12 @@ export const getAdminDashboardTemplate = (
           font-weight: 800;
           transition: all 0.3s;
           box-shadow: 0 4px 15px var(--accent-glow);
+          cursor: pointer;
+          border: none;
         }
 
         .btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
 
-        /* Modal Viewer */
         #modal {
           position: fixed;
           top: 0; left: 0; width: 100%; height: 100%;
@@ -181,14 +195,15 @@ export const getAdminDashboardTemplate = (
           backdrop-filter: blur(20px);
           display: none;
           z-index: 100;
-          padding: 4rem;
           overflow-y: auto;
+          padding: 0; 
         }
 
         .modal-container {
-          max-width: 1000px;
+          max-width: 800px;
           margin: 0 auto;
           position: relative;
+          padding: 6rem 2rem 4rem 2rem;
         }
 
         .close-btn {
@@ -197,27 +212,40 @@ export const getAdminDashboardTemplate = (
           background: rgba(255,255,255,0.1);
           border: 1px solid var(--border);
           color: #fff;
-          width: 40px; height: 40px;
+          width: 44px; height: 44px; 
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          font-size: 1.2rem;
+          font-size: 1.5rem;
           transition: all 0.2s;
+          z-index: 150; 
+          backdrop-filter: blur(5px);
         }
         .close-btn:hover { background: var(--accent); color: var(--bg); }
 
-        /* Markdown Styles */
-        .markdown-body { color: var(--text); line-height: 1.6; }
+        .markdown-body { 
+          color: var(--text); 
+          line-height: 1.6;
+        }
         .markdown-body h1 { font-size: 2.5rem; margin-bottom: 2rem; color: var(--accent); }
         .markdown-body h2 { font-size: 1.5rem; margin: 2rem 0 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
         .markdown-body p { margin-bottom: 1rem; color: var(--text-dim); }
-        .markdown-body ul { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+        .markdown-body ul, .markdown-body ol { margin-bottom: 1.5rem; padding-left: 2rem; }
         .markdown-body li { margin-bottom: 0.5rem; }
         .markdown-body code { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace; }
         .markdown-body pre { background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 16px; margin: 1.5rem 0; overflow-x: auto; border: 1px solid var(--border); }
-        .markdown-body table { width: 100%; border-collapse: collapse; margin: 2rem 0; }
+        .markdown-body table { 
+          display: block;
+          width: 100%; 
+          overflow-x: auto;
+          border-collapse: collapse; 
+          margin: 2rem 0; 
+          white-space: nowrap;
+          -webkit-overflow-scrolling: touch;
+        }
+        .markdown-body table::-webkit-scrollbar { height: 5px; }
         .markdown-body th, .markdown-body td { padding: 12px; border: 1px solid var(--border); text-align: left; }
         .markdown-body th { background: rgba(255,255,255,0.05); color: var(--accent); }
 
@@ -233,6 +261,67 @@ export const getAdminDashboardTemplate = (
 
         .highlight { color: #fff; }
         .footer-link { color: var(--accent); text-decoration: none; }
+
+        .input-group { margin-bottom: 1.5rem; text-align: left; }
+        .input-group label { display: block; margin-bottom: 0.5rem; color: var(--text-dim); }
+        .input-group input { width: 100%; padding: 12px 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; color: var(--text); outline: none; transition: border-color 0.2s; font-family: inherit; }
+        .input-group input:focus { border-color: var(--accent); }
+        
+        .input-group input:-webkit-autofill,
+        .input-group input:-webkit-autofill:hover, 
+        .input-group input:-webkit-autofill:focus {
+          -webkit-text-fill-color: var(--text);
+          -webkit-box-shadow: 0 0 0px 1000px #050b18 inset;
+          transition: background-color 5000s ease-in-out 0s;
+        }
+        
+        .input-error { border-color: #ef4444 !important; box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
+        .error-msg { color: #ef4444; font-size: 0.8rem; margin-top: 0.5rem; text-align: left; display: none; }
+
+        .spinner {
+          width: 18px; height: 18px;
+          border: 2px solid rgba(255, 255, 255, 0.2);
+          border-top-color: currentColor;
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+          display: none;
+          vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn-loading { pointer-events: none; opacity: 0.8; }
+        .btn-loading .spinner { display: inline-block; margin-right: 8px; }
+        .btn-loading .btn-text { vertical-align: middle; }
+        .btn-success { 
+          background: #10b981 !important; 
+          color: white !important; 
+          pointer-events: none; 
+          box-shadow: 0 0 20px rgba(16, 185, 129, 0.4) !important;
+        }
+
+        @media (max-width: 850px) {
+          html, body { height: auto; overflow: auto; }
+          body { display: block; }
+          main { 
+            display: flex; 
+            flex-direction: column; 
+            padding: 1.5rem; 
+            gap: 1.5rem;
+          }
+          header { padding: 1.5rem; flex-direction: column; gap: 1rem; text-align: center; }
+          footer { padding: 1.5rem; flex-direction: column; gap: 1rem; align-items: center; text-align: center; }
+          
+          .dashboard-content { order: 1; width: 100%; }
+          .sidebar { order: 2; overflow-y: visible; max-height: none; }
+          
+          .card { padding: 1.5rem; margin-bottom: 1.5rem; }
+          #modal { padding: 0; }
+          .modal-container { padding: 5rem 1.5rem 3rem 1.5rem; }
+          .close-btn { top: 1rem; right: 1rem; }
+          .markdown-body h1 { font-size: 1.8rem; }
+          .stat-value { font-size: 3rem; }
+          
+          .btn { padding: 12px 24px; font-size: 0.9rem; width: 100%; text-align: center; }
+        }
       </style>
     </head>
     <body>
@@ -247,18 +336,16 @@ export const getAdminDashboardTemplate = (
       <main>
         <div class="sidebar">
           <div class="sidebar-title">Internal Wiki</div>
-          ${docFiles
-            .map(
-              (file) => `
-            <div class="doc-link" onclick="openDoc('${file}')">
-              <i>📄</i> ${file.replace('.md', '').replace('_', ' ')}
-            </div>
-          `,
-            )
-            .join('')}
-          <div style="flex: 1"></div>
-          <div class="sidebar-title">Stats</div>
-          <div style="font-size: 0.8rem; color: var(--text-dim)">Built with NestJS & Prisma</div>
+            ${docFiles
+              .map(
+                (doc) => `
+              <div class="doc-link" onclick="openDoc('${doc.filename}')">
+                <i>📄</i>
+                <span>${doc.title}</span>
+              </div>
+            `,
+              )
+              .join('')}
         </div>
 
         <div class="dashboard-content">
@@ -268,6 +355,15 @@ export const getAdminDashboardTemplate = (
           </div>
           
           <a href="javascript:void(0)" onclick="checkSwagger()" class="btn">EXPLORE API ENDPOINTS</a>
+
+          <div class="card" style="margin-top: 2rem; padding: 2rem;">
+            <div class="stat-label" style="margin-bottom: 1.5rem;">Moderator Tools</div>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+              <a href="javascript:void(0)" id="btn-login-mod" onclick="openLoginModal()" class="btn" style="padding: 12px 24px; font-size: 0.9rem;">LOGIN</a>
+              <a href="javascript:void(0)" id="btn-ban-user" onclick="openBanModal()" class="btn" style="display: none; background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 12px 24px; font-size: 0.9rem;">BAN USER</a>
+              <a href="javascript:void(0)" id="btn-unban-user" onclick="openUnbanModal()" class="btn" style="display: none; background: rgba(245, 158, 11, 0.1); color: #f59e0b; padding: 12px 24px; font-size: 0.9rem;">UNBAN USER</a>
+            </div>
+          </div>
         </div>
       </main>
 
@@ -288,51 +384,7 @@ export const getAdminDashboardTemplate = (
       </footer>
 
       <script>
-        async function checkSwagger() {
-          try {
-            const response = await fetch('/api', { method: 'HEAD' });
-            if (response.ok) {
-              window.location.href = '/api';
-            } else {
-              showDocMessage('🚧 Swagger Documentation', 'The Swagger documentation is still in the formative stage. Please use the internal Wiki on the left to familiarize yourself with the architecture.');
-            }
-          } catch (e) {
-            showDocMessage('🚧 Swagger Documentation', 'The API documentation service is currently unavailable or has not yet been formed.');
-          }
-        }
-
-        function showDocMessage(title, message) {
-          const modal = document.getElementById('modal');
-          const content = document.getElementById('doc-content');
-          modal.style.display = 'block';
-          content.innerHTML = '<h1>' + title + '</h1><p style="font-size: 1.2rem; margin-top: 2rem;">' + message + '</p>';
-        }
-
-        async function openDoc(filename) {
-
-          const modal = document.getElementById('modal');
-          const content = document.getElementById('doc-content');
-          
-          modal.style.display = 'block';
-          content.innerHTML = '<div style="text-align: center; padding: 4rem;"><h1>Loading...</h1></div>';
-          
-          try {
-            const response = await fetch('/api/docs-content/' + filename);
-            const data = await response.json();
-            content.innerHTML = data.html;
-          } catch (error) {
-            content.innerHTML = '<h1>Error loading documentation</h1><p>' + error.message + '</p>';
-          }
-        }
-
-        function closeDoc() {
-          document.getElementById('modal').style.display = 'none';
-        }
-
-        // Close on ESC
-        window.onkeydown = function(event) {
-          if (event.keyCode === 27) closeDoc();
-        }
+        (${AdminDashboardScript.toString()})();
       </script>
     </body>
     </html>

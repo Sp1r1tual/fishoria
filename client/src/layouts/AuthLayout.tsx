@@ -6,18 +6,23 @@ import {
   Navigate,
   useSearchParams,
 } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
-import { useAppSelector } from '../hooks/core/useAppStore';
+import { useAppSelector, useAppDispatch } from '../hooks/core/useAppStore';
 import { useAuthInitialization } from '../hooks/core/useAuthInitialization';
+import { addToast } from '@/store/slices/uiSlice';
 
 import { GlobalPreloader } from '@/components/UI/GlobalPreloader/GlobalPreloader';
 import { ScrollToTop } from '@/components/UI/ScrollToTop/ScrollToTop';
 import { RouteMetadata } from '@/components/logic/RouteMetadata';
 import { CookieConsent } from '@/components/CookieConsent/CookieConsent';
+import { ToastContainer } from '@/components/UI/Toast/ToastContainer';
 
 export const AuthLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { t } = useTranslation();
 
   const { isAuthenticated, isInitialized } = useAppSelector(
     (state) => state.auth,
@@ -26,6 +31,22 @@ export const AuthLayout = () => {
   const [searchParams] = useSearchParams();
 
   useAuthInitialization();
+
+  useEffect(() => {
+    const wasBanned = sessionStorage.getItem('banned');
+    const banReason = sessionStorage.getItem('ban_reason');
+    if (wasBanned) {
+      sessionStorage.removeItem('banned');
+      sessionStorage.removeItem('ban_reason');
+      dispatch(
+        addToast({
+          type: 'error',
+          message: `${t('landing.auth.errors.accountBanned')}${banReason && banReason !== 'No reason provided' ? `: ${banReason}` : ''}`,
+          duration: 6000,
+        }),
+      );
+    }
+  }, [dispatch, t]);
 
   useEffect(() => {
     const isActivationFlow = searchParams.get('activated') === 'true';
@@ -67,6 +88,7 @@ export const AuthLayout = () => {
     <>
       <RouteMetadata />
       <ScrollToTop />
+      <ToastContainer />
       <Outlet />
       <CookieConsent />
     </>

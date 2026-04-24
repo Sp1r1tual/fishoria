@@ -20,6 +20,7 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { CsrfMiddleware } from './auth/middlewares/csrf.middleware';
 import { CsrfGuard } from './auth/guards/csrf.guard';
 import { AchievementsModule } from './achievements/achievements.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { AchievementsModule } from './achievements/achievements.module';
     MailModule,
     ShopModule,
     AuthModule,
+    AdminModule,
     PlayerModule,
     InventoryModule,
     GameModule,

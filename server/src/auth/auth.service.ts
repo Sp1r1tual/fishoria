@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -52,8 +53,10 @@ export class AuthService {
     const ban = await this.authEntity.findActiveBan(internalUser.id);
 
     if (ban) {
-      await this.redis.set(`ban:${internalUser.id}`, 'true', { ex: 3600 });
-      throw new UnauthorizedException('landing.auth.errors.accountBanned');
+      await this.redis.set(`ban:${internalUser.id}`, ban.reason, { ex: 3600 });
+      throw new UnauthorizedException(
+        `landing.auth.errors.accountBanned:::${ban.reason}`,
+      );
     }
 
     return internalUser;
@@ -83,8 +86,10 @@ export class AuthService {
 
     const ban = await this.authEntity.findActiveBan(user.id);
     if (ban) {
-      await this.redis.set(`ban:${user.id}`, 'true', { ex: 3600 });
-      throw new UnauthorizedException('landing.auth.errors.accountBanned');
+      await this.redis.set(`ban:${user.id}`, ban.reason, { ex: 3600 });
+      throw new UnauthorizedException(
+        `landing.auth.errors.accountBanned:::${ban.reason}`,
+      );
     }
 
     const { password: _password, ...result } = user;
@@ -170,6 +175,8 @@ export class AuthService {
   }
 
   async generateRefreshToken(userId: string, userAgent?: string, ip?: string) {
+    await this.authEntity.cleanUpRefreshTokens(userId, 5);
+
     const token = randomBytes(40).toString('hex');
     const expiresIn = this.configService.get<string>(
       'JWT_REFRESH_TOKEN_EXPIRATION',
@@ -205,44 +212,14 @@ export class AuthService {
       return null;
     }
 
-    const isBanned = await this.redis.get(`ban:${savedToken.userId}`);
-    if (isBanned) {
+    const banReason = await this.redis.get(`ban:${savedToken.userId}`);
+    if (banReason) {
       await this.authEntity.deleteRefreshTokenById(savedToken.id);
-      throw new UnauthorizedException('User is banned');
+      throw new ForbiddenException(`ACCOUNT_BANNED:::${banReason}`);
     }
 
     await this.authEntity.deleteRefreshTokenById(savedToken.id);
     return await this.login(savedToken.user, userAgent, ip);
-  }
-
-  async banUser(
-    userId: string,
-    reason: string,
-    bannedById: string,
-    expiresAt?: Date,
-  ) {
-    const ban = await this.authEntity.createBan({
-      user: { connect: { id: userId } },
-      reason,
-      bannedBy: { connect: { id: bannedById } },
-      expiresAt,
-    });
-
-    const redisTTL = expiresAt
-      ? Math.floor((expiresAt.getTime() - Date.now()) / 1000)
-      : 3600 * 24 * 7;
-
-    if (redisTTL > 0) {
-      await this.redis.set(`ban:${userId}`, 'true', { ex: redisTTL });
-    }
-
-    await this.authEntity.deleteRefreshTokensByUser(userId);
-    return ban;
-  }
-
-  async unbanUser(userId: string) {
-    await this.authEntity.deleteBansByUser(userId);
-    await this.redis.del(`ban:${userId}`);
   }
 
   async requestPasswordReset(

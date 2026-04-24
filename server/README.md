@@ -4,6 +4,10 @@
 
 ---
 
+![Admin Dashboard](https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/marketing/admin_dashboard.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL21hcmtldGluZy9hZG1pbl9kYXNoYm9hcmQucG5nIiwiaWF0IjoxNzc3MDY4NjQ4LCJleHAiOjQ4OTkxMzI2NDh9.gaquxpyxEoCTHpWaFACzdsihhNMzYA3c2B8MJY9PzCc)
+
+---
+
 ## About the API
 
 This repository contains the server-side code for Fishoria. It manages game state, player progression, authentication, and provides a secure RESTful API for the frontend client. The architecture is designed to be modular and scalable, ensuring a smooth experience even as the player base grows.
@@ -25,7 +29,7 @@ The server also features a built-in **Admin Dashboard** at the root URL with rea
 - **Security & Optimization** – rate limiting (Throttler), password hashing (bcrypt), Redis ban cache, row-level locking for all transactions
 - **Communication** – automated email notifications (activation, password reset) via Nodemailer with localized HTML templates
 - **Content Management** – news system with draft/publish status, localized content, and role-based creation (Moderator)
-- **Admin Dashboard** – server-rendered HTML dashboard with player stats, internal wiki, and Swagger API explorer link
+- **Admin Dashboard** – server-rendered HTML dashboard with player stats, internal wiki, Swagger API explorer, and robust moderator tools for managing account bans/unbans with automated email notifications
 
 ---
 

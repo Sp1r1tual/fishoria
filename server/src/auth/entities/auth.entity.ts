@@ -37,6 +37,10 @@ export class AuthEntity {
     return this.prisma.user.findUnique({ where: { email } });
   }
 
+  async findUserById(id: string) {
+    return this.prisma.user.findUnique({ where: { id } });
+  }
+
   async findUserByActivationLink(activationLink: string) {
     return this.prisma.user.findUnique({ where: { activationLink } });
   }
@@ -58,6 +62,32 @@ export class AuthEntity {
       where: { token },
       include: { user: true },
     });
+  }
+
+  async cleanUpRefreshTokens(userId: string, maxTokens: number = 5) {
+    await this.prisma.refreshToken.deleteMany({
+      where: {
+        userId,
+        expiresAt: { lt: new Date() },
+      },
+    });
+
+    const tokens = await this.prisma.refreshToken.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      select: { id: true },
+    });
+
+    if (tokens.length >= maxTokens) {
+      const keepCount = Math.max(0, maxTokens - 1);
+      const tokensToDelete = tokens.slice(keepCount).map((t) => t.id);
+
+      if (tokensToDelete.length > 0) {
+        await this.prisma.refreshToken.deleteMany({
+          where: { id: { in: tokensToDelete } },
+        });
+      }
+    }
   }
 
   async createBan(data: Prisma.UserBanCreateInput) {

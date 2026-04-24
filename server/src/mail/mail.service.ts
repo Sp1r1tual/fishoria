@@ -8,6 +8,8 @@ import nodemailer, { Transporter } from 'nodemailer';
 
 import { getActivationTemplate } from './templates/activation.template';
 import { getPasswordResetTemplate } from './templates/password-reset.template';
+import { getBanTemplate } from './templates/ban.template';
+import { getUnbanTemplate } from './templates/unban.template';
 
 @Injectable()
 export class MailService {
@@ -66,6 +68,42 @@ export class MailService {
         error.stack,
       );
       throw new InternalServerErrorException('Failed to send email');
+    }
+  }
+
+  async sendBanMail(to: string, reason: string, lang: string = 'en') {
+    const isUa = lang === 'ua';
+    const subject = isUa
+      ? `Блокування акаунту - ${this.projectName}`
+      : `Account Suspended - ${this.projectName}`;
+
+    try {
+      await this.transporter.sendMail({
+        from: this.configService.get<string>('SMTP_USER'),
+        to,
+        subject,
+        html: getBanTemplate(reason, this.projectName, lang),
+      });
+    } catch (error) {
+      this.logger.error(`Failed to send ban email to ${to}`, error.stack);
+    }
+  }
+
+  async sendUnbanMail(to: string, lang: string = 'en') {
+    const isUa = lang === 'ua';
+    const subject = isUa
+      ? `Акаунт розблоковано - ${this.projectName}`
+      : `Account Unbanned - ${this.projectName}`;
+
+    try {
+      await this.transporter.sendMail({
+        from: this.configService.get<string>('SMTP_USER'),
+        to,
+        subject,
+        html: getUnbanTemplate(this.projectName, lang),
+      });
+    } catch (error) {
+      this.logger.error(`Failed to send unban email to ${to}`, error.stack);
     }
   }
 }

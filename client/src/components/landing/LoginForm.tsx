@@ -74,7 +74,9 @@ export const LoginForm = ({
 
       {serverError && (
         <div className={styles.serverError} role="alert">
-          {t(serverError)}
+          {serverError.startsWith('landing.auth.errors.accountBanned:::')
+            ? `${t('landing.auth.errors.accountBanned')}: ${serverError.split(':::')[1]}`
+            : t(serverError)}
         </div>
       )}
 

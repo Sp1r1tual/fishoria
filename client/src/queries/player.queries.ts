@@ -6,6 +6,7 @@ import { INVENTORY_KEYS } from './inventory.queries';
 
 import { PlayerService } from '../services/player.service';
 import { refreshToken } from '../http/interceptors/auth.interceptor';
+import { useAppSelector } from '../hooks/core/useAppStore';
 
 export const PLAYER_KEYS = {
   all: ['player'] as const,
@@ -13,10 +14,13 @@ export const PLAYER_KEYS = {
 };
 
 export const usePlayerQuery = () => {
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+
   return useQuery({
     queryKey: PLAYER_KEYS.profile(),
     queryFn: PlayerService.getProfile,
     staleTime: 5 * 60 * 1000,
+    enabled: isAuthenticated,
   });
 };
 

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { addToast } from '@/store/slices/uiSlice';
 
 import type { ILoginResponse } from '@/common/types';
 
@@ -48,6 +49,29 @@ export const AuthBox = ({ onModeChange }: AuthBoxProps) => {
       }
     }
   }, [authMode, onModeChange]);
+
+  const hasNotifiedErrorRef = useRef(false);
+
+  useEffect(() => {
+    const error = searchParams.get('error');
+    if (error && !hasNotifiedErrorRef.current) {
+      hasNotifiedErrorRef.current = true;
+
+      let toastMsg = t(error);
+      if (error.startsWith('landing.auth.errors.accountBanned:::')) {
+        const reason = error.split(':::')[1];
+        toastMsg = `${t('landing.auth.errors.accountBanned')}: ${reason}`;
+      }
+
+      dispatch(addToast({ message: toastMsg, type: 'error' }));
+
+      const newParams = new URLSearchParams(searchParams);
+
+      newParams.delete('error');
+
+      navigate({ search: newParams.toString() }, { replace: true });
+    }
+  }, [searchParams, dispatch, t, navigate]);
 
   const handleModeChange = useCallback(
     (newMode: AuthMode) => {

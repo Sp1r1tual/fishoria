@@ -811,7 +811,7 @@
         "invalidResetToken": "Invalid or expired reset token.",
         "resetTokenExpired": "Reset token has expired.",
         "accountSuspended": "Your account has been suspended.",
-        "accountBanned": "Your account has been permanently banned for violating the rules.",
+        "accountBanned": "Account banned",
         "userAlreadyExists": "User with this email already exists.",
         "generic": "Something went wrong. Please try again.",
         "accountActivated": "Your account has been activated, you can now log in."

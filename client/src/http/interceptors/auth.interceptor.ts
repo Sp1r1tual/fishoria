@@ -24,6 +24,32 @@ const getXsrfHeaders = (): Record<string, string> => {
   return {};
 };
 
+const isBanResponse = (error: AxiosError): string | false => {
+  if (error.response?.status !== 403) return false;
+
+  const data = error.response?.data as { message?: string } | undefined;
+
+  if (data?.message?.startsWith('ACCOUNT_BANNED')) {
+    const parts = data.message.split(':::');
+    return parts.length > 1 ? parts[1] : 'No reason provided';
+  }
+
+  return false;
+};
+
+const handleBanDetected = (reason: string) => {
+  localStorage.removeItem('hasSession');
+  localStorage.removeItem('authExpiry');
+  localStorage.removeItem('fishoria_settings');
+  localStorage.removeItem('fishing_session_data');
+  store.dispatch(clearAuth());
+  sessionStorage.setItem('banned', 'true');
+  if (reason) {
+    sessionStorage.setItem('ban_reason', reason);
+  }
+  window.location.replace('/welcome');
+};
+
 let refreshPromise: Promise<IUser> | null = null;
 
 const refreshToken = async (): Promise<IUser> => {
@@ -59,6 +85,15 @@ const refreshToken = async (): Promise<IUser> => {
         return user;
       } catch (error) {
         const isAxiosError = axios.isAxiosError(error);
+
+        if (isAxiosError) {
+          const banReason = isBanResponse(error);
+          if (banReason !== false) {
+            handleBanDetected(banReason);
+            throw error;
+          }
+        }
+
         const status = isAxiosError ? error.response?.status : null;
 
         if (status === 401 || status === 403) {
@@ -131,6 +166,12 @@ const authInterceptors = (axiosInstance: AxiosInstance) => {
         !error.response ||
         PUBLIC_PATHS.some((path) => originalRequest.url?.includes(path))
       ) {
+        return Promise.reject(error);
+      }
+
+      const banReason = isBanResponse(error);
+      if (banReason !== false) {
+        handleBanDetected(banReason);
         return Promise.reject(error);
       }
 

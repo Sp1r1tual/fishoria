@@ -1134,8 +1134,7 @@ export class LakeScene implements IScene {
         this.playerReeling && this.hookConfig?.rigType === 'spinning';
 
       if (isSpinningBite) {
-        // For spinning, we try to hook immediately.
-        // We don't call onBite/onPhaseChange('bite') first to avoid redundant sounds if it fails.
+        this.callbacks.onBite();
         this.hookFish();
       } else {
         this.phase = 'bite';

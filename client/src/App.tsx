@@ -7,7 +7,6 @@ import { useAppInit } from '@/hooks/core/useAppInit';
 import { LanguageSync } from '@/components/logic/LanguageSync';
 import { AudioController } from '@/components/logic/AudioController';
 import { SessionSync } from '@/components/logic/SessionSync';
-import { ToastContainer } from '@/components/UI/Toast/ToastContainer';
 import { PreloaderScreen } from '@/components/UI/Preloader/PreloaderScreen';
 
 function App() {
@@ -15,8 +14,6 @@ function App() {
 
   return (
     <SkeletonTheme baseColor="#202435" highlightColor="#47484967">
-      <ToastContainer />
-
       {isInitializing ? (
         <PreloaderScreen
           onComplete={setLoaded}

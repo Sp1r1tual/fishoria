@@ -1,5 +1,6 @@
 import {
   Controller,
+  ForbiddenException,
   Get,
   Post,
   Req,
@@ -17,6 +18,8 @@ import ms from 'ms';
 
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
+import { Roles } from './decorators/roles.decorator';
 import { GoogleAuthPayloadDto } from './dto/google-payload.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
@@ -37,19 +40,31 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req: Request, @Res() res: Response) {
-    const internalUser = await this.authService.validateOAuthUser(
-      req.user as GoogleAuthPayloadDto,
-    );
+    try {
+      const internalUser = await this.authService.validateOAuthUser(
+        req.user as GoogleAuthPayloadDto,
+      );
 
-    const { access_token, refresh_token } = await this.authService.login(
-      internalUser,
-      req.headers['user-agent'],
-      req.ip,
-    );
+      const { access_token, refresh_token } = await this.authService.login(
+        internalUser,
+        req.headers['user-agent'],
+        req.ip,
+      );
 
-    this.setCookies(res, access_token, refresh_token);
+      this.setCookies(res, access_token, refresh_token);
 
-    res.redirect(this.configService.get<string>('CLIENT_URL')!);
+      res.redirect(this.configService.get<string>('CLIENT_URL')!);
+    } catch (error: unknown) {
+      const clientUrl = this.configService.get<string>('CLIENT_URL');
+
+      if (error instanceof UnauthorizedException) {
+        return res.redirect(
+          `${clientUrl}/welcome?error=${encodeURIComponent(error.message)}`,
+        );
+      }
+
+      res.redirect(`${clientUrl}/welcome?error=auth.errors.generic`);
+    }
   }
 
   @Post('refresh')
@@ -61,11 +76,17 @@ export class AuthController {
       throw new UnauthorizedException('Refresh token is missing');
     }
 
-    const tokens = await this.authService.refreshTokens(
-      refreshToken,
-      req.headers['user-agent'],
-      req.ip,
-    );
+    let tokens: Awaited<ReturnType<AuthService['refreshTokens']>>;
+    try {
+      tokens = await this.authService.refreshTokens(
+        refreshToken,
+        req.headers['user-agent'],
+        req.ip,
+      );
+    } catch (error) {
+      this.clearCookies(res);
+      throw error;
+    }
 
     if (!tokens) {
       this.clearCookies(res);
