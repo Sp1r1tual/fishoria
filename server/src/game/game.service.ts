@@ -4,6 +4,7 @@ import { GameEntity } from './entities/game.entity';
 import { CatchDto } from './dto/catch.dto';
 import { BreakDto } from './dto/break-gear.dto';
 import { FISH_SPECIES_MULTIPLIERS } from '../common/configs/prices.config';
+import { EXPERIENCE } from '../common/configs/game.config';
 import { mapPlayerProfile } from '../player/mappers/player.mapper';
 
 @Injectable()
@@ -32,7 +33,9 @@ export class GameService {
     }
 
     const multiplier = FISH_SPECIES_MULTIPLIERS[body.speciesId] || 1.0;
-    const xpGain = Math.ceil((body.weight || 0) * 25 * multiplier);
+    const xpGain = Math.ceil(
+      (body.weight || 0) * EXPERIENCE.baseXpPerKg * multiplier,
+    );
     const updatedProfile = await this.gameEntity.executeCatchFishTx(
       profile,
       body,

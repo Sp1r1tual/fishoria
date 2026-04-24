@@ -4,3 +4,7 @@ export const TRASH_ITEMS = [
   'tangled_line',
   'driftwood',
 ];
+
+export const EXPERIENCE = {
+  baseXpPerKg: 25,
+} as const;
