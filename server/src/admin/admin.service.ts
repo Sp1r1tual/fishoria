@@ -96,7 +96,7 @@ export class AdminService {
     const localDocsPath = path.join(process.cwd(), 'docs');
     const docsPath = fs.existsSync(localDocsPath)
       ? localDocsPath
-      : path.join(__dirname, '..', 'docs');
+      : path.join(__dirname, '..', '..', 'docs');
 
     if (fs.existsSync(docsPath)) {
       return fs
@@ -114,7 +114,7 @@ export class AdminService {
     const localDocsPath = path.join(process.cwd(), 'docs');
     const docsPath = fs.existsSync(localDocsPath)
       ? localDocsPath
-      : path.join(__dirname, '..', 'docs');
+      : path.join(__dirname, '..', '..', 'docs');
     const filePath = path.join(docsPath, filename);
 
     if (!fs.existsSync(filePath)) {
