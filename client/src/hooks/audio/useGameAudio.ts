@@ -15,6 +15,8 @@ import {
   isIOS,
 } from '@/common/media/audio-context';
 
+import { unlockMusicTracks } from './useMenuAudio';
+
 // ---------------------------------------------------------------------------
 // SFX source URLs (resolved at build time by Vite)
 // ---------------------------------------------------------------------------
@@ -91,6 +93,14 @@ Object.values(AMBIENT).forEach((a) => {
   a.loop = true;
   a.preload = 'auto';
   a.crossOrigin = 'anonymous';
+
+  // iOS Safari bug: `loop = true` on elements connected to MediaElementAudioSourceNode
+  // often breaks after the tab is backgrounded. The track plays to its end and stops.
+  // We manually restart it to ensure infinite looping.
+  a.addEventListener('ended', () => {
+    a.currentTime = 0;
+    a.play().catch(() => {});
+  });
 });
 
 let ambientGainNode: GainNode | null = null;
@@ -168,6 +178,8 @@ export async function unlockAudio() {
       // Connect to AudioContext to allow GainNode volume control
       ensureAmbientConnected(bgAudio);
     });
+
+    unlockMusicTracks();
 
     // Resume multiple times to be absolutely sure
     const resumeOnAnyInteraction = () => {

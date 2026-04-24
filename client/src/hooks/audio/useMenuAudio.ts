@@ -68,6 +68,18 @@ function pauseAllTracks() {
   musicTracks.forEach((t) => t.pause());
 }
 
+export function unlockMusicTracks() {
+  musicTracks.forEach((track) => {
+    track
+      .play()
+      .then(() => {
+        track.pause();
+        track.currentTime = 0;
+      })
+      .catch(() => {});
+  });
+}
+
 // ---------------------------------------------------------------------------
 // HMR cleanup – stop old Audio elements when module is replaced
 // ---------------------------------------------------------------------------
