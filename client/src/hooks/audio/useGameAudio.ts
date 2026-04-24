@@ -355,7 +355,7 @@ export function useGameAudio(manageAmbient = true) {
         // We use a masking technique: drop volume to 0 instantly, wait a moment
         // for Safari to process its "catch-up" glitch buffer from backgrounding,
         // then initiate the sync which fades the volume back in smoothly.
-        if (isIOS && ambientGainNode) {
+        if (isIOS && ambientGainNode && manageAmbient) {
           currentAmbientLevel = 0;
           ambientGainNode.gain.value = 0;
         }
@@ -470,7 +470,7 @@ export function useGameAudio(manageAmbient = true) {
 
   const onTimeOfDayChange = useCallback(
     (lakeId: string | null, tod: TimeOfDayType | null) => {
-      if (!lakeId || !tod) return;
+      if (!manageAmbient || !lakeId || !tod) return;
       const isNight = tod === 'night';
       const trackKey = `${lakeId}_${isNight ? 'night' : 'day'}`;
       const targetAudio = AMBIENT[trackKey];
@@ -483,19 +483,20 @@ export function useGameAudio(manageAmbient = true) {
         syncAmbientTracks();
       }
     },
-    [syncAmbientTracks],
+    [syncAmbientTracks, manageAmbient],
   );
 
-  // Cleanup
   useEffect(() => {
     return () => {
-      stopAllLoops();
-      Object.values(AMBIENT).forEach((a) => {
-        a.pause();
-      });
-      currentAmbientRef.current = null;
+      if (manageAmbient) {
+        stopAllLoops();
+        Object.values(AMBIENT).forEach((a) => {
+          a.pause();
+        });
+        currentAmbientRef.current = null;
+      }
     };
-  }, [stopAllLoops]);
+  }, [stopAllLoops, manageAmbient]);
 
   return {
     onCast,

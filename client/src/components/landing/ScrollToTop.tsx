@@ -33,12 +33,6 @@ export const ScrollToTop = () => {
           '--footer-offset',
           `${visibleFooterHeight}px`,
         );
-
-        if (shouldBeVisible) {
-          buttonRef.current.style.transform = `translateY(-${visibleFooterHeight}px) scale(1)`;
-        } else {
-          buttonRef.current.style.transform = '';
-        }
       }
     };
 

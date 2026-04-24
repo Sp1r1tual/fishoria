@@ -18,10 +18,11 @@
   opacity: 0;
   visibility: hidden;
   transform: translateY(20px) scale(0.8);
+  margin-bottom: var(--footer-offset, 0px);
   transition:
     opacity 0.4s ease,
     visibility 0.4s ease,
-    transform 0.05s linear,
+    transform 0.4s ease,
     background 0.3s ease,
     box-shadow 0.3s ease;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
@@ -30,6 +31,7 @@
 .visible {
   opacity: 1;
   visibility: visible;
+  transform: translateY(0) scale(1);
 }
 
 .scrollToTop:hover {

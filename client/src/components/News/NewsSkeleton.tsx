@@ -7,7 +7,7 @@ export const NewsSkeleton = () => (
     {[1, 2].map((i) => (
       <div key={i} className={styles.newsItem}>
         <div className={styles.newsItem__imageWrap}>
-          <Skeleton height={240} containerClassName={styles.newsItem__image} />
+          <Skeleton height={240} width="100%" style={{ display: 'block' }} />
         </div>
         <div className={styles.newsItem__body} style={{ width: '100%' }}>
           <Skeleton width="60%" height={32} style={{ marginBottom: '12px' }} />

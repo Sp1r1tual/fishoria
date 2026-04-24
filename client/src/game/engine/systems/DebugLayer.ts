@@ -165,6 +165,12 @@ export class DebugLayer {
         this.snagLabel.style.fontSize = targetSnagSize;
       }
 
+      const isMobile = this.app.renderer.width < 1000;
+      const targetSectorInfoSize = isMobile ? 9 : 12;
+      if (this.sectorInfoLabel.style.fontSize !== targetSectorInfoSize) {
+        this.sectorInfoLabel.style.fontSize = targetSectorInfoSize;
+      }
+
       if (this.showLabels) {
         this.updateSectorHover();
       } else {
@@ -363,13 +369,17 @@ export class DebugLayer {
       this.sectorInfoLabel.position.set(targetX, targetY);
 
       // Update background box
+      const isMobile = this.app.renderer.width < 1000;
+      const padding = isMobile ? 5 : 10;
+      const radius = isMobile ? 4 : 6;
+
       this.infoBgGfx.clear();
       this.infoBgGfx.roundRect(
-        targetX - 10,
-        targetY - 10,
-        Math.round(this.sectorInfoLabel.width) + 20,
-        Math.round(this.sectorInfoLabel.height) + 20,
-        6,
+        targetX - padding,
+        targetY - padding,
+        Math.round(this.sectorInfoLabel.width) + padding * 2,
+        Math.round(this.sectorInfoLabel.height) + padding * 2,
+        radius,
       );
       this.infoBgGfx.fill({ color: 0x000000, alpha: 0.6 });
       this.infoBgGfx.stroke({ color: 0xffffff, width: 1, alpha: 0.2 });

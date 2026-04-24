@@ -156,7 +156,7 @@ export const BottomInfo = () => {
           }}
         />
 
-        <div className={styles.selectableText}>{textContent}</div>
+        <p className={styles.selectableText}>{textContent}</p>
       </div>
     </section>
   );

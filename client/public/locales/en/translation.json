@@ -742,7 +742,7 @@
     "description": "The Fishoria servers are currently unavailable. Please try again later."
   },
   "meta": {
-    "landing": "Fishoria is a browser-based fishing simulator, blending mesmerizing WebGL graphics with uncompromised gameplay realism. Cast your line and experience the ultimate reeling thrill!",
+    "landing": "Fishoria is an online fishing simulator and browser game. Start your journey, catch fish and upgrade your gear directly in your browser.",
     "resetPassword": "Reset your Fishoria account password securely.",
     "privacy": "Read the Fishoria Privacy Policy to understand how we handle your personal data.",
     "terms": "Review the Fishoria Terms of Service before playing.",
@@ -770,7 +770,7 @@
   },
   "bottomInfo": {
     "title": "Project Information",
-    "text": "WELCOME TO FISHORIA – a next-generation browser-based fishing simulator that combines classic gameplay with deep technical simulation. We've created an immersive world where every cast matters and every fish has its own character.\n\nGAMEPLAY EXPERIENCE\nFishoria offers a comprehensive fishing experience featuring multiple fishing styles: Float, Feeder, and Spinning. Manage your equipment carefully – from selecting the right hook size and line type to choosing the perfect bait for your target species. Success requires mastering the tension system: keep the pressure in the sweet spot to tire the fish without snapping your line or allowing it to escape.\n\nENVIRONMENTAL SENSITIVITY\nBehavior changes dynamically with the weather and time of day. Predators become more active during rain and low-light conditions, requiring different tactics depending on the environment. For spinning enthusiasts, retrieval techniques like jigging or stop-and-go directly influence predator interest.\n\nBITING PROFILES\nSome fish are cautious 'nibblers' that test your patience, while others are aggressive 'strikers' that hit the bait with force.\n\nExplore beautifully rendered reservoirs, upgrade your gear, hunt for legendary trophies, and climb the global leaderboard. Whether you're a casual player or a hardcore angler, Fishoria offers a peaceful yet challenging escape into the world of fishing."
+    "text": "FISHORIA: ONLINE FISHING SIMULATOR. Fishoria is a browser-based fishing game that combines classic gameplay with deep technical simulation. We've created a world where you can relax, cast your line and explore different reservoirs.\n\nGAMEPLAY EXPERIENCE\nFishoria offers a fishing simulator experience featuring multiple styles: Float, Feeder, and Spinning. Success requires mastering the gear: from selecting the right hook size to choosing the perfect bait for your target species. Success requires mastering the tension system: keep the pressure in the sweet spot to tire the fish without snapping your line or allowing it to escape.\n\nENVIRONMENTAL SENSITIVITY\nBehavior changes dynamically with the weather and time of day. Predators become more active during rain and low-light conditions, requiring different tactics depending on the environment.\n\nExplore reservoirs, upgrade your gear, and play the fishing game online. Whether you're a casual player or a dedicated angler, Fishoria offers a peaceful escape into the world of fishing simulator."
   },
   "privacy": {
     "title": "Privacy Policy",
@@ -782,7 +782,7 @@
   },
   "landing": {
     "or_continue_with": "Or continue with",
-    "title": "Fishoria – A Fishing Simulator in Your Browser",
+    "title": "Fishoria – Online Fishing Simulator & Game",
     "hero": {
       "subtitle": "Fishing simulator in your browser! Authorize to start the game",
       "ariaLabel": "Game introduction"
@@ -903,7 +903,7 @@
     "passwordUpdated": "Password updated successfully"
   },
   "metadata": {
-    "defaultTitle": "Fishoria – A Fishing Simulator in Your Browser",
-    "defaultDescription": "Fishoria is a browser-based fishing simulator, blending mesmerizing WebGL graphics with uncompromised gameplay realism. Cast your line and experience the ultimate reeling thrill!"
+    "defaultTitle": "Fishoria – Online Fishing Simulator & Game",
+    "defaultDescription": "Fishoria is an online fishing simulator and browser game. Catch fish, explore reservoirs and upgrade your equipment directly in your browser."
   }
 }

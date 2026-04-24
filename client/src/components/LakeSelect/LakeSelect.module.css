@@ -119,6 +119,12 @@
   overflow: hidden;
   cursor: pointer;
   transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.lake-card__desc::-webkit-scrollbar {
+  display: none;
 }
 
 .lake-card__stats {

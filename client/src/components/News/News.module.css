@@ -57,12 +57,11 @@
 
 .newsItem__imageWrap {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: block;
   overflow: hidden;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   background: rgba(0, 0, 0, 0.2);
+  line-height: 0;
 }
 
 .newsItem__image {

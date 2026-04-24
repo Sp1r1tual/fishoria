@@ -108,7 +108,7 @@ export function PreloaderScreen({
     });
 
     return () => {
-      controller.abort();
+      controller.abort('component_unmounted');
     };
   }, [t, error]);
 

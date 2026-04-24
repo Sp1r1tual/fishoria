@@ -1041,11 +1041,11 @@ export class LakeScene implements IScene {
 
         this.potentialBiter.nibblesDone++;
 
-        if (Math.random() < 0.15) {
+        if (Math.random() < 0.1) {
           this.potentialBiter = null;
         } else {
           const forceBite =
-            this.potentialBiter.nibblesDone > 5 && Math.random() < 0.4;
+            this.potentialBiter.nibblesDone > 3 && Math.random() < 0.5;
 
           if (
             forceBite ||
