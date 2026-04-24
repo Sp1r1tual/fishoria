@@ -1,8 +1,8 @@
-# Fishoria — A Fishing Simulator in Your Browser
+# Fishoria – A Fishing Simulator in Your Browser
 
 **Fishoria** is not just another browser game. It is a highly interactive, state-of-the-art web-based fishing simulator, blending mesmerizing WebGL graphics with uncompromised gameplay realism.
 
-Feel the adrenaline rush of fighting a trophy catch, carefully select your tackle, and adapt to changing weather conditions. Fishoria is designed to deliver a genuine fishing experience directly in your browser. No compromises on quality or mechanics!
+Feel the adrenaline rush of fighting a trophy catch, carefully select your tackle, and adapt to changing weather conditions. Fishoria is designed to deliver a genuine fishing experience directly in your browser.
 
 ---
 
@@ -14,73 +14,71 @@ Feel the adrenaline rush of fighting a trophy catch, carefully select your tackl
 
 ## Why Will Fishoria Hook You From the First Minute?
 
-🌊 **Living Ecosystem & Advanced Fish AI**
-Forget boring, predictable algorithms. The fish in Fishoria have their own distinct behaviors! They migrate, seek comfortable depths, react differently to the time of day, and get spooked by the sound of a splash. Outsmarting each one is a true challenge.
+**Living Ecosystem & Advanced Fish AI**
+Forget boring, predictable algorithms. The fish in Fishoria have unique behavior profiles-varying in aggression, curiosity, and mobility. They adapt to environmental shifts: seeking preferred depths, reacting to weather changes, and following strict time-of-day activity cycles. Outsmarting each species requires the right strategy and perfect timing.
 
-🎣 **The Ultimate Reeling Thrill**
-This isn't just "click-to-catch". Our reeling mini-game calculates line tension physics, fish fatigue, and the durability of every single piece of your tackle. Pull too hard? Say goodbye to your favorite lure and the trophy.
+**The Ultimate Reeling Thrill**
+This isn't just "click-to-catch". Our reeling mini-game calculates line tension physics, dynamic fish struggle forces, and the durability of every single piece of your tackle. Experience the depth of spinning where realistic retrieval techniques-jigging, stop-and-go, or steady pulling-directly dictate your success with predators. Pull too hard? Say goodbye to your favorite lure and the trophy.
 
-🎯 **Three Distinct Fishing Styles**
+**Three Distinct Fishing Styles**
 Float, feeder, or spinning? Each fishing method features unique physics and behavior. Watch the micro-dips of the float, observe the tension on the feeder quiver tip, or experiment with various spinning retrieval techniques.
 
-⛈️ **A Dynamic, Breathing World**
-Sun setting and the sky getting cloudy? Brace for rain! The weather completely alters ecosystem behavior, predator activity, sonar effective radius, and creates a unique atmosphere accompanied by dynamic audio.
+**A Dynamic, Breathing World**
+Sun setting and the sky getting cloudy? Brace for rain! The weather completely alters ecosystem behavior, predator activity, and bite probabilities, creating a unique atmosphere accompanied by dynamic audio.
 
-🛍️ **Deep Economy & Progression**
-Start with a basic float rod, but as you progress—gain experience ($XP$), complete quests, earn in-game currency, and purchase professional gear in the shop. Don't forget maintenance: every epic struggle with a monster fish progressively wears down your arsenal!
+**Deep Economy & Progression**
+Start with a basic float rod, but as you progress-gain experience ($XP$), complete quests, earn in-game currency, and purchase professional gear in the shop. Don't forget maintenance: every epic struggle with a monster fish progressively wears down your arsenal!
 
-📦 **Ecosystem Surprises**
+**Ecosystem Surprises**
 Rewarding experiences are sometimes purely unexpected. Instead of a trophy carp, you might reel in an old boot or snag on an underwater branch. A complex quest system encourages you to explore every single corner of the lake.
 
-🤝 **Global Community**
+**Global Community**
 Fast and secure registration (including Google OAuth), cloud saving for your profile, and detailed statistics. Compete against others, break your own personal records, and build a collection of the rarest fish species.
 
-✨ **Full Immersion: Visuals & Audio**
+**Full Immersion: Visuals & Audio**
 We have polished every single detail: water droplets streaming down your screen, the iconic sound of the reel drag screaming when a fish pulls, and even meteor showers lighting up the night sky. The ambient sounds dynamically adapt to the weather.
 
 ---
 
 ## Tech Stack
 
-### Client — Frontend Engine
+### Client – Frontend Engine
 
 | Category          | Technology                                                                           |
 | :---------------- | :----------------------------------------------------------------------------------- |
 | **UI Framework**  | [React 19](https://react.dev/) with React Compiler (auto-memoization)                |
 | **Bundler**       | [Vite 8](https://vite.dev/)                                                          |
-| **Rendering**     | [PixiJS 8](https://pixijs.com/) — WebGL 2D graphics, particle systems                |
-| **State**         | [Redux Toolkit](https://redux-toolkit.js.org/) — global game state                   |
-| **Data Fetching** | [TanStack Query v5](https://tanstack.com/query) — server state, caching              |
+| **Rendering**     | [PixiJS 8](https://pixijs.com/) – WebGL 2D graphics, particle systems                |
+| **State**         | [Redux Toolkit](https://redux-toolkit.js.org/) – global game state                   |
+| **Data Fetching** | [TanStack Query v5](https://tanstack.com/query) – server state, caching              |
 | **Routing**       | [React Router 7](https://reactrouter.com/)                                           |
-| **i18n**          | [i18next](https://www.i18next.com/) + react-i18next                                  |
+| **i18n**          | [i18next](https://www.i18next.com/)                                                  |
 | **Forms**         | [React Hook Form](https://react-hook-form.com/)                                      |
-| **Math**          | [simplex-noise](https://github.com/jwagner/simplex-noise.js) — procedural generation |
-| **Analytics**     | [Vercel Analytics](https://vercel.com/analytics)                                     |
+| **Math**          | [simplex-noise](https://github.com/jwagner/simplex-noise.js) – procedural generation |
 | **Language**      | TypeScript 5                                                                         |
 
-### Server — Backend Core
+### Server – Backend Core
 
 | Category       | Technology                                                                     |
 | :------------- | :----------------------------------------------------------------------------- |
 | **Framework**  | [NestJS 11](https://nestjs.com/)                                               |
 | **ORM**        | [Prisma 7](https://www.prisma.io/) with `@prisma/adapter-pg`                   |
 | **Database**   | [PostgreSQL (Supabase)](https://supabase.com/)                                 |
-| **Caching**    | [Redis (Upstash)](https://upstash.com/) — REST-based                           |
+| **Caching**    | [Redis (Upstash)](https://upstash.com/) – REST-based                           |
 | **Validation** | [Zod 4](https://zod.dev/) & [nestjs-zod](https://github.com/risen7/nestjs-zod) |
-| **Auth**       | [Passport.js](https://www.passportjs.org/) — JWT, Google OAuth, Local          |
-| **Mailing**    | [Nodemailer](https://nodemailer.com/) — Gmail SMTP                             |
-| **Docs**       | [Swagger / OpenAPI](https://swagger.io/) via `@nestjs/swagger`                 |
+| **Auth**       | [Passport.js](https://www.passportjs.org/) – JWT, Google OAuth, Local          |
+| **Mailing**    | [Nodemailer](https://nodemailer.com/) – Gmail SMTP                             |
 | **Language**   | TypeScript 5                                                                   |
 
 ### DevOps & Quality
 
 | Category        | Technology                                                                      |
 | :-------------- | :------------------------------------------------------------------------------ |
-| **Hosting**     | [Vercel](https://vercel.com/) — client & server deployments                     |
-| **Git Hooks**   | [Husky](https://typicode.github.io/husky/) — pre-commit automation              |
-| **Lint Staged** | [lint-staged](https://github.com/lint-staged/lint-staged) — incremental linting |
+| **Hosting**     | [Vercel](https://vercel.com/) – client & server deployments                     |
+| **Git Hooks**   | [Husky](https://typicode.github.io/husky/) – pre-commit automation              |
+| **Lint Staged** | [lint-staged](https://github.com/lint-staged/lint-staged) – incremental linting |
 | **Linting**     | ESLint 9 + Prettier                                                             |
-| **Unused Code** | [Knip](https://knip.dev/) — dead export & dependency detection                  |
+| **Unused Code** | [Knip](https://knip.dev/) – dead export & dependency detection                  |
 
 ---
 
@@ -139,10 +137,10 @@ yarn prisma:seed
 ### 4. Run in Development
 
 ```bash
-# Terminal 1 — Start the API server (port 5000)
+# Terminal 1 – Start the API server (port 5000)
 cd server && yarn dev
 
-# Terminal 2 — Start the client dev server (port 5173)
+# Terminal 2 – Start the client dev server (port 5173)
 cd client && yarn dev
 ```
 
