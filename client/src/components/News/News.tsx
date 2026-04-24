@@ -62,10 +62,11 @@ export function News() {
                         src={item.imageUrl}
                         alt={item.title}
                         width="100%"
-                        height="100%"
+                        height="auto"
+                        skeletonHeight={240}
                         className={styles.newsItem__image}
                         onClick={() => window.open(item.imageUrl, '_blank')}
-                        objectFit="cover"
+                        objectFit="contain"
                       />
                     </div>
                   )}
@@ -81,7 +82,7 @@ export function News() {
                               onClick={() => window.open(src, '_blank')}
                               height="auto"
                               width="100%"
-                              objectFit="cover"
+                              objectFit="contain"
                               wrapperClassName={styles.newsItem__markdownImage}
                             />
                           ),

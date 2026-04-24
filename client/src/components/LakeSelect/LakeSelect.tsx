@@ -23,7 +23,6 @@ export function LakeSelect() {
   const previewRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const expandedIdRef = useRef<string | null>(null);
-  const initialHeightsRef = useRef<Record<string, number>>({});
 
   const handleSelect = (lakeId: string) => {
     dispatch(setCurrentLake(lakeId));
@@ -33,13 +32,18 @@ export function LakeSelect() {
   const collapse = (id: string) => {
     const p = descRefs.current[id];
     const preview = previewRefs.current[id];
+    const card = cardRefs.current[id];
 
     if (p) {
       p.style.maxHeight = '';
       p.style.webkitLineClamp = '2';
+      (p.style as CSSStyleDeclaration & { lineClamp: string }).lineClamp = '2';
     }
     if (preview) {
       preview.style.height = '';
+    }
+    if (card) {
+      card.style.height = '';
     }
   };
 
@@ -50,20 +54,20 @@ export function LakeSelect() {
 
     if (!p || !card || !preview) return;
 
-    if (!initialHeightsRef.current[id]) {
-      initialHeightsRef.current[id] = card.getBoundingClientRect().height;
-    }
-    card.style.height = `${initialHeightsRef.current[id]}px`;
-
     const startHeight = p.clientHeight;
     p.style.maxHeight = `${startHeight}px`;
     p.style.webkitLineClamp = 'unset';
+    (p.style as CSSStyleDeclaration & { lineClamp: string }).lineClamp =
+      'unset';
 
     const fullHeight = p.scrollHeight;
     void p.offsetHeight;
 
-    preview.style.height = '80px';
+    const isSmallScreen = window.innerHeight < 500 || window.innerWidth < 600;
+
+    preview.style.height = isSmallScreen ? '40px' : '70px';
     p.style.maxHeight = `${fullHeight}px`;
+    card.style.height = 'auto';
   };
 
   const handleDescClick = (lakeId: string) => {
