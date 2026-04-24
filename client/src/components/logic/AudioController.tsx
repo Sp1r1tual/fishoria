@@ -15,7 +15,7 @@ export function AudioController() {
 
   useMenuAudio(!isInGame);
 
-  // Centralized SFX volume sync — single source of truth for all SFX hooks
+  // Centralized SFX volume sync – single source of truth for all SFX hooks
   const sfxEnabled = useAppSelector((s) => s.settings.sfxEnabled);
   const sfxVolume = useAppSelector((s) => s.settings.sfxVolume);
 

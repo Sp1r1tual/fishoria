@@ -93,12 +93,17 @@ export const AuthBox = ({ onModeChange }: AuthBoxProps) => {
             'Sign in or create account',
           )}
         >
-          <DefaultButton size="lg" onClick={() => handleModeChange('login')}>
+          <DefaultButton
+            size="lg"
+            playSound={false}
+            onClick={() => handleModeChange('login')}
+          >
             {t('landing.auth.login')}
           </DefaultButton>
           <DefaultButton
             variant="secondary"
             size="lg"
+            playSound={false}
             onClick={() => handleModeChange('register')}
           >
             {t('landing.auth.register')}
@@ -111,6 +116,7 @@ export const AuthBox = ({ onModeChange }: AuthBoxProps) => {
           <DefaultButton
             variant="google"
             size="lg"
+            playSound={false}
             onClick={() => AuthService.googleLogin()}
           >
             <img src={googleIcon} alt="Google" className={styles.googleIcon} />
@@ -151,7 +157,11 @@ export const AuthBox = ({ onModeChange }: AuthBoxProps) => {
       {authMode === 'success' && (
         <div className={styles.successBox} role="status" aria-live="polite">
           <p className={styles.successMessage}>{t(successMessage)}</p>
-          <DefaultButton size="lg" onClick={() => handleModeChange('login')}>
+          <DefaultButton
+            size="lg"
+            playSound={false}
+            onClick={() => handleModeChange('login')}
+          >
             {t('landing.auth.backToLogin')}
           </DefaultButton>
         </div>

@@ -82,7 +82,7 @@ export function Inventory({ isModal = false }: { isModal?: boolean }) {
       onClick={handleSellAll}
       disabled={sellMutation.isPending}
     >
-      {t('inventory.sellAll')} —{' '}
+      {t('inventory.sellAll')} –{' '}
       <img
         src={coinIcon}
         alt="coins"
@@ -194,7 +194,7 @@ export function Inventory({ isModal = false }: { isModal?: boolean }) {
                         {t(`fish.${f.speciesId}.name`)}
                       </td>
                       <td className={styles['inventory__weight']}>
-                        {f.weight.toFixed(3)} kg
+                        {f.weight.toFixed(3)} {t('units.kg')}
                       </td>
                       <td className={styles['inventory__bait-cell']}>
                         {t(`baits.${f.baitUsed}.name`)}

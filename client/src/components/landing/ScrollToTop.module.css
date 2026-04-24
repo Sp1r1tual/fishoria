@@ -1,0 +1,68 @@
+.scrollToTop {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px) scale(0.8);
+  transition:
+    opacity 0.4s ease,
+    visibility 0.4s ease,
+    transform 0.05s linear,
+    background 0.3s ease,
+    box-shadow 0.3s ease;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+}
+
+.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.scrollToTop:hover {
+  background: rgba(51, 65, 85, 0.8);
+  transform: translateY(-5px) scale(1.05);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+.scrollToTop:active {
+  transform: scale(0.95);
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease;
+}
+
+.scrollToTop:hover .icon {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .scrollToTop {
+    bottom: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .icon {
+    width: 20px;
+    height: 20px;
+  }
+}

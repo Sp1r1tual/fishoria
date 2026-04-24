@@ -74,6 +74,7 @@ export const ResetPasswordForm = () => {
         <DefaultButton
           variant="primary"
           size="lg"
+          playSound={false}
           onClick={() => navigate('/')}
           style={{ marginTop: '20px' }}
         >
@@ -206,6 +207,7 @@ export const ResetPasswordForm = () => {
           variant="primary"
           size="lg"
           type="submit"
+          playSound={false}
           style={{ width: '100%' }}
           disabled={isPending || !token}
         >

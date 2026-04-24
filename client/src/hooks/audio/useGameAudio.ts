@@ -34,7 +34,7 @@ const SFX_URLS = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// Ambient tracks — HTMLAudioElement is fine (long music, latency irrelevant)
+// Ambient tracks – HTMLAudioElement is fine (long music, latency irrelevant)
 // ---------------------------------------------------------------------------
 const AMBIENT: Record<string, HTMLAudioElement> = {
   forest_lake_day: new Audio(
@@ -282,7 +282,7 @@ export function useGameAudio(manageAmbient = true) {
   // Web Audio playback helpers
   // -------------------------------------------------------------------------
 
-  /** Play a one-shot SFX — near-zero latency via pre-decoded AudioBuffer */
+  /** Play a one-shot SFX – near-zero latency via pre-decoded AudioBuffer */
   const playOnce = useCallback((key: SfxKey) => {
     if (!sfxEnabledRef.current) return;
     const buffer = sfxBuffers[key];
@@ -347,7 +347,7 @@ export function useGameAudio(manageAmbient = true) {
     stopLoop('unwinding');
   }, [stopLoop]);
 
-  // Visibility change handler — registered once per mount, uses refs for current state.
+  // Visibility change handler – registered once per mount, uses refs for current state.
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden) {

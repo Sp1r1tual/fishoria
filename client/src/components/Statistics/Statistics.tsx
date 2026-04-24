@@ -104,7 +104,9 @@ export function Statistics() {
                     </div>
                     <div className={styles['stats-card__summary-item']}>
                       {t('statistics.totalWeight')}:{' '}
-                      <span>{(stats.totalWeight ?? 0).toFixed(2)} kg</span>
+                      <span>
+                        {(stats.totalWeight ?? 0).toFixed(2)} {t('units.kg')}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -156,15 +158,21 @@ export function Statistics() {
                             <div className={styles['stats-card__species-grid']}>
                               <div className={styles['stats-card__spec-data']}>
                                 <label>{t('statistics.minWeight')}:</label>
-                                <span>{minWeight.toFixed(3)} kg</span>
+                                <span>
+                                  {minWeight.toFixed(3)} {t('units.kg')}
+                                </span>
                               </div>
                               <div className={styles['stats-card__spec-data']}>
                                 <label>{t('statistics.maxWeight')}:</label>
-                                <span>{maxWeight.toFixed(3)} kg</span>
+                                <span>
+                                  {maxWeight.toFixed(3)} {t('units.kg')}
+                                </span>
                               </div>
                               <div className={styles['stats-card__spec-data']}>
                                 <label>{t('statistics.speciesWeight')}:</label>
-                                <span>{totalWeight.toFixed(2)} kg</span>
+                                <span>
+                                  {totalWeight.toFixed(2)} {t('units.kg')}
+                                </span>
                               </div>
                             </div>
                           </div>

@@ -39,7 +39,7 @@ export const EARLY_HOOK = {
 } as const;
 
 export const FISH_AI = {
-  /** Bite timeout: base + random * range (seconds) — fish gives up if not hooked */
+  /** Bite timeout: base + random * range (seconds) – fish gives up if not hooked */
   biteTimeoutBase: 3.0,
   biteTimeoutRange: 7.0,
 

@@ -36,7 +36,7 @@ export const Masonry = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
         src: IMAGE_1,
         alt: t(
           'landing.gallery.image1',
-          'Fishoria gameplay — lake fishing scene',
+          'Fishoria gameplay – lake fishing scene',
         ),
         caption: t('landing.gallery.caption1', 'Lake fishing'),
         className: styles.item1,
@@ -45,14 +45,14 @@ export const Masonry = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
         src: IMAGE_2,
         alt: t(
           'landing.gallery.image2',
-          'Fishoria gameplay — fishing rod action',
+          'Fishoria gameplay – fishing rod action',
         ),
         caption: t('landing.gallery.caption2', 'Fishing action'),
         className: styles.item2,
       },
       {
         src: IMAGE_3,
-        alt: t('landing.gallery.image3', 'Fishoria gameplay — rare fish catch'),
+        alt: t('landing.gallery.image3', 'Fishoria gameplay – rare fish catch'),
         caption: t('landing.gallery.caption3', 'Rare catch'),
         className: styles.item3,
       },
@@ -60,7 +60,7 @@ export const Masonry = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
         src: IMAGE_4,
         alt: t(
           'landing.gallery.image4',
-          'Fishoria gameplay — equipment screen',
+          'Fishoria gameplay – equipment screen',
         ),
         caption: t('landing.gallery.caption4', 'Equipment'),
         className: styles.item4,
@@ -69,7 +69,7 @@ export const Masonry = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
         src: IMAGE_5,
         alt: t(
           'landing.gallery.image5',
-          'Fishoria gameplay — inventory overview',
+          'Fishoria gameplay – inventory overview',
         ),
         caption: t('landing.gallery.caption5', 'Inventory'),
         className: styles.item5,
@@ -105,6 +105,7 @@ export const Masonry = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
                   src={item.src}
                   alt={item.alt}
                   className={styles.masonryImage}
+                  wrapperClassName={styles.masonryImageWrapper}
                   objectFit="cover"
                 />
               </button>

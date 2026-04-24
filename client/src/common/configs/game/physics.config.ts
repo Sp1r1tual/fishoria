@@ -35,7 +35,7 @@ export const TENSION = {
   /** Idle rod: tension drop rate from tired fish */
   idleTiredDropRate: 0.5,
 
-  /** Escape progress: accumulation rate per second (inactive) — target ~8s to escape */
+  /** Escape progress: accumulation rate per second (inactive) – target ~8s to escape */
   escapeAccumulationRate: 15.0,
   /** Escape progress: reset rate per second (active interaction) */
   escapeResetRate: 350.0,

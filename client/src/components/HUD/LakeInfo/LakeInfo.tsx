@@ -154,7 +154,7 @@ export function LakeInfo({ sceneRef, isDebugActive }: ILakeInfoProps) {
         .join(' ')}
     >
       <div className={styles['lake-info__name']}>
-        {currentLakeId ? t(`lakes.${currentLakeId}.name`) : '—'}
+        {currentLakeId ? t(`lakes.${currentLakeId}.name`) : '–'}
       </div>
 
       <div className={styles['lake-info__time-row']}>

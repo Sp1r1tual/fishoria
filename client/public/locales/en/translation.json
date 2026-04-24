@@ -6,8 +6,10 @@
     "and": " and "
   },
   "units": {
-    "min": "m",
-    "hour": "h"
+    "min": "min",
+    "hour": "h",
+    "kg": "kg",
+    "coin": "coins"
   },
   "mainMenu": {
     "startFishing": "Start Fishing",
@@ -115,11 +117,11 @@
           },
           {
             "q": "How does game time work?",
-            "a": "The game uses accelerated time: 1 real second equals approximately 20 game seconds. The world stays alive even when you're offline — the system calculates elapsed time and updates weather upon your return."
+            "a": "The game uses accelerated time: 1 real second equals approximately 20 game seconds. Weather and time-dependent activities are calculated dynamically upon your return."
           },
           {
             "q": "How does weather affect fishing?",
-            "a": "Weather changes dynamically. Rain and clouds increase fish activity, especially predators. Clear skies make fish more cautious but allow lures to flash brighter."
+            "a": "Weather changes dynamically. Rain and clouds increase fish activity, especially for predators, while clear skies favor species that prefer bright conditions."
           }
         ]
       },
@@ -128,7 +130,7 @@
         "items": [
           {
             "q": "What is special about the Forest Lake?",
-            "a": "It's a natural starting location. You'll mostly find small to medium fish like Crucian, Roach, and Perch. There is a slight water current, and occasionally you might snag some trash from the bottom."
+            "a": "It's a natural starting location. You'll mostly find small to medium fish like Crucian, Roach, and Perch. The bottom is uneven with patches of thick vegetation where fish love to hide."
           },
           {
             "q": "How is the Fish Farm different?",
@@ -136,7 +138,7 @@
           },
           {
             "q": "What should I know about the Pasture Canal?",
-            "a": "The canal has a steady current and a deep central channel. It's the best place for Asp and Bream. Be careful with casting near the steep banks, as they can be tricky."
+            "a": "The canal features a deep central channel and steep grassy banks. It's the best place for Asp and Bream. Focus your casts on the deeper sections for better results."
           }
         ]
       },
@@ -157,19 +159,15 @@
           },
           {
             "q": "What does aggression do?",
-            "a": "Aggression is the force with which a fish pulls and jerks the line. High aggression increases the risk of snapping your line if you're not careful."
-          },
-          {
-            "q": "What is stamina?",
-            "a": "Stamina determines how long a fish can fight actively before getting tired. High stamina fish require more patience during reeling and easily exhaust your gear."
+            "a": "Aggression determines the frequency of nibbles before a full bite and the intensity of the fish's jerks during the fight."
           },
           {
             "q": "What is curiosity?",
-            "a": "This represents how quickly a fish approaches the bait once it notices it in the water."
+            "a": "Curiosity influences how much the fish pulls the line downwards during the fight, testing your gear's vertical load."
           },
           {
-            "q": "Can you scare the fish?",
-            "a": "Yes, the fear parameter determines how easily a fish is spooked by loud splashes or incorrect lure movement."
+            "q": "How does fear affect the fish?",
+            "a": "Fear determines how unpredictable and erratic the fish's movements are during the struggle, making it harder to maintain steady tension."
           }
         ]
       },
@@ -178,7 +176,7 @@
         "items": [
           {
             "q": "What gear types are available?",
-            "a": "Float — classic fishing where you see bites on a bobber. Feeder — bottom fishing with a groundbait cage. Spinning — active fishing with artificial lures requiring constant retrieval."
+            "a": "Float – classic fishing where you see bites on a bobber. Feeder – bottom fishing with a groundbait cage. Spinning – active fishing with artificial lures requiring constant retrieval."
           },
           {
             "q": "How does the tension system work?",
@@ -199,11 +197,11 @@
           },
           {
             "q": "What is the best tactic for Pike?",
-            "a": "Pike is exceptionally aggressive and makes sharp jerks. It takes well to wobblers or spoons. Use strong fishing line and avoid pulling by force when it's actively fighting — let it tire out first."
+            "a": "Pike is exceptionally aggressive and makes sharp jerks. It takes well to wobblers or spoons. Use strong fishing line and avoid pulling by force when it's actively fighting – let it tire out first."
           },
           {
             "q": "How to catch a big Carp?",
-            "a": "Carp are most active during evening and night and boast incredible stamina. Use a feeder rig combined with 'Pea Porridge' groundbait and cast corn or dough as bait."
+            "a": "Carp are most active during evening and night and boast incredible strength. Use a feeder rig combined with 'Pea Porridge' groundbait and cast corn or dough as bait."
           },
           {
             "q": "Where to find Zander?",
@@ -215,11 +213,11 @@
           },
           {
             "q": "Why am I catching so many Ruffe?",
-            "a": "Ruffe has immense curiosity and bites almost always. If you want to avoid it and target bigger fish, consider changing your spot, fishing depth or bait type."
+            "a": "Ruffe is a very active fish that bites frequently. If you want to avoid it and target bigger species, consider changing your spot, fishing depth, or bait type."
           },
           {
             "q": "How to handle Grass Carp?",
-            "a": "It's a very shy and cautious fish. It requires careful casting and high endurance during the fight due to its natural strength and stamina."
+            "a": "It's a very shy and cautious fish. It requires careful casting and high power during the fight due to its natural strength and aggression."
           },
           {
             "q": "What is the secret to catching Asp?",
@@ -240,7 +238,7 @@
         "items": [
           {
             "q": "How does Groundbait work?",
-            "a": "Mixtures create an 'attraction zone' where fish swim more actively. It doesn't pull them like a magnet but keeps them within the scent radius longer."
+            "a": "Mixtures significantly increase the probability of fish noticing your bait in the targeted area, improving your chances of a successful bite."
           },
           {
             "q": "When to use Vanillin Mix?",
@@ -248,11 +246,11 @@
           },
           {
             "q": "What are Crushed Peas for?",
-            "a": "This is a heavy mixture for trophy fish like Carp and Grass Carp. It helps 'filter out' smaller fish so you can wait for a real monster."
+            "a": "This is a heavy mixture for trophy fish like Carp and Grass Carp. It significantly increases the interest of large fish in your landing spot."
           },
           {
             "q": "How does Dried Blood help?",
-            "a": "This is a strong attractant for predators. It lures Zander, Perch, and Catfish out of their ambushes to your hook."
+            "a": "This is a strong attractant for predators. It lures Pike, Zander, Perch, and Catfish out of their ambushes to your hook."
           }
         ]
       },
@@ -261,11 +259,11 @@
         "items": [
           {
             "q": "Do rods and reels wear out?",
-            "a": "Yes, fighting fish reduces durability. Use a Repair Kit to restore them, otherwise your gear might break at the worst moment."
+            "a": "Overloading your gear during a fight can cause it to break or lose durability. Use a Repair Kit to restore your equipment before it fails."
           },
           {
             "q": "Why different types of fishing line?",
-            "a": "Different lines have varying strength and visibility. Braided cord is the strongest, while fluorocarbon is nearly invisible to fish."
+            "a": "Different lines have varying strength and max load capacities. Braided cord is the strongest for heavy trophies, while monofilament and fluorocarbon are reliable all-purpose options."
           },
           {
             "q": "How to make money fast?",
@@ -356,7 +354,7 @@
     "purchaseGear": "Purchase gear",
     "free": "Free",
     "starter": "Starter",
-    "buyButton": "Buy for ×{{qty}}",
+    "buyButton": "Buy ×{{qty}}",
     "boughtSuccess": "Bought {{qty}}× {{name}}",
     "buyItem": "Purchase Item",
     "perEach": "/ ea",
@@ -744,7 +742,7 @@
     "description": "The Fishoria servers are currently unavailable. Please try again later."
   },
   "meta": {
-    "landing": "Join Fishoria — a free browser fishing simulator. Cast your line, catch rare fish and upgrade your gear.",
+    "landing": "Fishoria is a browser-based fishing simulator, blending mesmerizing WebGL graphics with uncompromised gameplay realism. Cast your line and experience the ultimate reeling thrill!",
     "resetPassword": "Reset your Fishoria account password securely.",
     "privacy": "Read the Fishoria Privacy Policy to understand how we handle your personal data.",
     "terms": "Review the Fishoria Terms of Service before playing.",
@@ -772,7 +770,7 @@
   },
   "bottomInfo": {
     "title": "Project Information",
-    "text": "WELCOME TO FISHORIA — a next-generation web-based fishing simulator that combines classic gameplay with deep technical simulation. We've created an immersive world where every cast matters and every fish has its own character.\n\nGAMEPLAY EXPERIENCE\nFishoria offers a comprehensive fishing experience featuring multiple fishing styles: Float, Feeder, and Spinning. Manage your equipment carefully — from selecting the right hook size and line type (Mono, Fluoro, or Braid) to choosing the perfect bait for your target species. Success requires mastering the tension system: keep the pressure in the sweet spot to tire the fish without snapping your line or allowing it to escape.\n\nADVANCED FISH AI\nThe heart of Fishoria is our sophisticated Fish AI system. Instead of simple random encounters, our fish are autonomous agents powered by complex steering behaviors and environmental awareness:\n• NATURAL MOVEMENT: Fish use Simplex noise-driven wandering and flocking behaviors to navigate the underwater world realistically.\n• DYNAMIC LIFESTYLES: Every fish follows its own schedule, including migration to preferred depth zones, rest periods, and active hunting phases.\n• ENVIRONMENTAL SENSITIVITY: Fish behavior changes dynamically with the weather and time of day. Predators become more aggressive during rain and low-light conditions, while prey fish seek shelter.\n• REACTIVE INTELLIGENCE: Fish react to your presence. A loud splash might attract a hungry Pike but will scare away a cautious Crucian.\n• BITING STRATEGIES: Some fish are cautious 'nibblers' that test your patience, while others are aggressive 'strikers' that hit the bait with force.\n\nExplore beautifully rendered reservoirs, upgrade your gear, hunt for legendary trophies, and climb the global leaderboard. Whether you're a casual player or a hardcore angler, Fishoria offers a peaceful yet challenging escape into the world of fishing."
+    "text": "WELCOME TO FISHORIA – a next-generation browser-based fishing simulator that combines classic gameplay with deep technical simulation. We've created an immersive world where every cast matters and every fish has its own character.\n\nGAMEPLAY EXPERIENCE\nFishoria offers a comprehensive fishing experience featuring multiple fishing styles: Float, Feeder, and Spinning. Manage your equipment carefully – from selecting the right hook size and line type to choosing the perfect bait for your target species. Success requires mastering the tension system: keep the pressure in the sweet spot to tire the fish without snapping your line or allowing it to escape.\n\nENVIRONMENTAL SENSITIVITY\nBehavior changes dynamically with the weather and time of day. Predators become more active during rain and low-light conditions, requiring different tactics depending on the environment. For spinning enthusiasts, retrieval techniques like jigging or stop-and-go directly influence predator interest.\n\nBITING PROFILES\nSome fish are cautious 'nibblers' that test your patience, while others are aggressive 'strikers' that hit the bait with force.\n\nExplore beautifully rendered reservoirs, upgrade your gear, hunt for legendary trophies, and climb the global leaderboard. Whether you're a casual player or a hardcore angler, Fishoria offers a peaceful yet challenging escape into the world of fishing."
   },
   "privacy": {
     "title": "Privacy Policy",
@@ -784,7 +782,7 @@
   },
   "landing": {
     "or_continue_with": "Or continue with",
-    "title": "Fishoria | Welcome",
+    "title": "Fishoria – A Fishing Simulator in Your Browser",
     "hero": {
       "subtitle": "Fishing simulator in your browser! Authorize to start the game",
       "ariaLabel": "Game introduction"
@@ -827,11 +825,11 @@
     "gallery": {
       "ariaLabel": "Game screenshots gallery",
       "openAriaLabel": "Open full image",
-      "image1": "Fishoria gameplay — lake fishing",
-      "image2": "Fishoria gameplay — fishing action",
-      "image3": "Fishoria gameplay — rare fish catch",
-      "image4": "Fishoria gameplay — equipment",
-      "image5": "Fishoria gameplay — inventory",
+      "image1": "Fishoria gameplay – lake fishing",
+      "image2": "Fishoria gameplay – fishing action",
+      "image3": "Fishoria gameplay – rare fish catch",
+      "image4": "Fishoria gameplay – equipment",
+      "image5": "Fishoria gameplay – inventory",
       "caption1": "Lake fishing",
       "caption2": "Fishing action",
       "caption3": "Rare catch",
@@ -905,7 +903,7 @@
     "passwordUpdated": "Password updated successfully"
   },
   "metadata": {
-    "defaultTitle": "Fishoria | Browser-based fishing simulator",
-    "defaultDescription": "Fishoria is a free browser-based fishing simulator. Catch fish, upgrade gear and compete with anglers worldwide."
+    "defaultTitle": "Fishoria – A Fishing Simulator in Your Browser",
+    "defaultDescription": "Fishoria is a browser-based fishing simulator, blending mesmerizing WebGL graphics with uncompromised gameplay realism. Cast your line and experience the ultimate reeling thrill!"
   }
 }

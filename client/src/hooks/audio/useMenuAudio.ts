@@ -11,7 +11,7 @@ import {
 } from '@/common/media/audio-context';
 
 // ---------------------------------------------------------------------------
-// Music playlist — tracks rotate after each one finishes
+// Music playlist – tracks rotate after each one finishes
 // ---------------------------------------------------------------------------
 const MUSIC_URLS = [
   'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/sounds/ui/main_theme_1.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL3NvdW5kcy91aS9tYWluX3RoZW1lXzEubXAzIiwiaWF0IjoxNzc1ODU4NTQyLCJleHAiOjQ4OTc5MjI1NDJ9.4tO1WzKsLCqgTiQbVwZOKzyLjNIq4ETa1l18rca89Co',
@@ -69,7 +69,7 @@ function pauseAllTracks() {
 }
 
 // ---------------------------------------------------------------------------
-// HMR cleanup — stop old Audio elements when module is replaced
+// HMR cleanup – stop old Audio elements when module is replaced
 // ---------------------------------------------------------------------------
 if (import.meta.hot) {
   import.meta.hot.dispose(() => {
@@ -94,7 +94,7 @@ export function useMenuAudio(musicActive = true) {
   const { musicEnabled, musicVolume } = useAppSelector((s) => s.settings);
 
   // ------------------------------------------------------------------
-  // Track rotation — when current track ends, play the next one
+  // Track rotation – when current track ends, play the next one
   // ------------------------------------------------------------------
   useEffect(() => {
     const handlers = musicTracks.map((track) => {

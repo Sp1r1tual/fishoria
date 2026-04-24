@@ -140,7 +140,9 @@ export function CatchPopup({ result, sceneRef }: ICatchPopupProps) {
         <div className={styles.statsRow}>
           <span>{sizeRankLabel}</span>
           <span className={styles.dot}>•</span>
-          <span>{fish.weight.toFixed(3)} kg</span>
+          <span>
+            {fish.weight.toFixed(3)} {t('units.kg')}
+          </span>
         </div>
       }
       header={
