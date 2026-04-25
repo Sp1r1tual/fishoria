@@ -28,7 +28,7 @@
   pointer-events: none;
 }
 
-@media (max-width: 1044px) {
+@media (max-width: 1080px) {
   .hud-slot__circle {
     width: 42px;
     height: 42px;
@@ -99,7 +99,7 @@
   text-overflow: ellipsis;
 }
 
-@media (max-width: 1044px) {
+@media (max-width: 1080px) {
   .hud-slot__badge {
     min-width: 48px;
     font-size: 0.65rem;

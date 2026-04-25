@@ -50,7 +50,8 @@
     "resetConfirm": "Are you sure you want to completely wipe all progress? This cannot be undone!",
     "logoutButton": "Logout from account",
     "logoutConfirmTitle": "Logout",
-    "logoutConfirmMessage": "Are you sure you want to logout from your account?"
+    "logoutConfirmMessage": "Are you sure you want to logout from your account?",
+    "iosAudioWarning": "There may be sound issues on iOS, the team is working on a fix"
   },
   "statistics": {
     "title": "Fisher Statistics",
@@ -86,6 +87,8 @@
   },
   "guide": {
     "title": "Fishing Guide",
+    "filterByLake": "Filter by Lake",
+    "allLakes": "All Lakes",
     "description": "Description",
     "weightRange": "Weight Range",
     "favoredBaits": "Favored Baits",

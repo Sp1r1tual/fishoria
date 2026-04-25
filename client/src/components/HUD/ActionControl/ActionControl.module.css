@@ -24,7 +24,7 @@
   -ms-user-select: none;
 }
 
-@media (max-width: 1044px) {
+@media (max-width: 1080px) {
   .action__slot-circle {
     width: 44px;
     height: 44px;
@@ -34,7 +34,7 @@
 
 @media (hover: hover) {
   .action__slot-circle:hover {
-    filter: brightness(0.8);
+    filter: brightness(0.9);
   }
 }
 
@@ -55,7 +55,7 @@
   touch-action: none;
 }
 
-@media (max-width: 1044px) {
+@media (max-width: 1080px) {
   .action__reel-btn {
     width: 52px;
     height: 52px;
@@ -141,7 +141,7 @@
   margin-left: 0;
 }
 
-@media (max-width: 1044px) {
+@media (max-width: 1080px) {
   .action__extract-container {
     height: 52px;
   }
@@ -153,7 +153,7 @@
   pointer-events: all;
 }
 
-@media (max-width: 1044px) {
+@media (max-width: 1080px) {
   .action__extract-container--visible {
     width: 50px;
   }

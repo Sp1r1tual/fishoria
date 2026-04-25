@@ -1,14 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import ReactMarkdown from 'react-markdown';
-import 'react-loading-skeleton/dist/skeleton.css';
-
 import { useNewsState } from '@/hooks/game/useNewsState';
 
 import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
 import { ScreenContainer } from '../UI/ScreenContainer/ScreenContainer';
-import { SkeletonImage } from '../UI/skeletons/SkeletonImage/SkeletonImage';
 import { NewsSkeleton } from './NewsSkeleton';
+import { NewsItem } from './NewsItem';
 
 import type { INews } from '@/services/news.service';
 
@@ -43,71 +40,17 @@ export function News() {
         {isLoading ? (
           <NewsSkeleton />
         ) : news.length > 0 ? (
-          <div className={`${styles.news__list} fade-in`}>
-            {news.map((item: INews) => {
-              const isRead = readIds.includes(item.id);
-              return (
-                <article
-                  key={item.id}
-                  className={`${styles.newsItem} ${isRead ? styles['newsItem--read'] : styles['newsItem--unread']} ${!item.imageUrl ? styles['newsItem--no-image'] : ''}`}
-                >
-                  {!isRead && (
-                    <div className={styles.newsItem__unreadBadge}>
-                      {t('news.newBadge')}
-                    </div>
-                  )}
-                  {item.imageUrl && (
-                    <div className={styles.newsItem__imageWrap}>
-                      <SkeletonImage
-                        src={item.imageUrl}
-                        alt={item.title}
-                        width="100%"
-                        height="auto"
-                        skeletonHeight={240}
-                        className={styles.newsItem__image}
-                        onClick={() => window.open(item.imageUrl, '_blank')}
-                        objectFit="contain"
-                      />
-                    </div>
-                  )}
-                  <div className={styles.newsItem__body}>
-                    <h3 className={styles.newsItem__title}>{item.title}</h3>
-                    <div className={styles.newsItem__markdown}>
-                      <ReactMarkdown
-                        components={{
-                          img: ({ src, alt }) => (
-                            <SkeletonImage
-                              src={src || ''}
-                              alt={alt || ''}
-                              onClick={() => window.open(src, '_blank')}
-                              height="auto"
-                              width="100%"
-                              objectFit="contain"
-                              wrapperClassName={styles.newsItem__markdownImage}
-                            />
-                          ),
-                        }}
-                      >
-                        {item.content}
-                      </ReactMarkdown>
-                    </div>
-                    <div className={styles.newsItem__footer}>
-                      <span className={styles.newsItem__date}>
-                        {new Date(item.createdAt).toLocaleDateString()}
-                      </span>
-                      {!isRead && (
-                        <WoodyButton
-                          variant="brown"
-                          size="sm"
-                          onClick={() => markAsRead(item.id)}
-                          label={t('news.markRead')}
-                        />
-                      )}
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
+          <div className={styles.news__list}>
+            {news.map((item: INews, index: number) => (
+              <NewsItem
+                key={item.id}
+                item={item}
+                isRead={readIds.includes(item.id)}
+                index={index}
+                markAsRead={markAsRead}
+                t={t}
+              />
+            ))}
           </div>
         ) : (
           <div className={`${styles.news__emptyState} fade-in`}>

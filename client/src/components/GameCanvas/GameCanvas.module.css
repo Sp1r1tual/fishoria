@@ -33,7 +33,7 @@
   background: #2b1d12;
 }
 
-@media (max-width: 1044px) {
+@media (max-width: 1080px) {
   .game-canvas__hud-tray {
     height: 60px;
   }

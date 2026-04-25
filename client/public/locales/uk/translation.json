@@ -50,7 +50,8 @@
     "resetConfirm": "Ти впевнений, що хочеш повністю стерти весь прогрес? Це незворотньо!",
     "logoutButton": "Вийти з акаунта",
     "logoutConfirmTitle": "Вихід",
-    "logoutConfirmMessage": "Ви впевнені, що хочете вийти зі свого акаунта?"
+    "logoutConfirmMessage": "Ви впевнені, що хочете вийти зі свого акаунта?",
+    "iosAudioWarning": "У грі можливі проблеми зі звуком на iOS, команда працює над виправленням"
   },
   "statistics": {
     "title": "Статистика",
@@ -86,6 +87,8 @@
   },
   "guide": {
     "title": "Довідник рибалки",
+    "filterByLake": "Водойма",
+    "allLakes": "Всі водойми",
     "description": "Опис",
     "weightRange": "Діапазон ваги",
     "favoredBaits": "Улюблені наживки",

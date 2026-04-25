@@ -10,6 +10,7 @@ interface IBubble {
   size: number;
   alpha: number;
   delay: number;
+  perspectiveScale: number;
 }
 
 export class BubbleEffect {
@@ -21,16 +22,21 @@ export class BubbleEffect {
     parent.addChild(this.gfx);
   }
 
-  public spawn(x: number, y: number, amount: number = 3): void {
+  public spawn(
+    x: number,
+    y: number,
+    amount: number = 3,
+    perspectiveScale: number = 1.0,
+  ): void {
     for (let i = 0; i < amount; i++) {
-      const size = 0.3;
+      const size = 0.45;
       const life = 0.8 + Math.random() * 1.0;
 
       const delay = i * (0.3 + Math.random() * 0.4);
 
       this.bubbles.push({
-        x: x + (Math.random() - 0.5) * 35,
-        y: y + (Math.random() - 0.5) * 20,
+        x: x + (Math.random() - 0.5) * 35 * perspectiveScale,
+        y: y + (Math.random() - 0.5) * 20 * perspectiveScale,
 
         vx: 0,
         vy: 0,
@@ -39,6 +45,7 @@ export class BubbleEffect {
         size: size,
         alpha: 0,
         delay: delay,
+        perspectiveScale: perspectiveScale,
       });
     }
   }
@@ -75,8 +82,13 @@ export class BubbleEffect {
         continue;
       }
 
-      this.gfx.ellipse(b.x, b.y, b.size, b.size * 0.35);
-      this.gfx.stroke({ color: 0xffffff, alpha: b.alpha * 0.5, width: 1.0 });
+      const currentSize = b.size * b.perspectiveScale;
+      this.gfx.ellipse(b.x, b.y, currentSize, currentSize * 0.35);
+      this.gfx.stroke({
+        color: 0xffffff,
+        alpha: b.alpha * 0.5,
+        width: 1.0 * b.perspectiveScale,
+      });
     }
   }
 

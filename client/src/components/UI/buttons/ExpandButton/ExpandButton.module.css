@@ -9,4 +9,5 @@
   border-radius: 8px;
   color: #94a3b8;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }

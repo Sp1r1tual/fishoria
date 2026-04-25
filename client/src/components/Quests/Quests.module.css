@@ -45,11 +45,6 @@
     border-color 0.2s ease;
 }
 
-.quest_card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
 .quest_card--completed {
   border-color: rgba(74, 222, 128, 0.3);
 }

@@ -30,7 +30,17 @@
 .help__faq-card {
   padding: 0;
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  user-select: none;
+}
+
+.help__faq-card:hover {
+  background: rgba(255, 255, 255, 0.07);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .help__faq-header {
@@ -38,8 +48,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: pointer;
-  user-select: none;
+  gap: 16px;
 }
 
 .help__faq-q {
@@ -47,6 +56,12 @@
   margin: 0;
   font-size: 1rem;
   font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.help__faq-card:hover .help__faq-q {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 .help__faq-body {

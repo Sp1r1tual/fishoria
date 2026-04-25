@@ -2,6 +2,8 @@ import { Application } from 'pixi.js';
 
 import type { IScene } from '@/common/types';
 
+import { isIOS } from '@/common/utils/device.util';
+
 import BackgroundTimerWorker from './workers/backgroundTimer.worker?worker';
 
 export class Game {
@@ -17,10 +19,6 @@ export class Game {
     const W = container.clientWidth || window.innerWidth;
     const H = container.clientHeight || window.innerHeight;
 
-    const isIOS =
-      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-      (/Macintosh|Mac OS X/.test(navigator.userAgent) &&
-        navigator.maxTouchPoints > 1);
     const maxResolution = isIOS
       ? Math.min(window.devicePixelRatio || 2, 3)
       : window.devicePixelRatio || 1;

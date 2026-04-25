@@ -78,8 +78,8 @@ export interface IPlayerAchievement {
   achievement: {
     id: string;
     code: string;
-    title: Record<string, string>;
-    description: Record<string, string>;
+    title: string;
+    description: string;
     imageUrl: string | null;
   };
   unlockedAt: string | null;

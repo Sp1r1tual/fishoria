@@ -5,12 +5,6 @@
 let sharedCtx: AudioContext | null = null;
 let sharedSfxGainNode: GainNode | null = null;
 
-export const isIOS =
-  typeof window !== 'undefined' &&
-  (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
-    (/Macintosh|Mac OS X/.test(navigator.userAgent) &&
-      navigator.maxTouchPoints > 1));
-
 export function getSharedAudioContext(): AudioContext {
   if (sharedCtx) return sharedCtx;
 

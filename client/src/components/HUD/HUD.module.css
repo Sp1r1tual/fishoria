@@ -34,7 +34,7 @@
   width: 100%;
 }
 
-@media (max-width: 1044px) {
+@media (max-width: 1080px) {
   .hud__top {
     padding: 8px 12px;
   }
@@ -85,7 +85,7 @@
   -webkit-touch-callout: none;
 }
 
-@media (max-width: 1044px) {
+@media (max-width: 1080px) {
   .hud__bottom-bar {
     gap: 20px;
     padding: 4px 8px 8px 8px;
@@ -109,7 +109,7 @@
     drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
 }
 
-@media (max-width: 1044px) {
+@media (max-width: 1080px) {
   .hud__exit-icon {
     width: 26px;
     height: 18px;
@@ -151,7 +151,7 @@
   border-color: rgba(255, 255, 255, 0.3);
 }
 
-@media (max-width: 1044px) {
+@media (max-width: 1080px) {
   .hud__legend-container {
     bottom: 120px;
     right: 30px;

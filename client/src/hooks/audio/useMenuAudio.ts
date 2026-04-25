@@ -4,10 +4,10 @@ import { useClickSound } from './useSoundEffect';
 
 import { useAppSelector } from '@/hooks/core/useAppStore';
 
+import { isIOS } from '@/common/utils/device.util';
 import {
   getSharedAudioContext,
   resumeSharedAudioContext,
-  isIOS,
 } from '@/common/media/audio-context';
 
 // ---------------------------------------------------------------------------
@@ -26,7 +26,6 @@ const musicTracks = MUSIC_URLS.map((url) => {
   return audio;
 });
 
-// Start from a random track each session for variety
 let currentTrackIndex = Math.floor(Math.random() * musicTracks.length);
 
 let musicGainNode: GainNode | null = null;

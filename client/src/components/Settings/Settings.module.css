@@ -195,6 +195,18 @@
   opacity: 0.9;
 }
 
+.settings__audio-note {
+  color: var(--clr-accent);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  padding: 10px 14px;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  border-radius: var(--radius-md);
+  margin-top: 16px;
+  text-align: center;
+}
+
 .settings__logout-container {
   display: flex;
   justify-content: center;

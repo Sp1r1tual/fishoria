@@ -6,6 +6,8 @@ import { AudioSlider } from './AudioSlider';
 import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import { updateSettings } from '@/store/slices/settingsSlice';
 
+import { isIOS } from '@/common/utils/device.util';
+
 import styles from './Settings.module.css';
 
 export function AudioSection() {
@@ -114,6 +116,12 @@ export function AudioSection() {
           onVolumeChange={handleAmbientVolume}
         />
       </div>
+
+      {isIOS && (
+        <div className={styles['settings__audio-note']}>
+          {t('settings.iosAudioWarning')}
+        </div>
+      )}
     </section>
   );
 }

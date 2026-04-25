@@ -28,11 +28,6 @@
     border-color 0.2s ease;
 }
 
-.achievement_card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
 .achievement_card--completed {
   border-color: rgba(167, 243, 208, 0.4);
   box-shadow: 0 4px 16px rgba(167, 243, 208, 0.1);

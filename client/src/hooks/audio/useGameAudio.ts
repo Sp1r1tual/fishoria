@@ -8,11 +8,11 @@ import { preloadAchievementBuffer } from './useSoundEffect';
 
 import { useAppSelector } from '@/hooks/core/useAppStore';
 
+import { isIOS } from '@/common/utils/device.util';
 import {
   getSharedAudioContext,
   resumeSharedAudioContext,
   getSharedSfxGainNode,
-  isIOS,
 } from '@/common/media/audio-context';
 
 import { unlockMusicTracks } from './useMenuAudio';

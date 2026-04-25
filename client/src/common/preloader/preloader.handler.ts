@@ -1,5 +1,6 @@
 import type { AssetContext } from '@/common/types';
 
+import { isSafari } from '@/common/utils/device.util';
 import { ProgressTracker } from './preloader.utils';
 
 async function fallbackToNative(url: string, isAudio: boolean): Promise<void> {
@@ -51,9 +52,6 @@ export async function loadAsset(
   if (signal?.aborted) return;
 
   const isAudio = !!url.match(/\.(mp3|wav|ogg)(?:\?.*)?$/i);
-  const isSafari =
-    /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ||
-    /iPad|iPhone|iPod/.test(navigator.userAgent);
 
   const assetStartTime = Date.now();
   const assetName = url.split('/').pop() || url;

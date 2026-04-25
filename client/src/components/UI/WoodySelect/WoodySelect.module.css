@@ -111,3 +111,28 @@
   font-weight: 900;
   font-size: 1.1rem;
 }
+
+.woody-select--sm .woody-select__trigger {
+  padding: 8px 12px;
+}
+.woody-select--sm .woody-select__value {
+  font-size: 0.85rem;
+}
+.woody-select--sm .woody-select__dropdown {
+  top: 44px;
+}
+.woody-select--sm .woody-select__option {
+  height: 36px;
+  font-size: 0.75rem;
+  padding: 0 16px;
+}
+.woody-select--sm .woody-select__option:hover {
+  padding-left: 20px;
+}
+.woody-select--sm .woody-select__arrow {
+  width: 16px;
+  height: 16px;
+}
+.woody-select--sm .woody-select__check {
+  font-size: 0.95rem;
+}

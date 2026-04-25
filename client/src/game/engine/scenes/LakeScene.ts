@@ -832,6 +832,9 @@ export class LakeScene implements IScene {
       this.hookConfig?.rigType,
     );
 
+    const waterY = H * this.config.environment.waterBoundaryY;
+    const waterHeight = Math.max(1, H - waterY);
+
     if (isCast) {
       let bubbleChance = 0;
 
@@ -855,7 +858,10 @@ export class LakeScene implements IScene {
       }
 
       if (bubbleChance > 0 && Math.random() < bubbleChance) {
-        this.bubbleEffect.spawn(this.hookX, this.hookY, 1);
+        const perspectiveScale =
+          0.6 +
+          0.4 * Math.max(0, Math.min(1, (this.hookY - waterY) / waterHeight));
+        this.bubbleEffect.spawn(this.hookX, this.hookY, 1, perspectiveScale);
       }
     }
 
@@ -863,18 +869,21 @@ export class LakeScene implements IScene {
     const ambientRate = isRaining ? 25.0 : 0.25;
 
     if (Math.random() < deltaTime * ambientRate) {
-      const waterY = H * this.config.environment.waterBoundaryY;
       const spawnX = Math.random() * W;
       const spawnY = waterY + Math.random() * (H - waterY);
+
+      const perspectiveScale =
+        0.6 + 0.4 * Math.max(0, Math.min(1, (spawnY - waterY) / waterHeight));
 
       this.bubbleEffect.spawn(
         spawnX,
         spawnY,
         isRaining ? 1 : 1 + Math.floor(Math.random() * 3),
+        perspectiveScale,
       );
     }
 
-    const renderScale = W < 768 ? 0.45 : W < 1045 ? 0.65 : 1.0;
+    const renderScale = W < 768 ? 0.45 : W < 1080 ? 0.8 : 1.0;
 
     this.hook.update({
       x: this.hookX,

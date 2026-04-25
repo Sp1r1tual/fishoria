@@ -13,6 +13,7 @@ interface WoodySelectProps {
   options: WoodySelectOption[];
   onChange: (value: string) => void;
   className?: string;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export function WoodySelect({
@@ -21,6 +22,7 @@ export function WoodySelect({
   options,
   onChange,
   className = '',
+  size = 'md',
 }: WoodySelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -45,7 +47,7 @@ export function WoodySelect({
   return (
     <div
       ref={containerRef}
-      className={`${styles['woody-select']} ${className}`}
+      className={`${styles['woody-select']} ${className} ${styles[`woody-select--${size}`] || ''}`}
       id={id}
     >
       <div

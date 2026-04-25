@@ -8,7 +8,7 @@
   padding-top: env(safe-area-inset-top);
 }
 
-@media (max-width: 1044px) {
+@media (max-width: 1080px) {
   .main-menu {
     padding-left: 0;
     padding-right: 0;

@@ -45,7 +45,7 @@
     0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
-@media (max-width: 1044px) {
+@media (max-width: 1080px) {
   .lake-info {
     min-width: 155px;
     max-width: 450px;
@@ -199,7 +199,7 @@
   transform: scale(0.98);
 }
 
-@media (max-width: 1044px) {
+@media (max-width: 1080px) {
   .lake-info__activate-gb {
     height: 22px;
     padding: 0 6px;

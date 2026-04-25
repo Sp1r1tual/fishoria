@@ -45,11 +45,9 @@ export function Help() {
                   <article
                     key={id}
                     className={`glass ${styles['help__faq-card']} ${isOpen ? styles['help__faq-card--open'] : ''}`}
+                    onClick={() => setOpenId(isOpen ? null : id)}
                   >
-                    <div
-                      className={styles['help__faq-header']}
-                      onClick={() => setOpenId(isOpen ? null : id)}
-                    >
+                    <div className={styles['help__faq-header']}>
                       <h3 className={styles['help__faq-q']}>{item.q}</h3>
                       <ExpandButton isExpanded={isOpen} />
                     </div>

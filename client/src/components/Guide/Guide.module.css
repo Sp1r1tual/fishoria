@@ -57,3 +57,21 @@
   flex-direction: column;
   gap: 4px;
 }
+
+.guide__filter {
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.guide__filter-label {
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  margin: 0;
+}

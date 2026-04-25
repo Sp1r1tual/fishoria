@@ -76,7 +76,7 @@
   border-radius: 1px;
 }
 
-@media (max-width: 1044px) {
+@media (max-width: 1080px) {
   .depth-indicator {
     bottom: 90px;
     height: 120px;

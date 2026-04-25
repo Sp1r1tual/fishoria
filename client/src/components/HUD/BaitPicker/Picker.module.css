@@ -116,7 +116,7 @@
   background: rgba(251, 191, 36, 0.1);
 }
 
-@media (max-width: 1044px) {
+@media (max-width: 1080px) {
   .picker__dropdown {
     width: 180px;
     padding: 8px;
