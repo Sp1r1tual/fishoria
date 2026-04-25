@@ -419,10 +419,10 @@ export function useGameAudio(manageAmbient = true) {
   const onInterest = useCallback(
     (isSpinning: boolean) => {
       if (isSpinning) {
-        playBell();
+        playOnce('spinningDing');
       }
     },
-    [playBell],
+    [playOnce],
   );
 
   const onCatch = useCallback(() => {
