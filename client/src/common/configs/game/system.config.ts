@@ -94,7 +94,7 @@ export const EXPERIENCE = {
 
 export const ECONOMY = {
   /** Base price per kilogram of fish sold */
-  baseFishPricePerKg: 3,
+  baseFishPricePerKg: 4,
 } as const;
 
 export const GAME_CHANCES = {
