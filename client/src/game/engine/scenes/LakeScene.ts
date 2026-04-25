@@ -816,7 +816,8 @@ export class LakeScene implements IScene {
     this.totalTime += deltaTime;
 
     this.groundbaitEffect.update(deltaTime);
-    this.bubbleEffect.update(deltaTime);
+    const bubbleScale = W < 1000 ? 0.7 : 1.0;
+    this.bubbleEffect.update(deltaTime, bubbleScale);
     this.dragonflyEffect.update(
       deltaTime,
       W,
@@ -866,7 +867,7 @@ export class LakeScene implements IScene {
     }
 
     const isRaining = this.weather === 'rain';
-    const ambientRate = isRaining ? 25.0 : 0.25;
+    const ambientRate = isRaining ? 25.0 : 1.0;
 
     if (Math.random() < deltaTime * ambientRate) {
       const spawnX = Math.random() * W;

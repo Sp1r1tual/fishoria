@@ -29,7 +29,7 @@ export class BubbleEffect {
     perspectiveScale: number = 1.0,
   ): void {
     for (let i = 0; i < amount; i++) {
-      const size = 0.45;
+      const size = 1.5;
       const life = 0.8 + Math.random() * 1.0;
 
       const delay = i * (0.3 + Math.random() * 0.4);
@@ -50,7 +50,7 @@ export class BubbleEffect {
     }
   }
 
-  public update(dt: number): void {
+  public update(dt: number, scale: number = 1.0): void {
     if (this.bubbles.length === 0) {
       if (this.gfx.alpha > 0) this.gfx.clear();
       return;
@@ -68,7 +68,7 @@ export class BubbleEffect {
 
       b.life -= dt;
 
-      b.size += dt * 3.5;
+      b.size += dt * 8.0;
 
       if (b.life > b.maxLife - 0.2) {
         b.alpha = (b.maxLife - b.life) / 0.2;
@@ -82,12 +82,12 @@ export class BubbleEffect {
         continue;
       }
 
-      const currentSize = b.size * b.perspectiveScale;
+      const currentSize = b.size * b.perspectiveScale * scale;
       this.gfx.ellipse(b.x, b.y, currentSize, currentSize * 0.35);
       this.gfx.stroke({
         color: 0xffffff,
         alpha: b.alpha * 0.5,
-        width: 1.0 * b.perspectiveScale,
+        width: 1.0 * b.perspectiveScale * scale,
       });
     }
   }

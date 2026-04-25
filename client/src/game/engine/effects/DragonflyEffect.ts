@@ -55,10 +55,11 @@ export class DragonflyEffect {
       timeOfDay !== 'night' &&
       rigType !== 'spinning';
     const rodIsCalm =
-      isCast && phase === 'waiting' && maxInterest < 0.2 && !playerReeling;
+      phase === 'idle' ||
+      (isCast && phase === 'waiting' && maxInterest < 0.2 && !playerReeling);
 
     if (this.state === 'hidden') {
-      if (canBePresent && rodIsCalm && Math.random() < dt * 0.15) {
+      if (canBePresent && rodIsCalm && Math.random() < dt * 0.03) {
         this.state = 'flying';
         this.isTargetingRod = true;
         this.currentSpeed = 0;
@@ -149,9 +150,10 @@ export class DragonflyEffect {
           : 0.2 + Math.random() * 0.3;
       }
 
-      const targetSpeed = this.isBursting ? 450 : 25;
+      const speedScale = W < 768 ? 0.6 : W < 1000 ? 0.8 : 1.0;
+      const targetSpeed = (this.isBursting ? 300 : 20) * speedScale;
 
-      this.currentSpeed += (targetSpeed - this.currentSpeed) * dt * 12;
+      this.currentSpeed += (targetSpeed - this.currentSpeed) * dt * 7;
 
       const dx = this.targetX - this.x;
       const dy = this.targetY - this.y;
