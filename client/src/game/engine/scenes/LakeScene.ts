@@ -789,6 +789,7 @@ export class LakeScene implements IScene {
         this.weather,
         GROUNDBAITS[this.activeGroundbaitType],
         this.hookConfig?.rigType,
+        this.activeBait,
       );
       this.debugLayer.update();
     }
