@@ -1,6 +1,6 @@
 import type { IFishSpeciesConfig, FishStateType } from '@/common/types';
 
-import { FISH_STATES } from './constants/FishState';
+import { FISH_STATES } from './FishState';
 
 import { FISH_AI, CATCH_RESULT } from '@/common/configs/game';
 
