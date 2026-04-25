@@ -4,6 +4,7 @@ import type {
   IAllowedCastArea,
 } from '@/common/types';
 import { pointInPolygon } from '@/game/utils/MathUtils';
+import { POPULATION } from '@/common/configs/game';
 
 interface ISector {
   nx: number;
@@ -158,12 +159,12 @@ export class SectorSystem {
     const getDepthFactor = (range: { min: number; max: number }) => {
       if (depthM < range.min) {
         const gap = range.min - depthM;
-        return Math.max(0, 1 - gap * 3.0);
+        return Math.max(0, 1 - gap * POPULATION.lowDepthPenalty);
       }
 
       if (depthM > range.max) {
         const gap = depthM - range.max;
-        return Math.max(0, 1 - gap * 0.8);
+        return Math.max(0, 1 - gap * POPULATION.highDepthPenalty);
       }
 
       return 1.0;

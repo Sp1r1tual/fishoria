@@ -20,14 +20,17 @@ export class TensionSystem {
     let gearToBreak: 'rod' | 'reel' | 'line' | 'hook' | null = null;
 
     for (const gear of gears) {
-      if (params.fishWeight > gear.maxWeight * 1.15) {
+      if (params.fishWeight > gear.maxWeight * TENSION.instantBreakMultiplier) {
         gearToBreak = gear.type;
         break;
       }
     }
 
     const tackleMaxWeight = gears[0].maxWeight;
-    const tackleStrength = Math.max(0.01, tackleMaxWeight / 60);
+    const tackleStrength = Math.max(
+      0.01,
+      tackleMaxWeight / TENSION.tackleStrengthDivisor,
+    );
 
     const baseForce =
       params.fishWeight *
@@ -45,10 +48,14 @@ export class TensionSystem {
 
       if (isOverloaded) {
         const overloadRatio = params.fishWeight / tackleMaxWeight;
-        buildRate *= 1.2 + overloadRatio * 0.5;
+        buildRate *=
+          TENSION.overloadRatioBase +
+          overloadRatio * TENSION.overloadRatioScale;
       }
 
-      const maxBuildRate = isOverloaded ? 12.0 : 3.0;
+      const maxBuildRate = isOverloaded
+        ? TENSION.maxBuildRateOverloaded
+        : TENSION.maxBuildRateNormal;
       buildRate = Math.min(buildRate, maxBuildRate);
 
       tension += buildRate * dtSec;

@@ -5,14 +5,17 @@
  */
 
 export const REELING_PHYSICS = {
-  /** Weight penalty: Math.pow(maxWeight, 0.6) * weightPenaltyFactor */
+  /** Weight penalty: Math.pow(maxWeight, weightPenaltyExponent) * weightPenaltyFactor */
   weightPenaltyFactor: 0.85,
+  weightPenaltyExponent: 0.6,
 
   /** Pixels-per-second base scale */
-  pullSpeedScale: 110.0,
+  pullSpeedScale: 65.0,
   /** Absolute minimum pixels-per-second pull guarantee even with terrible gear */
-  minPullSpeed: 30.0,
+  minPullSpeed: 15.0,
   shoreBoundaryPx: 4,
+  /** Base height for UI scaling calculations */
+  referenceHeight: 800,
 
   /** Side movement speed multiplier during fight */
   sideMovementSpeedMult: 0.7,
@@ -43,6 +46,21 @@ export const TENSION = {
   escapeGracePeriod: 0.8,
   /** Escape threshold */
   escapeThreshold: 100,
+
+  /** Instant gear break threshold (weight / maxWeight) */
+  instantBreakMultiplier: 1.15,
+  /** Divisor for tackle strength calculation */
+  tackleStrengthDivisor: 60,
+
+  /** Max build rate when gear is overloaded */
+  maxBuildRateOverloaded: 12.0,
+  /** Max build rate when gear is not overloaded */
+  maxBuildRateNormal: 3.0,
+
+  /** Base overload ratio multiplier */
+  overloadRatioBase: 1.2,
+  /** Overload ratio scaling factor */
+  overloadRatioScale: 0.5,
 } as const;
 
 export const SNAG = {

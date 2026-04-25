@@ -25,6 +25,7 @@ import { HookEntity } from '../entities/HookEntity';
 import { DebugLayer } from '../systems/DebugLayer';
 import { BackgroundRenderer } from '../rendering/BackgroundRenderer';
 import { GroundbaitEffect } from '../systems/GroundbaitEffect';
+import { BubbleEffect } from '../systems/BubbleEffect';
 import { InputHandler } from '../input/InputHandler';
 import { validateCast } from '@/game/domain/mechanics/CastingSystem';
 import { detectSectorBite } from '@/game/domain/mechanics/SectorBiteDetection';
@@ -115,6 +116,7 @@ export class LakeScene implements IScene {
   private weatherLayer!: WeatherLayer;
   private weather: WeatherType = 'clear';
   private groundbaitEffect!: GroundbaitEffect;
+  private bubbleEffect!: BubbleEffect;
 
   private config: ILakeConfig;
   private callbacks: ILakeSceneCallbacks;
@@ -221,6 +223,7 @@ export class LakeScene implements IScene {
 
     this.weatherLayer = new WeatherLayer(this.stage, app);
     this.groundbaitEffect = new GroundbaitEffect(this.stage);
+    this.bubbleEffect = new BubbleEffect(this.fishLayer);
 
     this.hookX = W / 2;
     this.hookY = H / 2;
@@ -745,24 +748,26 @@ export class LakeScene implements IScene {
         this.retrievePauseTime = 0;
       } else {
         this.retrievePauseTime += dtSec;
-        if (this.retrievePauseTime > 0.05) {
+        if (
+          this.retrievePauseTime > SCENE_TIMING.retrieve.pauseResetThreshold
+        ) {
           this.retrieveReelTime = 0;
         }
       }
-      if (this.retrieveReelTime > 1.5) {
+      if (this.retrieveReelTime > SCENE_TIMING.retrieve.steadyMinTime) {
         this.currentRetrieveType = 'steady';
       } else if (
-        this.retrieveReelTime > 0.3 &&
-        this.retrieveReelTime < 1.2 &&
-        this.retrievePauseTime > 0.2 &&
-        this.retrievePauseTime < 1.0
+        this.retrieveReelTime > SCENE_TIMING.retrieve.stopAndGo.minReel &&
+        this.retrieveReelTime < SCENE_TIMING.retrieve.stopAndGo.maxReel &&
+        this.retrievePauseTime > SCENE_TIMING.retrieve.stopAndGo.minPause &&
+        this.retrievePauseTime < SCENE_TIMING.retrieve.stopAndGo.maxPause
       ) {
         this.currentRetrieveType = 'stop-and-go';
       } else if (
-        this.retrieveReelTime > 0.05 &&
-        this.retrieveReelTime < 0.25 &&
-        this.retrievePauseTime > 0.05 &&
-        this.retrievePauseTime < 0.3
+        this.retrieveReelTime > SCENE_TIMING.retrieve.jigging.minReel &&
+        this.retrieveReelTime < SCENE_TIMING.retrieve.jigging.maxReel &&
+        this.retrievePauseTime > SCENE_TIMING.retrieve.jigging.minPause &&
+        this.retrievePauseTime < SCENE_TIMING.retrieve.jigging.maxPause
       ) {
         this.currentRetrieveType = 'jigging';
       }
@@ -806,6 +811,49 @@ export class LakeScene implements IScene {
     this.totalTime += deltaTime;
 
     this.groundbaitEffect.update(deltaTime);
+    this.bubbleEffect.update(deltaTime);
+
+    if (isCast) {
+      let bubbleChance = 0;
+
+      const bottomFeeders = [
+        'carp',
+        'crucian',
+        'bream',
+        'tench',
+        'catfish',
+        'american_catfish',
+        'weatherfish',
+        'crayfish',
+        'gudgeon',
+        'silver_carp',
+      ];
+      if (
+        this.potentialBiter &&
+        bottomFeeders.includes(this.potentialBiter.config.id)
+      ) {
+        bubbleChance += deltaTime * 1.5;
+      }
+
+      if (bubbleChance > 0 && Math.random() < bubbleChance) {
+        this.bubbleEffect.spawn(this.hookX, this.hookY, 1);
+      }
+    }
+
+    const isRaining = this.weather === 'rain';
+    const ambientRate = isRaining ? 25.0 : 0.25;
+
+    if (Math.random() < deltaTime * ambientRate) {
+      const waterY = H * this.config.environment.waterBoundaryY;
+      const spawnX = Math.random() * W;
+      const spawnY = waterY + Math.random() * (H - waterY);
+
+      this.bubbleEffect.spawn(
+        spawnX,
+        spawnY,
+        isRaining ? 1 : 1 + Math.floor(Math.random() * 3),
+      );
+    }
 
     const renderScale = W < 768 ? 0.45 : W < 1045 ? 0.65 : 1.0;
 
@@ -942,6 +990,7 @@ export class LakeScene implements IScene {
     this.debugLayer.destroy();
     this.weatherLayer.destroy();
     this.groundbaitEffect.destroy();
+    this.bubbleEffect.destroy();
   }
 
   setDebugVisible(visible: boolean): void {
@@ -1056,6 +1105,14 @@ export class LakeScene implements IScene {
         }
 
         this.potentialBiter.nibblesDone++;
+
+        if (this.isBaitOnBottom() && Math.random() < 0.4) {
+          this.bubbleEffect.spawn(
+            this.hookX,
+            this.hookY,
+            1 + Math.floor(Math.random() * 2),
+          );
+        }
 
         if (Math.random() < 0.1) {
           this.potentialBiter = null;

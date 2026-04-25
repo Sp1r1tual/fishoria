@@ -24,10 +24,11 @@ export function pullFishToShore(
 
   const weightPenalty = Math.max(
     1,
-    Math.pow(weightRatio, 0.6) * REELING_PHYSICS.weightPenaltyFactor,
+    Math.pow(weightRatio, REELING_PHYSICS.weightPenaltyExponent) *
+      REELING_PHYSICS.weightPenaltyFactor,
   );
 
-  const scale = targetY / 800;
+  const scale = targetY / REELING_PHYSICS.referenceHeight;
   let pullSpeedRaw =
     (effectivePull / weightPenalty) * REELING_PHYSICS.pullSpeedScale;
 

@@ -6,7 +6,7 @@
 
 export const BITE_DETECTION = {
   /** Vertical gap penalty factor */
-  verticalGapPenaltyFactor: 1.0,
+  verticalGapPenaltyFactor: 2.5,
 
   /** Chance for a predator to strike a spinning lure instantly vs starting a follow phase */
   spinningImmediateBiteChance: 0.15,
@@ -29,7 +29,29 @@ export const BITE_DETECTION = {
    * Passive bite probability multiplier for feeder rig.
    * Encourages using feeder over float for stationary fishing.
    */
-  feederBiteMultiplier: 1.15,
+  feederBiteMultiplier: 1.05,
+
+  /**
+   * Active bite probability multiplier for spinning rig.
+   */
+  spinningBiteMultiplier: 1.05,
+
+  /** Base progress added for a nibble */
+  nibbleProgressBase: 0.3,
+  /** Random extra progress added for a nibble */
+  nibbleProgressRange: 0.5,
+
+  /** Multiplier for bite chance if this fish was already the potential biter */
+  potentialBiterMatchMultiplier: 4.0,
+  /** Penalty multiplier for bite chance if another fish was the potential biter */
+  potentialBiterMismatchMultiplier: 0.15,
+  /** Penalty multiplier if fishing on the bottom but it's deeper than preferred */
+  outOfRangeBottomPenalty: 0.1,
+
+  /** Base progress added for an alternative bite phase */
+  altProgressBase: 0.4,
+  /** Random extra progress added for an alternative bite phase */
+  altProgressRange: 0.4,
 } as const;
 
 export const INTEREST_RATES = {
@@ -40,6 +62,32 @@ export const INTEREST_RATES = {
       slow: 0.6,
       normal: 1.0,
       fast: 1.6,
+    },
+
+    follower: {
+      /** Thresholds for continuous reeling (seconds) */
+      shortMoveThreshold: 0.25,
+      longMoveThreshold: 1.4,
+
+      /** Interest adjustments for continuous reeling (per second) */
+      shortMovePenalty: 0.15,
+      longMovePenalty: 0.85,
+      goodMoveBonus: 0.32,
+
+      /** Thresholds for stop-and-go pauses (seconds) */
+      shortPauseThreshold: 0.8,
+      longPauseThreshold: 1.6,
+
+      /** Interest adjustments for stop-and-go pauses (per second) */
+      goodPauseBonus: 0.05,
+      longPausePenalty: 1.2,
+
+      /** Decay multiplier for continuous movement time when stopped */
+      stopDecayMultiplier: 4.0,
+
+      /** Initial random interest bounds when follower is spawned */
+      initialInterestMin: 0.1,
+      initialInterestRange: 0.2,
     },
   },
 } as const;
@@ -59,4 +107,11 @@ export const FISH_AI = {
   /** Fish struggle aggression multipliers for tension: aggression * Weight + Base */
   struggleAggressionWeight: 0.8,
   struggleAggressionBase: 0.2,
+} as const;
+
+export const POPULATION = {
+  /** Penalty factor for points shallower than preferred depth */
+  lowDepthPenalty: 3.0,
+  /** Penalty factor for points deeper than preferred depth */
+  highDepthPenalty: 0.8,
 } as const;

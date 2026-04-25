@@ -1,12 +1,17 @@
+import { INTEREST_RATES } from '@/common/configs/game';
+
 export class LureFollower {
   public speciesId: string;
   public interest: number = 0;
   public state: 'following' | 'attacking' | 'lost' = 'following';
   private timeSinceLastMovement: number = 0;
 
-  constructor(speciesId: string, initialInterest: number = 0.1) {
+  constructor(speciesId: string, initialInterest: number = 0) {
     this.speciesId = speciesId;
-    this.interest = initialInterest;
+    this.interest =
+      initialInterest ||
+      INTEREST_RATES.spinning.follower.initialInterestMin +
+        Math.random() * INTEREST_RATES.spinning.follower.initialInterestRange;
   }
 
   private continuousReelTime: number = 0;
@@ -14,31 +19,33 @@ export class LureFollower {
   public update(deltaTime: number, isMoving: boolean) {
     const dtSec = deltaTime;
 
+    const config = INTEREST_RATES.spinning.follower;
+
     if (isMoving) {
       this.timeSinceLastMovement = 0;
       this.continuousReelTime += dtSec;
 
-      if (this.continuousReelTime < 0.25) {
+      if (this.continuousReelTime < config.shortMoveThreshold) {
         // Penalty for very short "stutter" movements
-        this.interest -= 0.15 * dtSec;
-      } else if (this.continuousReelTime > 1.4) {
-        this.interest -= 0.85 * dtSec;
+        this.interest -= config.shortMovePenalty * dtSec;
+      } else if (this.continuousReelTime > config.longMoveThreshold) {
+        this.interest -= config.longMovePenalty * dtSec;
       } else {
-        this.interest += 0.32 * dtSec;
+        this.interest += config.goodMoveBonus * dtSec;
       }
     } else {
       // Decay continuous time instead of instant reset to prevent spam
       this.continuousReelTime = Math.max(
         0,
-        this.continuousReelTime - dtSec * 4,
+        this.continuousReelTime - dtSec * config.stopDecayMultiplier,
       );
       this.timeSinceLastMovement += dtSec;
 
-      if (this.timeSinceLastMovement < 0.8) {
+      if (this.timeSinceLastMovement < config.shortPauseThreshold) {
         // Small bonus for a proper "stop-and-go" pause
-        this.interest += 0.05 * dtSec;
-      } else if (this.timeSinceLastMovement > 1.6) {
-        this.interest -= 1.2 * dtSec;
+        this.interest += config.goodPauseBonus * dtSec;
+      } else if (this.timeSinceLastMovement > config.longPauseThreshold) {
+        this.interest -= config.longPausePenalty * dtSec;
       }
     }
 

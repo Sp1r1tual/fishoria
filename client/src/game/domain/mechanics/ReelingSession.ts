@@ -177,7 +177,7 @@ export function updateReelingPhase(
   const hookX = hookedFish.position.x;
   const hookY = hookedFish.position.y;
 
-  const scale = H / 800;
+  const scale = H / REELING_PHYSICS.referenceHeight;
   const isAtShore =
     H - hookY <= Math.max(10 * scale, REELING_PHYSICS.shoreBoundaryPx);
 

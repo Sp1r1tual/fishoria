@@ -140,7 +140,8 @@ export function detectSectorBite(params: ISectorBiteParams): ISectorBiteResult {
         timeScore *
         weatherScore *
         baitScore *
-        groundbaitMultiplier;
+        groundbaitMultiplier *
+        BITE_DETECTION.spinningBiteMultiplier;
 
       if (baseChance < 0.001) continue;
 
@@ -155,7 +156,7 @@ export function detectSectorBite(params: ISectorBiteParams): ISectorBiteResult {
             progressSpeciesId: speciesId,
           };
         }
-        activeFollower = new LureFollower(speciesId, 0.1 + Math.random() * 0.2);
+        activeFollower = new LureFollower(speciesId);
         break;
       }
     }
@@ -245,19 +246,24 @@ export function detectSectorBite(params: ISectorBiteParams): ISectorBiteResult {
         if (selected) {
           const actionRoll = Math.random();
           if (actionRoll < nibbleMultiplier / (nibbleMultiplier + 1.0)) {
-            maxProgress = 0.3 + Math.random() * 0.5;
+            maxProgress =
+              BITE_DETECTION.nibbleProgressBase +
+              Math.random() * BITE_DETECTION.nibbleProgressRange;
             progressSpeciesId = selected.id;
           } else {
             let biteProb: number = BITE_DETECTION.directBiteChance;
             if (params.potentialBiterSpeciesId === selected.id) {
-              biteProb = Math.min(1.0, biteProb * 4.0);
+              biteProb = Math.min(
+                1.0,
+                biteProb * BITE_DETECTION.potentialBiterMatchMultiplier,
+              );
             } else if (params.hasPotentialBiter) {
-              biteProb *= 0.15;
+              biteProb *= BITE_DETECTION.potentialBiterMismatchMultiplier;
             }
 
             const depthRange = params.getPreferredDepthRange(selected.id);
             if (params.isOnBottom && depthRange.max < params.hookDepthM - 1) {
-              biteProb *= 0.1;
+              biteProb *= BITE_DETECTION.outOfRangeBottomPenalty;
             }
 
             if (Math.random() < biteProb) {
@@ -268,7 +274,9 @@ export function detectSectorBite(params: ISectorBiteParams): ISectorBiteResult {
                 progressSpeciesId: selected.id,
               };
             } else {
-              maxProgress = 0.4 + Math.random() * 0.4;
+              maxProgress =
+                BITE_DETECTION.altProgressBase +
+                Math.random() * BITE_DETECTION.altProgressRange;
               progressSpeciesId = selected.id;
             }
           }

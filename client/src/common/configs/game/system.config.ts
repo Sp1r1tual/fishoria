@@ -65,6 +65,26 @@ export const SCENE_TIMING = {
 
   /** Bottom detection tolerance (meters) */
   bottomDetectionTolerance: 0.05,
+
+  /** Retrieve type timings (seconds) */
+  retrieve: {
+    pauseResetThreshold: 0.05,
+    steadyMinTime: 1.5,
+
+    stopAndGo: {
+      minReel: 0.3,
+      maxReel: 1.2,
+      minPause: 0.2,
+      maxPause: 1.0,
+    },
+
+    jigging: {
+      minReel: 0.05,
+      maxReel: 0.25,
+      minPause: 0.05,
+      maxPause: 0.3,
+    },
+  },
 } as const;
 
 export const EXPERIENCE = {
