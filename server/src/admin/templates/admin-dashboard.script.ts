@@ -56,7 +56,7 @@ export const AdminDashboardScript = () => {
 
   window.checkSwagger = async function () {
     try {
-      const response = await fetch('/docs', { method: 'HEAD' });
+      const response = await fetch('/docs-json');
       if (response.ok) {
         window.location.href = '/docs';
       } else {
