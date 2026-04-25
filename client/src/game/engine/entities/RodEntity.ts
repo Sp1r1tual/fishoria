@@ -59,7 +59,7 @@ export class RodEntity {
 
   private guidePoints: { x: number; y: number }[] = [];
 
-  private get tipX(): number {
+  public get tipX(): number {
     const dx = this.aimX - this.baseX;
     const lean = Math.min(Math.abs(dx) * 0.1, 40 * this.scale);
     const dir = dx > 0 ? 1 : -1;
@@ -67,7 +67,7 @@ export class RodEntity {
     return this.baseX + lean * dir + dir * flex;
   }
 
-  private get tipY(): number {
+  public get tipY(): number {
     const length = 280 * this.scale;
     const dy = this.aimY - this.baseY;
     const vOffset = Math.max(-40, Math.min(40, dy * 0.05)) * this.scale;

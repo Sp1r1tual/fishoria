@@ -10,7 +10,7 @@ import type {
 import type { DepthSystem } from './DepthSystem';
 import type { SectorSystem } from './SectorSystem';
 import { pointInPolygon } from '@/game/utils/MathUtils';
-import { FISH_SPECIES } from '@/common/configs/game';
+import { FISH_SPECIES, BITE_DETECTION } from '@/common/configs/game';
 
 export class DebugLayer {
   private container: Container;
@@ -32,6 +32,7 @@ export class DebugLayer {
   private currentTimeOfDay: TimeOfDayType = 'day';
   private currentWeather: WeatherType = 'clear';
   private currentGroundbait: IGroundbaitConfig | null = null;
+  private currentRigType: string | undefined = undefined;
 
   constructor(
     parent: Container,
@@ -145,10 +146,12 @@ export class DebugLayer {
     time: TimeOfDayType,
     weather: WeatherType,
     gb: IGroundbaitConfig | null,
+    rigType?: string,
   ): void {
     this.currentTimeOfDay = time;
     this.currentWeather = weather;
     this.currentGroundbait = gb;
+    this.currentRigType = rigType;
   }
 
   public update(): void {
@@ -317,6 +320,7 @@ export class DebugLayer {
           let tMult = 1.0;
           let wMult = 1.0;
           let gMult = 1.0;
+          let rMult = 1.0;
 
           if (globalConfig) {
             tMult =
@@ -330,26 +334,36 @@ export class DebugLayer {
                 gb.fishedSpeciesMultiplier[id]
               ) {
                 gMult = gb.fishedSpeciesMultiplier[id];
-              } else {
-                gMult = 1.0;
               }
+            }
+
+            if (this.currentRigType === 'feeder') {
+              rMult = BITE_DETECTION.feederBiteMultiplier;
+            } else if (
+              this.currentRigType === 'spinning' &&
+              globalConfig.isPredator
+            ) {
+              rMult = BITE_DETECTION.spinningBiteMultiplier;
             }
 
             const tSign = tMult >= 1.0 ? '+' : '';
             const wSign = wMult >= 1.0 ? '+' : '';
             const gSign = gMult >= 1.0 ? '+' : '';
+            const rSign = rMult >= 1.0 ? '+' : '';
 
             const tLabel = `${tSign}${Math.round((tMult - 1) * 100)}%`;
             const wLabel = `${wSign}${Math.round((wMult - 1) * 100)}%`;
             const gLabel = `${gSign}${Math.round((gMult - 1) * 100)}%`;
+            const rLabel = `${rSign}${Math.round((rMult - 1) * 100)}%`;
 
-            factorsStr = ` [T:${tLabel}, W:${wLabel}, G:${gLabel}]`;
+            factorsStr = ` [T:${tLabel}, W:${wLabel}, G:${gLabel}, R:${rLabel}]`;
           }
 
           const rangeStr = config
             ? `(${config.preferredDepthRange.min}-${config.preferredDepthRange.max}m)`
             : '';
-          let effectiveAvailability = availability * tMult * wMult * gMult;
+          let effectiveAvailability =
+            availability * tMult * wMult * gMult * rMult;
           if (effectiveAvailability < 0.001) effectiveAvailability = 0;
 
           const chancePercent = (effectiveAvailability * 100).toFixed(1);

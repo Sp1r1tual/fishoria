@@ -43,7 +43,7 @@ export class GroundbaitEffect {
         vx: (Math.random() - 0.5) * (50 * scale),
         vy: (-12 - Math.random() * 38) * scale,
         life: 1.0,
-        size: (2.5 + Math.random() * 4.5) * scale,
+        size: (1.0 + Math.random() * 1.5) * scale,
         alpha: 1.0,
         color,
       });

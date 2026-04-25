@@ -167,14 +167,20 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
     );
 
     if (rigType === 'feeder') {
-      const shakeAmount =
-        maxInterest > 0.2
-          ? (maxInterest - 0.2) *
-            0.12 *
-            (1 + Math.sin(time * (9.0 + maxInterest * 15)))
-          : 0;
+      let shakeAmount = 0;
+      if (maxInterest > 0.1) {
+        const freq1 = 4.0 + maxInterest * 5.0;
+        const freq2 = freq1 * 0.73;
+
+        const wave1 = Math.sin(time * freq1);
+        const wave2 = Math.cos(time * freq2);
+
+        const combinedWave = 1 + (wave1 + wave2) * 0.5;
+
+        shakeAmount = (maxInterest - 0.1) * 0.08 * combinedWave;
+      }
       rodTension = shakeAmount;
-      lineSlack = Math.max(0, lineSlack - shakeAmount * 0.2);
+      lineSlack = Math.max(0, lineSlack - shakeAmount * 0.3);
     }
   } else if (isCast && phase === 'escaped') {
     rodTension = 0;

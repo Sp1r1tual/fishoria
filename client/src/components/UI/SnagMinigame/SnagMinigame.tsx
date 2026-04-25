@@ -130,29 +130,33 @@ export function SnagMinigame({ onComplete }: Props) {
       <div
         className={`${styles.minigame} ${isGameOver ? (isWon ? styles.win : styles.lose) : ''}`}
       >
-        <div className={styles.hits}>
-          {[0, 1].map((i) => (
-            <div
-              key={i}
-              className={`${styles.hitDot} ${hits > i ? styles.hitActive : ''}`}
-            />
-          ))}
-        </div>
+        {!isGameOver && (
+          <div className={styles.hits}>
+            {[0, 1].map((i) => (
+              <div
+                key={i}
+                className={`${styles.hitDot} ${hits > i ? styles.hitActive : ''}`}
+              />
+            ))}
+          </div>
+        )}
 
-        <div className={styles.bar}>
-          <div
-            className={styles.target}
-            style={{
-              left: `${(targetPos - targetWidth / 2) * 100}%`,
-              width: `${targetWidth * 100}%`,
-            }}
-          />
-          <div
-            ref={markerDomRef}
-            className={styles.marker}
-            style={{ left: '0%' }}
-          />
-        </div>
+        {!isGameOver && (
+          <div className={styles.bar}>
+            <div
+              className={styles.target}
+              style={{
+                left: `${(targetPos - targetWidth / 2) * 100}%`,
+                width: `${targetWidth * 100}%`,
+              }}
+            />
+            <div
+              ref={markerDomRef}
+              className={styles.marker}
+              style={{ left: '0%' }}
+            />
+          </div>
+        )}
 
         {isGameOver && (
           <div

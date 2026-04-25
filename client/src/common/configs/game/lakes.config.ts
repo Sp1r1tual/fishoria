@@ -7,8 +7,6 @@ import canalNightImg from '@/assets/locations/02_pasture_canal_night.webp';
 import farmDayImg from '@/assets/locations/03_reservoir_day.webp';
 import farmNightImg from '@/assets/locations/03_reservoir_night.webp';
 
-//! The configuration allows you to override the weight range for fish using the property weightRange: { min: 0.1, max: 10 },
-
 export const LAKES: ILakeConfig[] = [
   {
     id: 'forest_lake',
@@ -40,7 +38,7 @@ export const LAKES: ILakeConfig[] = [
         {
           speciesId: 'pike',
           preferredDepthRange: { min: 0.2, max: 2.5 },
-          baseCatchChance: 0.025,
+          baseCatchChance: 0.03,
         },
         {
           speciesId: 'roach',

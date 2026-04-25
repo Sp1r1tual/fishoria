@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 import { TimeManager } from '@/game/managers/TimeManager';
+import { GameEvents } from '@/game/engine/GameEvents';
 
 import clockIcon from '@/assets/ui/clock.webp';
 
@@ -20,15 +21,7 @@ export function GameClock({
   const timeTextRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    if (timeTextRef.current) {
-      const initTime = TimeManager.getTime(mode);
-      timeTextRef.current.innerText = initTime.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    }
-
-    const interval = setInterval(() => {
+    const update = () => {
       if (timeTextRef.current) {
         const now = TimeManager.getTime(mode);
         timeTextRef.current.innerText = now.toLocaleTimeString([], {
@@ -36,8 +29,24 @@ export function GameClock({
           minute: '2-digit',
         });
       }
-    }, 1000);
-    return () => clearInterval(interval);
+    };
+
+    update();
+
+    const interval = setInterval(update, 1000);
+    const unbind = GameEvents.on(
+      'timeUpdate',
+      (data: { hour: number; mode: string }) => {
+        if (data.mode === mode) {
+          update();
+        }
+      },
+    );
+
+    return () => {
+      clearInterval(interval);
+      unbind();
+    };
   }, [mode]);
 
   return (

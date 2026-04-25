@@ -26,6 +26,7 @@ import { DebugLayer } from '../systems/DebugLayer';
 import { BackgroundRenderer } from '../rendering/BackgroundRenderer';
 import { GroundbaitEffect } from '../systems/GroundbaitEffect';
 import { BubbleEffect } from '../systems/BubbleEffect';
+import { DragonflyEffect } from '../systems/DragonflyEffect';
 import { InputHandler } from '../input/InputHandler';
 import { validateCast } from '@/game/domain/mechanics/CastingSystem';
 import { detectSectorBite } from '@/game/domain/mechanics/SectorBiteDetection';
@@ -117,6 +118,7 @@ export class LakeScene implements IScene {
   private weather: WeatherType = 'clear';
   private groundbaitEffect!: GroundbaitEffect;
   private bubbleEffect!: BubbleEffect;
+  private dragonflyEffect!: DragonflyEffect;
 
   private config: ILakeConfig;
   private callbacks: ILakeSceneCallbacks;
@@ -224,6 +226,7 @@ export class LakeScene implements IScene {
     this.weatherLayer = new WeatherLayer(this.stage, app);
     this.groundbaitEffect = new GroundbaitEffect(this.stage);
     this.bubbleEffect = new BubbleEffect(this.fishLayer);
+    this.dragonflyEffect = new DragonflyEffect(this.uiLayer);
 
     this.hookX = W / 2;
     this.hookY = H / 2;
@@ -785,6 +788,7 @@ export class LakeScene implements IScene {
         this.timeOfDay,
         this.weather,
         GROUNDBAITS[this.activeGroundbaitType],
+        this.hookConfig?.rigType,
       );
       this.debugLayer.update();
     }
@@ -812,6 +816,20 @@ export class LakeScene implements IScene {
 
     this.groundbaitEffect.update(deltaTime);
     this.bubbleEffect.update(deltaTime);
+    this.dragonflyEffect.update(
+      deltaTime,
+      W,
+      H,
+      this.weather,
+      this.timeOfDay,
+      this.phase,
+      this.rod.tipX || this.hookX + 20,
+      this.rod.tipY || this.hookY - 100,
+      maxInterest,
+      this.playerReeling,
+      isCast,
+      this.hookConfig?.rigType,
+    );
 
     if (isCast) {
       let bubbleChance = 0;
@@ -991,6 +1009,7 @@ export class LakeScene implements IScene {
     this.weatherLayer.destroy();
     this.groundbaitEffect.destroy();
     this.bubbleEffect.destroy();
+    this.dragonflyEffect.destroy();
   }
 
   setDebugVisible(visible: boolean): void {

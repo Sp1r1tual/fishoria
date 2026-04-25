@@ -34,7 +34,7 @@ export const BITE_DETECTION = {
   /**
    * Active bite probability multiplier for spinning rig.
    */
-  spinningBiteMultiplier: 1.05,
+  spinningBiteMultiplier: 1.1,
 
   /** Base progress added for a nibble */
   nibbleProgressBase: 0.3,

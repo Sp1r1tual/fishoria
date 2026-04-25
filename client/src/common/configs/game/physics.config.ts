@@ -74,9 +74,9 @@ export const SNAG = {
   spinningDecayRate: 0.5,
 
   /** Static snag chance for float rig on bottom */
-  floatOnBottomSnagChance: 0.3,
+  floatOnBottomSnagChance: 0.04,
   /** Static snag chance for feeder rig on bottom */
-  feederOnBottomSnagChance: 0.65,
+  feederOnBottomSnagChance: 0.08,
 } as const;
 
 export const SPINNING_LURE = {
