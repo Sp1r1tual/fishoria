@@ -29,6 +29,7 @@ export class PlayerService {
   async getProfile(
     userId: string,
     language?: string,
+    isMe = true,
   ): Promise<PlayerProfileResponseDto> {
     const user = await this.playerEntity.findUser(userId);
     if (!user) {
@@ -45,6 +46,10 @@ export class PlayerService {
     ) as unknown as PlayerProfileResponseDto | null;
 
     if (!profile) {
+      if (!isMe) {
+        throw new NotFoundException('Player profile not found');
+      }
+
       try {
         const createdProfile = (await this.playerEntity.createProfile(
           {
@@ -95,7 +100,13 @@ export class PlayerService {
       }
     }
 
-    await this.syncQuests(profile.id, profile.playerQuests?.length ?? 0);
+    if (isMe && profile) {
+      await this.syncQuests(profile.id, profile.playerQuests?.length ?? 0);
+    }
+
+    if (!profile) {
+      throw new NotFoundException('Player profile not found');
+    }
 
     return profile;
   }

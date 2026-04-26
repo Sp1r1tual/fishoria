@@ -89,9 +89,10 @@ const PlayerProfileResponseSchema = z.object({
     email: z.string(),
     username: z.string().nullable(),
     avatar: z.string().nullable(),
-    role: z.enum(['PLAYER', 'MODERATOR', 'ADMIN']),
+    role: z.enum(['PLAYER', 'MODERATOR']),
     isActivated: z.boolean(),
     language: z.string(),
+    createdAt: z.iso.datetime().or(z.any()).optional(),
   }),
 });
 

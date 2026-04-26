@@ -1,4 +1,12 @@
-import { Controller, Get, Post, UseGuards, Body, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  UseGuards,
+  Body,
+  Query,
+  Param,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import ms from 'ms';
 import { Throttle } from '@nestjs/throttler';
@@ -35,6 +43,12 @@ export class PlayerController {
     const expiresIn = ms(jwtExp as ms.StringValue);
 
     return { ...profile, expiresIn };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile/:userId')
+  async getOtherProfile(@Param('userId') targetUserId: string) {
+    return this.playerService.getProfile(targetUserId);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

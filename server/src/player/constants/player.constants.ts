@@ -30,6 +30,7 @@ export const FULL_PROFILE_INCLUDE = {
       role: true,
       isActivated: true,
       language: true,
+      createdAt: true,
     },
   },
 } as const;
