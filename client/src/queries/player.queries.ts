@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { ACHIEVEMENT_KEYS } from './achievement.queries';
 import { QUEST_KEYS } from './quest.queries';
 import { INVENTORY_KEYS } from './inventory.queries';
+import { NEWS_KEYS } from './news.queries';
 
 import { PlayerService } from '../services/player.service';
 import { refreshToken } from '../http/interceptors/auth.interceptor';
@@ -25,7 +26,7 @@ export const usePlayerQuery = () => {
   const language = i18n.language;
 
   return useQuery({
-    queryKey: [...PLAYER_KEYS.profile(), language],
+    queryKey: PLAYER_KEYS.profile(),
     queryFn: () => PlayerService.getProfile(language),
     staleTime: 5 * 60 * 1000,
     enabled: isAuthenticated,
@@ -35,15 +36,12 @@ export const usePlayerQuery = () => {
 
 export const useAddMoneyMutation = () => {
   const queryClient = useQueryClient();
-  const { i18n } = useTranslation();
-  const language = i18n.language;
 
   return useMutation({
     mutationFn: (payload: { amount: number; targetUserId?: string }) =>
       PlayerService.addMoney(payload),
     onSuccess: (data) => {
-      const queryKey = [...PLAYER_KEYS.profile(), language];
-      queryClient.setQueryData(queryKey, data);
+      queryClient.setQueryData(PLAYER_KEYS.profile(), data);
     },
   });
 };
@@ -71,21 +69,19 @@ export const useUpdateLanguageMutation = () => {
       queryClient.invalidateQueries({ queryKey: ACHIEVEMENT_KEYS.all });
       queryClient.invalidateQueries({ queryKey: QUEST_KEYS.all });
       queryClient.invalidateQueries({ queryKey: INVENTORY_KEYS.all });
+      queryClient.invalidateQueries({ queryKey: NEWS_KEYS.all });
     },
   });
 };
 
 export const useUpdateProfileMutation = () => {
   const queryClient = useQueryClient();
-  const { i18n } = useTranslation();
-  const language = i18n.language;
 
   return useMutation({
     mutationFn: (payload: { username?: string; avatar?: string }) =>
       PlayerService.updateProfile(payload),
     onSuccess: (data) => {
-      const queryKey = [...PLAYER_KEYS.profile(), language];
-      queryClient.setQueryData(queryKey, data);
+      queryClient.setQueryData(PLAYER_KEYS.profile(), data);
     },
   });
 };

@@ -21,7 +21,7 @@ export const useAchievements = () => {
   const language = i18n.language;
 
   return useQuery({
-    queryKey: [...ACHIEVEMENT_KEYS.all, language],
+    queryKey: ACHIEVEMENT_KEYS.all,
     queryFn: () => AchievementService.getAchievements(language),
     placeholderData: keepPreviousData,
   });

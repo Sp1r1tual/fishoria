@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useTranslation } from 'react-i18next';
 
 import type {
   IPlayerProfile,
@@ -40,8 +39,6 @@ const preserveValidGearSelection = (
 
 export const useCatchFishMutation = () => {
   const queryClient = useQueryClient();
-  const { i18n } = useTranslation();
-  const language = i18n.language;
 
   return useMutation({
     mutationFn: async (payload: ICatchFishPayload) => {
@@ -59,9 +56,10 @@ export const useCatchFishMutation = () => {
       return GameService.catchFish(payload);
     },
     onMutate: async (newCatch) => {
-      const queryKey = [...PLAYER_KEYS.profile(), language];
       await queryClient.cancelQueries({ queryKey: PLAYER_KEYS.profile() });
-      const previousPlayer = queryClient.getQueryData<IPlayerProfile>(queryKey);
+      const previousPlayer = queryClient.getQueryData<IPlayerProfile>(
+        PLAYER_KEYS.profile(),
+      );
 
       if (previousPlayer) {
         const { newLevel, newXp } = calculateOptimisticLevel(
@@ -99,7 +97,7 @@ export const useCatchFishMutation = () => {
           caughtAt: new Date().toISOString(),
         };
 
-        queryClient.setQueryData(queryKey, {
+        queryClient.setQueryData(PLAYER_KEYS.profile(), {
           ...previousPlayer,
           level: newLevel,
           xp: newXp,
@@ -112,48 +110,47 @@ export const useCatchFishMutation = () => {
     },
     onError: (_err, _newCatch, context) => {
       if (context?.previousPlayer) {
-        const queryKey = [...PLAYER_KEYS.profile(), language];
-        queryClient.setQueryData(queryKey, context.previousPlayer);
+        queryClient.setQueryData(PLAYER_KEYS.profile(), context.previousPlayer);
       }
     },
     onSuccess: (data) => {
-      const queryKey = [...PLAYER_KEYS.profile(), language];
-      queryClient.setQueryData(queryKey, (old: IPlayerProfile | undefined) => {
-        if (!old) return data;
-        return {
-          ...data,
-          activeBait: old.activeBait,
-          activeGroundbait: old.activeGroundbait,
-          equippedRodUid: preserveValidGearSelection(
-            old.equippedRodUid,
-            data.equippedRodUid,
-            data.gearItems,
-          ),
-          equippedReelUid: preserveValidGearSelection(
-            old.equippedReelUid,
-            data.equippedReelUid,
-            data.gearItems,
-          ),
-          equippedLineUid: preserveValidGearSelection(
-            old.equippedLineUid,
-            data.equippedLineUid,
-            data.gearItems,
-          ),
-          equippedHookUid: preserveValidGearSelection(
-            old.equippedHookUid,
-            data.equippedHookUid,
-            data.gearItems,
-          ),
-        };
-      });
+      queryClient.setQueryData(
+        PLAYER_KEYS.profile(),
+        (old: IPlayerProfile | undefined) => {
+          if (!old) return data;
+          return {
+            ...data,
+            activeBait: old.activeBait,
+            activeGroundbait: old.activeGroundbait,
+            equippedRodUid: preserveValidGearSelection(
+              old.equippedRodUid,
+              data.equippedRodUid,
+              data.gearItems,
+            ),
+            equippedReelUid: preserveValidGearSelection(
+              old.equippedReelUid,
+              data.equippedReelUid,
+              data.gearItems,
+            ),
+            equippedLineUid: preserveValidGearSelection(
+              old.equippedLineUid,
+              data.equippedLineUid,
+              data.gearItems,
+            ),
+            equippedHookUid: preserveValidGearSelection(
+              old.equippedHookUid,
+              data.equippedHookUid,
+              data.gearItems,
+            ),
+          };
+        },
+      );
     },
   });
 };
 
 export const useBreakGearMutation = () => {
   const queryClient = useQueryClient();
-  const { i18n } = useTranslation();
-  const language = i18n.language;
 
   return useMutation({
     mutationFn: async (payload: IBreakGearPayload) => {
@@ -171,9 +168,10 @@ export const useBreakGearMutation = () => {
       return GameService.breakGear(payload);
     },
     onMutate: async (variables) => {
-      const queryKey = [...PLAYER_KEYS.profile(), language];
       await queryClient.cancelQueries({ queryKey: PLAYER_KEYS.profile() });
-      const previousPlayer = queryClient.getQueryData<IPlayerProfile>(queryKey);
+      const previousPlayer = queryClient.getQueryData<IPlayerProfile>(
+        PLAYER_KEYS.profile(),
+      );
 
       if (previousPlayer) {
         const newPlayer = { ...previousPlayer };
@@ -219,47 +217,48 @@ export const useBreakGearMutation = () => {
           newPlayer.equippedReelUid = null;
         }
 
-        queryClient.setQueryData(queryKey, newPlayer);
+        queryClient.setQueryData(PLAYER_KEYS.profile(), newPlayer);
       }
 
       return { previousPlayer };
     },
     onError: (_err, _vars, context) => {
       if (context?.previousPlayer) {
-        const queryKey = [...PLAYER_KEYS.profile(), language];
-        queryClient.setQueryData(queryKey, context.previousPlayer);
+        queryClient.setQueryData(PLAYER_KEYS.profile(), context.previousPlayer);
       }
     },
     onSuccess: (data) => {
-      const queryKey = [...PLAYER_KEYS.profile(), language];
-      queryClient.setQueryData(queryKey, (old: IPlayerProfile | undefined) => {
-        if (!old) return data;
-        return {
-          ...data,
-          activeBait: old.activeBait,
-          activeGroundbait: old.activeGroundbait,
-          equippedRodUid: preserveValidGearSelection(
-            old.equippedRodUid,
-            data.equippedRodUid,
-            data.gearItems,
-          ),
-          equippedReelUid: preserveValidGearSelection(
-            old.equippedReelUid,
-            data.equippedReelUid,
-            data.gearItems,
-          ),
-          equippedLineUid: preserveValidGearSelection(
-            old.equippedLineUid,
-            data.equippedLineUid,
-            data.gearItems,
-          ),
-          equippedHookUid: preserveValidGearSelection(
-            old.equippedHookUid,
-            data.equippedHookUid,
-            data.gearItems,
-          ),
-        };
-      });
+      queryClient.setQueryData(
+        PLAYER_KEYS.profile(),
+        (old: IPlayerProfile | undefined) => {
+          if (!old) return data;
+          return {
+            ...data,
+            activeBait: old.activeBait,
+            activeGroundbait: old.activeGroundbait,
+            equippedRodUid: preserveValidGearSelection(
+              old.equippedRodUid,
+              data.equippedRodUid,
+              data.gearItems,
+            ),
+            equippedReelUid: preserveValidGearSelection(
+              old.equippedReelUid,
+              data.equippedReelUid,
+              data.gearItems,
+            ),
+            equippedLineUid: preserveValidGearSelection(
+              old.equippedLineUid,
+              data.equippedLineUid,
+              data.gearItems,
+            ),
+            equippedHookUid: preserveValidGearSelection(
+              old.equippedHookUid,
+              data.equippedHookUid,
+              data.gearItems,
+            ),
+          };
+        },
+      );
     },
   });
 };

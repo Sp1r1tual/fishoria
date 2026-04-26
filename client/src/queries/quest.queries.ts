@@ -25,7 +25,7 @@ export const useQuests = () => {
   const language = i18n.language;
 
   return useQuery<IPlayerQuest[]>({
-    queryKey: [...QUEST_KEYS.all, language],
+    queryKey: QUEST_KEYS.all,
     queryFn: () => QuestService.getQuests(language),
     placeholderData: keepPreviousData,
   });

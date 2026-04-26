@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useTranslation } from 'react-i18next';
 
 import type {
   IPlayerProfile,
@@ -47,8 +46,6 @@ const getItemPrice = (itemId: string, itemType: string): number => {
 
 export const useBuyMutation = () => {
   const queryClient = useQueryClient();
-  const { i18n } = useTranslation();
-  const language = i18n.language;
 
   return useMutation<
     IPlayerProfile,
@@ -58,10 +55,10 @@ export const useBuyMutation = () => {
   >({
     mutationFn: ShopService.buy,
     onMutate: async (newItem) => {
-      const queryKey = [...PLAYER_KEYS.profile(), language];
       await queryClient.cancelQueries({ queryKey: PLAYER_KEYS.profile() });
-      const previousProfile =
-        queryClient.getQueryData<IPlayerProfile>(queryKey);
+      const previousProfile = queryClient.getQueryData<IPlayerProfile>(
+        PLAYER_KEYS.profile(),
+      );
 
       if (previousProfile) {
         const updatedProfile = structuredClone(previousProfile);
@@ -105,29 +102,27 @@ export const useBuyMutation = () => {
           }
         }
 
-        const queryKey = [...PLAYER_KEYS.profile(), language];
-        queryClient.setQueryData(queryKey, updatedProfile);
+        queryClient.setQueryData(PLAYER_KEYS.profile(), updatedProfile);
       }
 
       return { previousProfile };
     },
     onError: (_err, _newItem, context) => {
       if (context?.previousProfile) {
-        const queryKey = [...PLAYER_KEYS.profile(), language];
-        queryClient.setQueryData(queryKey, context.previousProfile);
+        queryClient.setQueryData(
+          PLAYER_KEYS.profile(),
+          context.previousProfile,
+        );
       }
     },
     onSuccess: (data) => {
-      const queryKey = [...PLAYER_KEYS.profile(), language];
-      queryClient.setQueryData(queryKey, data);
+      queryClient.setQueryData(PLAYER_KEYS.profile(), data);
     },
   });
 };
 
 export const useSellMutation = () => {
   const queryClient = useQueryClient();
-  const { i18n } = useTranslation();
-  const language = i18n.language;
 
   return useMutation<
     IPlayerProfile,
@@ -137,10 +132,10 @@ export const useSellMutation = () => {
   >({
     mutationFn: ShopService.sell,
     onMutate: async () => {
-      const queryKey = [...PLAYER_KEYS.profile(), language];
       await queryClient.cancelQueries({ queryKey: PLAYER_KEYS.profile() });
-      const previousProfile =
-        queryClient.getQueryData<IPlayerProfile>(queryKey);
+      const previousProfile = queryClient.getQueryData<IPlayerProfile>(
+        PLAYER_KEYS.profile(),
+      );
 
       if (previousProfile) {
         const updatedProfile = structuredClone(previousProfile);
@@ -160,19 +155,20 @@ export const useSellMutation = () => {
         });
 
         updatedProfile.money += total;
-        queryClient.setQueryData(queryKey, updatedProfile);
+        queryClient.setQueryData(PLAYER_KEYS.profile(), updatedProfile);
       }
       return { previousProfile };
     },
     onError: (_err, _newItem, context) => {
       if (context?.previousProfile) {
-        const queryKey = [...PLAYER_KEYS.profile(), language];
-        queryClient.setQueryData(queryKey, context.previousProfile);
+        queryClient.setQueryData(
+          PLAYER_KEYS.profile(),
+          context.previousProfile,
+        );
       }
     },
     onSuccess: (data) => {
-      const queryKey = [...PLAYER_KEYS.profile(), language];
-      queryClient.setQueryData(queryKey, data);
+      queryClient.setQueryData(PLAYER_KEYS.profile(), data);
     },
   });
 };
