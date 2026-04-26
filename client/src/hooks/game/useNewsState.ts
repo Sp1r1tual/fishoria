@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 
@@ -8,8 +7,7 @@ import { markRead, markAllRead } from '@/store/slices/newsSlice';
 
 export function useNewsState() {
   const dispatch = useAppDispatch();
-  const { i18n } = useTranslation();
-  const { data: news = [], isLoading } = useNewsQuery(i18n.language);
+  const { data: news = [], isLoading } = useNewsQuery();
   const readIds = useAppSelector((state) => state.news.readIds);
 
   const markAsRead = useCallback(
