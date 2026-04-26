@@ -14,6 +14,7 @@ import { EditButton } from '../UI/buttons/EditButton/EditButton';
 import { WeatherStatus } from '../UI/WeatherStatus/WeatherStatus';
 import { Fireflies } from '../Effects/Fireflies/Fireflies';
 import { SkeletonImage } from '../UI/skeletons/SkeletonImage/SkeletonImage';
+import { PlayerSkeleton } from './PlayerSkeleton';
 
 import { useAppDispatch } from '@/hooks/core/useAppStore';
 import { navigateTo } from '@/store/slices/uiSlice';
@@ -52,20 +53,6 @@ export function MainMenu() {
 
   const menuActions = getMenuActions(t);
 
-  if (isLoading)
-    return (
-      <div
-        className="screen glass"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        {t('common.loading')}
-      </div>
-    );
-
   return (
     <main className={`screen ${styles['main-menu']}`}>
       <div
@@ -93,63 +80,68 @@ export function MainMenu() {
       </WoodyButton>
 
       <div className={`${styles['main-menu__content']} fade-in`}>
-        <section className={`glass ${styles['main-menu__player']}`}>
-          <div className={styles['main-menu__player-top']}>
-            <SkeletonImage
-              src={currentAvatarImg}
-              alt="Profile"
-              className={styles['main-menu__avatar-img']}
-              imgProps={{ referrerPolicy: 'no-referrer' }}
-            />
-
-            <div className={styles['main-menu__player-info']}>
-              <div className={styles['main-menu__name-group']}>
-                <div className={styles['main-menu__player-name']}>{name}</div>
-                <EditButton
-                  onClick={() => setIsProfileModalOpen(true)}
-                  title={t('profile.editTitle')}
-                />
-              </div>
-              <div className={styles['main-menu__level-row']}>
-                <div className={styles['main-menu__player-meta']}>
-                  {t('mainMenu.level', { level })}
-                </div>
-                <div className={styles['main-menu__xp-counter']}>
-                  {Math.floor(xp)} / {xpNeeded}
-                </div>
-              </div>
-              <div className={styles['main-menu__xp-bar']}>
-                <div
-                  className={styles['main-menu__xp-fill']}
-                  style={{ width: `${xpPct}%` }}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className={styles['main-menu__player-bottom']}>
-            <div className={styles['main-menu__money']}>
-              <img
-                src={coinIcon}
-                alt="coins"
-                className={styles['main-menu__coin-icon']}
+        {isLoading ? (
+          <PlayerSkeleton />
+        ) : (
+          <section className={`glass ${styles['main-menu__player']}`}>
+            <div className={styles['main-menu__player-top']}>
+              <SkeletonImage
+                src={currentAvatarImg}
+                alt="Profile"
+                className={styles['main-menu__avatar-img']}
+                wrapperClassName={styles['main-menu__avatar-img']}
+                imgProps={{ referrerPolicy: 'no-referrer' }}
               />
-              {money}
+
+              <div className={styles['main-menu__player-info']}>
+                <div className={styles['main-menu__name-group']}>
+                  <div className={styles['main-menu__player-name']}>{name}</div>
+                  <EditButton
+                    onClick={() => setIsProfileModalOpen(true)}
+                    title={t('profile.editTitle')}
+                  />
+                </div>
+                <div className={styles['main-menu__level-row']}>
+                  <div className={styles['main-menu__player-meta']}>
+                    {t('mainMenu.level', { level })}
+                  </div>
+                  <div className={styles['main-menu__xp-counter']}>
+                    {Math.floor(xp)} / {xpNeeded}
+                  </div>
+                </div>
+                <div className={styles['main-menu__xp-bar']}>
+                  <div
+                    className={styles['main-menu__xp-fill']}
+                    style={{ width: `${xpPct}%` }}
+                  />
+                </div>
+              </div>
             </div>
 
-            <WeatherStatus
-              className={styles['main-menu__weather']}
-              onClick={() => setIsWeatherModalOpen(true)}
-              title={t('weather.viewForecast', 'View Forecast')}
-            />
+            <div className={styles['main-menu__player-bottom']}>
+              <div className={styles['main-menu__money']}>
+                <img
+                  src={coinIcon}
+                  alt="coins"
+                  className={styles['main-menu__coin-icon']}
+                />
+                {money}
+              </div>
 
-            <GameClock
-              className={styles['main-menu__time']}
-              iconClassName={styles['main-menu__clock-icon']}
-              mode={'game'}
-            />
-          </div>
-        </section>
+              <WeatherStatus
+                className={styles['main-menu__weather']}
+                onClick={() => setIsWeatherModalOpen(true)}
+                title={t('weather.viewForecast', 'View Forecast')}
+              />
+
+              <GameClock
+                className={styles['main-menu__time']}
+                iconClassName={styles['main-menu__clock-icon']}
+                mode={'game'}
+              />
+            </div>
+          </section>
+        )}
 
         <nav className={styles['main-menu__nav']}>
           <WoodyButton

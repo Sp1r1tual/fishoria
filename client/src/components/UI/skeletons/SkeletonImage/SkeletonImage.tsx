@@ -16,6 +16,7 @@ interface ISkeletonImageProps {
   objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
   style?: React.CSSProperties;
   imgProps?: React.ImgHTMLAttributes<HTMLImageElement>;
+  isLoading?: boolean;
 }
 
 export const SkeletonImage = ({
@@ -30,6 +31,7 @@ export const SkeletonImage = ({
   objectFit = 'cover',
   style,
   imgProps,
+  isLoading = false,
 }: ISkeletonImageProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -59,7 +61,7 @@ export const SkeletonImage = ({
       className={`${styles.wrapper} ${wrapperClassName || ''}`}
       style={{ height, width }}
     >
-      {!isLoaded && (
+      {(isLoading || !isLoaded) && (
         <div className={styles.skeletonWrapper}>
           <Skeleton height={skeletonHeight} className={styles.skeleton} />
         </div>
@@ -69,7 +71,7 @@ export const SkeletonImage = ({
           ref={imgRef}
           src={src}
           alt={alt}
-          className={`${className || ''} ${styles.image} ${isLoaded ? styles.imageVisible : styles.imageHidden}`}
+          className={`${className || ''} ${styles.image} ${isLoaded && !isLoading ? styles.imageVisible : styles.imageHidden}`}
           style={{
             ...style,
             objectFit,
