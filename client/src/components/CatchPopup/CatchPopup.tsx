@@ -13,7 +13,7 @@ import {
   useCatchFishMutation,
   useBreakGearMutation,
 } from '@/queries/game.queries';
-import { clearCatch, resetGame } from '@/store/slices/gameSlice';
+import { resetGame } from '@/store/slices/gameSlice';
 
 import type { LakeScene } from '@/game/engine/scenes/LakeScene';
 
@@ -37,6 +37,12 @@ export function CatchPopup({ result, sceneRef }: ICatchPopupProps) {
 
   const handleKeep = () => {
     playClick();
+
+    // Close popup first — unmounts this component before mutation
+    // state transitions can trigger unnecessary re-renders.
+    dispatch(resetGame());
+    sceneRef.current?.resetCast();
+
     if (result.type === 'fish') {
       const fish = result as IFishCatch;
       const maxW = fish.species.weightRange.max;
@@ -56,13 +62,15 @@ export function CatchPopup({ result, sceneRef }: ICatchPopupProps) {
         reelDamage: fish.reelDamage || 0,
       });
     }
-    dispatch(clearCatch());
-    dispatch(resetGame());
-    sceneRef.current?.resetCast();
   };
 
   const handleRelease = () => {
     playClick();
+
+    // Close popup first — same reasoning as handleKeep.
+    dispatch(resetGame());
+    sceneRef.current?.resetCast();
+
     if (result.type === 'fish') {
       const fish = result as IFishCatch;
       const maxW = fish.species.weightRange.max;
@@ -106,9 +114,6 @@ export function CatchPopup({ result, sceneRef }: ICatchPopupProps) {
         });
       }
     }
-    dispatch(clearCatch());
-    dispatch(resetGame());
-    sceneRef.current?.resetCast();
   };
 
   if (result.type === 'trash') {
