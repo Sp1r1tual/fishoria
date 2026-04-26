@@ -24,10 +24,11 @@ export const mapPlayerProfile = <
   },
 >(
   profile: T | null,
+  overrideLang?: string,
 ) => {
   if (!profile) return null;
 
-  const userLang = profile.user?.language || 'en';
+  const userLang = overrideLang || profile.user?.language || 'en';
 
   return {
     ...profile,

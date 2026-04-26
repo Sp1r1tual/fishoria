@@ -41,6 +41,7 @@ export class PlayerService {
 
     let profile = mapPlayerProfile(
       rawProfile,
+      lang,
     ) as unknown as PlayerProfileResponseDto | null;
 
     if (!profile) {
@@ -134,7 +135,8 @@ export class PlayerService {
   }
 
   async addMoney(userId: string, amount: number) {
-    return this.playerEntity.incrementMoney(userId, amount);
+    await this.playerEntity.incrementMoney(userId, amount);
+    return this.getProfile(userId);
   }
 
   async updateLanguage(userId: string, language: string) {

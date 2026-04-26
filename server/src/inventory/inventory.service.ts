@@ -1,6 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 
 import { InventoryEntity } from './entities/inventory.entity';
+import { PlayerService } from '../player/player.service';
 
 type InventoryTargetType =
   | 'rod'
@@ -12,7 +13,10 @@ type InventoryTargetType =
 
 @Injectable()
 export class InventoryService {
-  constructor(private readonly inventoryEntity: InventoryEntity) {}
+  constructor(
+    private readonly inventoryEntity: InventoryEntity,
+    private readonly playerService: PlayerService,
+  ) {}
 
   async equipGear(
     userId: string,
@@ -118,7 +122,8 @@ export class InventoryService {
       }
     }
 
-    return this.inventoryEntity.updateProfile(profile.id, updateData);
+    await this.inventoryEntity.updateProfile(profile.id, updateData);
+    return this.playerService.getProfile(userId);
   }
 
   async repairGear(
@@ -152,7 +157,8 @@ export class InventoryService {
     )
       throw new BadRequestException('Invalid target item or fully repaired');
 
-    return this.inventoryEntity.executeRepairTx(targetUid, kitUid, profile.id);
+    await this.inventoryEntity.executeRepairTx(targetUid, kitUid, profile.id);
+    return this.playerService.getProfile(userId);
   }
 
   async deleteGear(userId: string, uid: string) {
@@ -168,11 +174,8 @@ export class InventoryService {
     if (profile.equippedLineUid === uid) updateData.equippedLineUid = null;
     if (profile.equippedHookUid === uid) updateData.equippedHookUid = null;
 
-    return this.inventoryEntity.executeDeleteGearTx(
-      uid,
-      profile.id,
-      updateData,
-    );
+    await this.inventoryEntity.executeDeleteGearTx(uid, profile.id, updateData);
+    return this.playerService.getProfile(userId);
   }
 
   async consumeConsumable(
@@ -194,6 +197,7 @@ export class InventoryService {
       throw new BadRequestException('Not enough consumable items');
     }
 
-    return this.inventoryEntity.executeConsumeTx(item.id, quantity, profile.id);
+    await this.inventoryEntity.executeConsumeTx(item.id, quantity, profile.id);
+    return this.playerService.getProfile(userId);
   }
 }
