@@ -1,6 +1,7 @@
 export const STARTER_MONEY = 100;
 export const STARTER_LEVEL = 1;
 export const STARTER_XP = 0;
+export const DEFAULT_AVATAR = 'profile_01.webp';
 
 export const STARTER_GEAR_ITEMS = [
   { itemType: 'rod', itemId: 'rod_starter', condition: 100 },

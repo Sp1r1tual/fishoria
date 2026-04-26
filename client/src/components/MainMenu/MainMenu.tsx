@@ -43,7 +43,7 @@ export function MainMenu() {
   const xp = player?.xp ?? 0;
   const money = player?.money ?? 0;
   const name = player?.user?.username ?? 'Angler';
-  const avatar = player?.user?.avatar ?? 'profile.webp';
+  const avatar = player?.user?.avatar ?? 'profile_01.webp';
 
   const currentAvatarImg = resolveAvatarImg(avatar);
 

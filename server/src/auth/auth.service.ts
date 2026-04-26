@@ -17,6 +17,7 @@ import { MailService } from '../mail/mail.service';
 import { AuthEntity } from './entities/auth.entity';
 import { GoogleAuthPayloadDto } from './dto/google-payload.dto';
 import { RegisterDto } from './dto/register.dto';
+import { DEFAULT_AVATAR } from '../common/configs/starter-kit';
 
 @Injectable()
 export class AuthService {
@@ -36,7 +37,6 @@ export class AuthService {
     );
 
     if (internalUser) {
-      // If user has no avatar yet but Google provides one, download it to Supabase
       let avatar = internalUser.avatar;
       if (!avatar && user.picture) {
         avatar =
@@ -53,12 +53,11 @@ export class AuthService {
         isActivated: true,
       });
     } else {
-      // New user — create, then upload Google avatar to Supabase
       internalUser = await this.authEntity.createUser({
         googleId: user.googleId,
         email: user.email,
         username: user.displayName,
-        avatar: user.picture, // temporary, will be replaced below
+        avatar: user.picture,
         isActivated: true,
       });
 
@@ -135,6 +134,7 @@ export class AuthService {
       email: dto.email,
       password: hashPassword,
       username: dto.username,
+      avatar: DEFAULT_AVATAR,
       activationLink,
       language: dto.language,
     });

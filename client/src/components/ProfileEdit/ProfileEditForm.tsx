@@ -30,7 +30,7 @@ export function ProfileEditForm({ player }: ProfileEditFormProps) {
   const [username, setUsername] = useState(player.user.username || '');
   const [usernameError, setUsernameError] = useState<string | null>(null);
 
-  const currentAvatar = player.user.avatar || 'profile.webp';
+  const currentAvatar = player.user.avatar || 'profile_01.webp';
   const isCurrentExternal = isExternalAvatarUrl(currentAvatar);
 
   const [selectedAvatar, setSelectedAvatar] = useState(
