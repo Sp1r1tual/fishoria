@@ -72,16 +72,6 @@
   opacity: 0.7;
 }
 
-.woody-button::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  box-shadow: none;
-  z-index: -1;
-  pointer-events: none !important;
-}
-
 .variant-green {
   background-image:
     radial-gradient(
@@ -154,10 +144,6 @@
     background 0.5s ease,
     border-color 0.5s ease,
     transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.variant-glass::after {
-  display: none;
 }
 
 .size-sm {
