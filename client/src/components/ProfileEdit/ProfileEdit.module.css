@@ -30,6 +30,24 @@
   opacity: 0.8;
 }
 
+.input {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  width: 100%;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.input:focus {
+  border-color: var(--clr-primary);
+  background: rgba(0, 0, 0, 0.6);
+}
+
 .note {
   font-size: 0.8rem;
   color: #94a3b8;
@@ -134,13 +152,25 @@
   }
 }
 
-@media (max-height: 480px), (max-width: 700px) {
+.footer {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+@media (max-height: 520px) {
   .container {
     gap: 12px;
   }
   .inputGroup {
     gap: 4px;
   }
+  .label {
+    font-size: 0.75rem;
+  }
+  .input,
   .inputReadOnly {
     padding: 8px 12px;
     font-size: 0.9rem;
@@ -151,39 +181,68 @@
   .avatarItem {
     border-radius: 8px;
   }
+  .note {
+    font-size: 0.7rem;
+    margin-top: 6px;
+  }
+  .footer {
+    margin-top: 4px;
+  }
+  .uploadIcon svg {
+    width: 20px;
+    height: 20px;
+  }
+  .avatarUpload {
+    gap: 2px;
+  }
+  .uploadLabel {
+    font-size: 0.55rem;
+  }
 }
 
-@media (max-height: 400px) {
-  .avatarGrid {
-    grid-template-columns: repeat(8, 1fr);
-  }
+@media (max-height: 420px) {
   .container {
     gap: 8px;
   }
+  .avatarGrid {
+    grid-template-columns: repeat(8, 1fr);
+    gap: 6px;
+  }
+  .label {
+    font-size: 0.7rem;
+  }
+  .input,
+  .inputReadOnly {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+  .note {
+    margin-top: 4px;
+    line-height: 1.2;
+  }
+  .uploadIcon svg {
+    width: 18px;
+    height: 18px;
+  }
+  .avatarUpload {
+    gap: 0px;
+  }
+  .uploadLabel {
+    font-size: 0.5rem;
+  }
 }
 
-.input {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 12px 16px;
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 700;
-  width: 100%;
-  outline: none;
-  transition: all 0.2s;
-}
-
-.input:focus {
-  border-color: var(--clr-primary);
-  background: rgba(0, 0, 0, 0.6);
-}
-
-.footer {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
+@media (max-width: 480px) and (min-height: 521px) {
+  .container {
+    gap: 16px;
+  }
+  .avatarGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .input,
+  .inputReadOnly {
+    padding: 12px 16px;
+    font-size: 1rem;
+  }
 }

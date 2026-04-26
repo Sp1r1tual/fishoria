@@ -15,6 +15,7 @@ interface ISector {
 
 export class SectorSystem {
   private grid: (ISector | null)[][] = [];
+  private validSectors: ISector[] = [];
   private cols: number;
   private rows: number;
   private config: IFishSpawnsConfig;
@@ -77,6 +78,7 @@ export class SectorSystem {
 
   private buildGrid() {
     this.grid = [];
+    this.validSectors = [];
     const { minX, maxX, minY, maxY } = this.bounds;
     const dx = maxX - minX;
     const dy = maxY - minY;
@@ -125,12 +127,14 @@ export class SectorSystem {
         const depthM = this.getDepthAt(nx, ny);
         const availability = this.calculateAvailabilityAt(depthM);
 
-        this.grid[c][r] = {
+        const sector = {
           nx,
           ny,
           depthM,
           availability,
         };
+        this.grid[c][r] = sector;
+        this.validSectors.push(sector);
       }
     }
   }
@@ -219,5 +223,16 @@ export class SectorSystem {
 
   public getConfigForSpecies(speciesId: string) {
     return this.config.species?.find((s) => s.speciesId === speciesId);
+  }
+
+  public getRandomAllowedPosition(): IVec2 | null {
+    if (this.validSectors.length === 0) return null;
+    const sector =
+      this.validSectors[Math.floor(Math.random() * this.validSectors.length)];
+
+    return {
+      x: sector.nx,
+      y: sector.ny,
+    };
   }
 }

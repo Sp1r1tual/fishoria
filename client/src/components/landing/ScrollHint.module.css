@@ -36,3 +36,10 @@
     color: rgba(255, 255, 255, 0.6);
   }
 }
+
+@media (max-height: 550px) and (orientation: landscape) {
+  .scrollHint {
+    bottom: 5px;
+    transform: translateX(-50%) scale(0.8);
+  }
+}

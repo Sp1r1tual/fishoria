@@ -35,12 +35,18 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-height: 550px) and (orientation: landscape) {
+  .branding {
+    text-align: left;
+  }
+
   .title {
-    font-size: 1.7rem;
+    font-size: 2.2rem;
+    margin-bottom: 6px;
   }
 
   .subtitle {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    max-width: 300px;
   }
 }

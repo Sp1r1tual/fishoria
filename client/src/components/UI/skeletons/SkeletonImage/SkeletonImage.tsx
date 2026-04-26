@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useRef, useLayoutEffect } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
@@ -33,6 +33,17 @@ export const SkeletonImage = ({
 }: ISkeletonImageProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [isCached, setIsCached] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useLayoutEffect(() => {
+    if (imgRef.current && imgRef.current.complete) {
+      queueMicrotask(() => {
+        setIsLoaded(true);
+        setIsCached(true);
+      });
+    }
+  }, [src]);
 
   const handleLoad = () => {
     setIsLoaded(true);
@@ -55,10 +66,16 @@ export const SkeletonImage = ({
       )}
       {!hasError ? (
         <img
+          ref={imgRef}
           src={src}
           alt={alt}
           className={`${className || ''} ${styles.image} ${isLoaded ? styles.imageVisible : styles.imageHidden}`}
-          style={{ ...style, objectFit, height: height || '100%' }}
+          style={{
+            ...style,
+            objectFit,
+            height: height || '100%',
+            transition: isCached ? 'none' : undefined,
+          }}
           onLoad={handleLoad}
           onError={handleError}
           onClick={onClick}

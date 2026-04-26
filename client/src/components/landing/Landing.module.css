@@ -26,6 +26,13 @@
   overflow-y: hidden;
 }
 
+@media (max-height: 550px) and (orientation: landscape) {
+  .content {
+    --content-pad: 40px;
+    gap: 40px;
+  }
+}
+
 .topSection {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -106,6 +113,28 @@
 
   .bottomReveal {
     animation: curtainReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+@media (max-height: 550px) and (orientation: landscape) {
+  .topSection {
+    min-height: calc(100dvh - 40px) !important;
+    gap: 20px;
+  }
+
+  .leftColumn {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .fixedBranding {
+    position: static;
+    flex: 1;
+    text-align: left;
   }
 }
 

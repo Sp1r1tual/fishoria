@@ -36,6 +36,7 @@ interface IReelingUpdateParams {
   trashChance: number;
   waterBoundaryY: number;
   getDepthAt: (nx: number, ny: number) => number;
+  isPositionAllowed?: (x: number, y: number) => boolean;
 }
 
 export function updateReelingPhase(
@@ -165,6 +166,7 @@ export function updateReelingPhase(
       params.canvasWidth,
       H,
       params.waterBoundaryY,
+      params.isPositionAllowed,
     );
 
     const waterHeight = Math.max(1, H * (1 - params.waterBoundaryY));

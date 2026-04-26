@@ -70,7 +70,7 @@ export function useFishController() {
         const dy = mousePos.current.y - fish.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist > 1) {
+        if (dist > 15) {
           const targetSpeed = Math.min(speedLimit, dist * 0.1);
           const desiredVx = (dx / dist) * targetSpeed;
           const desiredVy = (dy / dist) * targetSpeed;
@@ -78,6 +78,10 @@ export function useFishController() {
           const steerFactor = isSmall ? 0.07 : 0.1;
           fish.vx += (desiredVx - fish.vx) * steerFactor * timeScale;
           fish.vy += (desiredVy - fish.vy) * steerFactor * timeScale;
+        } else {
+          const friction = Math.pow(0.6, timeScale);
+          fish.vx *= friction;
+          fish.vy *= friction;
         }
       } else {
         fish.opacity = Math.max(0, fish.opacity - 0.02 * timeScale);
@@ -108,7 +112,7 @@ export function useFishController() {
         fish.vy = -Math.abs(fish.vy) * 0.8;
       }
 
-      if (Math.abs(fish.vx) > 0.05 || Math.abs(fish.vy) > 0.05) {
+      if (Math.abs(fish.vx) > 0.15 || Math.abs(fish.vy) > 0.15) {
         const targetAngle = Math.atan2(fish.vy, fish.vx);
         const diff =
           ((targetAngle - fish.angle + Math.PI * 3) % (Math.PI * 2)) - Math.PI;

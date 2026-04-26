@@ -78,3 +78,14 @@
     letter-spacing: 0.25em;
   }
 }
+
+@media (max-height: 550px) and (orientation: landscape) {
+  .companySection {
+    padding: 20px 10px;
+    gap: 8px;
+  }
+
+  .companyLogo {
+    height: 140px;
+  }
+}

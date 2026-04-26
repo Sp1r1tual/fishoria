@@ -21,9 +21,10 @@ export const BottomInfo = () => {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [windowWidth, setWindowWidth] = useState(
-    typeof window !== 'undefined' ? window.innerWidth : 1200,
-  );
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== 'undefined' ? window.innerWidth : 1200,
+    height: typeof window !== 'undefined' ? window.innerHeight : 800,
+  });
   const [containerWidth, setContainerWidth] = useState(0);
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
@@ -38,7 +39,11 @@ export const BottomInfo = () => {
     });
     obs.observe(wrap);
 
-    const handleResize = () => setWindowWidth(window.innerWidth);
+    const handleResize = () =>
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
     window.addEventListener('resize', handleResize);
 
     return () => {
@@ -53,13 +58,13 @@ export const BottomInfo = () => {
 
   const fluidFactor = Math.max(
     0,
-    Math.min(1, (windowWidth - MIN_WIDTH) / (MAX_WIDTH - MIN_WIDTH)),
+    Math.min(1, (windowSize.width - MIN_WIDTH) / (MAX_WIDTH - MIN_WIDTH)),
   );
 
   const fontSize =
     MIN_FONT_SIZE + (MAX_FONT_SIZE - MIN_FONT_SIZE) * fluidFactor;
   const lineH = fontSize * (1.6 + 0.15 * fluidFactor);
-  const isMobile = windowWidth < 640;
+  const isMobile = windowSize.width < 640;
   const fontStr = `${fontSize}px Nunito, system-ui, sans-serif`;
   const textContent = t('bottomInfo.text');
   const horizontalPad = 6 + 6 * fluidFactor;
@@ -73,7 +78,7 @@ export const BottomInfo = () => {
 
   const availableWidth = Math.max(
     280,
-    (containerWidth || windowWidth - outerPad) - horizontalPad * 2,
+    (containerWidth || windowSize.width - outerPad) - horizontalPad * 2,
   );
 
   const totalHeight = useMemo(() => {
@@ -100,7 +105,10 @@ export const BottomInfo = () => {
     containerWidth,
     horizontalPad,
     isMobile,
-    baseFishSize: FISH_SIZE,
+    baseFishSize:
+      windowSize.height <= 550 && windowSize.width > windowSize.height
+        ? 22
+        : FISH_SIZE,
     fontStr,
     lineH,
     padY,

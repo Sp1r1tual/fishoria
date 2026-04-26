@@ -65,6 +65,7 @@ export function applyFishAutonomousMovement(
   canvasWidth: number,
   canvasHeight: number,
   waterBoundaryY: number,
+  isPositionAllowed?: (x: number, y: number) => boolean,
 ): void {
   const dtSec = deltaTime;
 
@@ -135,27 +136,13 @@ export function applyFishAutonomousMovement(
     REELING_PHYSICS.sideMovementSpeedMult;
   const vy = Math.sin(fish.combatAngle) * baseSpeed;
 
-  fish.position.x += vx;
-  fish.position.y += vy;
+  const nextX = fish.position.x + vx;
+  const nextY = fish.position.y + vy;
 
-  const margin = 30;
-  const waterTop = canvasHeight * waterBoundaryY + margin;
-  const waterBottom = canvasHeight;
-  const waterLeft = margin;
-  const waterRight = canvasWidth - margin;
-
-  if (fish.position.x < waterLeft || fish.position.x > waterRight) {
-    fish.position.x = Math.max(
-      waterLeft,
-      Math.min(waterRight, fish.position.x),
-    );
+  if (isPositionAllowed && !isPositionAllowed(nextX, nextY)) {
     fish.combatTimer = 0;
-  }
-  if (fish.position.y < waterTop || fish.position.y > waterBottom) {
-    fish.position.y = Math.max(
-      waterTop,
-      Math.min(waterBottom, fish.position.y),
-    );
-    fish.combatTimer = 0;
+  } else {
+    fish.position.x = Math.max(0, Math.min(canvasWidth, nextX));
+    fish.position.y = Math.max(0, Math.min(canvasHeight, nextY));
   }
 }

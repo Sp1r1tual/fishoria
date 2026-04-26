@@ -155,6 +155,81 @@
   }
 }
 
+@media (max-height: 550px) and (orientation: landscape) {
+  .authForm {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 16px;
+    align-items: end;
+  }
+
+  .formTitle {
+    grid-column: 1 / -1;
+    font-size: 1rem;
+    margin-bottom: -2px;
+  }
+
+  .formGroup {
+    gap: 4px;
+  }
+
+  .fullWidthGroup {
+    grid-column: 1 / -1;
+  }
+
+  .formLabel {
+    font-size: 0.7rem;
+    margin-bottom: 0 !important;
+  }
+
+  p.formLabel {
+    display: none;
+  }
+
+  .formLabel {
+    font-size: 0.75rem;
+  }
+
+  .formInput {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .formActions {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 12px;
+    margin-top: 4px;
+  }
+
+  .formActions > button:first-child {
+    width: 100% !important;
+    margin-bottom: 4px;
+  }
+
+  .formActions button {
+    padding: 8px 16px !important;
+    min-height: 40px !important;
+    font-size: 0.8rem !important;
+    border-bottom-width: 3px !important;
+  }
+
+  .forgotPassword {
+    font-size: 0.75rem;
+    margin-top: 0;
+  }
+
+  .serverError,
+  .serverSuccess {
+    grid-column: 1 / -1;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+}
+
 .serverError {
   background-color: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);

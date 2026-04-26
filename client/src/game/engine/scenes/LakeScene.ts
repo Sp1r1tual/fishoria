@@ -870,21 +870,24 @@ export class LakeScene implements IScene {
     const ambientRate = isRaining ? 25.0 : 1.0;
 
     if (Math.random() < deltaTime * ambientRate) {
-      const spawnX = Math.random() * W;
-      const spawnY = waterY + Math.random() * (H - waterY);
+      const pos = this.sectorSystem.getRandomAllowedPosition();
+      if (pos) {
+        const spawnX = pos.x * W;
+        const spawnY = pos.y * H;
 
-      const perspectiveScale =
-        0.6 + 0.4 * Math.max(0, Math.min(1, (spawnY - waterY) / waterHeight));
+        const perspectiveScale =
+          0.6 + 0.4 * Math.max(0, Math.min(1, (spawnY - waterY) / waterHeight));
 
-      this.bubbleEffect.spawn(
-        spawnX,
-        spawnY,
-        isRaining ? 1 : 1 + Math.floor(Math.random() * 3),
-        perspectiveScale,
-      );
+        this.bubbleEffect.spawn(
+          spawnX,
+          spawnY,
+          isRaining ? 1 : 1 + Math.floor(Math.random() * 3),
+          perspectiveScale,
+        );
+      }
     }
 
-    const renderScale = W < 768 ? 0.45 : W < 1080 ? 0.8 : 1.0;
+    const renderScale = W < 768 ? 0.6 : W < 1080 ? 0.85 : 1.0;
 
     this.hook.update({
       x: this.hookX,
@@ -1334,6 +1337,8 @@ export class LakeScene implements IScene {
         trashChance: this.config.trashChance,
         waterBoundaryY: this.config.environment.waterBoundaryY,
         getDepthAt: (nx, ny) => this.depthSystem.getDepthAt(nx, ny),
+        isPositionAllowed: (x, y) =>
+          !!this.sectorSystem.getSectorAt(x / W, y / H),
       },
       this.callbacks,
     );

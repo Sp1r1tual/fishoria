@@ -59,7 +59,7 @@ export class DragonflyEffect {
       (isCast && phase === 'waiting' && maxInterest < 0.2 && !playerReeling);
 
     if (this.state === 'hidden') {
-      if (canBePresent && rodIsCalm && Math.random() < dt * 0.03) {
+      if (canBePresent && rodIsCalm && Math.random() < dt * 0.045) {
         this.state = 'flying';
         this.isTargetingRod = true;
         this.currentSpeed = 0;
@@ -74,14 +74,39 @@ export class DragonflyEffect {
         this.bodyColor = variation.body;
         this.headColor = variation.head;
 
-        const spawnDist = 150 + Math.random() * 150;
+        const minApproachDist = W < 768 ? 160 : 250;
+        const spawnDist = minApproachDist + Math.random() * 100;
         const spawnAngle = Math.random() * Math.PI * 2;
 
-        this.x = rodTipX + Math.cos(spawnAngle) * spawnDist;
-        this.y = rodTipY + Math.sin(spawnAngle) * spawnDist;
+        let sx = rodTipX + Math.cos(spawnAngle) * spawnDist;
+        let sy = rodTipY + Math.sin(spawnAngle) * spawnDist;
 
-        this.x = Math.max(50, Math.min(W - 50, this.x));
-        this.y = Math.max(50, Math.min(H / 2, this.y));
+        sx = Math.max(50, Math.min(W - 50, sx));
+        sy = Math.max(50, Math.min(H / 2, sy));
+
+        const dx = sx - rodTipX;
+        const dy = sy - (rodTipY - 2);
+        const actualDist = Math.sqrt(dx * dx + dy * dy);
+
+        if (actualDist < minApproachDist) {
+          const altAngle = spawnAngle + Math.PI;
+          let ax = rodTipX + Math.cos(altAngle) * spawnDist;
+          let ay = rodTipY + Math.sin(altAngle) * spawnDist;
+          ax = Math.max(50, Math.min(W - 50, ax));
+          ay = Math.max(50, Math.min(H / 2, ay));
+
+          const adx = ax - rodTipX;
+          const ady = ay - (rodTipY - 2);
+          const altDist = Math.sqrt(adx * adx + ady * ady);
+
+          if (altDist > actualDist) {
+            sx = ax;
+            sy = ay;
+          }
+        }
+
+        this.x = sx;
+        this.y = sy;
 
         this.gfx.visible = true;
         this.targetX = rodTipX;

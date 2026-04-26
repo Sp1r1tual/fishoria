@@ -64,7 +64,7 @@ export const ForgotPasswordForm = ({
         </div>
       )}
 
-      <div className={styles.formGroup}>
+      <div className={`${styles.formGroup} ${styles.fullWidthGroup || ''}`}>
         <label htmlFor="forgot-email" className={styles.formLabel}>
           {t('landing.login.email')}
         </label>
