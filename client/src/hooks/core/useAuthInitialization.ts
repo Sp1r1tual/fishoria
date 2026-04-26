@@ -50,7 +50,7 @@ export const useAuthInitialization = () => {
       try {
         const data = await queryClient.fetchQuery({
           queryKey: PLAYER_KEYS.profile(),
-          queryFn: PlayerService.getProfile,
+          queryFn: () => PlayerService.getProfile(),
           staleTime: 5 * 60 * 1000,
         });
 
