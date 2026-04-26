@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UseGuards, Body } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards, Body, Query } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import ms from 'ms';
 import { Throttle } from '@nestjs/throttler';
@@ -24,8 +24,11 @@ export class PlayerController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  async getProfile(@GetUserId() userId: string) {
-    const profile = await this.playerService.getProfile(userId);
+  async getProfile(
+    @GetUserId() userId: string,
+    @Query('lang') language?: string,
+  ) {
+    const profile = await this.playerService.getProfile(userId, language);
     const jwtExp = this.configService.get<string>(
       'JWT_ACCESS_TOKEN_EXPIRATION',
     )!;

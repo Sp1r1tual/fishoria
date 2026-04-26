@@ -6,6 +6,7 @@ import { ApiExcludeEndpoint } from '@nestjs/swagger';
 @Throttle({ default: { limit: 100, ttl: 60000 } })
 @Controller()
 export class AppController {
+  @ApiExcludeEndpoint()
   @Get()
   async getDashboard(@Res() res: express.Response) {
     res.redirect('/admin');

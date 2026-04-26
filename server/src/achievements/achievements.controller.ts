@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards, Query } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 
 import { GetUser } from '../auth/decorators/get-user.decorator';
@@ -15,8 +15,11 @@ export class AchievementsController {
   @Get()
   @UseGuards(JwtAuthGuard)
   async getAchievements(
-    @GetUser('language') language: string,
+    @GetUser('language') tokenLanguage: string,
+    @Query('lang') queryLanguage?: string,
   ): Promise<AchievementResponseDto[]> {
-    return this.achievementsService.getAllAchievements(language);
+    return this.achievementsService.getAllAchievements(
+      queryLanguage || tokenLanguage,
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Query } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -18,9 +18,13 @@ export class QuestController {
   @Get()
   async getQuests(
     @GetUserId() userId: string,
-    @GetUser('language') language: string,
+    @GetUser('language') tokenLanguage: string,
+    @Query('lang') queryLanguage?: string,
   ): Promise<PlayerQuestResponseDto[]> {
-    return this.questService.getPlayerQuests(userId, language);
+    return this.questService.getPlayerQuests(
+      userId,
+      queryLanguage || tokenLanguage,
+    );
   }
 
   @Post('claim')

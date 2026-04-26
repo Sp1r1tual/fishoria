@@ -26,13 +26,16 @@ export class PlayerService {
     private readonly redis: RedisService,
   ) {}
 
-  async getProfile(userId: string): Promise<PlayerProfileResponseDto> {
+  async getProfile(
+    userId: string,
+    language?: string,
+  ): Promise<PlayerProfileResponseDto> {
     const user = await this.playerEntity.findUser(userId);
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    const lang = user.language;
+    const lang = language || user.language;
 
     const rawProfile = await this.playerEntity.findProfile(userId, lang);
 
