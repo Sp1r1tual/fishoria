@@ -2,7 +2,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  flex: 1;
+  min-height: 0;
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
 }

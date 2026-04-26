@@ -35,12 +35,15 @@ export const usePlayerQuery = () => {
 
 export const useAddMoneyMutation = () => {
   const queryClient = useQueryClient();
+  const { i18n } = useTranslation();
+  const language = i18n.language;
 
   return useMutation({
     mutationFn: (payload: { amount: number; targetUserId?: string }) =>
       PlayerService.addMoney(payload),
     onSuccess: (data) => {
-      queryClient.setQueryData(PLAYER_KEYS.profile(), data);
+      const queryKey = [...PLAYER_KEYS.profile(), language];
+      queryClient.setQueryData(queryKey, data);
     },
   });
 };
@@ -74,12 +77,15 @@ export const useUpdateLanguageMutation = () => {
 
 export const useUpdateProfileMutation = () => {
   const queryClient = useQueryClient();
+  const { i18n } = useTranslation();
+  const language = i18n.language;
 
   return useMutation({
     mutationFn: (payload: { username?: string; avatar?: string }) =>
       PlayerService.updateProfile(payload),
     onSuccess: (data) => {
-      queryClient.setQueryData(PLAYER_KEYS.profile(), data);
+      const queryKey = [...PLAYER_KEYS.profile(), language];
+      queryClient.setQueryData(queryKey, data);
     },
   });
 };
