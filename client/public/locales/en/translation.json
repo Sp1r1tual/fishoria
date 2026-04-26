@@ -407,8 +407,17 @@
     "namePlaceholder": "Enter your name",
     "save": "Save Changes",
     "savedSuccess": "Profile updated!",
-    "errorLength": "Name must be 3-24 characters",
-    "errorChars": "Name contains invalid characters"
+    "errorLength": "Name must be 3-20 characters",
+    "errorChars": "Name contains invalid characters",
+    "uploadAvatar": "Upload",
+    "uploading": "Uploading...",
+    "avatarErrors": {
+      "invalidType": "Only JPG, PNG, WebP or GIF images are allowed",
+      "tooLarge": "Image must be under 5 MB",
+      "uploadFailed": "Failed to upload avatar. Please try again.",
+      "avatarNotice": "Inappropriate content will be removed, and repeated violations will lead to a ban. For details, see ",
+      "avatarNoticeLink": "Terms of Service"
+    }
   },
   "portrait": {
     "rotate": "Please rotate device",
@@ -777,11 +786,11 @@
   },
   "privacy": {
     "title": "Privacy Policy",
-    "text": "Your privacy is important to us. We collect minimal data required for game operation, including username and basic progress. We do not sell your data to third parties. By playing Fishoria, you agree to our simple and fair privacy standards. We use cookies to maintain your session and ensure a smooth gaming experience. All collected data is used exclusively to improve the game and manage your account achievements and leaderboard standing."
+    "text": "Your privacy is important to us.\n\nDATA COLLECTION\nWe collect minimal data required for game operation, including username and basic progress. We do not sell your data to third parties. By playing Fishoria, you agree to our simple and fair privacy standards.\n\nCOOKIES\nWe use cookies to maintain your session and ensure a smooth gaming experience.\n\nPURPOSE\nAll collected data is used exclusively to improve the game and manage your account achievements and leaderboard standing."
   },
   "terms": {
     "title": "Terms of Service",
-    "text": "Welcome to Fishoria. By using this application, you agree to stay respectful, avoid exploits or cheating, and use the service as intended. We reserve the right to manage accounts that violate our community standards. All game assets and code are property of Fishoria developers. Our services are provided 'as is' without warranties of any kind. Continued use of the game manifests your complete and binding acceptance of these simple terms and any future modifications that may be published here."
+    "text": "Welcome to Fishoria.\n\nCOMMUNITY STANDARDS\nBy using this application, you agree to stay respectful, avoid exploits or cheating, and use the service as intended. We reserve the right to manage accounts that violate our community standards.\n\nCONTENT POLICY\nPosting any inappropriate content, including avatars or usernames containing profanity, sexually explicit material, incitement to violence, or discrimination, is strictly prohibited. Violation of these rules may lead to an immediate and permanent ban of your account.\n\nLEGAL & PROPERTY\nAll game assets and code are property of Fishoria developers. Our services are provided 'as is' without warranties of any kind.\n\nACCEPTANCE\nContinued use of the game manifests your complete and binding acceptance of these terms and any future modifications that may be published here."
   },
   "landing": {
     "or_continue_with": "Or continue with",

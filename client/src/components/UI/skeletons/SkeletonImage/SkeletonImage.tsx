@@ -15,6 +15,7 @@ interface ISkeletonImageProps {
   onClick?: () => void;
   objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
   style?: React.CSSProperties;
+  imgProps?: React.ImgHTMLAttributes<HTMLImageElement>;
 }
 
 export const SkeletonImage = ({
@@ -28,6 +29,7 @@ export const SkeletonImage = ({
   onClick,
   objectFit = 'cover',
   style,
+  imgProps,
 }: ISkeletonImageProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -60,6 +62,7 @@ export const SkeletonImage = ({
           onLoad={handleLoad}
           onError={handleError}
           onClick={onClick}
+          {...imgProps}
         />
       ) : (
         <div className={styles.errorPlaceholder}>

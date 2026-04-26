@@ -13,30 +13,20 @@ import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
 import { EditButton } from '../UI/buttons/EditButton/EditButton';
 import { WeatherStatus } from '../UI/WeatherStatus/WeatherStatus';
 import { Fireflies } from '../Effects/Fireflies/Fireflies';
+import { SkeletonImage } from '../UI/skeletons/SkeletonImage/SkeletonImage';
 
 import { useAppDispatch } from '@/hooks/core/useAppStore';
 import { navigateTo } from '@/store/slices/uiSlice';
 import { usePlayerQuery } from '@/queries/player.queries';
 
 import { getXpNeededForLevel } from '@/common/utils/experience.util';
+import { resolveAvatarImg } from '@/common/utils/avatar.util';
+import { getMenuActions } from './MainMenu.config';
 
 import mainBg from '@/assets/ui/main_menu_background.webp';
-import keepnetIcon from '@/assets/ui/keepnet.webp';
-import equipmentIcon from '@/assets/ui/equipment.webp';
-import shopIcon from '@/assets/ui/shop.webp';
-import settingsIcon from '@/assets/ui/settings.webp';
-import statisticsIcon from '@/assets/ui/statistics.webp';
 import coinIcon from '@/assets/ui/coin.webp';
 import boatIcon from '@/assets/ui/boat.webp';
-import profile01 from '@/assets/ui/profile.webp';
-import profile02 from '@/assets/ui/profile_02.webp';
-import profile03 from '@/assets/ui/profile_03.webp';
-import profile04 from '@/assets/ui/profile_04.webp';
-import guideIcon from '@/assets/ui/guide.webp';
-import questsIcon from '@/assets/ui/quests.webp';
-import helpIcon from '@/assets/ui/help.webp';
 import newsIcon from '@/assets/ui/news.webp';
-import achievementsIcon from '@/assets/ui/achievements.webp';
 
 import styles from './MainMenu.module.css';
 
@@ -49,81 +39,18 @@ export function MainMenu() {
   const [isWeatherModalOpen, setIsWeatherModalOpen] = useState(false);
   const { t } = useTranslation();
 
-  const avatarMap = {
-    'profile.webp': profile01,
-    'profile_02.webp': profile02,
-    'profile_03.webp': profile03,
-    'profile_04.webp': profile04,
-  };
-
   const level = player?.level ?? 1;
   const xp = player?.xp ?? 0;
   const money = player?.money ?? 0;
   const name = player?.user?.username ?? 'Angler';
   const avatar = player?.user?.avatar ?? 'profile.webp';
 
-  const currentAvatarImg =
-    avatarMap[avatar as keyof typeof avatarMap] || profile01;
+  const currentAvatarImg = resolveAvatarImg(avatar);
 
   const xpNeeded = getXpNeededForLevel(level);
   const xpPct = Math.min(100, (xp / xpNeeded) * 100);
 
-  const menuActions = [
-    {
-      id: 'btn-inventory',
-      icon: keepnetIcon,
-      label: t('mainMenu.keepnet'),
-      path: '/keepnet',
-    },
-    {
-      id: 'btn-gear',
-      icon: equipmentIcon,
-      label: t('mainMenu.equipment'),
-      path: '/equipment',
-    },
-    {
-      id: 'btn-shop',
-      icon: shopIcon,
-      label: t('mainMenu.shop'),
-      path: '/marketplace',
-    },
-    {
-      id: 'btn-stats',
-      icon: statisticsIcon,
-      label: t('mainMenu.statistics'),
-      path: '/statistics',
-    },
-    {
-      id: 'btn-quests',
-      icon: questsIcon,
-      label: t('mainMenu.quests'),
-      path: '/quests',
-    },
-    {
-      id: 'btn-achievements',
-      icon: achievementsIcon,
-      label: t('mainMenu.achievements', 'Achievements'),
-      path: '/achievements',
-    },
-    {
-      id: 'btn-guide',
-      icon: guideIcon,
-      label: t('mainMenu.guide'),
-      path: '/guide',
-    },
-    {
-      id: 'btn-help',
-      icon: helpIcon,
-      label: t('mainMenu.help'),
-      path: '/help',
-    },
-    {
-      id: 'btn-settings',
-      icon: settingsIcon,
-      label: t('mainMenu.settings'),
-      path: '/settings',
-    },
-  ];
+  const menuActions = getMenuActions(t);
 
   if (isLoading)
     return (
@@ -168,10 +95,11 @@ export function MainMenu() {
       <div className={`${styles['main-menu__content']} fade-in`}>
         <section className={`glass ${styles['main-menu__player']}`}>
           <div className={styles['main-menu__player-top']}>
-            <img
+            <SkeletonImage
               src={currentAvatarImg}
               alt="Profile"
               className={styles['main-menu__avatar-img']}
+              imgProps={{ referrerPolicy: 'no-referrer' }}
             />
 
             <div className={styles['main-menu__player-info']}>

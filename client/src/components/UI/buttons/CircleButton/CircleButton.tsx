@@ -1,4 +1,6 @@
-import type { MouseEvent } from 'react';
+import { useCallback, type MouseEvent } from 'react';
+
+import { useClickSound } from '@/hooks/audio/useSoundEffect';
 
 import styles from './CircleButton.module.css';
 
@@ -21,10 +23,20 @@ export const CircleButton = ({
   title,
   disabled = false,
 }: ICircleButtonProps) => {
+  const playClick = useClickSound();
+
+  const handleClick = useCallback(
+    (e: MouseEvent) => {
+      playClick();
+      if (onClick) onClick(e);
+    },
+    [onClick, playClick],
+  );
+
   return (
     <button
       className={`${styles.circle_btn} ${styles[`circle_btn--${variant}`]} ${styles[`circle_btn--${size}`]} ${className}`}
-      onClick={onClick}
+      onClick={handleClick}
       title={title}
       disabled={disabled}
       type="button"

@@ -18,6 +18,7 @@ This repository contains the client-side code for Fishoria. It combines a custom
 - **Dynamic Weather** – rain, clouds, wind, and day/night cycles that affect gameplay and audio atmosphere
 - **Full Economy UI** – shop, inventory, equipment, and keepnet management with real-time updates
 - **Player Dashboard** – statistics, achievements, quest progress, and lake diary
+- **Profile Customization** – personalized player profiles with custom avatar uploads (Supabase storage) and local persistence for quick switching
 - **Immersive Audio** – Web Audio API with ambient tracks, SFX, and volume control (iOS-compatible via GainNodes)
 - **Premium UI/UX** – responsive design with smooth CSS transitions, skeleton loading, and scroll-reveal animations
 - **Multi-language Support** – full localization (Ukrainian / English) via i18next with dynamic language switching
