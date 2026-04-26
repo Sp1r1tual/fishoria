@@ -72,6 +72,7 @@ export function Shop() {
         titleIcon={shopIcon}
         onBack={() => navigate('/')}
         className={styles.shop}
+        width="lg"
         headerExtra={
           <div className={styles['shop__balance']}>
             <img

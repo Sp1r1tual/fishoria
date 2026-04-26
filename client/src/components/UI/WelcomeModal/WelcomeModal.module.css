@@ -1,0 +1,253 @@
+.welcome-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+  animation: fade-in 0.4s ease-out;
+}
+
+.welcome-modal {
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 32px;
+  padding: 40px;
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.7),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: scale-up 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+}
+
+.welcome-header {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.welcome-title {
+  font-size: 2.2rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.welcome-subtitle {
+  font-size: 1.1rem;
+  color: #94a3b8;
+  font-weight: 500;
+  max-width: 80%;
+  margin: 0 auto;
+}
+
+.welcome-content {
+  width: 100%;
+  overflow-y: auto;
+  padding-right: 8px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 15px,
+    black calc(100% - 15px),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 15px,
+    black calc(100% - 15px),
+    transparent 100%
+  );
+}
+
+.welcome-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.welcome-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.welcome-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.tutorial-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  padding: 8px 0;
+}
+
+.tutorial-step {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all 0.3s ease;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.step-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+.tutorial-step strong {
+  font-size: 1.15rem;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.tutorial-step p {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.welcome-footer {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.start-button {
+  width: 100%;
+  max-width: 280px;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-up {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-modal {
+    padding: 24px 16px;
+    gap: 16px;
+    border-radius: 24px;
+  }
+
+  .welcome-title {
+    font-size: 1.6rem;
+  }
+
+  .welcome-subtitle {
+    font-size: 0.95rem;
+    max-width: 100%;
+  }
+
+  .tutorial-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .tutorial-step {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .step-header {
+    gap: 12px;
+  }
+
+  .step-icon {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-height: 480px) {
+  .welcome-modal {
+    padding: 16px 24px;
+    gap: 12px;
+    max-width: 600px;
+  }
+
+  .welcome-title {
+    font-size: 1.4rem;
+    margin-bottom: 4px;
+  }
+
+  .welcome-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .tutorial-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .tutorial-step {
+    padding: 12px 16px;
+    gap: 8px;
+  }
+
+  .step-header {
+    gap: 10px;
+  }
+
+  .step-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .tutorial-step strong {
+    font-size: 1rem;
+  }
+
+  .tutorial-step p {
+    font-size: 0.85rem;
+  }
+}

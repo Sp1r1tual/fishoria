@@ -73,27 +73,60 @@
 }
 
 .content {
-  padding: 12px 14px;
+  padding: 15px 14px;
   overflow-y: auto;
   flex: 1;
+  min-height: 0;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 20px,
+    black calc(100% - 20px),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 20px,
+    black calc(100% - 20px),
+    transparent 100%
+  );
+}
+
+.noScroll {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  mask-image: none;
+  -webkit-mask-image: none;
 }
 
 .content::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 .content::-webkit-scrollbar-track {
   background: transparent;
 }
 .content::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+  border-radius: 10px;
 }
-@media (max-height: 520px), (max-width: 500px) {
+
+@media (max-width: 1000px) {
   .header {
-    padding: 8px 12px;
+    padding: 10px 12px;
   }
   .title {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .header {
+    padding: 12px;
+  }
+  .title {
+    font-size: 1.3rem;
   }
   .content {
     padding: 10px 12px;

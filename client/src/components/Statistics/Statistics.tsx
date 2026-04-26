@@ -41,6 +41,7 @@ export function Statistics() {
       titleIcon={statisticsIcon}
       onBack={() => navigate('/')}
       className={styles.statistics}
+      width="md"
     >
       <section className={styles['statistics__grid']}>
         {lakesToShow.map((lake) => {

@@ -124,7 +124,7 @@ export function LakeInfo({ sceneRef, isDebugActive }: ILakeInfoProps) {
         ) : (
           <div className={styles['lake-info__groundbait-timer-wrap']}>
             <div className={styles['lake-info__groundbait-timer']}>
-              {t('hud.groundbait')}:{' '}
+              {t('hud.groundbait')}:
               <span ref={timerRef}>
                 {TimeManager.formatTimeRemaining(groundbaitExpiresAt, t)}
               </span>

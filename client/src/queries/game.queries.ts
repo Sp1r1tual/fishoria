@@ -83,11 +83,26 @@ export const useCatchFishMutation = () => {
           }
         }
 
+        const optimisticFish = {
+          id: `temp_${Date.now()}`,
+          speciesId: newCatch.speciesId,
+          speciesName: newCatch.speciesName || newCatch.speciesId,
+          lakeId: newCatch.lakeId,
+          lakeName: newCatch.lakeName || newCatch.lakeId,
+          weight: newCatch.weight,
+          length: newCatch.length,
+          baitUsed: newCatch.baitUsed,
+          method: newCatch.method,
+          isReleased: newCatch.isReleased ?? false,
+          caughtAt: new Date().toISOString(),
+        };
+
         queryClient.setQueryData(PLAYER_KEYS.profile(), {
           ...previousPlayer,
           level: newLevel,
           xp: newXp,
           consumables: newConsumables,
+          fishCatches: [...previousPlayer.fishCatches, optimisticFish],
         });
       }
 

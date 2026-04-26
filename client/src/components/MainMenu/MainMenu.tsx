@@ -15,6 +15,7 @@ import { WeatherStatus } from '../UI/WeatherStatus/WeatherStatus';
 import { Fireflies } from '../Effects/Fireflies/Fireflies';
 import { SkeletonImage } from '../UI/skeletons/SkeletonImage/SkeletonImage';
 import { PlayerSkeleton } from './PlayerSkeleton';
+import { WelcomeModal } from '../UI/WelcomeModal/WelcomeModal';
 
 import { useAppDispatch } from '@/hooks/core/useAppStore';
 import { navigateTo } from '@/store/slices/uiSlice';
@@ -151,6 +152,7 @@ export function MainMenu() {
             icon={boatIcon}
             label={t('mainMenu.startFishing')}
             onClick={() => dispatch(navigateTo('lakeSelect'))}
+            isShining={true}
           />
 
           <div className={styles['main-menu__grid']}>
@@ -176,8 +178,6 @@ export function MainMenu() {
               badge={hasUnread}
             />
           </div>
-
-          <div className={styles['main-menu__footer-actions']}></div>
         </nav>
       </div>
       <div className={styles['main-menu__footer-wrapper']}>
@@ -198,6 +198,8 @@ export function MainMenu() {
         isOpen={isWeatherModalOpen}
         onClose={() => setIsWeatherModalOpen(false)}
       />
+
+      <WelcomeModal />
     </main>
   );
 }

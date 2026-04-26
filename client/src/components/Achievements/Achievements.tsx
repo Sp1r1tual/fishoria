@@ -37,6 +37,7 @@ export function Achievements() {
       titleIcon={achievementsIcon}
       onBack={() => navigate('/')}
       className={styles.achievements}
+      width="md"
     >
       <section className={styles['achievements__content']}>
         {isLoading ? (

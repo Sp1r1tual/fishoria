@@ -30,7 +30,7 @@ export const PlayerSkeleton = () => {
             </div>
           </div>
           <div className={styles['main-menu__xp-bar']}>
-            <Skeleton height={4} borderRadius={2} />
+            <Skeleton height={10} borderRadius={10} />
           </div>
         </div>
       </div>

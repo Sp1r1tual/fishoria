@@ -1,7 +1,7 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0;
   width: 100%;
 }
 
@@ -34,6 +34,7 @@
   width: 100%;
   position: relative;
   min-height: 56px;
+  border: none;
 }
 
 .title_group {
@@ -107,15 +108,14 @@
   z-index: 100;
   background: #0f172a;
   margin: -12px -14px 0 -14px;
-  padding: 12px 14px;
+  padding: 12px 14px 0 14px;
   width: calc(100% + 28px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 @media (max-width: 640px) {
   .sticky {
     top: -8px;
     margin: -8px -14px 0 -14px;
-    padding: 8px 14px;
+    padding: 8px 14px 0 14px;
   }
 }

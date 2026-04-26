@@ -26,8 +26,45 @@
   white-space: nowrap;
 }
 
+.woody-button.shining-effect {
+  overflow: hidden;
+}
+
+.shining-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transform: skewX(-25deg);
+  transition: none;
+  z-index: 2;
+  animation: shine-sweep 5s infinite;
+}
+
+@keyframes shine-sweep {
+  0% {
+    left: -150%;
+  }
+  40% {
+    left: 150%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+
 .woody-button * {
   pointer-events: none;
+  position: relative;
+  z-index: 3;
 }
 
 .woody-button:disabled {
@@ -49,9 +86,10 @@
   background-image:
     radial-gradient(
       circle at center,
-      rgba(255, 253, 230, 0.45) 0%,
-      rgba(255, 253, 230, 0) 75%
+      rgba(255, 253, 230, 0.35) 0%,
+      rgba(255, 253, 230, 0) 80%
     ),
+    linear-gradient(rgba(56, 102, 65, 0.45), rgba(56, 102, 65, 0.45)),
     var(--pattern-wood-url), linear-gradient(#386641, #386641);
   border-bottom: 5px solid #1a3a1f;
   border-right: 2px solid #2b4d2d;
@@ -66,9 +104,10 @@
   background-image:
     radial-gradient(
       circle at center,
-      rgba(255, 253, 230, 0.4) 0%,
-      rgba(255, 253, 230, 0) 75%
+      rgba(255, 253, 230, 0.3) 0%,
+      rgba(255, 253, 230, 0) 80%
     ),
+    linear-gradient(rgba(74, 52, 36, 0.55), rgba(74, 52, 36, 0.55)),
     var(--pattern-wood-url), linear-gradient(#4a3424, #4a3424);
   border-bottom: 5px solid #2b1d12;
   border-right: 2px solid #3d2b1f;
@@ -83,9 +122,10 @@
   background-image:
     radial-gradient(
       circle at center,
-      rgba(255, 253, 230, 0.3) 0%,
+      rgba(255, 253, 230, 0.25) 0%,
       rgba(255, 253, 230, 0) 75%
     ),
+    linear-gradient(rgba(127, 29, 29, 0.55), rgba(127, 29, 29, 0.55)),
     var(--pattern-wood-url), linear-gradient(#7f1d1d, #7f1d1d);
   border-bottom: 5px solid #450a0a;
   border-right: 2px solid #500707;
@@ -172,6 +212,7 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
 }
 
 .label {

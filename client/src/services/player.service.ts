@@ -3,8 +3,10 @@ import type { IPlayerProfile } from '@/common/types/player.types';
 import { $mainApi } from '@/http/axios';
 
 export class PlayerService {
-  static async getProfile(): Promise<IPlayerProfile> {
-    const { data } = await $mainApi.get<IPlayerProfile>('/player/profile');
+  static async getProfile(lang?: string): Promise<IPlayerProfile> {
+    const { data } = await $mainApi.get<IPlayerProfile>('/player/profile', {
+      params: lang ? { lang } : {},
+    });
     return data;
   }
 

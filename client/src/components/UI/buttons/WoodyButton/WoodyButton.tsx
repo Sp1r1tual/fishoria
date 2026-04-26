@@ -17,6 +17,7 @@ interface WoodyButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>
   children?: React.ReactNode;
   playSound?: boolean;
   badge?: number | string | boolean;
+  isShining?: boolean;
 }
 
 export const WoodyButton = ({
@@ -32,6 +33,7 @@ export const WoodyButton = ({
   children,
   playSound = true,
   badge,
+  isShining = false,
   onClick,
   ...props
 }: WoodyButtonProps) => {
@@ -53,6 +55,7 @@ export const WoodyButton = ({
     isBackBtn ? styles['back-nav-btn'] : '',
     mobileOnly ? styles['mobile-only'] : '',
     desktopOnly ? styles['desktop-only'] : '',
+    isShining ? styles['shining-effect'] : '',
     className,
   ]
     .join(' ')

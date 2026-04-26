@@ -221,11 +221,12 @@ export class LakeScene implements IScene {
       this.sectorSystem,
       this.config,
     );
+
+    this.bubbleEffect = new BubbleEffect(this.fishLayer);
     this.hook = new HookEntity(this.fishLayer);
 
     this.weatherLayer = new WeatherLayer(this.stage, app);
     this.groundbaitEffect = new GroundbaitEffect(this.stage);
-    this.bubbleEffect = new BubbleEffect(this.fishLayer);
     this.dragonflyEffect = new DragonflyEffect(this.uiLayer);
 
     this.hookX = W / 2;

@@ -415,7 +415,7 @@
       "invalidType": "Only JPG, PNG, WebP or GIF images are allowed",
       "tooLarge": "Image must be under 5 MB",
       "uploadFailed": "Failed to upload avatar. Please try again.",
-      "avatarNotice": "Inappropriate content will be removed, and repeated violations will lead to a ban. For details, see ",
+      "avatarNotice": "Uploading inappropriate content may result in blocking. For details, see ",
       "avatarNoticeLink": "Terms of Service"
     }
   },
@@ -917,5 +917,18 @@
   "metadata": {
     "defaultTitle": "Fishoria – Online Fishing Simulator & Game",
     "defaultDescription": "Fishoria is an online fishing simulator and browser game. Catch fish, explore reservoirs and upgrade your equipment directly in your browser."
+  },
+  "welcome": {
+    "title": "Welcome to Fishoria!",
+    "subtitle": "Your journey as a legendary angler begins here",
+    "depth_title": "Depth & Relief",
+    "depth_desc": "Every lake has a unique bottom. Explore the depths, as each fish species has its own preferences.",
+    "weather_title": "Time & Weather",
+    "weather_desc": "Time of day and weather critically affect fish activity. Become a master of observation!",
+    "spinning_title": "Spinning Realism",
+    "spinning_desc": "Lures move through the water column realistically. Watch your retrieval to avoid snags and trigger bites.",
+    "economy_title": "Economy & Trophies",
+    "economy_desc": "Catch and sell fish to buy better gear and pull out true heavyweight monsters of our lakes.",
+    "start_btn": "Start Adventure"
   }
 }

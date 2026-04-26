@@ -34,6 +34,7 @@ export function GameScreen() {
         isOpen={screen === 'inventory'}
         onClose={() => dispatch(navigateTo('game'))}
         maxWidth="800px"
+        disableScroll
       >
         <Inventory isModal />
       </Modal>
@@ -42,6 +43,7 @@ export function GameScreen() {
         isOpen={screen === 'gear'}
         onClose={() => dispatch(navigateTo('game'))}
         maxWidth="800px"
+        disableScroll
       >
         <Gear onClose={() => dispatch(navigateTo('game'))} />
       </Modal>

@@ -71,7 +71,11 @@ export function Gear({ onClose }: { onClose?: () => void }) {
         </>
       )}
 
-      <div className={styles['gear__container']}>
+      <div
+        className={`${styles['gear__container']} ${
+          onClose ? styles.with_fade : ''
+        }`}
+      >
         <GearCategory
           title={t('shop.tabs.rods')}
           items={getRodInstances()}
@@ -210,6 +214,7 @@ export function Gear({ onClose }: { onClose?: () => void }) {
       onInfo={handleShowInfo}
       infoText={guideText}
       className={styles.gear}
+      width="lg"
     >
       {content}
       {modals}

@@ -14,6 +14,7 @@ interface IModalProps {
   maxWidth?: string;
   showCloseButton?: boolean;
   closeButtonVariant?: 'red' | 'brown' | 'glass' | 'danger' | 'wooden';
+  disableScroll?: boolean;
 }
 
 export function Modal({
@@ -25,6 +26,7 @@ export function Modal({
   maxWidth,
   showCloseButton = false,
   closeButtonVariant = 'red',
+  disableScroll = false,
 }: IModalProps) {
   if (!isOpen) return null;
 
@@ -50,7 +52,11 @@ export function Modal({
             )}
           </div>
         )}
-        <div className={styles.content}>{children}</div>
+        <div
+          className={`${styles.content} ${disableScroll ? styles.noScroll : ''}`}
+        >
+          {children}
+        </div>
       </div>
     </div>,
     document.body,

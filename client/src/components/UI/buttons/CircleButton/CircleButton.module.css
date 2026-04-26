@@ -87,9 +87,10 @@
   background-image:
     radial-gradient(
       circle at center,
-      rgba(255, 253, 230, 0.3) 0%,
-      rgba(255, 253, 230, 0) 75%
+      rgba(255, 253, 230, 0.25) 0%,
+      rgba(255, 253, 230, 0) 80%
     ),
+    linear-gradient(rgba(74, 52, 36, 0.55), rgba(74, 52, 36, 0.55)),
     var(--pattern-wood-url), linear-gradient(#5d432e, #4a3424);
   border: 1px solid #3d2b1f;
   border-bottom: 3px solid #2b1d12;

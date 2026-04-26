@@ -19,6 +19,8 @@ interface ScreenContainerProps {
   showBlur?: boolean;
   onInfo?: () => void;
   infoText?: string;
+  width?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  withScrollFade?: boolean;
 }
 
 export function ScreenContainer({
@@ -33,7 +35,11 @@ export function ScreenContainer({
   showBlur = true,
   onInfo,
   infoText,
+  width = 'md',
+  withScrollFade = false,
 }: ScreenContainerProps) {
+  const widthClass = styles[`width-${width}`];
+
   return (
     <main className={`${styles.container} ${className}`}>
       {showBgImage && (
@@ -49,7 +55,7 @@ export function ScreenContainer({
       )}
       {showBlur && <BluredOverlay opacity={0.3} blurSize="5px" />}
 
-      <div className={`${styles.container__inner} fade-in`}>
+      <div className={`${styles.container__inner} ${widthClass} fade-in`}>
         <ScreenHeader
           title={title}
           titleIcon={titleIcon}
@@ -59,7 +65,13 @@ export function ScreenContainer({
           infoText={infoText}
         />
 
-        <div className={styles.container__content}>{children}</div>
+        <div
+          className={`${styles.container__content} ${
+            withScrollFade ? styles.with_fade : ''
+          }`}
+        >
+          {children}
+        </div>
       </div>
     </main>
   );

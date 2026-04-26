@@ -38,6 +38,7 @@ export function Guide() {
       titleIcon={guideIcon}
       onBack={() => navigate('/')}
       className={styles.guide}
+      width="lg"
     >
       <div>
         <div className={styles['guide__filter']}>

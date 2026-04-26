@@ -40,7 +40,7 @@ export function RepairModal({
         </WoodyButton>
       }
     >
-      <div className={styles['gear__repair-list']}>
+      <div className={`${styles['gear__repair-list']} ${styles.with_fade}`}>
         {repairableItems.length === 0 ? (
           <div
             style={{ padding: '20px', textAlign: 'center', color: '#fbbf24' }}

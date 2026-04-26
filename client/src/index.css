@@ -57,6 +57,7 @@ body {
   text-rendering: optimizeLegibility;
   image-rendering: -webkit-optimize-contrast;
   -webkit-overflow-scrolling: touch;
+  -webkit-text-size-adjust: 100%;
   touch-action: manipulation;
 }
 

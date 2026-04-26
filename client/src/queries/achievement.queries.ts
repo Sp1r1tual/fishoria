@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 import { $mainApi } from '@/http/axios';
 
@@ -7,15 +8,20 @@ export const ACHIEVEMENT_KEYS = {
 };
 
 export const AchievementService = {
-  getAchievements: async () => {
-    const { data } = await $mainApi.get('/achievements');
+  getAchievements: async (lang?: string) => {
+    const { data } = await $mainApi.get('/achievements', {
+      params: lang ? { lang } : {},
+    });
     return data;
   },
 };
 
 export const useAchievements = () => {
+  const { i18n } = useTranslation();
+  const language = i18n.language;
+
   return useQuery({
-    queryKey: ACHIEVEMENT_KEYS.all,
-    queryFn: AchievementService.getAchievements,
+    queryKey: [...ACHIEVEMENT_KEYS.all, language],
+    queryFn: () => AchievementService.getAchievements(language),
   });
 };

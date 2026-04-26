@@ -176,7 +176,11 @@ export function Inventory({ isModal = false }: { isModal?: boolean }) {
       ) : (
         <>
           <section className={styles['inventory__table-container']}>
-            <div className={styles['inventory__table-wrap']}>
+            <div
+              className={`${styles['inventory__table-wrap']} ${
+                isModal ? styles.with_fade : ''
+              }`}
+            >
               <table className={styles['inventory__table']}>
                 <thead>
                   <tr>
@@ -241,6 +245,7 @@ export function Inventory({ isModal = false }: { isModal?: boolean }) {
       onBack={handleBack}
       className={styles.inventory}
       headerExtra={sellButton}
+      width="lg"
     >
       {content}
     </ScreenContainer>

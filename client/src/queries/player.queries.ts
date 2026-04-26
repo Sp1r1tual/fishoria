@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 import { ACHIEVEMENT_KEYS } from './achievement.queries';
 import { QUEST_KEYS } from './quest.queries';
@@ -15,10 +16,12 @@ export const PLAYER_KEYS = {
 
 export const usePlayerQuery = () => {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const { i18n } = useTranslation();
+  const language = i18n.language;
 
   return useQuery({
-    queryKey: PLAYER_KEYS.profile(),
-    queryFn: PlayerService.getProfile,
+    queryKey: [...PLAYER_KEYS.profile(), language],
+    queryFn: () => PlayerService.getProfile(language),
     staleTime: 5 * 60 * 1000,
     enabled: isAuthenticated,
   });
