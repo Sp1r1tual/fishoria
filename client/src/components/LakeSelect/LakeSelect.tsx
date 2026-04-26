@@ -58,6 +58,7 @@ export function LakeSelect() {
       (p.style as CSSStyleDeclaration & { lineClamp: string }).lineClamp = '2';
       preview.style.height = '';
       card.style.height = '';
+      card.classList.remove(styles['is-expanded']);
 
       void p.offsetHeight;
       p.style.transition = '';
@@ -96,6 +97,7 @@ export function LakeSelect() {
       }
       if (currentCard) {
         currentCard.style.height = '';
+        currentCard.classList.remove(styles['is-expanded']);
       }
       delete collapseTimeouts.current[id];
     }, 300);
@@ -115,6 +117,7 @@ export function LakeSelect() {
     }
 
     card.style.height = `${card.offsetHeight}px`;
+    card.classList.add(styles['is-expanded']);
 
     const startHeight = p.clientHeight;
     p.style.maxHeight = `${startHeight}px`;

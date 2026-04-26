@@ -57,7 +57,7 @@ export class GroundbaitEffect {
     }
 
     this.gfx.clear();
-    const frameScalar = dt * 60; // Normalize dt (seconds) to a ~60fps scalar
+    const frameScalar = dt * 60;
     const spd = frameScalar / 6;
 
     for (let i = this.particles.length - 1; i >= 0; i--) {

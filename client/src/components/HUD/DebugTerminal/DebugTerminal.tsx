@@ -25,7 +25,7 @@ export function DebugTerminal({
 }: IDebugTerminalProps) {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
-  const isModerator = user?.role === 'MODERATOR' || user?.role === 'ADMIN';
+  const isModerator = user?.role === 'MODERATOR';
 
   const { mutateAsync: addMoneyAsync } = useAddMoneyMutation();
 

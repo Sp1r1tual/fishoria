@@ -6,7 +6,6 @@ import { GlobalPreloader } from '@/components/UI/GlobalPreloader/GlobalPreloader
 import { SnagMinigame } from '@/components/UI/SnagMinigame/SnagMinigame';
 import { SceneSync } from './SceneSync';
 import { CatchSync } from './CatchSync';
-import { LossSync } from './LossSync';
 
 import styles from './GameCanvas.module.css';
 
@@ -23,7 +22,6 @@ export function GameCanvas() {
 
         <SceneSync sceneRef={sceneRef} />
         <CatchSync sceneRef={sceneRef} />
-        <LossSync />
 
         <div
           className={styles['game-canvas__pixi-container']}

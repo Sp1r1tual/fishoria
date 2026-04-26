@@ -29,7 +29,14 @@ export interface IModalConfig {
   isOpen: boolean;
   title: string;
   message: string;
+  onConfirm: () => void;
+  onCancel?: () => void;
+  confirmLabel?: string;
+  cancelLabel?: string;
   icon?: string;
   price?: number;
-  onConfirm: () => void;
+  coinIcon?: string;
+  isLoading?: boolean;
+  closeButtonVariant?: 'red' | 'brown' | 'glass' | 'danger' | 'wooden';
+  confirmButtonVariant?: 'green' | 'brown' | 'red';
 }

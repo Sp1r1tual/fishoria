@@ -1,12 +1,24 @@
 import { createSlice, type PayloadAction, nanoid } from '@reduxjs/toolkit';
 
-import type { ScreenType, IToast } from '@/common/types';
+import type {
+  ScreenType,
+  IToast,
+  IPlayerProfile,
+  IModalConfig,
+} from '@/common/types';
 
 interface IUiState {
   screen: ScreenType;
   previousScreen: ScreenType;
   toasts: IToast[];
   gameAssetsLoaded: boolean;
+  profileModal: {
+    isOpen: boolean;
+    player: IPlayerProfile | null;
+    isError: boolean;
+  };
+  isWeatherModalOpen: boolean;
+  confirmModal: IModalConfig | null;
 }
 
 const INITIAL_STATE: IUiState = {
@@ -14,6 +26,13 @@ const INITIAL_STATE: IUiState = {
   previousScreen: 'mainMenu',
   toasts: [],
   gameAssetsLoaded: false,
+  profileModal: {
+    isOpen: false,
+    player: null,
+    isError: false,
+  },
+  isWeatherModalOpen: false,
+  confirmModal: null,
 };
 
 const uiSlice = createSlice({
@@ -45,9 +64,48 @@ const uiSlice = createSlice({
     setGameAssetsLoaded(state, action: PayloadAction<boolean>) {
       state.gameAssetsLoaded = action.payload;
     },
+    openProfileModal(
+      state,
+      action: PayloadAction<{
+        player: IPlayerProfile | null;
+        isError?: boolean;
+      }>,
+    ) {
+      state.profileModal = {
+        isOpen: true,
+        player: action.payload.player,
+        isError: action.payload.isError ?? false,
+      };
+    },
+    closeProfileModal(state) {
+      state.profileModal.isOpen = false;
+    },
+    openWeatherModal(state) {
+      state.isWeatherModalOpen = true;
+    },
+    closeWeatherModal(state) {
+      state.isWeatherModalOpen = false;
+    },
+    openConfirmModal(state, action: PayloadAction<IModalConfig>) {
+      state.confirmModal = action.payload;
+    },
+    closeConfirmModal(state) {
+      state.confirmModal = null;
+    },
   },
 });
 
-export const { navigateTo, addToast, removeToast, setGameAssetsLoaded } =
-  uiSlice.actions;
+export const {
+  navigateTo,
+  addToast,
+  removeToast,
+  setGameAssetsLoaded,
+  openProfileModal,
+  closeProfileModal,
+  openWeatherModal,
+  closeWeatherModal,
+  openConfirmModal,
+  closeConfirmModal,
+} = uiSlice.actions;
+
 export default uiSlice.reducer;

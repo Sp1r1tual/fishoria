@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useCallback } from 'react';
+
 import type { IOwnedGearItem } from '@/common/types';
-import { TIME_SYSTEM } from '@/common/configs/game/system.config';
 
 import { WoodyButton } from '@/components/UI/buttons/WoodyButton/WoodyButton';
 import { DebugTerminal } from './DebugTerminal/DebugTerminal';
@@ -14,6 +14,7 @@ import { HUDActionButtons } from './HUDActionButtons/HUDActionButtons';
 import { LevelBar } from '@/components/UI/LevelBar/LevelBar';
 import { DebugLegend } from '@/components/UI/DebugLegend/DebugLegend';
 import { OverloadOverlay } from './OverloadOverlay/OverloadOverlay';
+import { GameChat } from './GameChat/GameChat';
 
 import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import { navigateTo } from '@/store/slices/uiSlice';
@@ -34,6 +35,7 @@ import type { LakeScene } from '@/game/engine/scenes/LakeScene';
 
 import { getLakeById } from '@/common/configs/game';
 import { SHOP_HOOKS, SHOP_RODS } from '@/common/configs/game';
+import { TIME_SYSTEM } from '@/common/configs/game/system.config';
 
 import styles from './HUD.module.css';
 
@@ -213,33 +215,40 @@ export function HUD({
               onClose={() => sceneRef.current?.toggleDebug()}
             />
           </div>
+
           <div className={styles['hud__top-right']}>
-            <WoodyButton
-              id="hud-exit"
-              variant="glass"
-              size="sm"
-              isSquare={true}
-              onClick={handleExit}
-              title={t('hud.titles.goHome')}
-              icon={
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className={styles['hud__exit-svg']}
-                >
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" x2="9" y1="12" y2="12" />
-                </svg>
-              }
-            />
+            <div className={styles['hud__top-right-group']}>
+              <GameChat isNight={isNight} />
+
+              <div className={styles['hud__exit-wrapper']}>
+                <WoodyButton
+                  id="hud-exit"
+                  variant="glass"
+                  size="sm"
+                  isSquare={true}
+                  onClick={handleExit}
+                  title={t('hud.titles.goHome')}
+                  icon={
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className={styles['hud__exit-svg']}
+                    >
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                      <polyline points="16 17 21 12 16 7" />
+                      <line x1="21" x2="9" y1="12" y2="12" />
+                    </svg>
+                  }
+                />
+              </div>
+            </div>
           </div>
         </div>
       )}

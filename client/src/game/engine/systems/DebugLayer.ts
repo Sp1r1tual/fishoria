@@ -426,7 +426,6 @@ export class DebugLayer {
 
       this.sectorInfoLabel.position.set(targetX, targetY);
 
-      // Update background box
       const isMobile = this.app.renderer.width < 1000;
       const padding = isMobile ? 5 : 10;
       const radius = isMobile ? 4 : 6;

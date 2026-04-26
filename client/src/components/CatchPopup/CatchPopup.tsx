@@ -1,14 +1,14 @@
 import { useTranslation } from 'react-i18next';
-import { SkeletonImage } from '@/components/UI/skeletons/SkeletonImage/SkeletonImage';
 
 import type { IFishCatch, ITrashCatch, CatchResultType } from '@/common/types';
 
 import { useClickSound } from '@/hooks/audio/useSoundEffect';
-import { useAppDispatch } from '@/hooks/core/useAppStore';
 
+import { SkeletonImage } from '@/components/UI/skeletons/SkeletonImage/SkeletonImage';
 import { UniversalModal } from '@/components/UI/modals/UniversalModal/UniversalModal';
 import { WoodyButton } from '@/components/UI/buttons/WoodyButton/WoodyButton';
 
+import { useAppDispatch } from '@/hooks/core/useAppStore';
 import {
   useCatchFishMutation,
   useBreakGearMutation,
@@ -38,14 +38,13 @@ export function CatchPopup({ result, sceneRef }: ICatchPopupProps) {
   const handleKeep = () => {
     playClick();
 
-    // Close popup first — unmounts this component before mutation
-    // state transitions can trigger unnecessary re-renders.
     dispatch(resetGame());
     sceneRef.current?.resetCast();
 
     if (result.type === 'fish') {
       const fish = result as IFishCatch;
       const maxW = fish.species.weightRange.max;
+
       catchMutation.mutate({
         speciesId: fish.species.id,
         speciesName: fish.species.name,
@@ -67,13 +66,13 @@ export function CatchPopup({ result, sceneRef }: ICatchPopupProps) {
   const handleRelease = () => {
     playClick();
 
-    // Close popup first — same reasoning as handleKeep.
     dispatch(resetGame());
     sceneRef.current?.resetCast();
 
     if (result.type === 'fish') {
       const fish = result as IFishCatch;
       const maxW = fish.species.weightRange.max;
+
       catchMutation.mutate({
         speciesId: fish.species.id,
         speciesName: fish.species.name,
@@ -101,7 +100,7 @@ export function CatchPopup({ result, sceneRef }: ICatchPopupProps) {
         lakeName: trash.lakeName,
         baitUsed: trash.baitUsed,
         method: trash.method,
-        isReleased: true, // Discarding trash is like releasing it (not keeping it)
+        isReleased: true,
         rodDamage: trash.rodDamage || 0,
         reelDamage: trash.reelDamage || 0,
       });

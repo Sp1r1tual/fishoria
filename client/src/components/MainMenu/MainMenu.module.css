@@ -176,6 +176,17 @@
   object-fit: contain;
   border-radius: 50%;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  cursor: pointer;
+  transition: all 0.3s ease-out;
+}
+
+.main-menu__avatar-img:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+}
+
+.main-menu__avatar-img:active {
+  transform: scale(0.95);
 }
 
 @media (min-width: 1024px) {

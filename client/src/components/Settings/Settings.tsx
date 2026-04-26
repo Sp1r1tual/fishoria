@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
 import { ScreenContainer } from '../UI/ScreenContainer/ScreenContainer';
-
 import { LocalizationSection } from './LocalizationSection';
 import { AudioSection } from './AudioSection';
 import { AccountSection } from './AccountSection';
 import { DangerZoneSection } from './DangerZoneSection';
+import { NetworkSection } from './NetworkSection';
 
 import settingsIcon from '@/assets/ui/settings.webp';
 
@@ -28,6 +28,7 @@ export function Settings() {
       onBack={handleBackClick}
       className={styles.settings}
     >
+      <NetworkSection />
       <LocalizationSection />
       <AudioSection />
       <AccountSection />

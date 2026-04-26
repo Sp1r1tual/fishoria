@@ -10,6 +10,13 @@ export class PlayerService {
     return data;
   }
 
+  static async getOtherProfile(userId: string) {
+    const { data } = await $mainApi.get<IPlayerProfile>(
+      `/player/profile/${userId}`,
+    );
+    return data;
+  }
+
   static async updateProfile(payload: { username?: string; avatar?: string }) {
     const { data } = await $mainApi.post('/player/update', payload);
     return data;

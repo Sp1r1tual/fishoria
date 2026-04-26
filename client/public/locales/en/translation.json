@@ -51,7 +51,14 @@
     "logoutButton": "Logout from account",
     "logoutConfirmTitle": "Logout",
     "logoutConfirmMessage": "Are you sure you want to logout from your account?",
-    "iosAudioWarning": "There may be sound issues on iOS, the team is working on a fix"
+    "iosAudioWarning": "There may be sound issues on iOS, the team is working on a fix",
+    "sections": {
+      "network": "Network"
+    },
+    "serverStatus": {
+      "online": "Server Online",
+      "offline": "Server Offline"
+    }
   },
   "statistics": {
     "title": "Fisher Statistics",
@@ -325,6 +332,19 @@
     "extract": "Extract",
     "noGear": "No gear available",
     "empty": "Empty",
+    "chat": {
+      "placeholder": "Send...",
+      "tabs": {
+        "events": "Events",
+        "eventsShort": "Events",
+        "messages": "Messages",
+        "messagesShort": "Msg."
+      },
+      "actions": {
+        "minimize": "Minimize",
+        "expand": "Expand"
+      }
+    },
     "titles": {
       "goHome": "Exit"
     }
@@ -332,7 +352,8 @@
   "lakeSelect": {
     "title": "Select Location",
     "locked": "Locked",
-    "go": "Go Fishing"
+    "go": "Go Fishing",
+    "playOnline": "Play Online"
   },
   "shop": {
     "title": "The Shop",
@@ -418,7 +439,20 @@
       "uploadFailed": "Failed to upload avatar. Please try again.",
       "avatarNotice": "Uploading inappropriate content may result in blocking. For details, see ",
       "avatarNoticeLink": "Terms of Service"
-    }
+    },
+    "role": "Role",
+    "level": "Level",
+    "joinedAt": "Joined",
+    "online": "Online",
+    "offline": "Offline",
+    "status": "Status",
+    "playerProfile": "Player Profile",
+    "roles": {
+      "PLAYER": "Player",
+      "MODERATOR": "Moderator",
+      "ADMIN": "Administrator"
+    },
+    "errorLoading": "Failed to load profile"
   },
   "portrait": {
     "rotate": "Please rotate device",
@@ -752,7 +786,7 @@
   },
   "serverUnavailable": {
     "title": "Fishoria | Server Unavailable",
-    "description": "The Fishoria servers are currently unavailable. Please try again later."
+    "description": "The Fishoria server are currently unavailable. Please try again later."
   },
   "meta": {
     "landing": "Fishoria is an online fishing simulator and browser game. Start your journey, catch fish and upgrade your gear directly in your browser.",

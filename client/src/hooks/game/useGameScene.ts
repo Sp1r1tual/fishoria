@@ -82,14 +82,12 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
 
   const weather = useAppSelector((s) => s.game.weather);
 
-  // Dynamic weather update
   useEffect(() => {
     if (sceneRef.current) {
       sceneRef.current.setWeather(weather);
     }
   }, [weather]);
 
-  // Sync refs for mutations to be used in callbacks
   const catchMutationRef = useRef(catchMutation);
   const breakMutationRef = useRef(breakMutation);
   const equipMutationRef = useRef(equipMutation);
@@ -410,7 +408,6 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
             dispatch(addToast({ type: 'warning', message: t(msgId) }));
           },
           onResetCast: (prevPhase) => {
-            // Bait falling off logic should only apply when manually extracting before a catch/loss result
             if (
               ['idle', 'caught', 'escaped', 'broken', 'snagged'].includes(
                 prevPhase,
@@ -424,7 +421,6 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
             const activeBait = player.activeBait;
             const isLure = activeBait?.startsWith('lure_');
 
-            // Use centralized chance for bait to fall off when extracting float/feeder rigs
             if (
               activeBait &&
               !isLure &&
@@ -445,6 +441,7 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
             return false;
           },
           onGroundbaitExpired: () => {
+            dispatch(setGroundbaitExpiry(null));
             dispatch(
               addToast({ type: 'info', message: t('game.groundbait_expired') }),
             );
@@ -516,8 +513,6 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
           lineInst?.meters ?? lineConfig?.totalLength ?? 0,
         );
 
-        // Sync player-selected float depth from Redux so the first cast
-        // uses the correct depth without requiring a manual picker interaction.
         const savedBaseDepth = state.game.baseDepth;
         scene.setBaseDepth(savedBaseDepth);
       }
@@ -543,7 +538,6 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
       dispatch(setGroundbaitExpiry(null));
       sceneRef.current?.setActiveGroundbait('none', null);
 
-      // Clear lake ID first to ensure mutation bypasses buffering and hits the server
       dispatch(setCurrentLake(null));
 
       if (

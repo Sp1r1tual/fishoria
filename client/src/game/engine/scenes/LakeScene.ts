@@ -917,7 +917,7 @@ export class LakeScene implements IScene {
       }
     }
 
-    const renderScale = W < 768 ? 0.6 : W < 1080 ? 0.85 : 1.0;
+    const renderScale = W < 1000 ? 0.69 : 1.0;
 
     this.hook.update({
       x: this.hookX,

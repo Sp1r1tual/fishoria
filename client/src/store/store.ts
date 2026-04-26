@@ -14,6 +14,13 @@ export const store = configureStore({
     auth: authReducer,
     news: newsReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['ui/openConfirmModal'],
+        ignoredPaths: ['ui.confirmModal.onConfirm', 'ui.confirmModal.onCancel'],
+      },
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -26,7 +26,6 @@ export class LureFollower {
       this.continuousReelTime += dtSec;
 
       if (this.continuousReelTime < config.shortMoveThreshold) {
-        // Penalty for very short "stutter" movements
         this.interest -= config.shortMovePenalty * dtSec;
       } else if (this.continuousReelTime > config.longMoveThreshold) {
         this.interest -= config.longMovePenalty * dtSec;
@@ -34,7 +33,6 @@ export class LureFollower {
         this.interest += config.goodMoveBonus * dtSec;
       }
     } else {
-      // Decay continuous time instead of instant reset to prevent spam
       this.continuousReelTime = Math.max(
         0,
         this.continuousReelTime - dtSec * config.stopDecayMultiplier,
@@ -42,7 +40,6 @@ export class LureFollower {
       this.timeSinceLastMovement += dtSec;
 
       if (this.timeSinceLastMovement < config.shortPauseThreshold) {
-        // Small bonus for a proper "stop-and-go" pause
         this.interest += config.goodPauseBonus * dtSec;
       } else if (this.timeSinceLastMovement > config.longPauseThreshold) {
         this.interest -= config.longPausePenalty * dtSec;

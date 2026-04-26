@@ -43,8 +43,9 @@
 .modal__close {
   position: absolute;
   right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
 }
 
 .modal__title {

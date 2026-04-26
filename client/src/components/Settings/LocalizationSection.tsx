@@ -33,6 +33,7 @@ export function LocalizationSection() {
           {t('settings.selectLanguage')}
         </label>
         <WoodySelect
+          size="sm"
           value={i18n.language ?? 'en'}
           onChange={(val) => handleLanguageChange(val as 'en' | 'uk')}
           options={[

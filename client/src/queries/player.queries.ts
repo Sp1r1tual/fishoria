@@ -18,6 +18,8 @@ import { useAppSelector } from '../hooks/core/useAppStore';
 export const PLAYER_KEYS = {
   all: ['player'] as const,
   profile: () => [...PLAYER_KEYS.all, 'profile'] as const,
+  otherProfile: (userId: string) =>
+    [...PLAYER_KEYS.all, 'profile', userId] as const,
 };
 
 export const usePlayerQuery = () => {
@@ -31,6 +33,18 @@ export const usePlayerQuery = () => {
     staleTime: 5 * 60 * 1000,
     enabled: isAuthenticated,
     placeholderData: keepPreviousData,
+  });
+};
+
+export const useOtherPlayerQuery = (userId: string | null) => {
+  return useQuery({
+    queryKey: PLAYER_KEYS.otherProfile(userId || ''),
+    queryFn: () =>
+      userId
+        ? PlayerService.getOtherProfile(userId)
+        : Promise.reject('No userId provided'),
+    enabled: !!userId,
+    staleTime: 5 * 60 * 1000,
   });
 };
 

@@ -1,7 +1,7 @@
 .lake-info-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   transform: scale(0.9);
   transform-origin: top left;
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -12,7 +12,7 @@
 .lake-info {
   background: color-mix(
     in srgb,
-    rgba(15, 23, 42, 0.65),
+    rgba(15, 23, 42, 0.85),
     rgba(255, 255, 255, 0.12) calc(var(--night-intensity) * 100%)
   );
   backdrop-filter: blur(12px);
@@ -70,10 +70,6 @@
     padding: 6px 8px;
     gap: 2px;
   }
-
-  .lake-info__name {
-    font-size: 0.72rem;
-  }
 }
 
 @media (max-width: 480px) {
@@ -95,21 +91,23 @@
 
 .lake-info__name {
   font-weight: 700;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
+  margin-bottom: 2px;
   text-transform: uppercase;
+  text-align: center;
   letter-spacing: 0.8px;
-  color: #fff;
+  color: #fbbf24;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 @media (min-width: 1045px) {
   .lake-info__name {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
 }
 
 .lake-info__time-row {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #fff;
   font-weight: 700;
   display: flex;
@@ -122,7 +120,7 @@
 
 @media (min-width: 768px) {
   .lake-info__time-row {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
   }
 }
 
@@ -156,23 +154,7 @@
 
 .lake-info__groundbait-status {
   width: 100%;
-  background: color-mix(
-    in srgb,
-    rgba(15, 23, 42, 0.65),
-    rgba(255, 255, 255, 0.12) calc(var(--night-intensity) * 100%)
-  );
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  padding: 6px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    inset 0 1px 1px rgba(255, 255, 255, 0.1);
   animation: fadeIn 0.3s ease-out forwards;
-  transition:
-    background 0.5s ease,
-    border-color 0.5s ease;
   pointer-events: all;
   box-sizing: border-box;
 }
@@ -195,23 +177,27 @@
   gap: 10px;
   background: color-mix(
     in srgb,
-    rgba(255, 255, 255, 0.15),
-    rgba(15, 23, 42, 0.2) calc(var(--night-intensity) * 100%)
+    rgba(15, 23, 42, 0.85),
+    rgba(255, 255, 255, 0.12) calc(var(--night-intensity) * 100%)
   );
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 4px 12px;
+  height: 26px;
+  padding: 0 12px;
   box-sizing: border-box;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
   pointer-events: all;
   transition: all 0.2s ease;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  width: 100%;
 }
 
 .lake-info__activate-gb span {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: #fff;
   text-transform: uppercase;
@@ -235,10 +221,10 @@
 
 @media (max-width: 1080px) {
   .lake-info__activate-gb {
-    height: 22px;
+    height: 26px;
     padding: 0 6px;
     gap: 4px;
-    border-radius: 4px;
+    border-radius: 8px;
   }
   .lake-info__activate-gb img {
     width: 12px;
@@ -247,79 +233,78 @@
   .lake-info__groundbait-timer {
     padding: 0 6px;
     font-size: 0.7rem;
-    border-radius: 4px;
-    height: 22px;
-    min-height: 22px;
+    height: 26px;
+    min-height: 26px;
   }
   .lake-info__activate-gb span {
     font-size: 0.7rem;
   }
   .lake-info__cancel-gb {
-    width: 22px;
-    height: 22px;
+    width: 26px;
+    height: 26px;
     font-size: 0.8rem;
-    border-radius: 4px;
   }
   .lake-info__groundbait-timer-wrap {
-    gap: 4px;
-    margin-top: 2px;
-    height: 22px;
+    height: 26px;
+    border-radius: 8px;
   }
 }
 
 .lake-info__groundbait-timer-wrap {
   display: flex;
   align-items: stretch;
-  gap: 6px;
   width: 100%;
+  height: 26px;
   box-sizing: border-box;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .lake-info__groundbait-timer {
   background: color-mix(
     in srgb,
-    rgba(255, 255, 255, 0.15),
-    rgba(15, 23, 42, 0.2) calc(var(--night-intensity) * 100%)
+    rgba(15, 23, 42, 0.85),
+    rgba(255, 255, 255, 0.12) calc(var(--night-intensity) * 100%)
   );
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   padding: 0 12px;
-  border-radius: 8px;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: #fff;
   flex: 1;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.15);
   gap: 6px;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .lake-info__cancel-gb {
-  background: rgba(239, 68, 68, 0.2);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  color: #ef4444;
-  width: 32px;
+  background: #ef4444;
+  border: none;
+  color: #fff;
+  width: 36px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 900;
   cursor: pointer;
   pointer-events: all;
-  transition: all 0.1s;
+  transition: all 0.2s;
   padding: 0;
   margin: 0;
   outline: none;
 }
 
 .lake-info__cancel-gb:hover {
-  background: rgba(239, 68, 68, 0.4);
-  color: #fff;
-  transform: scale(1.05);
+  background: #dc2626;
+  transform: none;
 }
 
 .lake-info__cancel-gb:active {

@@ -7,7 +7,6 @@ import { useNewsState } from '@/hooks/game/useNewsState';
 import { Footer } from '../Footer/Footer';
 import { Modal } from '../UI/modals/Modal/Modal';
 import { ProfileEdit } from '../ProfileEdit/ProfileEdit';
-import { WeatherForecastModal } from '../UI/modals/WeatherForecastModal/WeatherForecastModal';
 import { GameClock } from '../UI/GameClock/GameClock';
 import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
 import { EditButton } from '../UI/buttons/EditButton/EditButton';
@@ -15,10 +14,13 @@ import { WeatherStatus } from '../UI/WeatherStatus/WeatherStatus';
 import { Fireflies } from '../Effects/Fireflies/Fireflies';
 import { SkeletonImage } from '../UI/skeletons/SkeletonImage/SkeletonImage';
 import { PlayerSkeleton } from './PlayerSkeleton';
-import { WelcomeModal } from '../UI/WelcomeModal/WelcomeModal';
 
 import { useAppDispatch } from '@/hooks/core/useAppStore';
-import { navigateTo } from '@/store/slices/uiSlice';
+import {
+  navigateTo,
+  openProfileModal,
+  openWeatherModal,
+} from '@/store/slices/uiSlice';
 import { usePlayerQuery } from '@/queries/player.queries';
 
 import { getXpNeededForLevel } from '@/common/utils/experience.util';
@@ -38,7 +40,6 @@ export function MainMenu() {
   const { data: player, isLoading } = usePlayerQuery();
   const { hasUnread } = useNewsState();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [isWeatherModalOpen, setIsWeatherModalOpen] = useState(false);
   const { t } = useTranslation();
 
   const level = player?.level ?? 1;
@@ -91,7 +92,11 @@ export function MainMenu() {
                 alt="Profile"
                 className={styles['main-menu__avatar-img']}
                 wrapperClassName={styles['main-menu__avatar-img']}
-                imgProps={{ referrerPolicy: 'no-referrer' }}
+                imgProps={{
+                  referrerPolicy: 'no-referrer',
+                  onClick: () =>
+                    dispatch(openProfileModal({ player: player || null })),
+                }}
               />
 
               <div className={styles['main-menu__player-info']}>
@@ -131,7 +136,7 @@ export function MainMenu() {
 
               <WeatherStatus
                 className={styles['main-menu__weather']}
-                onClick={() => setIsWeatherModalOpen(true)}
+                onClick={() => dispatch(openWeatherModal())}
                 title={t('weather.viewForecast', 'View Forecast')}
               />
 
@@ -193,13 +198,6 @@ export function MainMenu() {
       >
         <ProfileEdit />
       </Modal>
-
-      <WeatherForecastModal
-        isOpen={isWeatherModalOpen}
-        onClose={() => setIsWeatherModalOpen(false)}
-      />
-
-      <WelcomeModal />
     </main>
   );
 }

@@ -1,3 +1,10 @@
+import type {
+  IUser,
+  BaitTypeType,
+  GroundbaitTypeType,
+  GearTypeType,
+} from './index';
+
 export interface IQuestCondition {
   id: string;
   type: 'CATCH_METHOD' | 'CATCH_SPECIES' | string;
@@ -29,19 +36,13 @@ export interface IPlayerQuest {
   updatedAt: string;
 }
 
-import type {
-  BaitTypeType,
-  GroundbaitTypeType,
-  GearTypeType,
-} from './gear.types';
-
 export interface IOwnedGearItem {
   uid: string;
   id: string;
   itemId: string;
   itemType: GearTypeType;
   condition?: number;
-  meters?: number; // for lines
+  meters?: number;
   isBroken?: boolean;
 }
 
@@ -69,8 +70,6 @@ export interface ILakeStatMetadata {
   speciesCounts: Record<string, number>;
   speciesWeights: Record<string, number>;
 }
-
-import type { IUser } from './auth.types';
 
 export interface IPlayerAchievement {
   id: string;
@@ -105,4 +104,5 @@ export interface IPlayerProfile {
   lakeStats: ILakeStatMetadata[];
   playerQuests: IPlayerQuest[];
   playerAchievements: IPlayerAchievement[];
+  createdAt: string;
 }

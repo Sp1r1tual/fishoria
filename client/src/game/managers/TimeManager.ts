@@ -36,10 +36,10 @@ export const TimeManager = {
   },
 
   setGameTime(hour: number) {
-    realStartTime = Date.now();
-    const date = new Date();
+    const date = this.getTime('game');
     date.setHours(hour, 0, 0, 0);
     virtualStartTime = date.getTime();
+    realStartTime = Date.now();
 
     GameEvents.emit('timeUpdate', { hour, mode: 'game' });
   },
@@ -114,3 +114,14 @@ export const TimeManager = {
     return `${mins} ${minLabel}`;
   },
 };
+
+let lastEmittedHour = -1;
+setInterval(() => {
+  const currentHour = TimeManager.getTime('game').getHours();
+  if (currentHour !== lastEmittedHour) {
+    if (lastEmittedHour !== -1) {
+      GameEvents.emit('timeUpdate', { hour: currentHour, mode: 'game' });
+    }
+    lastEmittedHour = currentHour;
+  }
+}, 1000);
