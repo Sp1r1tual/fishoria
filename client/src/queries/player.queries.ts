@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  keepPreviousData,
+} from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
 import { ACHIEVEMENT_KEYS } from './achievement.queries';
@@ -24,6 +29,7 @@ export const usePlayerQuery = () => {
     queryFn: () => PlayerService.getProfile(language),
     staleTime: 5 * 60 * 1000,
     enabled: isAuthenticated,
+    placeholderData: keepPreviousData,
   });
 };
 

@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  keepPreviousData,
+} from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
 import type { IPlayerQuest, IPlayerProfile } from '@/common/types/player.types';
@@ -22,6 +27,7 @@ export const useQuests = () => {
   return useQuery<IPlayerQuest[]>({
     queryKey: [...QUEST_KEYS.all, language],
     queryFn: () => QuestService.getQuests(language),
+    placeholderData: keepPreviousData,
   });
 };
 

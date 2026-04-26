@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 
 import { NewsService } from '../services/news.service';
 
@@ -11,5 +11,6 @@ export const useNewsQuery = (lang: string = 'en') => {
   return useQuery({
     queryKey: NEWS_KEYS.list(lang),
     queryFn: () => NewsService.getAll(lang),
+    placeholderData: keepPreviousData,
   });
 };

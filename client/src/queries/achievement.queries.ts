@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
 import { $mainApi } from '@/http/axios';
@@ -23,5 +23,6 @@ export const useAchievements = () => {
   return useQuery({
     queryKey: [...ACHIEVEMENT_KEYS.all, language],
     queryFn: () => AchievementService.getAchievements(language),
+    placeholderData: keepPreviousData,
   });
 };
