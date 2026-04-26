@@ -229,8 +229,14 @@ export class HookEntity {
       if (this.rigType === 'feeder') {
         const bulbAlpha = bulbAlphaOverride != null ? bulbAlphaOverride : 1;
         if (bulbAlpha > 0) {
-          this.gfx.circle(bx, totalY, 3 * this.scale);
-          this.gfx.fill({ color: 0xffffff, alpha: bulbAlpha });
+          this.gfx.circle(bx, totalY, 4 * this.scale);
+          this.gfx.fill({ color: 0x444444, alpha: bulbAlpha });
+          this.gfx.circle(
+            bx - 1 * this.scale,
+            totalY - 1 * this.scale,
+            1.5 * this.scale,
+          );
+          this.gfx.fill({ color: 0x888888, alpha: bulbAlpha * 0.5 });
         }
       } else {
         const bulbDist = 4 * this.scale;
@@ -238,59 +244,77 @@ export class HookEntity {
         const bulbY = totalY + cosT * bulbDist;
         const bulbAlpha = bulbAlphaOverride != null ? bulbAlphaOverride : 1;
 
-        if (isLayingOnSide) {
-          const surfaceY = bulbY;
-          if (bulbAlpha > 0) {
+        if (bulbAlpha > 0) {
+          const colorMain = 0xffffff;
+          const colorShadow = 0xdddddd;
+
+          if (isLayingOnSide) {
+            const surfaceY = bulbY;
             this.gfx.moveTo(bulbX - bulbRadius, surfaceY);
             this.gfx.arc(bulbX, surfaceY, bulbRadius, Math.PI, 0);
-            this.gfx.fill({ color: 0xffffff, alpha: bulbAlpha });
-            this.gfx.stroke({
-              width: 1 * this.scale,
-              color: 0xffffff,
-              alpha: bulbAlpha,
-            });
+            this.gfx.fill({ color: colorMain, alpha: bulbAlpha });
 
             this.gfx.moveTo(bulbX + bulbRadius, surfaceY);
             this.gfx.arc(bulbX, surfaceY, bulbRadius, 0, Math.PI);
-            this.gfx.fill({ color: 0xffffff, alpha: bulbAlpha * 0.9 });
-            this.gfx.stroke({
-              width: 1 * this.scale,
-              color: 0xffffff,
-              alpha: bulbAlpha * 0.9,
-            });
-          }
-        } else {
-          if (bulbAlpha > 0) {
+            this.gfx.fill({ color: colorShadow, alpha: bulbAlpha * 0.9 });
+          } else {
             this.gfx.circle(bulbX, bulbY, bulbRadius);
-            this.gfx.fill({ color: 0xffffff, alpha: bulbAlpha });
-            this.gfx.stroke({
-              width: 1 * this.scale,
-              color: 0xffffff,
-              alpha: bulbAlpha,
-            });
+            this.gfx.fill({ color: colorShadow, alpha: bulbAlpha });
+
+            this.gfx.circle(
+              bulbX - 0.5 * this.scale,
+              bulbY - 0.5 * this.scale,
+              bulbRadius * 0.85,
+            );
+            this.gfx.fill({ color: colorMain, alpha: bulbAlpha });
+
+            this.gfx.circle(
+              bulbX - 1.5 * this.scale,
+              bulbY - 1.5 * this.scale,
+              bulbRadius * 0.3,
+            );
+            this.gfx.fill({ color: 0xffffff, alpha: bulbAlpha * 0.8 });
           }
         }
 
+        const stemWidth = 2.8;
         const topStemStart = 4 * this.scale - bulbRadius;
-        const topStemEnd = -14 * this.scale;
+        const antennaLen = 18 * this.scale;
+
         drawClippedSegment(
           bx + sinT * topStemStart,
           totalY + cosT * topStemStart,
-          bx + sinT * topStemEnd,
-          totalY + cosT * topStemEnd,
-          2.8,
-          0xff4411,
+          bx + sinT * (topStemStart - 3 * this.scale),
+          totalY + cosT * (topStemStart - 3 * this.scale),
+          stemWidth,
+          0xff4444,
         );
 
-        const botStemStart = 4 * this.scale + bulbRadius;
-        const botStemEnd = 12 * this.scale;
         drawClippedSegment(
-          bx + sinT * botStemStart,
-          totalY + cosT * botStemStart,
-          bx + sinT * botStemEnd,
-          totalY + cosT * botStemEnd,
-          2,
-          0x333333,
+          bx + sinT * (topStemStart - 3 * this.scale),
+          totalY + cosT * (topStemStart - 3 * this.scale),
+          bx + sinT * (topStemStart - 10 * this.scale),
+          totalY + cosT * (topStemStart - 10 * this.scale),
+          stemWidth,
+          0xeeeeee,
+        );
+
+        drawClippedSegment(
+          bx + sinT * (topStemStart - 10 * this.scale),
+          totalY + cosT * (topStemStart - 10 * this.scale),
+          bx + sinT * (topStemStart - antennaLen),
+          totalY + cosT * (topStemStart - antennaLen),
+          stemWidth,
+          0xff4400,
+        );
+
+        drawClippedSegment(
+          bx + sinT * (topStemStart - antennaLen + 1 * this.scale),
+          totalY + cosT * (topStemStart - antennaLen + 1 * this.scale),
+          bx + sinT * (topStemStart - antennaLen),
+          totalY + cosT * (topStemStart - antennaLen),
+          stemWidth * 1.2,
+          0xff8844,
         );
       }
     }

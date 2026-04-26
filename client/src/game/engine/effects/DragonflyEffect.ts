@@ -116,11 +116,13 @@ export class DragonflyEffect {
     }
 
     if (!canBePresent) {
-      this.isFadingOut = true;
-      this.isTargetingRod = false;
-      this.targetX = this.x + (Math.random() - 0.5) * 400;
-      this.targetY = this.y - 200;
-      this.state = 'flying';
+      if (!this.isFadingOut) {
+        this.isFadingOut = true;
+        this.isTargetingRod = false;
+        this.targetX = this.x + (Math.random() - 0.5) * 400;
+        this.targetY = this.y - 200;
+        this.state = 'flying';
+      }
     } else if (this.state === 'perched') {
       const dx = rodTipX - this.x;
       const dy = rodTipY - 2 - this.y;

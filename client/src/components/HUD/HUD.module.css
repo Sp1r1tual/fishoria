@@ -6,6 +6,12 @@
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
+  --night-intensity: 0;
+  transition: all 0.5s ease;
+}
+
+.hud--night {
+  --night-intensity: 1;
 }
 
 .hud--top-only {
@@ -130,27 +136,32 @@
   position: absolute;
   left: 12px;
   bottom: calc(12px + env(safe-area-inset-bottom));
-  width: 28px;
-  height: 28px;
-  background: rgba(0, 0, 0, 0.3);
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
-  color: rgba(255, 255, 255, 0.4);
-  font-family: monospace;
-  font-size: 12px;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   pointer-events: all;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .hud__debug-btn:hover {
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(255, 255, 255, 0.3);
   color: #fff;
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
 }
 
 @media (max-width: 1080px) {

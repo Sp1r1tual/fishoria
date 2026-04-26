@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useCallback } from 'react';
-
 import type { IOwnedGearItem } from '@/common/types';
+import { TIME_SYSTEM } from '@/common/configs/game/system.config';
 
 import { WoodyButton } from '@/components/UI/buttons/WoodyButton/WoodyButton';
 import { DebugTerminal } from './DebugTerminal/DebugTerminal';
@@ -173,10 +173,27 @@ export function HUD({
   const showTop = !bottomOnly;
   const showBottom = !topOnly;
 
+  const [isNight, setIsNight] = useState(false);
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = TimeManager.getTime('game');
+      const hour = now.getHours();
+      setIsNight(
+        hour >= TIME_SYSTEM.nightStart || hour < TIME_SYSTEM.morningStart,
+      );
+    };
+
+    updateTime();
+    const unsub = GameEvents.on('timeUpdate', updateTime);
+    return () => unsub();
+  }, []);
+
   const hudClass = [
     styles.hud,
     topOnly ? styles['hud--top-only'] : '',
     bottomOnly ? styles['hud--bottom-only'] : '',
+    isNight ? styles['hud--night'] : '',
   ]
     .filter(Boolean)
     .join(' ');
@@ -199,7 +216,7 @@ export function HUD({
           <div className={styles['hud__top-right']}>
             <WoodyButton
               id="hud-exit"
-              variant="brown"
+              variant="glass"
               size="sm"
               isSquare={true}
               onClick={handleExit}

@@ -5,7 +5,7 @@ import { useClickSound } from '@/hooks/audio/useSoundEffect';
 import styles from './WoodyButton.module.css';
 
 interface WoodyButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'green' | 'brown' | 'red';
+  variant?: 'green' | 'brown' | 'red' | 'glass';
   size?: 'sm' | 'md' | 'lg';
   icon?: string | React.ReactNode;
   label?: string;

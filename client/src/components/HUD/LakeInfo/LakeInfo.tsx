@@ -142,39 +142,38 @@ export function LakeInfo({ sceneRef, isDebugActive }: ILakeInfoProps) {
   };
 
   return (
-    <div
-      className={[
-        styles['lake-info'],
-        isDebugActive ? styles['lake-info--debug'] : '',
-        player?.activeGroundbait && player.activeGroundbait !== 'none'
-          ? styles['lake-info--has-gb']
-          : '',
-      ]
-        .filter(Boolean)
-        .join(' ')}
-    >
-      <div className={styles['lake-info__name']}>
-        {currentLakeId ? t(`lakes.${currentLakeId}.name`) : '–'}
-      </div>
+    <div className={styles['lake-info-wrapper']}>
+      <div
+        className={[
+          styles['lake-info'],
+          isDebugActive ? styles['lake-info--debug'] : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
+        <div className={styles['lake-info__name']}>
+          {currentLakeId ? t(`lakes.${currentLakeId}.name`) : '–'}
+        </div>
 
-      <div className={styles['lake-info__time-row']}>
-        <GameClock
-          mode="game"
-          iconClassName={styles['lake-info__clock-icon']}
-        />
-        <WeatherStatus
-          className={styles['lake-info__weather']}
-          onClick={() => setIsWeatherModalOpen(true)}
-          title={t('weather.viewForecast', 'View Forecast')}
+        <div className={styles['lake-info__time-row']}>
+          <GameClock
+            mode="game"
+            iconClassName={styles['lake-info__clock-icon']}
+          />
+          <WeatherStatus
+            className={styles['lake-info__weather']}
+            onClick={() => setIsWeatherModalOpen(true)}
+            title={t('weather.viewForecast', 'View Forecast')}
+          />
+        </div>
+
+        <WeatherForecastModal
+          isOpen={isWeatherModalOpen}
+          onClose={() => setIsWeatherModalOpen(false)}
         />
       </div>
 
       {renderGroundbaitStatus()}
-
-      <WeatherForecastModal
-        isOpen={isWeatherModalOpen}
-        onClose={() => setIsWeatherModalOpen(false)}
-      />
     </div>
   );
 }

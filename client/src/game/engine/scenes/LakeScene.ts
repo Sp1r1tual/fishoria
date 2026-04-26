@@ -208,7 +208,23 @@ export class LakeScene implements IScene {
     this.sectorSystem = new SectorSystem(
       this.config.fishSpawns,
       this.config.allowedCastArea,
-      (nx, ny) => this.depthSystem.getDepthAt(nx, ny),
+      (nx, ny) => {
+        let minY = this.config.environment.waterBoundaryY;
+        let maxY = 1.0;
+        if (
+          this.config.allowedCastArea.type === 'polygon' &&
+          this.config.allowedCastArea.points
+        ) {
+          const ys = this.config.allowedCastArea.points.map((p) => p.y);
+          minY = Math.min(...ys);
+          maxY = Math.max(...ys);
+        }
+        const localNy = (ny - minY) / (maxY - minY);
+        return this.depthSystem.getDepthAt(
+          nx,
+          Math.max(0, Math.min(1, localNy)),
+        );
+      },
       W,
       H,
       50,
@@ -430,7 +446,20 @@ export class LakeScene implements IScene {
     this.hookY = this.castY;
 
     const normX = this.hookX / W;
-    const normY = Math.max(0, Math.min(1, (this.hookY - waterY) / waterHeight));
+    let minY = this.config.environment.waterBoundaryY;
+    let maxY = 1.0;
+    if (
+      this.config.allowedCastArea.type === 'polygon' &&
+      this.config.allowedCastArea.points
+    ) {
+      const ys = this.config.allowedCastArea.points.map((p) => p.y);
+      minY = Math.min(...ys);
+      maxY = Math.max(...ys);
+    }
+    const normY = Math.max(
+      0,
+      Math.min(1, (this.hookY / H - minY) / (maxY - minY)),
+    );
 
     this.groundDepthM = this.depthSystem.getDepthAt(normX, normY);
 
@@ -998,7 +1027,23 @@ export class LakeScene implements IScene {
     this.sectorSystem = new SectorSystem(
       this.config.fishSpawns,
       this.config.allowedCastArea,
-      (nx, ny) => this.depthSystem.getDepthAt(nx, ny),
+      (nx, ny) => {
+        let minY = this.config.environment.waterBoundaryY;
+        let maxY = 1.0;
+        if (
+          this.config.allowedCastArea.type === 'polygon' &&
+          this.config.allowedCastArea.points
+        ) {
+          const ys = this.config.allowedCastArea.points.map((p) => p.y);
+          minY = Math.min(...ys);
+          maxY = Math.max(...ys);
+        }
+        const localNy = (ny - minY) / (maxY - minY);
+        return this.depthSystem.getDepthAt(
+          nx,
+          Math.max(0, Math.min(1, localNy)),
+        );
+      },
       newW,
       newH,
       50,

@@ -5,6 +5,7 @@ import { useAppSelector } from '@/hooks/core/useAppStore';
 
 import { TimeManager } from '@/game/managers/TimeManager';
 import { GameEvents } from '@/game/engine/GameEvents';
+import { TIME_SYSTEM } from '@/common/configs/game/system.config';
 
 interface IWeatherStatusProps {
   className?: string;
@@ -36,7 +37,9 @@ export function WeatherStatus({
     };
   }, []);
 
-  const isNight = currentHour >= 21 || currentHour < 5;
+  const isNight =
+    currentHour >= TIME_SYSTEM.nightStart ||
+    currentHour < TIME_SYSTEM.morningStart;
 
   const weatherLabel = (() => {
     switch (weather) {

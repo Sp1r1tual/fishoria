@@ -109,10 +109,10 @@
   }
 
   .authButtons button {
-    padding: 8px 16px !important;
-    min-height: 40px !important;
-    font-size: 0.8rem !important;
-    border-bottom-width: 3px !important;
+    padding: 8px 16px;
+    min-height: 40px;
+    font-size: 0.8rem;
+    border-bottom-width: 3px;
   }
 
   .divider {

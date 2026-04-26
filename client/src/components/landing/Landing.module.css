@@ -118,7 +118,7 @@
 
 @media (max-height: 550px) and (orientation: landscape) {
   .topSection {
-    min-height: calc(100dvh - 40px) !important;
+    min-height: calc(100dvh - 40px);
     gap: 20px;
   }
 

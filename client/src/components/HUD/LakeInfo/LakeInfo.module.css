@@ -1,10 +1,32 @@
+.lake-info-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transform: scale(0.9);
+  transform-origin: top left;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none;
+  width: fit-content;
+}
+
 .lake-info {
-  background: rgba(43, 29, 18, 0.85);
-  padding: 8px 12px;
+  background: color-mix(
+    in srgb,
+    rgba(15, 23, 42, 0.65),
+    rgba(255, 255, 255, 0.12) calc(var(--night-intensity) * 100%)
+  );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 8px 20px 8px 12px;
   border-radius: 12px;
-  border: 2px solid #6b4d32;
-  color: #fbbf24;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  transition:
+    background 0.5s ease,
+    border-color 0.5s ease;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -13,9 +35,6 @@
   max-width: 600px;
   position: relative;
   pointer-events: all;
-  transform: scale(0.9);
-  transform-origin: top left;
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   overflow: hidden;
   white-space: nowrap;
   box-sizing: border-box;
@@ -32,10 +51,6 @@
     min-width: 210px;
     padding: 12px 18px;
   }
-  .lake-info--has-gb {
-    width: 270px;
-    min-width: 300px;
-  }
 }
 
 .lake-info--debug {
@@ -46,28 +61,26 @@
 }
 
 @media (max-width: 1080px) {
+  .lake-info-wrapper {
+    transform: scale(0.85);
+  }
   .lake-info {
     min-width: 155px;
     max-width: 450px;
     padding: 6px 8px;
-    transform: scale(0.75);
-    transform-origin: top left;
     gap: 2px;
   }
 
-  .lake-info--has-gb {
-    width: 220px;
-    min-width: 220px;
-  }
-
   .lake-info__name {
-    font-size: 0.9rem;
+    font-size: 0.72rem;
   }
 }
 
 @media (max-width: 480px) {
+  .lake-info-wrapper {
+    transform: scale(0.8);
+  }
   .lake-info {
-    transform: scale(0.65);
     padding: 6px 8px;
   }
 }
@@ -82,20 +95,22 @@
 
 .lake-info__name {
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.78rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 @media (min-width: 1045px) {
   .lake-info__name {
-    font-size: 1.1rem;
+    font-size: 0.9rem;
   }
 }
 
 .lake-info__time-row {
   font-size: 0.9rem;
-  color: #d4b08c;
+  color: #fff;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -114,10 +129,9 @@
 .lake-info__weather {
   font-size: 0.75rem;
   color: #bae6fd;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.3px;
-  opacity: 0.9;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.1);
   padding: 2px 8px;
   border-radius: 6px;
   transition: all 0.2s ease;
@@ -142,23 +156,35 @@
 
 .lake-info__groundbait-status {
   width: 100%;
-  padding-top: 4px;
-  border-top: 1px solid rgba(251, 191, 36, 0.2);
-  margin-top: 4px;
-  animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  transform-origin: top;
+  background: color-mix(
+    in srgb,
+    rgba(15, 23, 42, 0.65),
+    rgba(255, 255, 255, 0.12) calc(var(--night-intensity) * 100%)
+  );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  animation: fadeIn 0.3s ease-out forwards;
+  transition:
+    background 0.5s ease,
+    border-color 0.5s ease;
+  pointer-events: all;
+  box-sizing: border-box;
 }
 
-@keyframes slideDown {
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-8px) scaleY(0.8);
-    max-height: 0;
+    transform: translateY(-4px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scaleY(1);
-    max-height: 100px;
+    transform: translateY(0);
   }
 }
 
@@ -167,15 +193,21 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: rgba(251, 191, 36, 0.1);
-  border: 1px solid rgba(251, 191, 36, 0.3);
-  height: 32px;
-  padding: 0 12px;
+  background: color-mix(
+    in srgb,
+    rgba(255, 255, 255, 0.15),
+    rgba(15, 23, 42, 0.2) calc(var(--night-intensity) * 100%)
+  );
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 4px 12px;
   box-sizing: border-box;
   border-radius: 8px;
   cursor: pointer;
   pointer-events: all;
-  transition: background 0.1s;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
 }
 
 .lake-info__activate-gb span {
@@ -193,8 +225,8 @@
 }
 
 .lake-info__activate-gb:hover {
-  background: rgba(251, 191, 36, 0.25);
-  border-color: rgba(251, 191, 36, 0.5);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .lake-info__activate-gb:active {
@@ -214,10 +246,13 @@
   }
   .lake-info__groundbait-timer {
     padding: 0 6px;
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     border-radius: 4px;
     height: 22px;
     min-height: 22px;
+  }
+  .lake-info__activate-gb span {
+    font-size: 0.7rem;
   }
   .lake-info__cancel-gb {
     width: 22px;
@@ -237,23 +272,29 @@
   align-items: stretch;
   gap: 6px;
   width: 100%;
-  height: 32px;
   box-sizing: border-box;
 }
 
 .lake-info__groundbait-timer {
-  background: rgba(251, 191, 36, 0.15);
+  background: color-mix(
+    in srgb,
+    rgba(255, 255, 255, 0.15),
+    rgba(15, 23, 42, 0.2) calc(var(--night-intensity) * 100%)
+  );
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   padding: 0 12px;
   border-radius: 8px;
   font-size: 0.85rem;
   font-weight: 700;
-  color: #fbbf24;
+  color: #fff;
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(251, 191, 36, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   gap: 6px;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
 }
 
 .lake-info__cancel-gb {

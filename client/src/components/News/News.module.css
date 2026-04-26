@@ -43,7 +43,7 @@
 }
 
 .newsItem--hidden {
-  opacity: 0 !important;
+  opacity: 0;
   transform: translateY(30px) scale(0.98);
 }
 
@@ -60,7 +60,7 @@
 }
 
 .newsItem--no-animate {
-  transition: none !important;
+  transition: none;
 }
 
 .newsItem__unreadBadge {

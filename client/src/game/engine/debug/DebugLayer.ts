@@ -1,4 +1,12 @@
-import { Container, Graphics, Text, Application } from 'pixi.js';
+import {
+  Container,
+  Graphics,
+  Text,
+  Application,
+  Sprite,
+  Texture,
+  Color,
+} from 'pixi.js';
 
 import type {
   ILakeConfig,
@@ -11,13 +19,14 @@ import type {
 
 import type { DepthSystem } from '../systems/DepthSystem';
 import type { SectorSystem } from '../systems/SectorSystem';
-import { pointInPolygon } from '@/game/utils/MathUtils';
 import { FISH_SPECIES, BITE_DETECTION } from '@/common/configs/game';
 
 export class DebugLayer {
   private container: Container;
   private terrainGfx: Graphics;
   private dynamicGfx: Graphics;
+  private mapSprite: Sprite;
+  private mapMask: Graphics;
   private infoBgGfx: Graphics;
   private fpsLabel: Text;
   private depthSystem: DepthSystem;
@@ -48,15 +57,22 @@ export class DebugLayer {
     this.container = new Container();
     this.terrainGfx = new Graphics();
     this.dynamicGfx = new Graphics();
+    this.mapSprite = new Sprite();
+    this.mapMask = new Graphics();
     this.infoBgGfx = new Graphics();
     this.app = app;
     this.depthSystem = depthSystem;
     this.sectorSystem = sectorSystem;
     this.config = config;
 
+    this.container.addChild(this.mapSprite);
+    this.container.addChild(this.mapMask);
     this.container.addChild(this.terrainGfx);
     this.container.addChild(this.dynamicGfx);
     this.container.addChild(this.infoBgGfx);
+
+    this.mapSprite.mask = this.mapMask;
+    this.mapSprite.alpha = 0.8;
 
     this.fpsLabel = new Text({
       text: 'FPS: 00',
@@ -164,9 +180,8 @@ export class DebugLayer {
   }
 
   public update(dt: number = 1 / 60): void {
-    // Smooth alpha transition
     if (this.container.alpha !== this.targetAlpha) {
-      const speed = 5; // Fades in ~200ms
+      const speed = 5;
       const diff = this.targetAlpha - this.container.alpha;
       const step = dt * speed;
 
@@ -248,33 +263,43 @@ export class DebugLayer {
   public drawTerrain(): void {
     const W = this.app.renderer.width,
       H = this.app.renderer.height;
-    const gfx = this.terrainGfx;
 
-    const isSmallScreen = this.app.renderer.width < 1000;
-    const rows = isSmallScreen ? 25 : 40;
-    const cols = isSmallScreen ? 45 : 75;
-    const waterBoundaryY = this.config.environment.waterBoundaryY;
-    const horizonY = H * waterBoundaryY;
+    this.mapMask.clear();
+    if (
+      this.config.allowedCastArea.type === 'polygon' &&
+      this.config.allowedCastArea.points
+    ) {
+      const waterBoundaryY = this.config.environment.waterBoundaryY;
+      const horizonY = H * waterBoundaryY;
+      const waterH = H - horizonY;
+
+      const polyPoints = this.config.allowedCastArea.points.map((p) => ({
+        x: p.x * W,
+        y: horizonY + ((p.y - waterBoundaryY) / (1 - waterBoundaryY)) * waterH,
+      }));
+
+      this.mapMask.poly(polyPoints);
+      this.mapMask.fill(0xffffff);
+    } else {
+      this.mapMask.rect(0, 0, W, H);
+      this.mapMask.fill(0xffffff);
+    }
+
+    const rows = 64;
+    const cols = 64;
+    const canvas = document.createElement('canvas');
+    canvas.width = cols;
+    canvas.height = rows;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const imageData = ctx.createImageData(cols, rows);
+    const data = imageData.data;
 
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         const nx = c / (cols - 1);
         const ny = r / (rows - 1);
-        const px = nx * W;
-        const py = horizonY + ny * (H - horizonY);
-
-        const globalNY = waterBoundaryY + ny * (1.0 - waterBoundaryY);
-
-        if (
-          this.config.allowedCastArea.type === 'polygon' &&
-          this.config.allowedCastArea.points &&
-          !pointInPolygon(
-            { x: nx, y: globalNY },
-            this.config.allowedCastArea.points,
-          )
-        ) {
-          continue;
-        }
 
         const depth = this.depthSystem.getDepthAt(nx, ny);
         const depthNorm =
@@ -285,14 +310,51 @@ export class DebugLayer {
           );
 
         const hue = 40 + depthNorm * 220;
-        const color = this.hslToHex(hue, 90, 45);
+        const color = new Color({ h: hue, s: 90, l: 45 });
+        const rgb = color.toRgbArray();
 
-        const radius = isSmallScreen ? 2.5 : 3.2;
-        gfx.circle(px, py, radius);
-        gfx.fill({ color, alpha: 0.5 + depthNorm * 0.3 });
-        gfx.stroke({ color: 0x000000, width: 0.5, alpha: 0.5 });
+        const idx = (r * cols + c) * 4;
+        data[idx] = rgb[0] * 255;
+        data[idx + 1] = rgb[1] * 255;
+        data[idx + 2] = rgb[2] * 255;
+
+        const fadeX = Math.min(1, nx * 10, (1 - nx) * 10);
+
+        const fadeY = Math.min(1, (1 - ny) * 10);
+        const alphaFade = fadeX * fadeY;
+
+        data[idx + 3] = (0.5 + depthNorm * 0.4) * 255 * alphaFade;
       }
     }
+    ctx.putImageData(imageData, 0, 0);
+
+    if (this.mapSprite.texture && this.mapSprite.texture !== Texture.EMPTY) {
+      this.mapSprite.texture.destroy(true);
+    }
+
+    this.mapSprite.texture = Texture.from(canvas);
+
+    const waterBoundaryY = this.config.environment.waterBoundaryY;
+    let minY = waterBoundaryY;
+    let maxY = 1.0;
+    if (
+      this.config.allowedCastArea.type === 'polygon' &&
+      this.config.allowedCastArea.points
+    ) {
+      const ys = this.config.allowedCastArea.points.map((p) => p.y);
+      minY = Math.min(...ys);
+      maxY = Math.max(...ys);
+    }
+
+    const horizonY = H * minY;
+    const mapH = H * (maxY - minY);
+
+    this.mapSprite.position.set(0, horizonY);
+    this.mapSprite.width = W;
+    this.mapSprite.height = mapH;
+
+    const gfx = this.terrainGfx;
+    gfx.clear();
   }
 
   public drawSectors(): void {
@@ -429,7 +491,22 @@ export class DebugLayer {
         })
         .join('\n');
 
-      const exactDepth = this.depthSystem.getDepthAt(nx, ny);
+      let minY = this.config.environment.waterBoundaryY;
+      let maxY = 1.0;
+      if (
+        this.config.allowedCastArea.type === 'polygon' &&
+        this.config.allowedCastArea.points
+      ) {
+        const ys = this.config.allowedCastArea.points.map((p) => p.y);
+        minY = Math.min(...ys);
+        maxY = Math.max(...ys);
+      }
+
+      const localNy = (ny - minY) / (maxY - minY);
+      const exactDepth = this.depthSystem.getDepthAt(
+        nx,
+        Math.max(0, Math.min(1, localNy)),
+      );
       this.sectorInfoLabel.text = `Depth: ${exactDepth.toFixed(1)}m\n---\n${speciesList}`;
 
       const H = this.app.renderer.height;
@@ -448,7 +525,6 @@ export class DebugLayer {
 
       this.sectorInfoLabel.position.set(targetX, targetY);
 
-      // Update background box
       const isMobile = this.app.renderer.width < 1000;
       const padding = isMobile ? 5 : 10;
       const radius = isMobile ? 4 : 6;
@@ -468,19 +544,6 @@ export class DebugLayer {
       this.sectorInfoLabel.visible = false;
       this.infoBgGfx.visible = false;
     }
-  }
-
-  private hslToHex(h: number, s: number, l: number): number {
-    l /= 100;
-    const a = (s * Math.min(l, 1 - l)) / 100;
-    const f = (n: number) => {
-      const k = (n + h / 30) % 12;
-      const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-      return Math.round(255 * color)
-        .toString(16)
-        .padStart(2, '0');
-    };
-    return parseInt(`${f(0)}${f(8)}${f(4)}`, 16);
   }
 
   public destroy(): void {
