@@ -15,6 +15,9 @@ export const envSchema = z.object({
   DATABASE_URL: z.url('DATABASE_URL must be a valid URL'),
   POOLER_DATABASE_URL: z.url('POOLER_DATABASE_URL must be a valid URL'),
 
+  SUPABASE_URL: z.url('SUPABASE_URL must be a valid URL').optional(),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
+
   UPSTASH_REDIS_REST_URL: z.url('UPSTASH_REDIS_REST_URL must be a valid URL'),
   UPSTASH_REDIS_REST_TOKEN: z.string().min(1, {
     message: 'UPSTASH_REDIS_REST_TOKEN is required',

@@ -21,6 +21,7 @@ The server also features a built-in **Admin Dashboard** at the root URL with rea
 - **Secure Authentication** – multi-strategy auth including Google OAuth 2.0, JWT with refresh token rotation, and Local login with email activation
 - **CSRF Protection** – automatic CSRF token middleware + guard for cookie-based clients, bypassed for Bearer token (mobile)
 - **Player Management** – comprehensive profile handling, auto-generated starter kits, catch statistics, and XP-based level progression
+- **Cloud Storage Integration** – secure avatar management via Supabase Storage with support for direct uploads and automated external URL synchronization
 - **Game Logic Engine** – authoritative handling of fishing results, gear durability, bait consumption, lake diary, and trophy detection
 - **Inventory System** – management of rods, reels, lines, hooks, lures, repair kits, bait, and groundbait with batch equip support
 - **In-Game Economy** – shop for purchasing gear/consumables and selling fish with species-specific price multipliers

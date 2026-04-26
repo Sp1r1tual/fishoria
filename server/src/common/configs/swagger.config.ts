@@ -5,7 +5,7 @@ export function setupSwagger(app: INestApplication) {
   const config = new DocumentBuilder()
     .setTitle('Fishoria API')
     .setDescription('The Fishoria Game API documentation')
-    .setVersion('0.4.1')
+    .setVersion('0.4.2')
     .addCookieAuth(
       'Authentication',
       {

@@ -1,6 +1,6 @@
 {
   "name": "fishoria-api",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "author": "Atmosphoria Software",
   "private": true,
   "scripts": {
@@ -36,6 +36,7 @@
     "@nestjs/throttler": "^6.5.0",
     "@prisma/adapter-pg": "^7.6.0",
     "@prisma/client": "^7.6.0",
+    "@supabase/supabase-js": "^2.104.1",
     "@upstash/redis": "^1.37.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",

@@ -32,8 +32,8 @@ Start with a basic float rod, but as you progress-gain experience ($XP$), comple
 **Ecosystem Surprises**
 Rewarding experiences are sometimes purely unexpected. Instead of a trophy carp, you might reel in an old boot or snag on an underwater branch. A complex quest system encourages you to explore every single corner of the lake.
 
-**Global Community**
-Fast and secure registration (including Google OAuth), cloud saving for your profile, and detailed statistics. Compete against others, break your own personal records, and build a collection of the rarest fish species.
+**Global Community & Personalization**
+Fast and secure registration (including Google OAuth), cloud saving for your profile with custom avatar uploads (Supabase Storage), and detailed statistics. Compete against others, break your own personal records, and build a collection of the rarest fish species.
 
 **Full Immersion: Visuals & Audio**
 We have polished every single detail: water droplets streaming down your screen, the iconic sound of the reel drag screaming when a fish pulls, and even meteor showers lighting up the night sky. The ambient sounds dynamically adapt to the weather.

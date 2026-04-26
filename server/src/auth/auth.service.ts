@@ -12,6 +12,7 @@ import ms from 'ms';
 import * as bcrypt from 'bcrypt';
 
 import { RedisService } from '../common/redis/redis.service';
+import { SupabaseStorageService } from '../common/supabase/supabase-storage.service';
 import { MailService } from '../mail/mail.service';
 import { AuthEntity } from './entities/auth.entity';
 import { GoogleAuthPayloadDto } from './dto/google-payload.dto';
@@ -23,6 +24,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly redis: RedisService,
+    private readonly supabaseStorage: SupabaseStorageService,
     private readonly mailService: MailService,
     private readonly authEntity: AuthEntity,
   ) {}
@@ -34,20 +36,43 @@ export class AuthService {
     );
 
     if (internalUser) {
+      // If user has no avatar yet but Google provides one, download it to Supabase
+      let avatar = internalUser.avatar;
+      if (!avatar && user.picture) {
+        avatar =
+          (await this.supabaseStorage.uploadAvatarFromUrl(
+            internalUser.id,
+            user.picture,
+          )) || user.picture;
+      }
+
       internalUser = await this.authEntity.updateUser(internalUser.id, {
         googleId: user.googleId,
         username: internalUser.username || user.displayName,
-        avatar: internalUser.avatar || user.picture,
+        avatar,
         isActivated: true,
       });
     } else {
+      // New user — create, then upload Google avatar to Supabase
       internalUser = await this.authEntity.createUser({
         googleId: user.googleId,
         email: user.email,
         username: user.displayName,
-        avatar: user.picture,
+        avatar: user.picture, // temporary, will be replaced below
         isActivated: true,
       });
+
+      if (user.picture) {
+        const storedAvatar = await this.supabaseStorage.uploadAvatarFromUrl(
+          internalUser.id,
+          user.picture,
+        );
+        if (storedAvatar) {
+          internalUser = await this.authEntity.updateUser(internalUser.id, {
+            avatar: storedAvatar,
+          });
+        }
+      }
     }
 
     const ban = await this.authEntity.findActiveBan(internalUser.id);

@@ -7,6 +7,8 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { GetUserId } from '../auth/decorators/get-user-id.decorator';
 import { BuyDto } from './dto/shop.dto';
 
+import { PlayerProfileResponseDto } from '../player/dto/profile-response.dto';
+
 @Throttle({ default: { limit: 100, ttl: 60000 } })
 @Controller('shop')
 export class ShopController {
@@ -18,13 +20,13 @@ export class ShopController {
     @GetUserId() userId: string,
     @Body(new ZodValidationPipe(BuyDto))
     body: BuyDto,
-  ) {
+  ): Promise<PlayerProfileResponseDto> {
     return this.shopService.buy(userId, body);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('sell')
-  sellItem(@GetUserId() userId: string) {
+  sellItem(@GetUserId() userId: string): Promise<PlayerProfileResponseDto> {
     return this.shopService.sellAllFish(userId);
   }
 }
