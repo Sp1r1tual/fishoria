@@ -27,7 +27,7 @@ export function DebugLegend({ minDepth, maxDepth }: IDebugLegendProps) {
     const d = isLast ? maxDepth : minDepth + i * step;
     if (!isLast && d >= maxDepth - 0.1) continue;
     const depthNorm = (d - minDepth) / Math.max(0.1, maxDepth - minDepth);
-    const hue = 60 + depthNorm * 180;
+    const hue = 40 + depthNorm * 220;
     const color = `hsl(${hue}, 90%, 45%)`;
     const label = `${d.toFixed(1)}m`;
     items.push({ label, color });

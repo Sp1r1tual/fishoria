@@ -168,7 +168,9 @@ export function Inventory({ isModal = false }: { isModal?: boolean }) {
       {inventory.length === 0 ? (
         <section className={styles['inventory__empty-container']}>
           <div className={styles['inventory__empty']}>
-            <div className={styles['inventory__empty-icon']}>🎣</div>
+            <div className={styles['inventory__empty-icon']}>
+              <img src={keepnetIcon} alt="" />
+            </div>
             <p>{t('inventory.empty')}</p>
             <p style={{ marginTop: 8 }}>{t('inventory.goFish')}</p>
           </div>

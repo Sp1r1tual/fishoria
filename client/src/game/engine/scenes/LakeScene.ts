@@ -215,7 +215,7 @@ export class LakeScene implements IScene {
     );
 
     this.debugLayer = new DebugLayer(
-      this.stage,
+      this.fishLayer,
       this.app,
       this.depthSystem,
       this.sectorSystem,
@@ -792,7 +792,7 @@ export class LakeScene implements IScene {
         this.hookConfig?.rigType,
         this.activeBait,
       );
-      this.debugLayer.update();
+      this.debugLayer.update(deltaTime);
     }
     this.debugLayer.updateSnag(
       isFishHookedOrBiting ? 0 : this.snagMechanic.getSnagProgress(),

@@ -71,7 +71,7 @@
     "sellValue": "Sell Value",
     "balance": "Balance",
     "empty": "Empty",
-    "goFish": "Go fishing and catch something!",
+    "goFish": "Let's go to fishing!",
     "sellAll": "Sell All Items",
     "deleteConfirmTitle": "Delete item?",
     "deleteConfirmMessage": "Are you sure you want to delete {{name}}? This cannot be undone.",
@@ -324,8 +324,9 @@
     "noBait": "No bait selected",
     "extract": "Extract",
     "noGear": "No gear available",
+    "empty": "Empty",
     "titles": {
-      "goHome": "Go Home 🏠"
+      "goHome": "Exit"
     }
   },
   "lakeSelect": {

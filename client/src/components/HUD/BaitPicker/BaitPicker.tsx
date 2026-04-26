@@ -129,65 +129,69 @@ export function BaitPicker({
         >
           <div className={styles['picker__label']}>{t('hud.bait')}</div>
           <div className={styles['picker__wheel']}>
-            {availableItems.map((item) => {
-              const id = item.id;
-              const count = isSpinningRod
-                ? gearItems.filter((gi: IOwnedGearItem) => gi.itemId === id)
-                    .length
-                : (consumables.find(
-                    (c: {
-                      itemId: string;
-                      itemType: string;
-                      quantity: number;
-                    }) => c.itemId === id && c.itemType === 'bait',
-                  )?.quantity ?? 0);
-              const isLureItem = id.startsWith('lure_');
+            {availableItems.length > 0 ? (
+              availableItems.map((item) => {
+                const id = item.id;
+                const count = isSpinningRod
+                  ? gearItems.filter((gi: IOwnedGearItem) => gi.itemId === id)
+                      .length
+                  : (consumables.find(
+                      (c: {
+                        itemId: string;
+                        itemType: string;
+                        quantity: number;
+                      }) => c.itemId === id && c.itemType === 'bait',
+                    )?.quantity ?? 0);
+                const isLureItem = id.startsWith('lure_');
 
-              return (
-                <div
-                  key={id}
-                  className={`${styles['picker__step']} ${styles['picker__step--bait']} ${activeBait === id ? styles['picker__step--active'] : ''}`}
-                  onClick={() => {
-                    const bait = id as BaitTypeType;
+                return (
+                  <div
+                    key={id}
+                    className={`${styles['picker__step']} ${styles['picker__step--bait']} ${activeBait === id ? styles['picker__step--active'] : ''}`}
+                    onClick={() => {
+                      const bait = id as BaitTypeType;
 
-                    if (isLureItem) {
-                      const lureConfig = SHOP_HOOKS.find((h) => h.id === id);
-                      const matchingInstance = gearItems.find(
-                        (inst: IOwnedGearItem) => inst.itemId === id,
-                      );
-                      if (lureConfig && matchingInstance) {
+                      if (isLureItem) {
+                        const lureConfig = SHOP_HOOKS.find((h) => h.id === id);
+                        const matchingInstance = gearItems.find(
+                          (inst: IOwnedGearItem) => inst.itemId === id,
+                        );
+                        if (lureConfig && matchingInstance) {
+                          equipMutation.mutate({
+                            equips: [
+                              { targetType: 'hook', uid: matchingInstance.uid },
+                              { targetType: 'bait', targetId: bait },
+                            ],
+                          });
+                        }
+                      } else {
                         equipMutation.mutate({
-                          equips: [
-                            { targetType: 'hook', uid: matchingInstance.uid },
-                            { targetType: 'bait', targetId: bait },
-                          ],
+                          targetType: 'bait',
+                          targetId: bait,
                         });
                       }
-                    } else {
-                      equipMutation.mutate({
-                        targetType: 'bait',
-                        targetId: bait,
-                      });
-                    }
 
-                    sceneRef.current?.setActiveBait(
-                      bait,
-                      isLureItem ? item.name : (BAITS[bait]?.name ?? bait),
-                      count > 0,
-                    );
-                    setIsOpen(false);
-                  }}
-                >
-                  {getBaitIcon(id, item)}
-                  <span>
-                    {isLureItem
-                      ? t(`gear_items.${id}.name`)
-                      : t(`baits.${id}.name`)}{' '}
-                    ({count})
-                  </span>
-                </div>
-              );
-            })}
+                      sceneRef.current?.setActiveBait(
+                        bait,
+                        isLureItem ? item.name : (BAITS[bait]?.name ?? bait),
+                        count > 0,
+                      );
+                      setIsOpen(false);
+                    }}
+                  >
+                    {getBaitIcon(id, item)}
+                    <span>
+                      {isLureItem
+                        ? t(`gear_items.${id}.name`)
+                        : t(`baits.${id}.name`)}{' '}
+                      ({count})
+                    </span>
+                  </div>
+                );
+              })
+            ) : (
+              <div className={styles['picker__empty']}>{t('hud.empty')}</div>
+            )}
           </div>
         </div>
       )}
@@ -199,9 +203,11 @@ export function BaitPicker({
         onClick={() => {
           if (phase === 'idle') setIsOpen(!isOpen);
         }}
-        badge={activeCount}
+        badge={activeCountValue > 0 ? activeCount : undefined}
       >
-        {currentBaitConfig && getSlotIcon(currentBaitConfig)}
+        {activeCountValue > 0 &&
+          currentBaitConfig &&
+          getSlotIcon(currentBaitConfig)}
       </HUDSlot>
     </div>
   );

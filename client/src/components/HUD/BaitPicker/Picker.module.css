@@ -141,3 +141,16 @@
     font-size: 1rem;
   }
 }
+
+.picker__empty {
+  padding: 16px 4px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.65rem;
+  font-style: italic;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}

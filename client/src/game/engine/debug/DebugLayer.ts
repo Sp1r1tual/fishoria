@@ -30,6 +30,7 @@ export class DebugLayer {
   private lastFpsUpdateTime = 0;
   private showGrid = true;
   private showLabels = false;
+  private targetAlpha = 0;
 
   private currentTimeOfDay: TimeOfDayType = 'day';
   private currentWeather: WeatherType = 'clear';
@@ -108,13 +109,16 @@ export class DebugLayer {
     this.container.addChild(this.sectorInfoLabel);
 
     this.container.visible = false;
+    this.container.alpha = 0;
     parent.addChild(this.container);
   }
 
   public setVisible(visible: boolean, showGrid = true): void {
-    this.container.visible = visible;
+    this.targetAlpha = visible ? 1 : 0;
     this.showGrid = showGrid;
+
     if (visible) {
+      this.container.visible = true;
       this.terrainGfx.clear();
       this.drawTerrain();
       if (this.showGrid) {
@@ -142,7 +146,7 @@ export class DebugLayer {
   }
 
   public isVisible(): boolean {
-    return this.container.visible;
+    return this.container.visible || this.container.alpha > 0;
   }
 
   public setEnv(
@@ -159,7 +163,24 @@ export class DebugLayer {
     this.currentBaitType = baitType;
   }
 
-  public update(): void {
+  public update(dt: number = 1 / 60): void {
+    // Smooth alpha transition
+    if (this.container.alpha !== this.targetAlpha) {
+      const speed = 5; // Fades in ~200ms
+      const diff = this.targetAlpha - this.container.alpha;
+      const step = dt * speed;
+
+      if (Math.abs(diff) < step) {
+        this.container.alpha = this.targetAlpha;
+      } else {
+        this.container.alpha += Math.sign(diff) * step;
+      }
+
+      if (this.container.alpha === 0 && this.targetAlpha === 0) {
+        this.container.visible = false;
+      }
+    }
+
     if (this.container.visible) {
       this.dynamicGfx.clear();
       const now = performance.now();
@@ -230,7 +251,7 @@ export class DebugLayer {
     const gfx = this.terrainGfx;
 
     const isSmallScreen = this.app.renderer.width < 1000;
-    const rows = isSmallScreen ? 30 : 50;
+    const rows = isSmallScreen ? 25 : 40;
     const cols = isSmallScreen ? 45 : 75;
     const waterBoundaryY = this.config.environment.waterBoundaryY;
     const horizonY = H * waterBoundaryY;
@@ -263,11 +284,13 @@ export class DebugLayer {
             this.config.depthMap.maxDepth - this.config.depthMap.minDepth,
           );
 
-        const hue = 60 + depthNorm * 180;
+        const hue = 40 + depthNorm * 220;
         const color = this.hslToHex(hue, 90, 45);
 
-        gfx.circle(px, py, 2.0);
-        gfx.fill({ color, alpha: 0.2 + depthNorm * 0.3 });
+        const radius = isSmallScreen ? 2.5 : 3.2;
+        gfx.circle(px, py, radius);
+        gfx.fill({ color, alpha: 0.5 + depthNorm * 0.3 });
+        gfx.stroke({ color: 0x000000, width: 0.5, alpha: 0.5 });
       }
     }
   }
@@ -289,8 +312,7 @@ export class DebugLayer {
 
     const cellW = (pxMaxX - pxMinX) / cols;
     const cellH = (pxMaxY - pxMinY) / rows;
-    gfx.setStrokeStyle({ width: 1, color: 0xffffff, alpha: 0.1 });
-
+    gfx.setStrokeStyle({ width: 1, color: 0xffffff, alpha: 0.15 });
     for (let c = 0; c < cols; c++) {
       for (let r = 0; r < rows; r++) {
         if (!grid[c][r]) continue;

@@ -3,6 +3,7 @@
   inset: 0;
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,6 +18,7 @@
   max-height: 90vh;
   background: rgba(15, 23, 42, 0.95);
   backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 32px;
   padding: 40px;

@@ -61,7 +61,7 @@ export const SCENE_TIMING = {
   caughtResetDelay: 1500,
 
   /** Cast water-boundary margin (fraction) */
-  castWaterMargin: 0.015,
+  castWaterMargin: 0,
 
   /** Bottom detection tolerance (meters) */
   bottomDetectionTolerance: 0.05,

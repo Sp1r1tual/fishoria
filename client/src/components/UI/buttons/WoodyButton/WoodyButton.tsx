@@ -18,6 +18,7 @@ interface WoodyButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>
   playSound?: boolean;
   badge?: number | string | boolean;
   isShining?: boolean;
+  isSquare?: boolean;
 }
 
 export const WoodyButton = ({
@@ -34,6 +35,7 @@ export const WoodyButton = ({
   playSound = true,
   badge,
   isShining = false,
+  isSquare = false,
   onClick,
   ...props
 }: WoodyButtonProps) => {
@@ -56,6 +58,7 @@ export const WoodyButton = ({
     mobileOnly ? styles['mobile-only'] : '',
     desktopOnly ? styles['desktop-only'] : '',
     isShining ? styles['shining-effect'] : '',
+    isSquare ? styles['square-style'] : '',
     className,
   ]
     .join(' ')

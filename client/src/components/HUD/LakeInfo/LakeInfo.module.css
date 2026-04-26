@@ -169,7 +169,9 @@
   gap: 10px;
   background: rgba(251, 191, 36, 0.1);
   border: 1px solid rgba(251, 191, 36, 0.3);
-  padding: 6px 12px;
+  height: 32px;
+  padding: 0 12px;
+  box-sizing: border-box;
   border-radius: 8px;
   cursor: pointer;
   pointer-events: all;
@@ -204,31 +206,27 @@
     height: 22px;
     padding: 0 6px;
     gap: 4px;
-    border-radius: 5px;
-  }
-  .lake-info__activate-gb span {
-    font-size: 0.7rem;
-    letter-spacing: 0px;
+    border-radius: 4px;
   }
   .lake-info__activate-gb img {
-    width: 13px;
-    height: 13px;
+    width: 12px;
+    height: 12px;
   }
   .lake-info__groundbait-timer {
     padding: 0 6px;
     font-size: 0.65rem;
-    border-radius: 5px;
+    border-radius: 4px;
     height: 22px;
     min-height: 22px;
   }
   .lake-info__cancel-gb {
     width: 22px;
     height: 22px;
-    font-size: 0.9rem;
-    border-radius: 5px;
+    font-size: 0.8rem;
+    border-radius: 4px;
   }
   .lake-info__groundbait-timer-wrap {
-    gap: 3px;
+    gap: 4px;
     margin-top: 2px;
     height: 22px;
   }
@@ -239,11 +237,13 @@
   align-items: stretch;
   gap: 6px;
   width: 100%;
+  height: 32px;
+  box-sizing: border-box;
 }
 
 .lake-info__groundbait-timer {
   background: rgba(251, 191, 36, 0.15);
-  padding: 6px 12px;
+  padding: 0 12px;
   border-radius: 8px;
   font-size: 0.85rem;
   font-weight: 700;

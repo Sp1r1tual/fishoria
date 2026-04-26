@@ -35,8 +35,6 @@ import type { LakeScene } from '@/game/engine/scenes/LakeScene';
 import { getLakeById } from '@/common/configs/game';
 import { SHOP_HOOKS, SHOP_RODS } from '@/common/configs/game';
 
-import jeepIcon from '@/assets/ui/jeep.webp';
-
 import styles from './HUD.module.css';
 
 interface IHUDProps {
@@ -193,26 +191,38 @@ export function HUD({
 
           <div className={styles['hud__top-center']}>
             <LevelBar />
-          </div>
-
-          <div className={styles['hud__top-right']}>
             <DebugTerminal
               isVisible={localDebugActive}
               onClose={() => sceneRef.current?.toggleDebug()}
             />
+          </div>
+          <div className={styles['hud__top-right']}>
             <WoodyButton
               id="hud-exit"
               variant="brown"
               size="sm"
+              isSquare={true}
               onClick={handleExit}
               title={t('hud.titles.goHome')}
-            >
-              <img
-                src={jeepIcon}
-                alt="Leave"
-                className={styles['hud__exit-icon']}
-              />
-            </WoodyButton>
+              icon={
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className={styles['hud__exit-svg']}
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" x2="9" y1="12" y2="12" />
+                </svg>
+              }
+            />
           </div>
         </div>
       )}

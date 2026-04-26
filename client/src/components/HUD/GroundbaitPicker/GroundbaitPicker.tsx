@@ -91,32 +91,36 @@ export function GroundbaitPicker({ sceneRef, phase }: IGroundbaitPickerProps) {
         >
           <div className={styles['picker__label']}>{t('hud.groundbait')}</div>
           <div className={styles['picker__wheel']}>
-            {availableItems.map((item) => {
-              const id = item.id;
-              const count = groundbaitCounts[id] ?? 0;
+            {availableItems.length > 0 ? (
+              availableItems.map((item) => {
+                const id = item.id;
+                const count = groundbaitCounts[id] ?? 0;
 
-              return (
-                <div
-                  key={id}
-                  className={`${styles['picker__step']} ${styles['picker__step--gb']} ${activeGroundbait === id ? styles['picker__step--active'] : ''}`}
-                  onClick={() => {
-                    const gb = id as GroundbaitTypeType;
-                    equipMutation.mutate({
-                      targetType: 'groundbait',
-                      targetId: gb,
-                    });
-                    sceneRef.current?.setActiveGroundbait(gb, null);
-                    setIsOpen(false);
-                  }}
-                >
-                  {getGBIcon(id, item)}
-                  <span>
-                    {t(`groundbaits.${id}.name`)}{' '}
-                    {id !== 'none' ? `(${count})` : ''}
-                  </span>
-                </div>
-              );
-            })}
+                return (
+                  <div
+                    key={id}
+                    className={`${styles['picker__step']} ${styles['picker__step--gb']} ${activeGroundbait === id ? styles['picker__step--active'] : ''}`}
+                    onClick={() => {
+                      const gb = id as GroundbaitTypeType;
+                      equipMutation.mutate({
+                        targetType: 'groundbait',
+                        targetId: gb,
+                      });
+                      sceneRef.current?.setActiveGroundbait(gb, null);
+                      setIsOpen(false);
+                    }}
+                  >
+                    {getGBIcon(id, item)}
+                    <span>
+                      {t(`groundbaits.${id}.name`)}{' '}
+                      {id !== 'none' ? `(${count})` : ''}
+                    </span>
+                  </div>
+                );
+              })
+            ) : (
+              <div className={styles['picker__empty']}>{t('hud.empty')}</div>
+            )}
           </div>
         </div>
       )}
@@ -128,12 +132,15 @@ export function GroundbaitPicker({ sceneRef, phase }: IGroundbaitPickerProps) {
           if (phase === 'idle') setIsOpen(!isOpen);
         }}
         badge={
-          activeGroundbait !== 'none'
+          activeGroundbait !== 'none' && groundbaitCounts[activeGroundbait] > 0
             ? groundbaitCounts[activeGroundbait]
             : undefined
         }
       >
-        {currentGBConfig && getSlotIcon(currentGBConfig)}
+        {activeGroundbait !== 'none' &&
+          groundbaitCounts[activeGroundbait] > 0 &&
+          currentGBConfig &&
+          getSlotIcon(currentGBConfig)}
       </HUDSlot>
     </div>
   );

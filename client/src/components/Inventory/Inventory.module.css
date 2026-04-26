@@ -221,9 +221,17 @@
 }
 
 .inventory__empty-icon {
-  font-size: 3rem;
   margin-bottom: 16px;
   opacity: 0.5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.inventory__empty-icon img {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
 }
 
 .inventory__coin-icon-btn-sm {
