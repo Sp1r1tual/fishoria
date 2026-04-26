@@ -21,34 +21,50 @@ export const BottomInfo = () => {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [windowSize, setWindowSize] = useState({
-    width: typeof window !== 'undefined' ? window.innerWidth : 1200,
-    height: typeof window !== 'undefined' ? window.innerHeight : 800,
+  const [layout, setLayout] = useState({
+    winW: typeof window !== 'undefined' ? window.innerWidth : 1200,
+    winH: typeof window !== 'undefined' ? window.innerHeight : 800,
+    contW: 0,
   });
-  const [containerWidth, setContainerWidth] = useState(0);
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
     const wrap = wrapRef.current;
     if (!wrap) return;
 
+    let timer: number;
+    let pendingContW = 0;
+
+    const commit = () => {
+      setLayout((prev) => {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        if (prev.winW === w && prev.winH === h && prev.contW === pendingContW) {
+          return prev;
+        }
+        return { winW: w, winH: h, contW: pendingContW || prev.contW };
+      });
+    };
+
     const obs = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        setContainerWidth(entry.contentRect.width);
+        pendingContW = entry.contentRect.width;
       }
+      window.clearTimeout(timer);
+      timer = window.setTimeout(commit, 300);
     });
     obs.observe(wrap);
 
-    const handleResize = () =>
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
+    const handleResize = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(commit, 300);
+    };
     window.addEventListener('resize', handleResize);
 
     return () => {
       obs.disconnect();
       window.removeEventListener('resize', handleResize);
+      window.clearTimeout(timer);
     };
   }, []);
 
@@ -58,13 +74,13 @@ export const BottomInfo = () => {
 
   const fluidFactor = Math.max(
     0,
-    Math.min(1, (windowSize.width - MIN_WIDTH) / (MAX_WIDTH - MIN_WIDTH)),
+    Math.min(1, (layout.winW - MIN_WIDTH) / (MAX_WIDTH - MIN_WIDTH)),
   );
 
   const fontSize =
     MIN_FONT_SIZE + (MAX_FONT_SIZE - MIN_FONT_SIZE) * fluidFactor;
   const lineH = fontSize * (1.6 + 0.15 * fluidFactor);
-  const isMobile = windowSize.width < 640;
+  const isMobile = layout.winW < 640;
   const fontStr = `${fontSize}px Nunito, system-ui, sans-serif`;
   const textContent = t('bottomInfo.text');
   const horizontalPad = 6 + 6 * fluidFactor;
@@ -78,7 +94,7 @@ export const BottomInfo = () => {
 
   const availableWidth = Math.max(
     280,
-    (containerWidth || windowSize.width - outerPad) - horizontalPad * 2,
+    (layout.contW || layout.winW - outerPad) - horizontalPad * 2,
   );
 
   const totalHeight = useMemo(() => {
@@ -102,13 +118,11 @@ export const BottomInfo = () => {
     canvasRef,
     wrapRef,
     updateFishLogic,
-    containerWidth,
+    containerWidth: layout.contW,
     horizontalPad,
     isMobile,
     baseFishSize:
-      windowSize.height <= 550 && windowSize.width > windowSize.height
-        ? 22
-        : FISH_SIZE,
+      layout.winH <= 550 && layout.winW > layout.winH ? 22 : FISH_SIZE,
     fontStr,
     lineH,
     padY,

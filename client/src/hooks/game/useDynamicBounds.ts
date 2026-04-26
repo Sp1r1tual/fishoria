@@ -1,36 +1,41 @@
-import { useLayoutEffect, useState, type RefObject } from 'react';
+import { useLayoutEffect, type RefObject } from 'react';
 
 export const useDynamicBounds = (
   targetRef: RefObject<HTMLElement | null>,
+  applyRef: RefObject<HTMLElement | null>,
+  cssVarName: string = '--min-allowed-height',
   safeGap: number = 60,
-  fallbackHeight: number = 500,
   dependencies: unknown[] = [],
 ) => {
-  const [minAllowedHeight, setMinAllowedHeight] = useState(() => {
-    return targetRef.current
-      ? targetRef.current.offsetHeight + safeGap
-      : fallbackHeight;
-  });
-
   useLayoutEffect(() => {
-    if (!targetRef.current) return;
+    if (!targetRef.current || !applyRef.current) return;
 
-    setMinAllowedHeight(targetRef.current.offsetHeight + safeGap);
+    const setHeight = (height: number) => {
+      applyRef.current?.style.setProperty(cssVarName, `${height + safeGap}px`);
+    };
+
+    setHeight(targetRef.current.offsetHeight);
+
+    let timerId: number;
 
     const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const height =
-          entry.borderBoxSize?.[0]?.blockSize ??
-          (entry.target as HTMLElement).offsetHeight;
-        setMinAllowedHeight(height + safeGap);
-      }
+      window.clearTimeout(timerId);
+      timerId = window.setTimeout(() => {
+        for (const entry of entries) {
+          const height =
+            entry.borderBoxSize?.[0]?.blockSize ??
+            (entry.target as HTMLElement).offsetHeight;
+          setHeight(height);
+        }
+      }, 300);
     });
 
     observer.observe(targetRef.current);
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(timerId);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targetRef, safeGap, ...dependencies]);
-
-  return minAllowedHeight;
+  }, [targetRef, applyRef, cssVarName, safeGap, ...dependencies]);
 };

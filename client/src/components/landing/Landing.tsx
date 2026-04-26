@@ -45,9 +45,9 @@ export const Landing = () => {
     };
   }, []);
 
-  const minAllowedHeight = useDynamicBounds(leftColumnRef, 60, 500, []);
+  useDynamicBounds(leftColumnRef, containerRef, '--min-allowed-height', 60, []);
   useScrollCssVar(containerRef, containerRef, '--scroll-y');
-  const dynamicMinHeight = `max(${minAllowedHeight}px, calc(100dvh - calc(var(--scroll-y, 0px) * 1.5)))`;
+  const dynamicMinHeight = `max(var(--min-allowed-height, 500px), calc(100dvh - calc(var(--scroll-y, 0px) * 1.5)))`;
 
   return (
     <LandingLayout

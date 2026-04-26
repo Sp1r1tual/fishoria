@@ -70,16 +70,32 @@ export function useFishController() {
         const dy = mousePos.current.y - fish.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist > 15) {
-          const targetSpeed = Math.min(speedLimit, dist * 0.1);
-          const desiredVx = (dx / dist) * targetSpeed;
-          const desiredVy = (dy / dist) * targetSpeed;
+        const stopThreshold = 2;
+        if (dist > stopThreshold) {
+          const decelerationRadius = isSmall ? 70 : 120;
+          const targetSpeed =
+            speedLimit * Math.min(1, dist / decelerationRadius);
+
+          const ux = dx / dist;
+          const uy = dy / dist;
+
+          const waveFreq = isSmall ? 3 : 2.5;
+          const waveAmp = isSmall ? 0.4 : 0.6;
+          const lateralWobble =
+            Math.sin(fish.t * waveFreq) * waveAmp * Math.min(1, dist / 80);
+
+          const desiredVx = ux * targetSpeed - uy * lateralWobble;
+          const desiredVy = uy * targetSpeed + ux * lateralWobble;
 
           const steerFactor = isSmall ? 0.07 : 0.1;
           fish.vx += (desiredVx - fish.vx) * steerFactor * timeScale;
           fish.vy += (desiredVy - fish.vy) * steerFactor * timeScale;
+
+          const damping = Math.pow(0.98, timeScale);
+          fish.vx *= damping;
+          fish.vy *= damping;
         } else {
-          const friction = Math.pow(0.6, timeScale);
+          const friction = Math.pow(0.75, timeScale);
           fish.vx *= friction;
           fish.vy *= friction;
         }

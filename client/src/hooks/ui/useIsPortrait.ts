@@ -6,10 +6,17 @@ export function useIsPortrait(): boolean {
   );
 
   useEffect(() => {
-    const check = () => setIsPortrait(window.innerWidth < window.innerHeight);
+    let timer: number;
+    const check = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        setIsPortrait(window.innerWidth < window.innerHeight);
+      }, 300);
+    };
     window.addEventListener('resize', check);
     window.addEventListener('orientationchange', check);
     return () => {
+      window.clearTimeout(timer);
       window.removeEventListener('resize', check);
       window.removeEventListener('orientationchange', check);
     };
