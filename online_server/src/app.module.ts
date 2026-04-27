@@ -8,6 +8,7 @@ import { RedisModule } from './common/redis/redis.module';
 import { StatusModule } from './status/status.module';
 import { ChatModule } from './chat/chat.module';
 import { AuthModule } from './auth/auth.module';
+import { GameModule } from './game/game.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -30,6 +31,7 @@ import { validateEnv } from './common/configs/env.validation';
     RedisModule,
     ChatModule,
     AuthModule,
+    GameModule,
   ],
   controllers: [AppController],
   providers: [

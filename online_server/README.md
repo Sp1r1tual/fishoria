@@ -8,7 +8,8 @@ Real-time WebSocket server for **Fishoria**. Handles live chat, game events, and
 
 - **Live Multi-room Chat** – Isolated chat rooms for each lake with message persistence (last 50 messages) via Redis.
 - **Real-time Game Events** – Instant broadcasting of fish catches and other player activities across the lake.
-- **Advanced Security** – JWT-based socket authentication, identity verification, and real-time ban checks using the shared Redis ban cache.
+- **Global Game Sync** – Synchronizes virtual game time and weather across all connected clients via Redis state caching.
+- **Advanced Security** – JWT-based socket authentication, identity verification, Role-based Access Control (RBAC), and real-time ban checks using the shared Redis ban cache.
 - **Performance Optimized** – Built on Socket.io with Redis-backed state management for low-latency interactions.
 
 ---
@@ -87,14 +88,23 @@ The server will be available at `ws://localhost:5001`.
 | `status:check`  | In   | Request current server boot status |
 | `status:update` | Out  | Broadcast of boot phase changes    |
 
+### Namespace: `/game`
+
+| Event                    | Type | Payload             | Description                                         |
+| :----------------------- | :--- | :------------------ | :-------------------------------------------------- | --------- | ------------------------------------------------- |
+| `game:sync`              | Out  | `GameState`         | Broadcasts virtual time and weather globally        |
+| `game:admin:set_time`    | In   | `{ hour: number }`  | Set global game time (requires ADMIN/MODERATOR JWT) |
+| `game:admin:set_weather` | In   | `{ weather: 'clear' | 'cloudy'                                            | 'rain' }` | Set global weather (requires ADMIN/MODERATOR JWT) |
+
 ---
 
 ## Architecture
 
 ```
 src/
-├── auth/           # JWT Validation & WsAuthGuard
+├── auth/           # JWT Validation, WsAuthGuard & WsRolesGuard
 ├── chat/           # Room logic, messaging & Redis history
+├── game/           # Global game state sync (time & weather)
 ├── status/         # Boot phase tracking & status gateway
 ├── common/         # Redis & Prisma shared services
 └── main.ts         # Server entry point with status triggers
