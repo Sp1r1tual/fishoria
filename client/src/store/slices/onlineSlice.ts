@@ -59,7 +59,12 @@ const onlineSlice = createSlice({
     },
 
     setChatHistory(state, action: PayloadAction<IChatHistoryResponse>) {
-      state.messages = action.payload.history.slice(-MAX_MESSAGES);
+      state.messages = [...action.payload.messages, ...action.payload.events]
+        .sort(
+          (a, b) =>
+            new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+        )
+        .slice(-MAX_MESSAGES);
       state.readPointers = action.payload.readPointers;
     },
 

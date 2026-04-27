@@ -38,51 +38,43 @@ export const ChatTabs = ({
     }
   };
 
-  const dotClass = getDotClass(connectionStatus);
+  const tabs: { id: ChatTab; label: string; short: string; badge: number }[] = [
+    {
+      id: 'events',
+      label: t('hud.chat.tabs.events'),
+      short: t('hud.chat.tabs.eventsShort'),
+      badge: unreadCounts.system,
+    },
+    {
+      id: 'messages',
+      label: t('hud.chat.tabs.messages'),
+      short: t('hud.chat.tabs.messagesShort'),
+      badge: unreadCounts.chat,
+    },
+  ];
 
   return (
     <div className={styles.chat__tabs}>
       <div className={styles.chat__tabs_group}>
-        <button
-          className={`${styles.chat__tab} ${
-            !isMinimized && activeTab === 'events'
-              ? styles['chat__tab--active']
-              : ''
-          }`}
-          onClick={() => onSetTab('events')}
-        >
-          <span className={styles['chat__tab-text--full']}>
-            {t('hud.chat.tabs.events')}
-          </span>
-          <span className={styles['chat__tab-text--short']}>
-            {t('hud.chat.tabs.eventsShort')}
-          </span>
-          {unreadCounts.system > 0 && (
-            <span className={styles.chat__badge}>
-              {unreadCounts.system > 99 ? '99+' : unreadCounts.system}
-            </span>
-          )}
-        </button>
-        <button
-          className={`${styles.chat__tab} ${
-            !isMinimized && activeTab === 'messages'
-              ? styles['chat__tab--active']
-              : ''
-          }`}
-          onClick={() => onSetTab('messages')}
-        >
-          <span className={styles['chat__tab-text--full']}>
-            {t('hud.chat.tabs.messages')}
-          </span>
-          <span className={styles['chat__tab-text--short']}>
-            {t('hud.chat.tabs.messagesShort')}
-          </span>
-          {unreadCounts.chat > 0 && (
-            <span className={styles.chat__badge}>
-              {unreadCounts.chat > 99 ? '99+' : unreadCounts.chat}
-            </span>
-          )}
-        </button>
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            className={`${styles.chat__tab} ${
+              !isMinimized && activeTab === tab.id
+                ? styles['chat__tab--active']
+                : ''
+            }`}
+            onClick={() => onSetTab(tab.id)}
+          >
+            <span className={styles['chat__tab-text--full']}>{tab.label}</span>
+            <span className={styles['chat__tab-text--short']}>{tab.short}</span>
+            {tab.badge > 0 && (
+              <span className={styles.chat__badge}>
+                {tab.badge > 99 ? '99+' : tab.badge}
+              </span>
+            )}
+          </button>
+        ))}
         <div
           className={styles.chat__tab_indicator}
           style={{
@@ -92,7 +84,9 @@ export const ChatTabs = ({
         />
       </div>
       <div className={styles.chat__online_indicator}>
-        <div className={`${styles.chat__online_dot} ${dotClass}`} />
+        <div
+          className={`${styles.chat__online_dot} ${getDotClass(connectionStatus)}`}
+        />
         {connectionStatus === 'online' && (
           <span className={styles.chat__online_count}>{onlineCount}</span>
         )}

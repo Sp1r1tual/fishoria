@@ -51,7 +51,8 @@ export interface ICatchEventPayload {
 }
 
 export interface IChatHistoryResponse {
-  history: IChatMessage[];
+  messages: IChatMessage[];
+  events: IChatMessage[];
   readPointers: Record<string, string>;
 }
 

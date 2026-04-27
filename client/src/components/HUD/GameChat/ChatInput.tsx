@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import styles from './GameChat.module.css';
@@ -10,35 +10,15 @@ interface ChatInputProps {
 export const ChatInput = ({ onSendMessage }: ChatInputProps) => {
   const { t } = useTranslation();
   const [inputValue, setInputValue] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
-  const counterRef = useRef<HTMLSpanElement>(null);
-
-  const handleInput = () => {
-    if (!inputRef.current || !counterRef.current) return;
-    const val = inputRef.current.value;
-
-    setInputValue(val);
-
-    counterRef.current.textContent = `${val.length}/100`;
-    counterRef.current.classList.toggle(
-      styles['chat__counter--warning'],
-      val.length >= 90,
-    );
-  };
 
   const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
+    (e: React.SyntheticEvent) => {
       e.preventDefault();
       const val = inputValue.trim();
       if (!val) return;
 
       onSendMessage(val);
       setInputValue('');
-      if (inputRef.current) inputRef.current.value = '';
-      if (counterRef.current) {
-        counterRef.current.textContent = '0/100';
-        counterRef.current.classList.remove(styles['chat__counter--warning']);
-      }
     },
     [inputValue, onSendMessage],
   );
@@ -46,15 +26,19 @@ export const ChatInput = ({ onSendMessage }: ChatInputProps) => {
   return (
     <form className={styles.chat__input_wrapper} onSubmit={handleSubmit}>
       <input
-        ref={inputRef}
         type="text"
         className={styles.chat__input}
         placeholder={t('hud.chat.placeholder')}
         maxLength={100}
-        onInput={handleInput}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
       />
-      <span ref={counterRef} className={styles.chat__counter}>
-        0/100
+      <span
+        className={`${styles.chat__counter} ${
+          inputValue.length >= 90 ? styles['chat__counter--warning'] : ''
+        }`}
+      >
+        {inputValue.length}/100
       </span>
       <button
         type="submit"

@@ -51,6 +51,7 @@ export function useOnlineChat(lakeId: string | null) {
 
     socket.on('chat:history', onHistory);
     socket.on('chat:message', onMessage);
+    socket.on('chat:event', onMessage);
     socket.on('chat:room_state', onRoomState);
 
     socket.emit('chat:join', { lakeId });
@@ -60,6 +61,7 @@ export function useOnlineChat(lakeId: string | null) {
     return () => {
       socket.off('chat:history', onHistory);
       socket.off('chat:message', onMessage);
+      socket.off('chat:event', onMessage);
       socket.off('chat:room_state', onRoomState);
 
       socket.emit('chat:leave');
@@ -86,6 +88,7 @@ export function useOnlineChat(lakeId: string | null) {
   const markAsRead = useCallback(
     (messageId: string, type: 'chat' | 'system') => {
       if (!lakeId) return;
+
       const socket = getChatSocket();
       if (!socket.connected) return;
 
