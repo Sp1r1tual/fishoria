@@ -9,10 +9,6 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 
-import { EServerStatus } from '../../status/enums/status.enum';
-
-import { StatusService } from '../../status/status.service';
-
 @Injectable()
 export class PrismaService
   extends PrismaClient
@@ -21,10 +17,7 @@ export class PrismaService
   private readonly logger = new Logger(PrismaService.name);
   private pool: Pool;
 
-  constructor(
-    configService: ConfigService,
-    private readonly statusService: StatusService,
-  ) {
+  constructor(configService: ConfigService) {
     const connectionString = configService.get<string>('POOLER_DATABASE_URL');
     const pool = new Pool({
       connectionString,
@@ -39,11 +32,6 @@ export class PrismaService
   }
 
   async onModuleInit() {
-    this.statusService.setStatus(
-      EServerStatus.CONNECTING_DB,
-      'Connecting to database...',
-    );
-
     await this.$connect();
     this.logger.log('Database connected successfully');
   }

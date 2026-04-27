@@ -1,3 +1,4 @@
+import { Socket } from 'socket.io';
 import {
   CanActivate,
   ExecutionContext,
@@ -21,7 +22,8 @@ export class WsAuthGuard implements CanActivate {
     const token =
       data?.token ||
       client.handshake?.auth?.token ||
-      client.handshake?.headers?.authorization?.split(' ')[1];
+      client.handshake?.headers?.authorization?.split(' ')[1] ||
+      this.extractTokenFromCookie(client);
 
     if (!token) {
       this.logger.debug(`No token provided for socket ${client.id}`);
@@ -40,5 +42,13 @@ export class WsAuthGuard implements CanActivate {
       );
       throw error;
     }
+  }
+
+  private extractTokenFromCookie(client: Socket): string | null {
+    const cookieHeader = client.handshake?.headers?.cookie;
+    if (!cookieHeader) return null;
+
+    const match = cookieHeader.match(/(?:^|;\s*)Authentication=([^;]*)/);
+    return match?.[1] ? decodeURIComponent(match[1]) : null;
   }
 }

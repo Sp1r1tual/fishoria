@@ -8,7 +8,6 @@ Real-time WebSocket server for **Fishoria**. Handles live chat, game events, and
 
 - **Live Multi-room Chat** – Isolated chat rooms for each lake with message persistence (last 50 messages) via Redis.
 - **Real-time Game Events** – Instant broadcasting of fish catches and other player activities across the lake.
-- **Server Status Tracking** – Multi-phase boot tracking (`starting` → `db_connect` → `redis_connect` → `online`) with live updates for clients (essential for Render cold-starts).
 - **Advanced Security** – JWT-based socket authentication, identity verification, and real-time ban checks using the shared Redis ban cache.
 - **Performance Optimized** – Built on Socket.io with Redis-backed state management for low-latency interactions.
 
