@@ -16,7 +16,6 @@ import {
   setCurrentChatLakeId,
   clearChat,
 } from '@/store/slices/onlineSlice';
-import { addToast } from '@/store/slices/uiSlice';
 
 import { getChatSocket } from '@/services/socket.service';
 
@@ -50,20 +49,9 @@ export function useOnlineChat(lakeId: string | null) {
       dispatch(setRoomState(state));
     };
 
-    const onError = (err: { message: string }) => {
-      console.warn('[OnlineChat] Server error:', err.message);
-      dispatch(
-        addToast({
-          type: 'error',
-          message: `[Socket] ${err.message}`,
-        }),
-      );
-    };
-
     socket.on('chat:history', onHistory);
     socket.on('chat:message', onMessage);
     socket.on('chat:room_state', onRoomState);
-    socket.on('chat:error', onError);
 
     socket.emit('chat:join', { lakeId });
     joinedRef.current = true;
@@ -73,7 +61,6 @@ export function useOnlineChat(lakeId: string | null) {
       socket.off('chat:history', onHistory);
       socket.off('chat:message', onMessage);
       socket.off('chat:room_state', onRoomState);
-      socket.off('chat:error', onError);
 
       socket.emit('chat:leave');
 

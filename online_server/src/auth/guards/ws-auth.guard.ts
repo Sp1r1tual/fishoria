@@ -27,7 +27,7 @@ export class WsAuthGuard implements CanActivate {
 
     if (!token) {
       this.logger.debug(`No token provided for socket ${client.id}`);
-      throw new UnauthorizedException('No token provided');
+      throw new UnauthorizedException('error.socket.auth_error');
     }
 
     try {

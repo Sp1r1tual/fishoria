@@ -16,11 +16,16 @@ export class AllExceptionsFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
+    if (host.getType() === 'ws') {
+      this.handleWsException(exception, host);
+      return;
+    }
+
     const { httpAdapter } = this.httpAdapterHost;
     const ctx = host.switchToHttp();
 
     let httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message = 'Internal server error';
+    let message = 'errors.unknown';
 
     if (exception instanceof HttpException) {
       httpStatus = exception.getStatus();
@@ -71,5 +76,28 @@ export class AllExceptionsFilter implements ExceptionFilter {
     }
 
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
+  }
+
+  private handleWsException(exception: unknown, host: ArgumentsHost) {
+    const client = host.switchToWs().getClient();
+    let message = 'errors.unknown';
+
+    if (exception instanceof HttpException) {
+      const response = exception.getResponse();
+      if (typeof response === 'object' && response !== null) {
+        const msg = (response as Record<string, unknown>).message;
+        message = Array.isArray(msg) ? msg.join(', ') : (msg as string);
+      } else {
+        message = response as string;
+      }
+    } else if (exception instanceof Error) {
+      message = exception.message;
+    }
+
+    this.logger.warn(`[WS Exception] ${message}`);
+    client.emit('exception', {
+      status: 'error',
+      message: message,
+    });
   }
 }
