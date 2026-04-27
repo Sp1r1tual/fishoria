@@ -22,7 +22,7 @@ export function NetworkSection() {
     if (!onlineMode) return t('online.status.disabled');
     switch (connectionStatus) {
       case 'online':
-        return t('settings.serverStatus.online');
+        return t('online.status.online');
       case 'connecting':
         return t('online.status.connecting');
       case 'error':
@@ -42,11 +42,7 @@ export function NetworkSection() {
         onChange={handleToggle}
       />
 
-      <ServiceStatus
-        status={statusType}
-        label={getStatusLabel()}
-        onClick={() => {}}
-      />
+      <ServiceStatus status={statusType} label={getStatusLabel()} />
     </div>
   );
 }

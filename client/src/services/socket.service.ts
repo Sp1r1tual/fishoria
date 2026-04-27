@@ -11,7 +11,7 @@ export function getStatusSocket(): Socket {
     statusSocket = io(`${ONLINE_SERVER_URL}/status`, {
       autoConnect: false,
       withCredentials: true,
-      transports: ['websocket', 'polling'],
+      transports: ['polling', 'websocket'],
       reconnection: true,
       reconnectionAttempts: Infinity,
       reconnectionDelay: 2000,
@@ -26,7 +26,7 @@ export function getChatSocket(): Socket {
     chatSocket = io(`${ONLINE_SERVER_URL}/chat`, {
       autoConnect: false,
       withCredentials: true,
-      transports: ['websocket', 'polling'],
+      transports: ['polling', 'websocket'],
       reconnection: true,
       reconnectionAttempts: Infinity,
       reconnectionDelay: 2000,

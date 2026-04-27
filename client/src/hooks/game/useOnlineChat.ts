@@ -12,6 +12,7 @@ import {
   addChatMessage,
   setChatHistory,
   setRoomState,
+  setLakesOnlineStats,
   setCurrentChatLakeId,
   clearChat,
 } from '@/store/slices/onlineSlice';
@@ -30,7 +31,7 @@ export function useOnlineChat(lakeId: string | null) {
   const joinedRef = useRef(false);
 
   useEffect(() => {
-    if (!lakeId || !isAuthenticated || !onlineMode) {
+    if (!isAuthenticated || !onlineMode) {
       if (joinedRef.current) {
         disconnectChat();
         dispatch(clearChat());
@@ -44,9 +45,11 @@ export function useOnlineChat(lakeId: string | null) {
     const onConnect = () => {
       dispatch(setChatConnectionStatus('online'));
 
-      socket.emit('chat:join', { lakeId });
-      joinedRef.current = true;
-      dispatch(setCurrentChatLakeId(lakeId));
+      if (lakeId) {
+        socket.emit('chat:join', { lakeId });
+        joinedRef.current = true;
+        dispatch(setCurrentChatLakeId(lakeId));
+      }
     };
 
     const onDisconnect = () => {
@@ -70,6 +73,10 @@ export function useOnlineChat(lakeId: string | null) {
       dispatch(setRoomState(state));
     };
 
+    const onAllLakesStats = (stats: Record<string, number>) => {
+      dispatch(setLakesOnlineStats(stats));
+    };
+
     const onError = (err: { message: string }) => {
       console.warn('[OnlineChat] Server error:', err.message);
     };
@@ -80,6 +87,7 @@ export function useOnlineChat(lakeId: string | null) {
     socket.on('chat:history', onHistory);
     socket.on('chat:message', onMessage);
     socket.on('chat:room_state', onRoomState);
+    socket.on('chat:all_lakes_stats', onAllLakesStats);
     socket.on('chat:error', onError);
 
     dispatch(setChatConnectionStatus('connecting'));
@@ -93,6 +101,7 @@ export function useOnlineChat(lakeId: string | null) {
       socket.off('chat:history', onHistory);
       socket.off('chat:message', onMessage);
       socket.off('chat:room_state', onRoomState);
+      socket.off('chat:all_lakes_stats', onAllLakesStats);
       socket.off('chat:error', onError);
 
       disconnectChat();

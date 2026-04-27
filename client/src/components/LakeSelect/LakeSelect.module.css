@@ -71,27 +71,26 @@
   );
 }
 
-.lake-card__badge {
+.lake-card__badges {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  background: var(--clr-accent);
-  color: #000;
-  padding: 2px 8px;
-  border-radius: 20px;
-  font-size: 0.7rem;
-  font-weight: 900;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  z-index: 2;
-  transition:
-    opacity 0.3s ease,
-    transform 0.3s ease;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 5;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 }
 
-.is-expanded .lake-card__badge {
+.lake-card__level-badge {
+  margin-left: auto;
+}
+
+.is-expanded .lake-card__badges {
   opacity: 0;
-  transform: scale(0.8);
-  pointer-events: none;
 }
 
 .lake-card__body {

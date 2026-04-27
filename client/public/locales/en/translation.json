@@ -927,19 +927,6 @@
     "notification": "Achievement unlocked!",
     "empty": "No achievements available"
   },
-  "common": {
-    "loading": "Loading...",
-    "processing": "Processing...",
-    "save": "Save",
-    "remove": "Remove",
-    "discard": "Discard",
-    "close": "Close",
-    "serverUnavailableTitle": "Server Temporarily Unavailable",
-    "serverUnavailableDesc": "We are experiencing some technical issues on our side. Please try again in a few minutes.",
-    "serverUnavailable": "Server is currently unavailable",
-    "refresh": "Retry Connection",
-    "retry": "Retry"
-  },
   "game": {
     "groundbait_expired": "Groundbait effect has expired!",
     "bait_fell_off": "Bait fell off!",
@@ -965,5 +952,24 @@
     "economy_title": "Economy & Trophies",
     "economy_desc": "Catch and sell fish to buy better gear and pull out true heavyweight monsters of our lakes.",
     "start_btn": "Start Adventure"
+  },
+  "online": {
+    "waiting": {
+      "title": "Network Connection",
+      "message": "Please wait. The server may take up to 60 seconds to 'wake up'...",
+      "cancel": "Play Offline",
+      "hide": "Hide"
+    },
+    "status": {
+      "online": "Online",
+      "offline": "Offline",
+      "connecting": "Connecting...",
+      "error": "Network Error",
+      "disabled": "Disabled"
+    }
+  },
+  "common": {
+    "error": "Error",
+    "serverUnavailable": "Server is currently unavailable"
   }
 }

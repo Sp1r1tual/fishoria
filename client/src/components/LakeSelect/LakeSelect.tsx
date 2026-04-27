@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useLakeCardAnimations } from '@/hooks/ui/useLakeCardAnimations';
+import { useOnlineChat } from '@/hooks/game/useOnlineChat';
 
+import { StatBadge } from '../UI/StatBadge/StatBadge';
 import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
 import { ScreenContainer } from '../UI/ScreenContainer/ScreenContainer';
 import { ConnectingModal } from '../UI/modals/ConnectingModal/ConnectingModal';
@@ -29,6 +31,12 @@ export function LakeSelect() {
   const [pendingLakeId, setPendingLakeId] = useState<string | null>(null);
   const onlineMode = useAppSelector((s) => s.settings.onlineMode);
   const connectionStatus = useAppSelector((s) => s.online.connectionStatus);
+  const chatConnectionStatus = useAppSelector(
+    (s) => s.online.chatConnectionStatus,
+  );
+  const lakesOnlineStats = useAppSelector((s) => s.online.lakesOnlineStats);
+
+  useOnlineChat(null);
 
   useEffect(() => {
     if (pendingLakeId && (connectionStatus === 'online' || !onlineMode)) {
@@ -59,6 +67,10 @@ export function LakeSelect() {
     }
   };
 
+  const handleHideWait = () => {
+    setPendingLakeId(null);
+  };
+
   return (
     <ScreenContainer
       title={t('lakeSelect.title')}
@@ -87,8 +99,42 @@ export function LakeSelect() {
             >
               <div className={styles['lake-card__overlay']} />
             </div>
-            <div className={styles['lake-card__badge']}>
-              Lv.{lake.unlockLevel}
+
+            <div className={styles['lake-card__badges']}>
+              {onlineMode && (
+                <StatBadge
+                  variant="online"
+                  title={t('hud.online')}
+                  label={
+                    chatConnectionStatus === 'error'
+                      ? 'x'
+                      : lakesOnlineStats[lake.id] || 0
+                  }
+                  isLoading={
+                    chatConnectionStatus === 'connecting' ||
+                    chatConnectionStatus === 'offline'
+                  }
+                  icon={
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="12"
+                      height="12"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                  }
+                />
+              )}
+              <StatBadge
+                label={`Lv.${lake.unlockLevel}`}
+                className={styles['lake-card__level-badge']}
+              />
             </div>
 
             <div className={styles['lake-card__body']}>
@@ -140,7 +186,11 @@ export function LakeSelect() {
         ))}
       </div>
 
-      <ConnectingModal isOpen={!!pendingLakeId} onCancel={handleCancelWait} />
+      <ConnectingModal
+        isOpen={!!pendingLakeId}
+        onCancel={handleCancelWait}
+        onHide={handleHideWait}
+      />
     </ScreenContainer>
   );
 }

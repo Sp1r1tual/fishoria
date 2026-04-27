@@ -10,11 +10,15 @@ import styles from './GlobalPreloader.module.css';
 interface GlobalPreloaderProps {
   children?: React.ReactNode;
   delay?: number;
+  isInline?: boolean;
+  className?: string;
 }
 
 export const GlobalPreloader = ({
   children,
   delay = 700,
+  isInline = false,
+  className = '',
 }: GlobalPreloaderProps) => {
   const { t } = useTranslation();
   const [visible, setVisible] = useState(delay === 0);
@@ -36,6 +40,8 @@ export const GlobalPreloader = ({
   }, [delay, visible]);
 
   useEffect(() => {
+    if (isInline) return;
+
     if (visible) {
       document.body.style.overflow = 'hidden';
       document.body.style.touchAction = 'none';
@@ -48,11 +54,13 @@ export const GlobalPreloader = ({
       document.body.style.overflow = '';
       document.body.style.touchAction = '';
     };
-  }, [visible]);
+  }, [visible, isInline]);
 
   return (
     <div
-      className={`${styles.globalPreloader} ${visible ? styles.visible : ''}`}
+      className={`${styles.globalPreloader} ${visible ? styles.visible : ''} ${
+        isInline ? styles.inline : ''
+      } ${className}`}
     >
       <Bubbles />
       <div className={styles.loaderContent}>

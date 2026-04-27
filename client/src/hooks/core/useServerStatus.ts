@@ -23,7 +23,7 @@ export function useServerStatus() {
       return;
     }
 
-    axios.get(ONLINE_SERVER_URL).catch(() => {
+    axios.get(`${ONLINE_SERVER_URL}/status`).catch(() => {
       // Ignored: socket.io will handle reconnects if this fails
     });
     const socket = getStatusSocket();

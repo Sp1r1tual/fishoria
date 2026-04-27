@@ -160,12 +160,22 @@
 }
 
 .chat--minimized .chat__tabs {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
+  background: color-mix(
+    in srgb,
+    rgba(15, 23, 42, 0.65),
+    rgba(255, 255, 255, 0.12) calc(var(--night-intensity) * 100%)
+  );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15);
 }
 
 .chat--night.chat--minimized .chat__tabs {
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .chat__messages {
@@ -337,6 +347,10 @@
     min-width: 0;
   }
 
+  .chat--minimized .chat__tabs {
+    border-radius: 14px;
+  }
+
   .chat__body {
     max-height: 120px;
   }
@@ -408,7 +422,7 @@
   border-radius: 50%;
   background: #4ade80;
   box-shadow: 0 0 6px rgba(74, 222, 128, 0.6);
-  animation: pulse 2s ease-in-out infinite;
+  animation: pulse 4s ease-in-out infinite;
 }
 
 .chat__online_dot--offline,
@@ -421,7 +435,7 @@
 .chat__online_dot--connecting {
   background: #fbbf24;
   box-shadow: 0 0 6px rgba(251, 191, 36, 0.6);
-  animation: pulse 1s ease-in-out infinite;
+  animation: pulse 2s ease-in-out infinite;
 }
 
 .chat__online_count {

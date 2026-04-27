@@ -9,6 +9,10 @@
   width: 100%;
 }
 
+.noPadding {
+  padding: 0;
+}
+
 .icon {
   font-size: 3rem;
   filter: drop-shadow(0 0 10px rgba(255, 152, 0, 0.4));

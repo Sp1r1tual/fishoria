@@ -102,8 +102,6 @@
   }
 }
 
-/* Old top wrappers removed */
-
 .hud__bottom-bar {
   display: flex;
   align-items: center;

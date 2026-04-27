@@ -15,6 +15,7 @@ interface OnlineState {
   chatConnectionStatus: ConnectionStatusType;
   messages: IChatMessage[];
   roomState: IChatRoomState | null;
+  lakesOnlineStats: Record<string, number>;
   currentChatLakeId: string | null;
 }
 
@@ -24,6 +25,7 @@ const initialState: OnlineState = {
   chatConnectionStatus: 'offline',
   messages: [],
   roomState: null,
+  lakesOnlineStats: {},
   currentChatLakeId: null,
 };
 
@@ -61,6 +63,10 @@ const onlineSlice = createSlice({
       state.roomState = action.payload;
     },
 
+    setLakesOnlineStats(state, action: PayloadAction<Record<string, number>>) {
+      state.lakesOnlineStats = action.payload;
+    },
+
     setCurrentChatLakeId(state, action: PayloadAction<string | null>) {
       state.currentChatLakeId = action.payload;
     },
@@ -84,6 +90,7 @@ export const {
   addChatMessage,
   setChatHistory,
   setRoomState,
+  setLakesOnlineStats,
   setCurrentChatLakeId,
   clearChat,
   resetOnline,
