@@ -5,7 +5,8 @@
   "author": "Atmosphoria Software",
   "scripts": {
     "translations:check": "node scripts/check_translations.cjs",
-    "prepare": "husky"
+    "prepare": "husky",
+    "dev": "concurrently -n \"client,server,online\" -c \"bgGreen.bold,bgBlue.bold,bgYellow.bold\" \"yarn --cwd client dev\" \"yarn --cwd server dev\" \"yarn --cwd online_server dev\""
   },
   "lint-staged": {
     "client/**/*.{js,jsx,ts,tsx,css}": [
@@ -15,9 +16,14 @@
     "server/**/*.{js,ts}": [
       "npm run --prefix server lint:fix",
       "npm run --prefix server format"
+    ],
+    "online_server/**/*.{js,ts}": [
+      "npm run --prefix online_server lint:fix",
+      "npm run --prefix online_server format"
     ]
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0"
   }

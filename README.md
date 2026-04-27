@@ -57,11 +57,12 @@ We have polished every single detail: water droplets streaming down your screen,
 | **Math**          | [simplex-noise](https://github.com/jwagner/simplex-noise.js) – procedural generation |
 | **Language**      | TypeScript 5                                                                         |
 
-### Server – Backend Core
+### Server – Backend Core (API & Online)
 
 | Category       | Technology                                                                     |
 | :------------- | :----------------------------------------------------------------------------- |
 | **Framework**  | [NestJS 11](https://nestjs.com/)                                               |
+| **Real-time**  | [Socket.io](https://socket.io/) – for multiplayer & synchronization            |
 | **ORM**        | [Prisma 7](https://www.prisma.io/) with `@prisma/adapter-pg`                   |
 | **Database**   | [PostgreSQL (Supabase)](https://supabase.com/)                                 |
 | **Caching**    | [Redis (Upstash)](https://upstash.com/) – REST-based                           |
@@ -74,6 +75,7 @@ We have polished every single detail: water droplets streaming down your screen,
 
 | Category        | Technology                                                                      |
 | :-------------- | :------------------------------------------------------------------------------ |
+| **Monorepo Run**| [Concurrently](https://github.com/open-cli-tools/concurrently) – parallel dev   |
 | **Hosting**     | [Vercel](https://vercel.com/) – client & server deployments                     |
 | **Git Hooks**   | [Husky](https://typicode.github.io/husky/) – pre-commit automation              |
 | **Lint Staged** | [lint-staged](https://github.com/lint-staged/lint-staged) – incremental linting |
@@ -97,14 +99,17 @@ We have polished every single detail: water droplets streaming down your screen,
 git clone https://github.com/your-repo/fishoria.git
 cd fishoria
 
-# Install root dependencies (Husky, lint-staged)
+# Install root dependencies (Husky, lint-staged, concurrently)
 yarn install
 
 # Install client dependencies
 cd client && yarn install && cd ..
 
-# Install server dependencies
+# Install main server dependencies
 cd server && yarn install && cd ..
+
+# Install online server dependencies
+cd online_server && yarn install && cd ..
 ```
 
 ### 2. Configure Environment
@@ -113,11 +118,14 @@ cd server && yarn install && cd ..
 # Client
 cp client/.env.example client/.env
 
-# Server
+# Main Server
 cp server/.env.example server/.env
+
+# Online Server
+cp online_server/.env.example online_server/.env
 ```
 
-Edit both `.env` files with your credentials. See each directory's README for details.
+Edit the `.env` files with your credentials. See each directory's README for details.
 
 ### 3. Database Setup
 
@@ -132,19 +140,24 @@ yarn prisma:generate
 
 # Seed initial data (news, quests, achievements)
 yarn prisma:seed
+
+cd ../online_server
+# Generate Prisma client for online server
+yarn prisma:generate
 ```
 
 ### 4. Run in Development
 
-```bash
-# Terminal 1 – Start the API server (port 5000)
-cd server && yarn dev
+The easiest way to run everything at once is using the root command:
 
-# Terminal 2 – Start the client dev server (port 5173)
-cd client && yarn dev
+```bash
+yarn dev
 ```
 
-Open `http://localhost:5173` in your browser and start fishing!
+This will simultaneously start:
+- **Client** dev server (`localhost:5173`)
+- **Main API** server (`localhost:5000`)
+- **Online/Socket** server (`localhost:5001`)
 
 ---
 
@@ -152,10 +165,11 @@ Open `http://localhost:5173` in your browser and start fishing!
 
 ### Root (Monorepo)
 
-| Command                   | Description                     |
-| :------------------------ | :------------------------------ |
-| `yarn translations:check` | Check i18n translation coverage |
-| `yarn prepare`            | Install Husky git hooks         |
+| Command                   | Description                                                |
+| :------------------------ | :--------------------------------------------------------- |
+| `yarn dev`                | **Run Client, Server, and Online servers simultaneously**  |
+| `yarn translations:check` | Check i18n translation coverage                            |
+| `yarn prepare`            | Install Husky git hooks                                    |
 
 ### Client (`/client`)
 
@@ -169,7 +183,7 @@ Open `http://localhost:5173` in your browser and start fishing!
 | `yarn convert`           | Convert images to WebP            |
 | `yarn knip`              | Detect unused code                |
 
-### Server (`/server`)
+### Main Server (`/server`)
 
 | Command                  | Description                   |
 | :----------------------- | :---------------------------- |
@@ -184,6 +198,16 @@ Open `http://localhost:5173` in your browser and start fishing!
 | `yarn prisma:studio`     | Open Prisma Studio GUI        |
 | `yarn knip`              | Detect unused code            |
 
+### Online Server (`/online_server`)
+
+| Command                  | Description                   |
+| :----------------------- | :---------------------------- |
+| `yarn dev`               | Start in watch mode           |
+| `yarn build`             | Lint + compile + NestJS build |
+| `yarn lint` / `lint:fix` | ESLint check / auto-fix       |
+| `yarn format`            | Format with Prettier              |
+| `yarn prisma:generate`   | Generate Prisma client        |
+
 ---
 
 ## Documentation
@@ -192,6 +216,7 @@ Open `http://localhost:5173` in your browser and start fishing!
 | :---------------------------------------------------------------------- | :----------------------------------------- |
 | [Client README](./client/README.md)                                     | Frontend architecture, game engine, UI     |
 | [Server README](./server/README.md)                                     | Backend API, all endpoints, setup          |
+| [Online Server README](./online_server/README.md)                       | Socket server for multiplayer features     |
 | [In-Game Terminal Commands](./docs/CLIENT_IN_GAME_TERMINAL_COMMANDS.md) | Debug shell commands reference             |
 | [Server Internal Wiki](./server/docs/)                                  | 12 detailed module docs (auth, game, etc.) |
 
