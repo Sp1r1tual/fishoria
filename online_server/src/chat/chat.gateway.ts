@@ -1,0 +1,177 @@
+import {
+  WebSocketGateway,
+  WebSocketServer,
+  SubscribeMessage,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  OnGatewayInit,
+  ConnectedSocket,
+  MessageBody,
+} from '@nestjs/websockets';
+import { Logger, UsePipes, UseGuards } from '@nestjs/common';
+import { Server, Socket } from 'socket.io';
+import { ZodValidationPipe } from 'nestjs-zod';
+
+import type { IChatUser } from './types/chat.types';
+import { WsAuthGuard } from '../auth/guards/ws-auth.guard';
+
+import { ChatService } from './chat.service';
+import type { IJwtPayload } from '../auth/auth.service';
+
+import { JoinDto } from './dto/join.dto';
+import { SendMessageDto } from './dto/send-message.dto';
+import { CatchEventDto } from './dto/catch-event.dto';
+
+interface ISocketMeta {
+  user: IChatUser;
+  lakeId: string;
+}
+
+interface IAuthenticatedSocket extends Socket {
+  user: IJwtPayload;
+}
+
+@WebSocketGateway({
+  cors: {
+    origin: (
+      origin: string,
+      callback: (err: Error | null, allow?: boolean) => void,
+    ) => {
+      const allowed = process.env['CLIENT_URL'] ?? 'http://localhost:5173';
+      if (!origin || origin === allowed) {
+        callback(null, true);
+      } else {
+        callback(null, true);
+      }
+    },
+    credentials: true,
+  },
+  namespace: '/chat',
+})
+export class ChatGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
+  private readonly logger = new Logger(ChatGateway.name);
+  private readonly socketMeta = new Map<string, ISocketMeta>();
+
+  @WebSocketServer()
+  server: Server;
+
+  constructor(private readonly chatService: ChatService) {}
+
+  afterInit() {
+    this.logger.log('Chat gateway initialized on /chat namespace');
+  }
+
+  async handleConnection(client: Socket) {
+    this.logger.debug(`Client connected to chat: ${client.id}`);
+  }
+
+  async handleDisconnect(client: Socket) {
+    const meta = this.socketMeta.get(client.id);
+    if (!meta) return;
+
+    const { user, lakeId } = meta;
+    this.socketMeta.delete(client.id);
+
+    await this.chatService.removeOnlineUser(lakeId, user.id);
+
+    const roomState = await this.chatService.getLakeRoomState(lakeId);
+    this.server.to(lakeId).emit('chat:room_state', roomState);
+
+    this.logger.debug(
+      `User ${user.username} left lake ${lakeId} (${client.id})`,
+    );
+  }
+
+  @UseGuards(WsAuthGuard)
+  @UsePipes(new ZodValidationPipe())
+  @SubscribeMessage('chat:join')
+  async handleJoin(
+    @ConnectedSocket() client: IAuthenticatedSocket,
+    @MessageBody() payload: JoinDto,
+  ) {
+    const { lakeId } = payload;
+    const userId = client.user.sub;
+
+    const chatUser = await this.chatService.getUser(userId);
+    if (!chatUser) {
+      client.emit('chat:error', { message: 'User not found' });
+      return;
+    }
+
+    const existing = this.socketMeta.get(client.id);
+    if (existing) {
+      await this.chatService.removeOnlineUser(existing.lakeId, chatUser.id);
+      client.leave(existing.lakeId);
+
+      const oldRoomState = await this.chatService.getLakeRoomState(
+        existing.lakeId,
+      );
+      this.server.to(existing.lakeId).emit('chat:room_state', oldRoomState);
+    }
+
+    client.join(lakeId);
+    this.socketMeta.set(client.id, { user: chatUser, lakeId });
+
+    await this.chatService.addOnlineUser(lakeId, chatUser);
+
+    const [history, roomState] = await Promise.all([
+      this.chatService.getHistory(lakeId),
+      this.chatService.getLakeRoomState(lakeId),
+    ]);
+
+    client.emit('chat:history', history);
+    this.server.to(lakeId).emit('chat:room_state', roomState);
+    this.server.to(lakeId).emit('chat:user_joined', {
+      user: chatUser.username,
+      lakeId,
+      timestamp: new Date().toISOString(),
+    });
+
+    this.logger.debug(
+      `User ${chatUser.username} joined lake ${lakeId} (${client.id})`,
+    );
+  }
+
+  @UseGuards(WsAuthGuard)
+  @UsePipes(new ZodValidationPipe())
+  @SubscribeMessage('chat:send_message')
+  async handleMessage(
+    @ConnectedSocket() client: IAuthenticatedSocket,
+    @MessageBody() payload: SendMessageDto,
+  ) {
+    const meta = this.socketMeta.get(client.id);
+    if (!meta) {
+      client.emit('chat:error', { message: 'Not authenticated in chat' });
+      return;
+    }
+
+    const { user, lakeId } = meta;
+    const message = await this.chatService.createChatMessage(
+      user,
+      lakeId,
+      payload,
+    );
+    if (!message) return;
+
+    this.server.to(lakeId).emit('chat:message', message);
+  }
+
+  @UseGuards(WsAuthGuard)
+  @UsePipes(new ZodValidationPipe())
+  @SubscribeMessage('chat:catch_event')
+  async handleCatchEvent(
+    @ConnectedSocket() client: IAuthenticatedSocket,
+    @MessageBody() payload: CatchEventDto,
+  ) {
+    const meta = this.socketMeta.get(client.id);
+    if (!meta) {
+      client.emit('chat:error', { message: 'Not authenticated in chat' });
+      return;
+    }
+
+    const catchMessage = this.chatService.createCatchEvent(meta.user, payload);
+    this.server.to(payload.lakeId).emit('chat:message', catchMessage);
+  }
+}

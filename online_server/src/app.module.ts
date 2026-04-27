@@ -5,6 +5,9 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 
 import { PrismaModule } from './common/prisma/prisma.module';
 import { RedisModule } from './common/redis/redis.module';
+import { StatusModule } from './status/status.module';
+import { ChatModule } from './chat/chat.module';
+import { AuthModule } from './auth/auth.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -22,8 +25,11 @@ import { validateEnv } from './common/configs/env.validation';
         limit: 100,
       },
     ]),
+    StatusModule,
     PrismaModule,
     RedisModule,
+    ChatModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [

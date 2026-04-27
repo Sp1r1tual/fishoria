@@ -5,7 +5,10 @@ import cookieParser from 'cookie-parser';
 import * as fs from 'fs';
 import { join } from 'path';
 
+import { EServerStatus } from './status/enums/status.enum';
+
 import { AppModule } from './app.module';
+import { StatusService } from './status/status.service';
 import { setupSwagger } from './common/configs/swagger.config';
 import { getCorsConfig } from './common/configs/cors.config';
 
@@ -26,6 +29,13 @@ async function bootstrap() {
 
   setupSwagger(app);
 
-  await app.listen(process.env.PORT ?? 5001);
+  const port = process.env.PORT ?? 5001;
+  await app.listen(port);
+
+  const statusService = app.get(StatusService);
+  statusService.setStatus(
+    EServerStatus.ONLINE,
+    `Server is online and listening on port ${port}`,
+  );
 }
 bootstrap();

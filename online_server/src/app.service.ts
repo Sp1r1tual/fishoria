@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
+import { StatusService } from './status/status.service';
+
 @Injectable()
 export class AppService {
+  constructor(private readonly statusService: StatusService) {}
+
   getStatus() {
-    return { status: 'online', timestamp: new Date().toISOString() };
+    return this.statusService.getPayload();
   }
 }
