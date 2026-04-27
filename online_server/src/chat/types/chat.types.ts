@@ -2,7 +2,7 @@ export type UserRole = 'PLAYER' | 'MODERATOR';
 
 export type EChatMessageType = 'chat' | 'system';
 
-export type EFishingMethod = 'FLOAT' | 'SPINNING' | 'FEEDER';
+export type EFishingMethod = 'float' | 'spinning' | 'feeder';
 
 export interface IChatUser {
   id: string;

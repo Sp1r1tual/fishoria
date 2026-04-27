@@ -6,7 +6,7 @@ export const CatchEventSchema = z.object({
   weight: z.number().positive(),
   lakeId: z.string(),
   lakeName: z.string(),
-  method: z.enum(['FLOAT', 'SPINNING', 'FEEDER']),
+  method: z.enum(['float', 'spinning', 'feeder']),
 });
 
 export class CatchEventDto extends createZodDto(CatchEventSchema) {}
