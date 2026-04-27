@@ -25,13 +25,18 @@ export function SessionSync() {
   const lastWeatherUpdateHour = useAppSelector(
     (s) => s.game.lastWeatherUpdateHour,
   );
+  const onlineMode = useAppSelector((s) => s.settings.onlineMode);
 
   const lastAutoSaveRef = useRef<number>(0);
-  const stateRef = useRef({ weatherForecast, lastWeatherUpdateHour });
+  const stateRef = useRef({
+    weatherForecast,
+    lastWeatherUpdateHour,
+    onlineMode,
+  });
 
   useEffect(() => {
-    stateRef.current = { weatherForecast, lastWeatherUpdateHour };
-  }, [weatherForecast, lastWeatherUpdateHour]);
+    stateRef.current = { weatherForecast, lastWeatherUpdateHour, onlineMode };
+  }, [weatherForecast, lastWeatherUpdateHour, onlineMode]);
 
   useEffect(() => {
     const session = TimeManager.loadSessionData();
@@ -51,6 +56,8 @@ export function SessionSync() {
         dispatch(setLastWeatherUpdateHour(loadedLastHour));
       }
     }
+
+    if (stateRef.current.onlineMode) return;
 
     const gTime = TimeManager.getGameTimeHours();
     const currentHour = Math.floor(gTime);
@@ -99,15 +106,15 @@ export function SessionSync() {
           lastWeatherUpdateHour,
         );
         lastAutoSaveRef.current = gTime;
-        console.log(
-          `[AutoSave] Game time: ${TimeManager.getTime('game').toLocaleTimeString()}, Weather: ${weather}`,
-        );
       }
 
       const {
         weatherForecast: curForecast,
         lastWeatherUpdateHour: lastUpdate,
+        onlineMode: isOnline,
       } = stateRef.current;
+
+      if (isOnline) return;
 
       const isInvalid =
         lastUpdate === null ||

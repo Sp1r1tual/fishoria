@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { useEffect } from 'react';
 
+import type { WeatherType } from '@/common/types';
+
 import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import {
   setConnectionStatus,
@@ -8,6 +10,15 @@ import {
   setLakesOnlineStats,
   clearChat,
 } from '@/store/slices/onlineSlice';
+import {
+  setWeather,
+  setWeatherForecast,
+  setLastWeatherUpdateHour,
+} from '@/store/slices/gameSlice';
+import { addToast } from '@/store/slices/uiSlice';
+
+import i18n from '@/i18n';
+import { TimeManager } from '@/game/managers/TimeManager';
 
 import {
   getStatusSocket,
@@ -16,6 +27,9 @@ import {
   getChatSocket,
   connectChat,
   disconnectChat,
+  getGameSocket,
+  connectGame,
+  disconnectGame,
 } from '@/services/socket.service';
 
 const ONLINE_SERVER_URL =
@@ -32,6 +46,7 @@ export function useGlobalSockets() {
       dispatch(setChatConnectionStatus('offline'));
       disconnectStatus();
       disconnectChat();
+      disconnectGame();
       dispatch(clearChat());
       return;
     }
@@ -41,7 +56,15 @@ export function useGlobalSockets() {
 
     const onStatusConnect = () => dispatch(setConnectionStatus('online'));
     const onStatusDisconnect = () => dispatch(setConnectionStatus('offline'));
-    const onStatusError = () => dispatch(setConnectionStatus('error'));
+    const onStatusError = () => {
+      dispatch(setConnectionStatus('error'));
+      dispatch(
+        addToast({
+          type: 'error',
+          message: i18n.t('error.socket.connection_error'),
+        }),
+      );
+    };
 
     statusSocket.on('connect', onStatusConnect);
     statusSocket.on('disconnect', onStatusDisconnect);
@@ -60,9 +83,15 @@ export function useGlobalSockets() {
       dispatch(setLakesOnlineStats(stats));
     };
 
-    const onException = (err: unknown) => {
+    const onException = (err: { message?: string }) => {
       console.warn('[OnlineChat] NestJS Exception:', err);
       dispatch(setChatConnectionStatus('error'));
+      dispatch(
+        addToast({
+          type: 'error',
+          message: err.message || i18n.t('error.socket.unknown'),
+        }),
+      );
     };
 
     chatSocket.on('connect', onChatConnect);
@@ -73,6 +102,23 @@ export function useGlobalSockets() {
 
     dispatch(setChatConnectionStatus('connecting'));
     connectChat('');
+
+    const gameSocket = getGameSocket();
+
+    const onGameSync = (state: {
+      virtualTime: number;
+      weather: WeatherType;
+      weatherForecast: WeatherType[];
+      lastWeatherUpdateHour: number;
+    }) => {
+      TimeManager.restoreSession(state.virtualTime);
+      dispatch(setWeather(state.weather));
+      dispatch(setWeatherForecast(state.weatherForecast));
+      dispatch(setLastWeatherUpdateHour(state.lastWeatherUpdateHour));
+    };
+
+    gameSocket.on('game:sync', onGameSync);
+    connectGame('');
 
     return () => {
       statusSocket.off('connect', onStatusConnect);
@@ -87,6 +133,9 @@ export function useGlobalSockets() {
       chatSocket.off('exception', onException);
       disconnectChat();
       dispatch(clearChat());
+
+      gameSocket.off('game:sync', onGameSync);
+      disconnectGame();
     };
   }, [dispatch, onlineMode, isAuthenticated]);
 }

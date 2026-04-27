@@ -55,7 +55,35 @@ export function disconnectChat(): void {
   chatSocket?.disconnect();
 }
 
+let gameSocket: Socket | null = null;
+
+export function getGameSocket(): Socket {
+  if (!gameSocket) {
+    gameSocket = io(`${ONLINE_SERVER_URL}/game`, {
+      autoConnect: false,
+      withCredentials: true,
+      transports: ['polling', 'websocket'],
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 2000,
+      reconnectionDelayMax: 10000,
+    });
+  }
+  return gameSocket;
+}
+
+export function connectGame(token: string): void {
+  const s = getGameSocket();
+  s.auth = { token };
+  if (!s.connected) s.connect();
+}
+
+export function disconnectGame(): void {
+  gameSocket?.disconnect();
+}
+
 export function disconnectAll(): void {
   disconnectStatus();
   disconnectChat();
+  disconnectGame();
 }

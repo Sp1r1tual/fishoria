@@ -31,6 +31,7 @@ export interface IChatMessage {
   lakeId?: string;
   lakeName?: string;
   method?: FishingMethodType;
+  fishId?: string;
   timestamp: string;
 }
 
@@ -41,11 +42,17 @@ export interface IChatRoomState {
 }
 
 export interface ICatchEventPayload {
+  fishId?: string;
   speciesName: string;
   weight: number;
   lakeId: string;
   lakeName: string;
   method: FishingMethodType;
+}
+
+export interface IChatHistoryResponse {
+  history: IChatMessage[];
+  lastReadMessageId: string | null;
 }
 
 export type ConnectionStatusType =

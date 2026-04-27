@@ -31,6 +31,7 @@ export function CatchSync({ sceneRef }: ICatchSyncProps) {
     if (!socket.connected) return;
 
     const payload: ICatchEventPayload = {
+      fishId: fish.species.id,
       speciesName: fish.species.name,
       weight: fish.weight,
       lakeId: fish.lakeId,

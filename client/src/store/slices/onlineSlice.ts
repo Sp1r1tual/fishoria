@@ -5,6 +5,7 @@ import type {
   IChatMessage,
   IChatRoomState,
   ConnectionStatusType,
+  IChatHistoryResponse,
 } from '@/common/types';
 
 const MAX_MESSAGES = 100;
@@ -17,6 +18,7 @@ interface OnlineState {
   roomState: IChatRoomState | null;
   lakesOnlineStats: Record<string, number>;
   currentChatLakeId: string | null;
+  lastReadMessageId: string | null;
 }
 
 const initialState: OnlineState = {
@@ -27,6 +29,7 @@ const initialState: OnlineState = {
   roomState: null,
   lakesOnlineStats: {},
   currentChatLakeId: null,
+  lastReadMessageId: null,
 };
 
 const onlineSlice = createSlice({
@@ -55,8 +58,13 @@ const onlineSlice = createSlice({
       ];
     },
 
-    setChatHistory(state, action: PayloadAction<IChatMessage[]>) {
-      state.messages = action.payload.slice(-MAX_MESSAGES);
+    setChatHistory(state, action: PayloadAction<IChatHistoryResponse>) {
+      state.messages = action.payload.history.slice(-MAX_MESSAGES);
+      state.lastReadMessageId = action.payload.lastReadMessageId;
+    },
+
+    setLastReadMessageId(state, action: PayloadAction<string | null>) {
+      state.lastReadMessageId = action.payload;
     },
 
     setRoomState(state, action: PayloadAction<IChatRoomState>) {
@@ -89,6 +97,7 @@ export const {
   setChatConnectionStatus,
   addChatMessage,
   setChatHistory,
+  setLastReadMessageId,
   setRoomState,
   setLakesOnlineStats,
   setCurrentChatLakeId,

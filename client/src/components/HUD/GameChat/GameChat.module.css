@@ -26,17 +26,21 @@
   pointer-events: none;
 }
 
+.chat--minimized .chat__input_wrapper {
+  border-radius: 20px;
+}
+
 .chat__tabs {
   display: flex;
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #3d4452;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-bottom: none;
-  border-radius: 8px 8px 0 0;
+  border-radius: 12px 12px 0 0;
   overflow: hidden;
   transition:
     background 0.5s ease,
-    border-color 0.5s ease;
+    border-color 0.5s ease,
+    border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .chat--night .chat__tabs {
@@ -187,10 +191,10 @@
   gap: 4px;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-  background: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(8px);
+  background: #3d4452;
   border-radius: 0;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
   border-bottom: none;
   transition:
     background 0.5s ease,
@@ -198,7 +202,7 @@
 }
 
 .chat--night .chat__messages {
-  background: rgba(255, 255, 255, 0.12);
+  background: linear-gradient(to bottom, #1a2333, #2d3e5a);
   border-color: rgba(255, 255, 255, 0.15);
 }
 
@@ -223,25 +227,22 @@
 .message {
   display: flex;
   align-items: baseline;
-  gap: 8px;
-  font-size: 0.6rem;
+  gap: 6px;
+  font-size: 0.7rem;
   line-height: 1.4;
   color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   animation: fadeIn 0.3s ease-out;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
   flex-wrap: wrap;
-}
-
-.chat--night .message {
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  font-family: 'Outfit', 'Inter', sans-serif;
 }
 
 .message__time {
-  font-size: 0.6rem;
-  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.5);
   font-variant-numeric: tabular-nums;
   flex-shrink: 0;
+  font-weight: 500;
 }
 
 .message__user {
@@ -258,17 +259,19 @@
 
 .message__user--mod {
   color: #4ade80;
-  text-shadow: 0 0 8px rgba(74, 222, 128, 0.3);
 }
 
 .message--system .message__user {
-  color: #94a3b8;
-  font-weight: 400;
+  color: var(--clr-accent);
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
 }
 
 .message__fish {
-  color: #fcd34d;
-  font-weight: 700;
+  color: #fbbf24;
+  font-weight: 800;
+  letter-spacing: 0.01em;
 }
 
 .message__weight {
@@ -276,21 +279,22 @@
 }
 
 .chat__input_wrapper {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(12px);
+  background: #3d4452;
   padding: 4px 10px;
-  border-radius: 0 0 8px 8px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 0 0 12px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
   transition:
     background 0.5s ease,
-    border-color 0.5s ease;
+    border-color 0.5s ease,
+    border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .chat--night .chat__input_wrapper {
-  background: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(to bottom, #2d3e5a, #1a2333);
   border-color: rgba(255, 255, 255, 0.15);
 }
 
@@ -334,6 +338,16 @@
 .chat__send_btn:hover {
   color: var(--clr-accent);
   background: rgba(255, 255, 255, 0.05);
+}
+
+.chat__send_btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  color: var(--clr-muted) !important;
+}
+
+.chat__send_btn:disabled:hover {
+  background: transparent;
 }
 
 .chat__input::placeholder {
@@ -453,11 +467,46 @@
 }
 
 .message__log {
-  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  color: rgba(255, 255, 255, 0.85);
+  gap: 4px;
+  font-weight: 500;
 }
 
 .message__method {
   color: #93c5fd;
   font-weight: 600;
   text-transform: capitalize;
+}
+
+.chat__unread_line {
+  display: flex;
+  align-items: center;
+  margin: 12px 0 8px;
+  position: relative;
+}
+
+.chat__unread_line::before,
+.chat__unread_line::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(239, 68, 68, 0.4);
+}
+
+.chat__unread_line span {
+  padding: 0 10px;
+  color: #ef4444;
+  font-size: 0.55rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.message--unread {
+  background: rgba(239, 68, 68, 0.05);
+  border-left: 2px solid #ef4444;
+  padding-left: 6px;
+  margin-left: -8px;
+  width: calc(100% + 8px);
 }

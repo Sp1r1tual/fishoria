@@ -246,57 +246,71 @@ export class HookEntity {
 
         if (bulbAlpha > 0) {
           const colorMain = 0xffffff;
-          const colorShadow = 0xdddddd;
+          const colorShadow = 0xcccccc;
 
           if (isLayingOnSide) {
             const surfaceY = bulbY;
+
             this.gfx.moveTo(bulbX - bulbRadius, surfaceY);
             this.gfx.arc(bulbX, surfaceY, bulbRadius, Math.PI, 0);
             this.gfx.fill({ color: colorMain, alpha: bulbAlpha });
 
             this.gfx.moveTo(bulbX + bulbRadius, surfaceY);
             this.gfx.arc(bulbX, surfaceY, bulbRadius, 0, Math.PI);
-            this.gfx.fill({ color: colorShadow, alpha: bulbAlpha * 0.9 });
+            this.gfx.fill({ color: 0x880000, alpha: bulbAlpha * 0.7 });
           } else {
             this.gfx.circle(bulbX, bulbY, bulbRadius);
             this.gfx.fill({ color: colorShadow, alpha: bulbAlpha });
 
-            this.gfx.circle(
-              bulbX - 0.5 * this.scale,
-              bulbY - 0.5 * this.scale,
-              bulbRadius * 0.85,
-            );
-            this.gfx.fill({ color: colorMain, alpha: bulbAlpha });
+            this.gfx.moveTo(bulbX - bulbRadius, bulbY);
+            this.gfx.arc(bulbX, bulbY, bulbRadius, Math.PI, 0, true);
+            this.gfx.fill({ color: 0xcc0000, alpha: bulbAlpha });
 
             this.gfx.circle(
-              bulbX - 1.5 * this.scale,
+              bulbX - 1 * this.scale,
               bulbY - 1.5 * this.scale,
-              bulbRadius * 0.3,
+              bulbRadius * 0.45,
             );
-            this.gfx.fill({ color: 0xffffff, alpha: bulbAlpha * 0.8 });
+            this.gfx.fill({ color: 0xffffff, alpha: bulbAlpha * 0.6 });
+
+            this.gfx.circle(
+              bulbX - 2 * this.scale,
+              bulbY - 2 * this.scale,
+              bulbRadius * 0.15,
+            );
+            this.gfx.fill({ color: 0xffffff, alpha: bulbAlpha * 0.9 });
           }
         }
 
-        const stemWidth = 2.8;
+        const stemWidth = 2.4 * this.scale;
         const topStemStart = 4 * this.scale - bulbRadius;
-        const antennaLen = 18 * this.scale;
+        const antennaLen = 22 * this.scale;
 
         drawClippedSegment(
           bx + sinT * topStemStart,
           totalY + cosT * topStemStart,
-          bx + sinT * (topStemStart - 3 * this.scale),
-          totalY + cosT * (topStemStart - 3 * this.scale),
-          stemWidth,
-          0xff4444,
+          bx + sinT * (topStemStart - 2 * this.scale),
+          totalY + cosT * (topStemStart - 2 * this.scale),
+          stemWidth * 1.1,
+          0x333333,
         );
 
         drawClippedSegment(
-          bx + sinT * (topStemStart - 3 * this.scale),
-          totalY + cosT * (topStemStart - 3 * this.scale),
+          bx + sinT * (topStemStart - 2 * this.scale),
+          totalY + cosT * (topStemStart - 2 * this.scale),
+          bx + sinT * (topStemStart - 8 * this.scale),
+          totalY + cosT * (topStemStart - 8 * this.scale),
+          stemWidth,
+          0xffffff,
+        );
+
+        drawClippedSegment(
+          bx + sinT * (topStemStart - 8 * this.scale),
+          totalY + cosT * (topStemStart - 8 * this.scale),
           bx + sinT * (topStemStart - 10 * this.scale),
           totalY + cosT * (topStemStart - 10 * this.scale),
           stemWidth,
-          0xeeeeee,
+          0x000000,
         );
 
         drawClippedSegment(
@@ -308,14 +322,22 @@ export class HookEntity {
           0xff4400,
         );
 
+        const tipLen = 4 * this.scale;
         drawClippedSegment(
-          bx + sinT * (topStemStart - antennaLen + 1 * this.scale),
-          totalY + cosT * (topStemStart - antennaLen + 1 * this.scale),
+          bx + sinT * (topStemStart - antennaLen + tipLen),
+          totalY + cosT * (topStemStart - antennaLen + tipLen),
           bx + sinT * (topStemStart - antennaLen),
           totalY + cosT * (topStemStart - antennaLen),
-          stemWidth * 1.2,
-          0xff8844,
+          stemWidth * 1.3,
+          0xffaa00,
         );
+
+        this.gfx.circle(
+          bx + sinT * (topStemStart - antennaLen),
+          totalY + cosT * (topStemStart - antennaLen),
+          stemWidth * 0.7,
+        );
+        this.gfx.fill({ color: 0xff0000, alpha: bulbAlpha });
       }
     }
 

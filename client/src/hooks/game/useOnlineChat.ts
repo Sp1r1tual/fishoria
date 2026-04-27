@@ -10,12 +10,15 @@ import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import {
   addChatMessage,
   setChatHistory,
+  setLastReadMessageId,
   setRoomState,
   setCurrentChatLakeId,
   clearChat,
 } from '@/store/slices/onlineSlice';
+import type { IChatHistoryResponse } from '@/common/types';
 
 import { getChatSocket } from '@/services/socket.service';
+import { addToast } from '@/store/slices/uiSlice';
 
 export function useOnlineChat(lakeId: string | null) {
   const dispatch = useAppDispatch();
@@ -35,8 +38,8 @@ export function useOnlineChat(lakeId: string | null) {
     const socket = getChatSocket();
     if (!socket.connected) return;
 
-    const onHistory = (history: IChatMessage[]) => {
-      dispatch(setChatHistory(history));
+    const onHistory = (response: IChatHistoryResponse) => {
+      dispatch(setChatHistory(response));
     };
 
     const onMessage = (message: IChatMessage) => {
@@ -49,6 +52,12 @@ export function useOnlineChat(lakeId: string | null) {
 
     const onError = (err: { message: string }) => {
       console.warn('[OnlineChat] Server error:', err.message);
+      dispatch(
+        addToast({
+          type: 'error',
+          message: `[Socket] ${err.message}`,
+        }),
+      );
     };
 
     socket.on('chat:history', onHistory);
@@ -66,9 +75,10 @@ export function useOnlineChat(lakeId: string | null) {
       socket.off('chat:room_state', onRoomState);
       socket.off('chat:error', onError);
 
+      socket.emit('chat:leave');
+
       dispatch(clearChat());
       joinedRef.current = false;
-      // We don't disconnect the global socket here!
     };
   }, [lakeId, isAuthenticated, onlineMode, dispatch]);
 
@@ -86,5 +96,17 @@ export function useOnlineChat(lakeId: string | null) {
     socket.emit('chat:catch_event', payload);
   }, []);
 
-  return { sendMessage, sendCatchEvent };
+  const markAsRead = useCallback(
+    (messageId: string) => {
+      if (!lakeId) return;
+      const socket = getChatSocket();
+      if (!socket.connected) return;
+
+      socket.emit('chat:mark_read', { lakeId, messageId });
+      dispatch(setLastReadMessageId(messageId));
+    },
+    [lakeId, dispatch],
+  );
+
+  return { sendMessage, sendCatchEvent, markAsRead };
 }

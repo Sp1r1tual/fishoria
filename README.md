@@ -32,8 +32,8 @@ Start with a basic float rod, but as you progress-gain experience ($XP$), comple
 **Ecosystem Surprises**
 Rewarding experiences are sometimes purely unexpected. Instead of a trophy carp, you might reel in an old boot or snag on an underwater branch. A complex quest system encourages you to explore every single corner of the lake.
 
-**Global Community & Personalization**
-Fast and secure registration (including Google OAuth), cloud saving for your profile with custom avatar uploads (Supabase Storage), and detailed statistics. Compete against others, break your own personal records, and build a collection of the rarest fish species.
+**Global Community & Real-time Interaction**
+Fast and secure registration (including Google OAuth), cloud saving for your profile with custom avatar uploads (Supabase Storage), and detailed statistics. Connect with other anglers through a **real-time Socket.io chat system** featuring dynamic lake-based rooms, smart Redis-powered unread message synchronization, and live catch broadcasts that create a truly living, competitive atmosphere.
 
 **Full Immersion: Visuals & Audio**
 We have polished every single detail: water droplets streaming down your screen, the iconic sound of the reel drag screaming when a fish pulls, and even meteor showers lighting up the night sky. The ambient sounds dynamically adapt to the weather.
@@ -73,14 +73,14 @@ We have polished every single detail: water droplets streaming down your screen,
 
 ### DevOps & Quality
 
-| Category        | Technology                                                                      |
-| :-------------- | :------------------------------------------------------------------------------ |
-| **Monorepo Run**| [Concurrently](https://github.com/open-cli-tools/concurrently) – parallel dev   |
-| **Hosting**     | [Vercel](https://vercel.com/) – client & server deployments                     |
-| **Git Hooks**   | [Husky](https://typicode.github.io/husky/) – pre-commit automation              |
-| **Lint Staged** | [lint-staged](https://github.com/lint-staged/lint-staged) – incremental linting |
-| **Linting**     | ESLint 9 + Prettier                                                             |
-| **Unused Code** | [Knip](https://knip.dev/) – dead export & dependency detection                  |
+| Category         | Technology                                                                      |
+| :--------------- | :------------------------------------------------------------------------------ |
+| **Monorepo Run** | [Concurrently](https://github.com/open-cli-tools/concurrently) – parallel dev   |
+| **Hosting**      | [Vercel](https://vercel.com/) – client & server deployments                     |
+| **Git Hooks**    | [Husky](https://typicode.github.io/husky/) – pre-commit automation              |
+| **Lint Staged**  | [lint-staged](https://github.com/lint-staged/lint-staged) – incremental linting |
+| **Linting**      | ESLint 9 + Prettier                                                             |
+| **Unused Code**  | [Knip](https://knip.dev/) – dead export & dependency detection                  |
 
 ---
 
@@ -155,6 +155,7 @@ yarn dev
 ```
 
 This will simultaneously start:
+
 - **Client** dev server (`localhost:5173`)
 - **Main API** server (`localhost:5000`)
 - **Online/Socket** server (`localhost:5001`)
@@ -165,11 +166,11 @@ This will simultaneously start:
 
 ### Root (Monorepo)
 
-| Command                   | Description                                                |
-| :------------------------ | :--------------------------------------------------------- |
-| `yarn dev`                | **Run Client, Server, and Online servers simultaneously**  |
-| `yarn translations:check` | Check i18n translation coverage                            |
-| `yarn prepare`            | Install Husky git hooks                                    |
+| Command                   | Description                                               |
+| :------------------------ | :-------------------------------------------------------- |
+| `yarn dev`                | **Run Client, Server, and Online servers simultaneously** |
+| `yarn translations:check` | Check i18n translation coverage                           |
+| `yarn prepare`            | Install Husky git hooks                                   |
 
 ### Client (`/client`)
 
@@ -205,7 +206,7 @@ This will simultaneously start:
 | `yarn dev`               | Start in watch mode           |
 | `yarn build`             | Lint + compile + NestJS build |
 | `yarn lint` / `lint:fix` | ESLint check / auto-fix       |
-| `yarn format`            | Format with Prettier              |
+| `yarn format`            | Format with Prettier          |
 | `yarn prisma:generate`   | Generate Prisma client        |
 
 ---

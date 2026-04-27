@@ -150,25 +150,6 @@
   }
 }
 
-@media (max-height: 400px) {
-  .container {
-    gap: 8px;
-  }
-
-  .avatarWrapper {
-    width: 70px;
-    height: 70px;
-  }
-
-  .top {
-    gap: 12px;
-  }
-
-  .grid {
-    padding: 8px;
-  }
-}
-
 .footer {
   display: flex;
   justify-content: center;

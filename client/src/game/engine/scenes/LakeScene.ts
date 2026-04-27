@@ -918,6 +918,8 @@ export class LakeScene implements IScene {
     }
 
     const renderScale = W < 1000 ? 0.69 : 1.0;
+    const perspectiveScale =
+      0.6 + 0.4 * Math.max(0, Math.min(1, (this.hookY - waterY) / waterHeight));
 
     this.hook.update({
       x: this.hookX,
@@ -931,7 +933,7 @@ export class LakeScene implements IScene {
       maxInterest,
       hookDepthM: this.hookDepthM,
       groundDepthM: this.groundDepthM,
-      scale: renderScale,
+      scale: perspectiveScale * renderScale,
       rigType: this.hookConfig?.rigType,
       currentDepthM:
         this.hookConfig?.rigType === 'spinning'

@@ -1,13 +1,20 @@
-import { useReducer, useEffect, useRef, useCallback } from 'react';
+import { useReducer, useEffect, useRef, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useOnlineChat } from '@/hooks/game/useOnlineChat';
 
-import type { IChatMessage, ConnectionStatusType } from '@/common/types';
+import type {
+  IChatMessage,
+  ConnectionStatusType,
+  IPlayerProfile,
+} from '@/common/types';
+
+import { ProfileModal } from '@/components/UI/modals/ProfileModal/ProfileModal';
 
 import { useAppSelector } from '@/hooks/core/useAppStore';
 
 import { formatDate } from '@/common/utils/date.util';
+import { PlayerService } from '@/services/player.service';
 
 import styles from './GameChat.module.css';
 
@@ -97,17 +104,42 @@ export function GameChat({ isNight = false }: IGameChatProps) {
   const counterRef = useRef<HTMLSpanElement>(null);
   const prevMessageCountRef = useRef(0);
 
-  // ── Online state from Redux ──────────────────────────────────────────────
   const currentLakeId = useAppSelector((s) => s.game.currentLakeId);
   const messages = useAppSelector((s) => s.online.messages);
   const roomState = useAppSelector((s) => s.online.roomState);
+  const lastReadMessageId = useAppSelector((s) => s.online.lastReadMessageId);
   const chatConnectionStatus = useAppSelector(
     (s) => s.online.chatConnectionStatus,
   );
 
-  const { sendMessage } = useOnlineChat(currentLakeId);
+  const [inputValue, setInputValue] = useState('');
+  const { sendMessage, markAsRead } = useOnlineChat(currentLakeId);
 
-  // ── Track unread on new messages ─────────────────────────────────────────
+  const [selectedPlayer, setSelectedPlayer] = useState<IPlayerProfile | null>(
+    null,
+  );
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [profileError, setProfileError] = useState(false);
+
+  const handleOpenProfile = useCallback(async (userId: string) => {
+    setIsProfileOpen(true);
+    setProfileError(false);
+    setSelectedPlayer(null);
+
+    try {
+      const data = await PlayerService.getOtherProfile(userId);
+      setSelectedPlayer(data);
+    } catch (error) {
+      console.error('[GameChat] Error loading profile:', error);
+      setProfileError(true);
+    }
+  }, []);
+
+  const handleCloseProfile = () => {
+    setIsProfileOpen(false);
+    setSelectedPlayer(null);
+  };
+
   useEffect(() => {
     if (messages.length > prevMessageCountRef.current) {
       const newMessages = messages.slice(prevMessageCountRef.current);
@@ -121,7 +153,6 @@ export function GameChat({ isNight = false }: IGameChatProps) {
     prevMessageCountRef.current = messages.length;
   }, [messages]);
 
-  // ── Auto-scroll ──────────────────────────────────────────────────────────
   useEffect(() => {
     if (state.isMinimized) return;
     isScrolledUpRef.current = false;
@@ -139,16 +170,38 @@ export function GameChat({ isNight = false }: IGameChatProps) {
     }
   }, [messages]);
 
+  useEffect(() => {
+    if (state.isMinimized || isScrolledUpRef.current || messages.length === 0)
+      return;
+
+    const lastMsg = messages[messages.length - 1];
+    if (
+      lastMsg &&
+      lastMsg.id !== lastReadMessageId &&
+      ((lastMsg.type === 'chat' && state.activeTab === 'messages') ||
+        (lastMsg.type === 'system' && state.activeTab === 'events'))
+    ) {
+      markAsRead(lastMsg.id);
+    }
+  }, [
+    messages,
+    state.isMinimized,
+    state.activeTab,
+    lastReadMessageId,
+    markAsRead,
+  ]);
+
   const handleScroll = () => {
     if (!scrollRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
     isScrolledUpRef.current = scrollHeight - scrollTop - clientHeight > 10;
   };
 
-  // ── Input handling ───────────────────────────────────────────────────────
   const handleInput = () => {
     if (!inputRef.current || !counterRef.current) return;
-    const len = inputRef.current.value.length;
+    const val = inputRef.current.value;
+    const len = val.length;
+    setInputValue(val);
     counterRef.current.textContent = `${len}/100`;
 
     if (len >= 90) {
@@ -169,6 +222,7 @@ export function GameChat({ isNight = false }: IGameChatProps) {
       sendMessage(val);
 
       inputRef.current.value = '';
+      setInputValue('');
       if (counterRef.current) counterRef.current.textContent = '0/100';
       if (counterRef.current)
         counterRef.current.classList.remove(styles['chat__counter--warning']);
@@ -177,10 +231,16 @@ export function GameChat({ isNight = false }: IGameChatProps) {
     [sendMessage],
   );
 
-  // ── Filter messages by tab ───────────────────────────────────────────────
-  const filteredMessages = messages.filter((msg: IChatMessage) =>
-    state.activeTab === 'events' ? msg.type === 'system' : msg.type === 'chat',
-  );
+  const filteredMessages = messages
+    .filter((msg: IChatMessage) =>
+      state.activeTab === 'events'
+        ? msg.type === 'system'
+        : msg.type === 'chat',
+    )
+    .sort(
+      (a, b) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+    );
 
   const onlineCount = roomState?.onlineCount ?? 0;
 
@@ -236,7 +296,9 @@ export function GameChat({ isNight = false }: IGameChatProps) {
 
         <div className={styles.chat__online_indicator}>
           <div className={`${styles.chat__online_dot} ${dotClass}`} />
-          <span className={styles.chat__online_count}>{onlineCount}</span>
+          {chatConnectionStatus === 'online' && (
+            <span className={styles.chat__online_count}>{onlineCount}</span>
+          )}
         </div>
 
         <button
@@ -258,30 +320,62 @@ export function GameChat({ isNight = false }: IGameChatProps) {
           ref={scrollRef}
           onScroll={handleScroll}
         >
-          {filteredMessages.map((msg: IChatMessage) => (
-            <div
-              key={msg.id}
-              className={`${styles.message} ${styles[`message--${msg.type}`]}`}
-            >
-              <span className={styles.message__time}>
-                {formatDate(msg.timestamp, 'time')}
-              </span>
-              <span
-                className={`${styles.message__user} ${msg.isModerator ? styles['message__user--mod'] : ''}`}
-              >
-                {msg.user}:
-              </span>
-              {msg.type === 'chat' ? (
-                <span className={styles.message__text}>{msg.text}</span>
-              ) : (
-                <span className={styles.message__log}>
-                  {t('hud.chat.caught')}{' '}
-                  <span className={styles.message__fish}>{msg.fish}</span> (
-                  <span className={styles.message__weight}>{msg.weight}</span>)
-                </span>
-              )}
-            </div>
-          ))}
+          {filteredMessages.map((msg: IChatMessage, idx: number) => {
+            const isUnread =
+              lastReadMessageId &&
+              messages.findIndex((m) => m.id === lastReadMessageId) <
+                messages.findIndex((m) => m.id === msg.id);
+
+            const showUnreadLine =
+              isUnread &&
+              idx > 0 &&
+              !(
+                lastReadMessageId &&
+                messages.findIndex((m) => m.id === lastReadMessageId) <
+                  messages.findIndex(
+                    (m) => m.id === filteredMessages[idx - 1].id,
+                  )
+              );
+
+            return (
+              <div key={msg.id}>
+                {showUnreadLine && (
+                  <div className={styles.chat__unread_line}>
+                    <span>{t('hud.chat.unread_messages', 'New messages')}</span>
+                  </div>
+                )}
+                <div
+                  className={`${styles.message} ${styles[`message--${msg.type}`]} ${isUnread ? styles['message--unread'] : ''}`}
+                >
+                  <span className={styles.message__time}>
+                    {formatDate(msg.timestamp, 'time')}
+                  </span>
+                  <span
+                    className={`${styles.message__user} ${msg.isModerator ? styles['message__user--mod'] : ''}`}
+                    onClick={() => handleOpenProfile(msg.userId)}
+                    title={t('hud.chat.actions.viewProfile', 'View profile')}
+                  >
+                    {msg.user}:
+                  </span>
+                  {msg.type === 'chat' ? (
+                    <span className={styles.message__text}>{msg.text}</span>
+                  ) : (
+                    <span className={styles.message__log}>
+                      {`${t('hud.caught')} `}
+                      <span className={styles.message__fish}>
+                        {msg.fishId ? t(`fish.${msg.fishId}.name`) : msg.fish}
+                      </span>{' '}
+                      (
+                      <span className={styles.message__weight}>
+                        {msg.weight}
+                      </span>
+                      )
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
 
         <form
@@ -299,7 +393,11 @@ export function GameChat({ isNight = false }: IGameChatProps) {
           <span ref={counterRef} className={styles.chat__counter}>
             0/100
           </span>
-          <button type="submit" className={styles.chat__send_btn}>
+          <button
+            type="submit"
+            className={styles.chat__send_btn}
+            disabled={!inputValue.trim()}
+          >
             <svg
               viewBox="0 0 24 24"
               width="18"
@@ -316,6 +414,13 @@ export function GameChat({ isNight = false }: IGameChatProps) {
           </button>
         </form>
       </div>
+
+      <ProfileModal
+        isOpen={isProfileOpen}
+        onClose={handleCloseProfile}
+        player={selectedPlayer}
+        isError={profileError}
+      />
     </div>
   );
 }
