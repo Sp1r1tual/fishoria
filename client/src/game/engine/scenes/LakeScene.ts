@@ -586,11 +586,18 @@ export class LakeScene implements IScene {
   }
 
   setWeather(type: WeatherType): void {
+    console.log(
+      `[LakeScene] Setting weather to: ${type} (TimeOfDay: ${this.timeOfDay})`,
+    );
     this.weather = type;
-    this.weatherLayer.setWeather(type);
-    const W = this.app.renderer.width;
-    const H = this.app.renderer.height;
-    this.bgRenderer.drawBackground(W, H, this.timeOfDay, type);
+    if (this.weatherLayer) {
+      this.weatherLayer.setWeather(type);
+    }
+    if (this.bgRenderer && this.app) {
+      const W = this.app.renderer.width;
+      const H = this.app.renderer.height;
+      this.bgRenderer.drawBackground(W, H, this.timeOfDay, type);
+    }
   }
 
   setPlayerReeling(v: boolean): void {

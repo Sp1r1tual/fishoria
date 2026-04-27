@@ -59,7 +59,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection {
   }
 
   @UseGuards(WsAuthGuard, WsRolesGuard)
-  @RequireRoles('ADMIN', 'MODERATOR')
+  @RequireRoles('MODERATOR')
   @SubscribeMessage('game:admin:set_time')
   handleSetTime(
     @ConnectedSocket() client: Socket,
@@ -71,7 +71,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection {
   }
 
   @UseGuards(WsAuthGuard, WsRolesGuard)
-  @RequireRoles('ADMIN', 'MODERATOR')
+  @RequireRoles('MODERATOR')
   @SubscribeMessage('game:admin:set_weather')
   handleSetWeather(
     @ConnectedSocket() client: Socket,

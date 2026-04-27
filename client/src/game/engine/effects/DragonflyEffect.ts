@@ -185,8 +185,9 @@ export class DragonflyEffect {
       const dx = this.targetX - this.x;
       const dy = this.targetY - this.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
+      const perchThreshold = 8;
 
-      if (dist < 4) {
+      if (dist < perchThreshold) {
         if (this.isTargetingRod && rodIsCalm) {
           this.state = 'perched';
           this.currentSpeed = 0;
@@ -199,7 +200,7 @@ export class DragonflyEffect {
         this.x += (dx / dist) * moveDist;
         this.y += (dy / dist) * moveDist;
 
-        if (!this.isBursting) {
+        if (!this.isBursting && dist > 15) {
           this.y += Math.sin(this.time * 25) * 0.4;
         }
 
@@ -216,8 +217,22 @@ export class DragonflyEffect {
     const cx = this.x;
     const cy = this.y;
 
+    const distToTarget = this.isTargetingRod
+      ? Math.sqrt(
+          Math.pow(this.targetX - this.x, 2) +
+            Math.pow(this.targetY - this.y, 2),
+        )
+      : 100;
+
+    const flapMult =
+      this.state === 'flying' && this.isTargetingRod && distToTarget < 20
+        ? Math.max(0.1, distToTarget / 20)
+        : 1.0;
+
     this.wingAngle =
-      this.state === 'perched' ? 0.1 : Math.sin(this.time * 60) * 0.5;
+      this.state === 'perched'
+        ? 0.1
+        : Math.sin(this.time * 60) * 0.5 * flapMult;
     this.gfx.moveTo(cx, cy);
     this.gfx.lineTo(
       cx - Math.cos(this.bodyAngle) * 8,

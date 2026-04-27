@@ -56,7 +56,7 @@ export function useGlobalSockets() {
     const showSocketToast = (msgKey: string) => {
       const now = Date.now();
       const lastTime = lastToastTimeRef.current[msgKey] || 0;
-      if (now - lastTime < 2000) return; // Deduplicate within 2s
+      if (now - lastTime < 2000) return;
 
       lastToastTimeRef.current[msgKey] = now;
       dispatch(
@@ -100,18 +100,21 @@ export function useGlobalSockets() {
       weatherForecast: WeatherType[];
       lastWeatherUpdateHour: number;
     }) => {
+      console.log('[Online] Game Sync received:', state.weather);
       TimeManager.restoreSession(state.virtualTime);
-      dispatch(setWeather(state.weather));
+
       dispatch(setWeatherForecast(state.weatherForecast));
-      dispatch(setLastWeatherUpdateHour(state.lastWeatherUpdateHour));
+      dispatch(setWeather(state.weather));
+
+      if (state.lastWeatherUpdateHour !== undefined) {
+        dispatch(setLastWeatherUpdateHour(state.lastWeatherUpdateHour));
+      }
     };
 
-    // Status Socket
     statusSocket.on('connect', onStatusConnect);
     statusSocket.on('disconnect', onStatusDisconnect);
     statusSocket.on('connect_error', onConnectionError);
 
-    // Chat Socket
     chatSocket.on('connect', onChatConnect);
     chatSocket.on('disconnect', onChatDisconnect);
     chatSocket.on('connect_error', onConnectionError);
@@ -119,7 +122,6 @@ export function useGlobalSockets() {
     chatSocket.on('exception', onException);
     chatSocket.on('chat:error', onException);
 
-    // Game Socket
     gameSocket.on('game:sync', onGameSync);
     gameSocket.on('connect_error', onConnectionError);
     gameSocket.on('exception', onException);

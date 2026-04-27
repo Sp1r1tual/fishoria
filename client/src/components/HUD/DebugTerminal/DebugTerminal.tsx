@@ -11,6 +11,7 @@ import { useAddMoneyMutation } from '@/queries/player.queries';
 import { store } from '@/store/store';
 
 import { TimeManager } from '@/game/managers/TimeManager';
+import { getGameSocket } from '@/services/socket.service';
 
 import styles from './DebugTerminal.module.css';
 
@@ -25,6 +26,7 @@ export function DebugTerminal({
 }: IDebugTerminalProps) {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
+  const onlineMode = useAppSelector((state) => state.settings.onlineMode);
   const isModerator = user?.role === 'MODERATOR';
 
   const { mutateAsync: addMoneyAsync } = useAddMoneyMutation();
@@ -94,11 +96,28 @@ export function DebugTerminal({
 
       case 'weather': {
         const type = args[0]?.toLowerCase() as WeatherType;
-        if (['clear', 'cloudy', 'rain'].includes(type)) {
-          dispatch(setWeather(type));
-          addLog(`CLIMATE SYNCHRONIZED: ${type.toUpperCase()}`, 'success');
-        } else {
+        if (!['clear', 'cloudy', 'rain'].includes(type)) {
           addLog('USAGE: WEATHER <CLEAR|CLOUDY|RAIN>', 'error');
+          break;
+        }
+
+        if (onlineMode) {
+          if (!isModerator) {
+            addLog(
+              'ERROR: PERMISSION DENIED. MODERATOR ONLY IN ONLINE.',
+              'error',
+            );
+            break;
+          }
+          const socket = getGameSocket();
+          socket.emit('game:admin:set_weather', { weather: type });
+          addLog(
+            `GLOBAL CLIMATE UPDATE SENT: ${type.toUpperCase()}`,
+            'success',
+          );
+        } else {
+          dispatch(setWeather(type));
+          addLog(`LOCAL CLIMATE UPDATED: ${type.toUpperCase()}`, 'success');
         }
         break;
       }
@@ -106,7 +125,23 @@ export function DebugTerminal({
       case 'time':
         if (args.length > 0) {
           const hour = parseInt(args[0]);
-          if (!isNaN(hour) && hour >= 0 && hour <= 23) {
+          if (isNaN(hour) || hour < 0 || hour > 23) {
+            addLog('USAGE: TIME <0-23>', 'error');
+            break;
+          }
+
+          if (onlineMode) {
+            if (!isModerator) {
+              addLog(
+                'ERROR: PERMISSION DENIED. MODERATOR ONLY IN ONLINE.',
+                'error',
+              );
+              break;
+            }
+            const socket = getGameSocket();
+            socket.emit('game:admin:set_time', { hour });
+            addLog(`GLOBAL TIME UPDATE SENT: ${hour}:00`, 'success');
+          } else {
             TimeManager.setGameTime(hour);
             const state = store.getState();
             TimeManager.saveSessionData(
@@ -114,9 +149,7 @@ export function DebugTerminal({
               state.game.weatherForecast,
               state.game.lastWeatherUpdateHour,
             );
-            addLog(`TIME TRAVEL SUCCESSFUL: ${hour}:00`, 'success');
-          } else {
-            addLog('USAGE: TIME <0-23>', 'error');
+            addLog(`LOCAL TIME UPDATED: ${hour}:00`, 'success');
           }
         } else {
           addLog(
