@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 
 import { PrismaService } from '../common/prisma/prisma.service';
 import { RedisService } from '../common/redis/redis.service';
@@ -18,10 +18,12 @@ const MESSAGE_COOLDOWN_MS = 2000;
 const redisKeys = {
   history: (lakeId: string) => `chat:lake:${lakeId}:history`,
   online: (lakeId: string) => `chat:lake:${lakeId}:online`,
+  lastRead: (lakeId: string, userId: string) =>
+    `chat:lake:${lakeId}:user:${userId}:last_read`,
 };
 
 @Injectable()
-export class ChatService {
+export class ChatService implements OnModuleInit {
   private readonly logger = new Logger(ChatService.name);
   private readonly cooldowns = new Map<string, number>();
 
@@ -29,6 +31,20 @@ export class ChatService {
     private readonly prisma: PrismaService,
     private readonly redis: RedisService,
   ) {}
+
+  async onModuleInit() {
+    try {
+      const keys = await this.redis.keys('chat:lake:*:online');
+      if (keys.length > 0) {
+        await this.redis.del(...keys);
+        this.logger.log(
+          `Cleared ${keys.length} online lake state(s) on startup`,
+        );
+      }
+    } catch (e) {
+      this.logger.error('Failed to clear online states on startup', e);
+    }
+  }
 
   async getUser(userId: string): Promise<IChatUser | null> {
     const user = await this.prisma.user.findUnique({
@@ -85,6 +101,7 @@ export class ChatService {
       user: chatUser.username,
       userId: chatUser.id,
       isModerator: chatUser.role === 'MODERATOR',
+      fishId: payload.fishId,
       fish: payload.speciesName,
       weight: `${payload.weight.toFixed(3)} кг`,
       lakeId: payload.lakeId,
@@ -154,6 +171,21 @@ export class ChatService {
       this.logger.error('Failed to get all lakes online count', error);
       return {};
     }
+  }
+
+  async getLastReadMessageId(
+    lakeId: string,
+    userId: string,
+  ): Promise<string | null> {
+    return await this.redis.get(redisKeys.lastRead(lakeId, userId));
+  }
+
+  async markAsRead(
+    lakeId: string,
+    userId: string,
+    messageId: string,
+  ): Promise<void> {
+    await this.redis.set(redisKeys.lastRead(lakeId, userId), messageId);
   }
 
   private async saveToHistory(

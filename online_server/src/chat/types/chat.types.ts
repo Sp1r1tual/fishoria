@@ -19,6 +19,7 @@ export interface IChatMessage {
   userId: string;
   isModerator: boolean;
   text?: string;
+  fishId?: string;
   fish?: string;
   weight?: string;
   lakeId?: string;
@@ -32,6 +33,7 @@ export interface ISendMessagePayload {
 }
 
 export interface ICatchEventPayload {
+  fishId?: string;
   speciesName: string;
   weight: number;
   lakeId: string;

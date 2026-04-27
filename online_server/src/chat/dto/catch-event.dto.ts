@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 
 export const CatchEventSchema = z.object({
+  fishId: z.string().optional(),
   speciesName: z.string(),
   weight: z.number().positive(),
   lakeId: z.string(),

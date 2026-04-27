@@ -21,6 +21,7 @@ import type { IJwtPayload } from '../auth/auth.service';
 import { JoinDto } from './dto/join.dto';
 import { SendMessageDto } from './dto/send-message.dto';
 import { CatchEventDto } from './dto/catch-event.dto';
+import { MarkReadDto } from './dto/mark-read.dto';
 
 interface ISocketMeta {
   user: IChatUser;
@@ -124,12 +125,16 @@ export class ChatGateway
 
     await this.chatService.addOnlineUser(lakeId, chatUser);
 
-    const [history, roomState] = await Promise.all([
+    const [history, roomState, lastReadMessageId] = await Promise.all([
       this.chatService.getHistory(lakeId),
       this.chatService.getLakeRoomState(lakeId),
+      this.chatService.getLastReadMessageId(lakeId, userId),
     ]);
 
-    client.emit('chat:history', history);
+    client.emit('chat:history', {
+      history,
+      lastReadMessageId,
+    });
     this.server.to(lakeId).emit('chat:room_state', roomState);
     await this.broadcastAllLakesStats();
 
@@ -141,6 +146,28 @@ export class ChatGateway
 
     this.logger.debug(
       `User ${chatUser.username} joined lake ${lakeId} (${client.id})`,
+    );
+  }
+
+  @UseGuards(WsAuthGuard)
+  @SubscribeMessage('chat:leave')
+  async handleLeave(@ConnectedSocket() client: IAuthenticatedSocket) {
+    const meta = this.socketMeta.get(client.id);
+    if (!meta) return;
+
+    const { user, lakeId } = meta;
+    this.socketMeta.delete(client.id);
+    client.leave(lakeId);
+
+    await this.chatService.removeOnlineUser(lakeId, user.id);
+
+    const roomState = await this.chatService.getLakeRoomState(lakeId);
+    this.server.to(lakeId).emit('chat:room_state', roomState);
+
+    await this.broadcastAllLakesStats();
+
+    this.logger.debug(
+      `User ${user.username} explicitly left lake ${lakeId} (${client.id})`,
     );
   }
 
@@ -183,5 +210,20 @@ export class ChatGateway
 
     const catchMessage = this.chatService.createCatchEvent(meta.user, payload);
     this.server.to(payload.lakeId).emit('chat:message', catchMessage);
+  }
+
+  @UseGuards(WsAuthGuard)
+  @UsePipes(new ZodValidationPipe())
+  @SubscribeMessage('chat:mark_read')
+  async handleMarkRead(
+    @ConnectedSocket() client: IAuthenticatedSocket,
+    @MessageBody() payload: MarkReadDto,
+  ) {
+    const userId = client.user.sub;
+    await this.chatService.markAsRead(
+      payload.lakeId,
+      userId,
+      payload.messageId,
+    );
   }
 }
