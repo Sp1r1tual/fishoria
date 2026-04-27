@@ -8,7 +8,7 @@ import { ErrorView } from '@/components/UI/ErrorView/ErrorView';
 import { ProfileSkeleton } from './ProfileSkeleton';
 
 import { resolveAvatarImg } from '@/common/utils/avatar.util';
-import { formatNumericDate } from '@/common/utils/date.util';
+import { formatDate } from '@/common/utils/date.util';
 
 import styles from './ProfileModal.module.css';
 
@@ -39,7 +39,7 @@ export function ProfileModal({
 
   const joinDate =
     createdAt || playerUser?.createdAt
-      ? formatNumericDate(createdAt || playerUser?.createdAt)
+      ? formatDate(createdAt || playerUser?.createdAt)
       : '';
 
   const roleKey = (playerUser?.role as UserRole) || 'PLAYER';

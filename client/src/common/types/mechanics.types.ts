@@ -1,4 +1,4 @@
-import type { IFishSpeciesConfig } from './index';
+import type { IFishSpeciesConfig, RigTypeType } from './index';
 
 export interface ITensionState {
   value: number;
@@ -38,7 +38,7 @@ export interface IFishCatch {
   weight: number;
   length: number;
   baitUsed: string;
-  method: string;
+  method: RigTypeType;
   lakeId: string;
   lakeName: string;
   rodDamage?: number;
@@ -52,7 +52,7 @@ export interface ITrashCatch {
   weight: number;
   length: number;
   baitUsed: string;
-  method: string;
+  method: RigTypeType;
   lakeId: string;
   lakeName: string;
   rodDamage?: number;

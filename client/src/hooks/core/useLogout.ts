@@ -1,7 +1,9 @@
 import { useAppDispatch } from './useAppStore';
 import { logout } from '@/store/slices/authSlice';
+import { resetOnline } from '@/store/slices/onlineSlice';
 
 import { AuthService } from '@/services/auth.service';
+import { disconnectAll } from '@/services/socket.service';
 
 import { queryClient } from '@/common/configs/libs/reactQuery';
 
@@ -15,6 +17,8 @@ export const useLogout = () => {
       console.error('[Auth] Logout request failed:', error);
     } finally {
       dispatch(logout());
+      dispatch(resetOnline());
+      disconnectAll();
 
       sessionStorage.setItem('loggedOut', 'true');
       localStorage.removeItem('hasSession');

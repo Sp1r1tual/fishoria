@@ -1,21 +1,15 @@
-import { useReducer, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useReducer, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { openProfileModal } from '@/store/slices/uiSlice';
+import { useOnlineChat } from '@/hooks/game/useOnlineChat';
+
+import type { IChatMessage, ConnectionStatusType } from '@/common/types';
+
+import { useAppSelector } from '@/hooks/core/useAppStore';
+
+import { formatDate } from '@/common/utils/date.util';
 
 import styles from './GameChat.module.css';
-
-interface IMessage {
-  id: string;
-  type: 'chat' | 'system';
-  user: string;
-  isModerator?: boolean;
-  text?: string;
-  fish?: string;
-  weight?: string;
-  timestamp: string;
-}
 
 type ChatTab = 'events' | 'messages';
 
@@ -24,13 +18,12 @@ interface IChatState {
   isMinimized: boolean;
   unreadEvents: number;
   unreadMessages: number;
-  messages: IMessage[];
 }
 
 type ChatAction =
   | { type: 'SET_TAB'; tab: ChatTab }
   | { type: 'TOGGLE_MINIMIZED' }
-  | { type: 'ADD_MESSAGE'; message: IMessage }
+  | { type: 'INCREMENT_UNREAD'; messageType: 'system' | 'chat' }
   | { type: 'RESET_UNREAD'; tab: ChatTab };
 
 const initialState: IChatState = {
@@ -38,41 +31,6 @@ const initialState: IChatState = {
   isMinimized: true,
   unreadEvents: 0,
   unreadMessages: 0,
-  messages: [
-    {
-      id: '1',
-      type: 'system',
-      user: 'FisherPro',
-      fish: 'Щука',
-      weight: '3.420 кг',
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-    },
-    {
-      id: '2',
-      type: 'chat',
-      user: 'Рибак_Василь',
-      isModerator: true,
-      text: 'Всім привіт! Де зараз найкраще клює короп?',
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-    },
-    {
-      id: '3',
-      type: 'chat',
-      user: 'Admin_Fishoria',
-      isModerator: true,
-      text: 'Нагадую всім про дотримання правил чату!',
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-    },
-  ],
 };
 
 function chatReducer(state: IChatState, action: ChatAction): IChatState {
@@ -100,8 +58,8 @@ function chatReducer(state: IChatState, action: ChatAction): IChatState {
             : state.unreadMessages,
       };
     }
-    case 'ADD_MESSAGE': {
-      const isSystem = action.message.type === 'system';
+    case 'INCREMENT_UNREAD': {
+      const isSystem = action.messageType === 'system';
       let unreadEvents = state.unreadEvents;
       let unreadMessages = state.unreadMessages;
 
@@ -113,12 +71,7 @@ function chatReducer(state: IChatState, action: ChatAction): IChatState {
         if (!isSystem && state.activeTab !== 'messages') unreadMessages++;
       }
 
-      return {
-        ...state,
-        messages: [...state.messages.slice(-49), action.message],
-        unreadEvents,
-        unreadMessages,
-      };
+      return { ...state, unreadEvents, unreadMessages };
     }
     case 'RESET_UNREAD':
       return {
@@ -131,77 +84,44 @@ function chatReducer(state: IChatState, action: ChatAction): IChatState {
   }
 }
 
-const MOCK_USERS = [
-  'Рибак_Василь',
-  'FisherPro',
-  'Карась_Коля',
-  'AquaLover',
-  'BigFishHunter',
-];
-const MOCK_FISH = ['Короп', 'Щука', 'Окунь', 'Лящ', 'Плітка', 'Судак'];
-
 interface IGameChatProps {
   isNight?: boolean;
 }
 
 export function GameChat({ isNight = false }: IGameChatProps) {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const [state, dispatchAction] = useReducer(chatReducer, initialState);
   const scrollRef = useRef<HTMLDivElement>(null);
   const isScrolledUpRef = useRef(false);
-
-  const activeTabRef = useRef(state.activeTab);
-  const isMinimizedRef = useRef(state.isMinimized);
   const inputRef = useRef<HTMLInputElement>(null);
   const counterRef = useRef<HTMLSpanElement>(null);
+  const prevMessageCountRef = useRef(0);
 
-  const handleNicknameClick = (username: string) => {
-    dispatch(openProfileModal({ player: null }));
+  // ── Online state from Redux ──────────────────────────────────────────────
+  const currentLakeId = useAppSelector((s) => s.game.currentLakeId);
+  const messages = useAppSelector((s) => s.online.messages);
+  const roomState = useAppSelector((s) => s.online.roomState);
+  const chatConnectionStatus = useAppSelector(
+    (s) => s.online.chatConnectionStatus,
+  );
 
-    setTimeout(() => {
-      dispatch(
-        openProfileModal({
-          player: {
-            id: Math.random().toString(),
-            user: {
-              id: Math.random().toString(),
-              username: username,
-              email: 'mock@example.com',
-              avatar: 'profile_01.webp',
-              role: username === 'Admin_Fishoria' ? 'MODERATOR' : 'PLAYER',
-              isActivated: true,
-              language: 'uk',
-              createdAt: new Date().toISOString(),
-            },
-            level: Math.floor(Math.random() * 50) + 1,
-            xp: 1250,
-            money: 5000,
-            equippedRodUid: null,
-            equippedReelUid: null,
-            equippedLineUid: null,
-            equippedHookUid: null,
-            hasEchoSounder: false,
-            activeBait: '',
-            activeGroundbait: '',
-            gearItems: [],
-            consumables: [],
-            fishCatches: [],
-            lakeStats: [],
-            playerQuests: [],
-            playerAchievements: [],
-            createdAt: new Date().toISOString(),
-          },
-        }),
-      );
-    }, 600);
-  };
+  const { sendMessage } = useOnlineChat(currentLakeId);
 
+  // ── Track unread on new messages ─────────────────────────────────────────
   useEffect(() => {
-    activeTabRef.current = state.activeTab;
-    isMinimizedRef.current = state.isMinimized;
-  }, [state.activeTab, state.isMinimized]);
+    if (messages.length > prevMessageCountRef.current) {
+      const newMessages = messages.slice(prevMessageCountRef.current);
+      for (const msg of newMessages) {
+        dispatchAction({
+          type: 'INCREMENT_UNREAD',
+          messageType: msg.type,
+        });
+      }
+    }
+    prevMessageCountRef.current = messages.length;
+  }, [messages]);
 
+  // ── Auto-scroll ──────────────────────────────────────────────────────────
   useEffect(() => {
     if (state.isMinimized) return;
     isScrolledUpRef.current = false;
@@ -217,7 +137,7 @@ export function GameChat({ isNight = false }: IGameChatProps) {
     if (scrollRef.current && !isScrolledUpRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [state.messages]);
+  }, [messages]);
 
   const handleScroll = () => {
     if (!scrollRef.current) return;
@@ -225,37 +145,7 @@ export function GameChat({ isNight = false }: IGameChatProps) {
     isScrolledUpRef.current = scrollHeight - scrollTop - clientHeight > 10;
   };
 
-  useEffect(() => {
-    const interval = setInterval(
-      () => {
-        const isSystem = Math.random() > 0.4;
-        const user = MOCK_USERS[Math.floor(Math.random() * MOCK_USERS.length)];
-
-        const newMessage: IMessage = {
-          id: Date.now().toString(),
-          type: isSystem ? 'system' : 'chat',
-          user,
-          text: isSystem ? undefined : 'Гарна погода для риболовлі!',
-          fish: isSystem
-            ? MOCK_FISH[Math.floor(Math.random() * MOCK_FISH.length)]
-            : undefined,
-          weight: isSystem
-            ? (Math.random() * 5 + 0.5).toFixed(3) + ' кг'
-            : undefined,
-          timestamp: new Date().toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-        };
-
-        dispatchAction({ type: 'ADD_MESSAGE', message: newMessage });
-      },
-      12000 + Math.random() * 10000,
-    );
-
-    return () => clearInterval(interval);
-  }, []);
-
+  // ── Input handling ───────────────────────────────────────────────────────
   const handleInput = () => {
     if (!inputRef.current || !counterRef.current) return;
     const len = inputRef.current.value.length;
@@ -268,35 +158,33 @@ export function GameChat({ isNight = false }: IGameChatProps) {
     }
   };
 
-  const handleSendMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputRef.current) return;
+  const handleSendMessage = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!inputRef.current) return;
 
-    const val = inputRef.current.value.trim();
-    if (!val) return;
+      const val = inputRef.current.value.trim();
+      if (!val) return;
 
-    const newMessage: IMessage = {
-      id: Date.now().toString(),
-      type: 'chat',
-      user: 'Ви',
-      text: val,
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-    };
+      sendMessage(val);
 
-    dispatchAction({ type: 'ADD_MESSAGE', message: newMessage });
-    inputRef.current.value = '';
-    if (counterRef.current) counterRef.current.textContent = '0/100';
-    if (counterRef.current)
-      counterRef.current.classList.remove(styles['chat__counter--warning']);
-    dispatchAction({ type: 'SET_TAB', tab: 'messages' });
-  };
+      inputRef.current.value = '';
+      if (counterRef.current) counterRef.current.textContent = '0/100';
+      if (counterRef.current)
+        counterRef.current.classList.remove(styles['chat__counter--warning']);
+      dispatchAction({ type: 'SET_TAB', tab: 'messages' });
+    },
+    [sendMessage],
+  );
 
-  const filteredMessages = state.messages.filter((msg) =>
+  // ── Filter messages by tab ───────────────────────────────────────────────
+  const filteredMessages = messages.filter((msg: IChatMessage) =>
     state.activeTab === 'events' ? msg.type === 'system' : msg.type === 'chat',
   );
+
+  const onlineCount = roomState?.onlineCount ?? 0;
+
+  const dotClass = getDotClass(chatConnectionStatus);
 
   return (
     <div
@@ -346,6 +234,11 @@ export function GameChat({ isNight = false }: IGameChatProps) {
           />
         </div>
 
+        <div className={styles.chat__online_indicator}>
+          <div className={`${styles.chat__online_dot} ${dotClass}`} />
+          <span className={styles.chat__online_count}>{onlineCount}</span>
+        </div>
+
         <button
           className={styles.chat__minimize}
           onClick={() => dispatchAction({ type: 'TOGGLE_MINIMIZED' })}
@@ -365,15 +258,16 @@ export function GameChat({ isNight = false }: IGameChatProps) {
           ref={scrollRef}
           onScroll={handleScroll}
         >
-          {filteredMessages.map((msg) => (
+          {filteredMessages.map((msg: IChatMessage) => (
             <div
               key={msg.id}
               className={`${styles.message} ${styles[`message--${msg.type}`]}`}
             >
-              <span className={styles.message__time}>{msg.timestamp}</span>
+              <span className={styles.message__time}>
+                {formatDate(msg.timestamp, 'time')}
+              </span>
               <span
                 className={`${styles.message__user} ${msg.isModerator ? styles['message__user--mod'] : ''}`}
-                onClick={() => handleNicknameClick(msg.user)}
               >
                 {msg.user}:
               </span>
@@ -381,7 +275,7 @@ export function GameChat({ isNight = false }: IGameChatProps) {
                 <span className={styles.message__text}>{msg.text}</span>
               ) : (
                 <span className={styles.message__log}>
-                  впіймав{' '}
+                  {t('hud.chat.caught')}{' '}
                   <span className={styles.message__fish}>{msg.fish}</span> (
                   <span className={styles.message__weight}>{msg.weight}</span>)
                 </span>
@@ -424,4 +318,17 @@ export function GameChat({ isNight = false }: IGameChatProps) {
       </div>
     </div>
   );
+}
+
+function getDotClass(status: ConnectionStatusType): string {
+  switch (status) {
+    case 'online':
+      return '';
+    case 'connecting':
+      return styles['chat__online_dot--connecting'];
+    case 'error':
+      return styles['chat__online_dot--error'];
+    default:
+      return styles['chat__online_dot--offline'];
+  }
 }

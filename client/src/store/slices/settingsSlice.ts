@@ -14,6 +14,7 @@ const loadSettings = (): ISettingsState => {
     ambientVolume: 60,
     debugMode: false,
     language: 'en',
+    onlineMode: true,
   };
 
   try {
@@ -44,4 +45,5 @@ const settingsSlice = createSlice({
 });
 
 export const { updateSettings } = settingsSlice.actions;
+
 export default settingsSlice.reducer;

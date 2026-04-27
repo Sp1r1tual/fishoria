@@ -23,6 +23,7 @@ This repository contains the client-side code for Fishoria. It combines a custom
 - **Premium UI/UX** – responsive design with smooth CSS transitions, skeleton loading, and scroll-reveal animations
 - **Multi-language Support** – full localization (Ukrainian / English) via i18next with dynamic language switching
 - **Touch-Friendly** – universal Pointer Events for seamless gameplay on tablets and mobile devices
+- **Real-time Multiplayer & Chat** – live global chat and catch notifications powered by Socket.io
 - **Debug Terminal** – in-game command shell for testing and moderation
 
 ---
@@ -41,6 +42,7 @@ This repository contains the client-side code for Fishoria. It combines a custom
 | **Forms**         | [React Hook Form](https://react-hook-form.com/)                                      |
 | **Math**          | [simplex-noise](https://github.com/jwagner/simplex-noise.js) – procedural generation |
 | **Content**       | [React Markdown](https://github.com/remarkjs/react-markdown) – rich text rendering   |
+| **Real-time**     | [Socket.io Client](https://socket.io/) – WebSocket communication                     |
 | **Language**      | TypeScript 5                                                                         |
 
 ---
@@ -68,6 +70,25 @@ All server interactions go through `queries/` hooks which handle:
 
 ---
 
+## Real-time Architecture
+
+The client communicates with the **Online Server** via WebSockets (Socket.io) to provide a shared experience.
+
+### Socket Instances
+
+- **Status Socket** – tracked globally via `useServerStatus` hook to detect server availability and wake up the instance (e.g., on Render).
+- **Chat Socket** – established only when the player enters a lake. Handles messages and "catch events" (notifying others when you land a fish).
+
+### Connection States
+
+The UI reacts to the `online.connectionStatus` state:
+
+- `online` – all real-time features enabled.
+- `offline` – fallback to single-player mode.
+- `connecting` / `error` – visual indicators in HUD and settings.
+
+---
+
 ## Getting Started
 
 ### 1. Installation
@@ -83,10 +104,11 @@ yarn install
 cp .env.example .env
 ```
 
-Configure the API URL:
+Configure the API URLs:
 
 ```dotenv
 VITE_API_URL=http://localhost:5000
+VITE_ONLINE_SERVER_URL=http://localhost:5001
 ```
 
 ### 3. Development Mode

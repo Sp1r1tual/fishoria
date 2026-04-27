@@ -7,4 +7,5 @@ export interface ISettingsState {
   ambientVolume?: number;
   debugMode?: boolean;
   language?: 'en' | 'uk';
+  onlineMode?: boolean;
 }

@@ -1,4 +1,8 @@
-import type { IFishSpeciesConfig, CatchResultType } from '@/common/types';
+import type {
+  IFishSpeciesConfig,
+  CatchResultType,
+  RigTypeType,
+} from '@/common/types';
 
 import { CATCH_RESULT } from '@/common/configs/game';
 
@@ -6,7 +10,7 @@ export function generateCatch(
   fish: IFishSpeciesConfig,
   weight: number,
   baitUsed: string,
-  method: string,
+  method: RigTypeType,
   lakeId: string,
   lakeName: string,
   isTrashOverride?: boolean,

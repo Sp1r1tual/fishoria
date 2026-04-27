@@ -1,9 +1,9 @@
+import type { ConnectionStatusType } from '@/common/types';
+
 import styles from './ServiceStatus.module.css';
 
-export type ServiceStatusType = 'online' | 'warning' | 'offline';
-
 interface ServiceStatusProps {
-  status: ServiceStatusType;
+  status: ConnectionStatusType;
   label?: string;
   onClick?: () => void;
   className?: string;

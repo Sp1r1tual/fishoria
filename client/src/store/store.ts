@@ -5,6 +5,7 @@ import uiReducer from './slices/uiSlice';
 import settingsReducer from './slices/settingsSlice';
 import authReducer from './slices/authSlice';
 import newsReducer from './slices/newsSlice';
+import onlineReducer from './slices/onlineSlice';
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     settings: settingsReducer,
     auth: authReducer,
     news: newsReducer,
+    online: onlineReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

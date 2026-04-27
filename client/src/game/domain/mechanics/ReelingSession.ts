@@ -6,6 +6,7 @@ import type {
   IRodConfig,
   IReelConfig,
   ILineConfig,
+  RigTypeType,
 } from '@/common/types';
 
 import { TensionSystem } from './TensionSystem';
@@ -184,11 +185,12 @@ export function updateReelingPhase(
     H - hookY <= Math.max(10 * scale, REELING_PHYSICS.shoreBoundaryPx);
 
   if (isAtShore && playerReeling) {
-    let method = 'FLOAT';
+    let method: RigTypeType = 'float';
+
     if (hookConfig?.rigType) {
-      method = hookConfig.rigType.toUpperCase();
+      method = hookConfig.rigType;
     } else if (rodConfig?.rodCategory) {
-      method = rodConfig.rodCategory.toUpperCase();
+      method = rodConfig.rodCategory.toLowerCase() as RigTypeType;
     }
 
     const result = generateCatch(

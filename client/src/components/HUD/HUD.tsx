@@ -177,6 +177,8 @@ export function HUD({
 
   const [isNight, setIsNight] = useState(false);
 
+  const onlineMode = useAppSelector((s) => s.settings.onlineMode);
+
   useEffect(() => {
     const updateTime = () => {
       const now = TimeManager.getTime('game');
@@ -218,7 +220,7 @@ export function HUD({
 
           <div className={styles['hud__top-right']}>
             <div className={styles['hud__top-right-group']}>
-              <GameChat isNight={isNight} />
+              {onlineMode && <GameChat isNight={isNight} />}
 
               <div className={styles['hud__exit-wrapper']}>
                 <WoodyButton

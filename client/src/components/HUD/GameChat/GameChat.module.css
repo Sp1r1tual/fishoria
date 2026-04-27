@@ -390,3 +390,60 @@
     font-size: 0.55rem;
   }
 }
+
+/* Online status indicator */
+.chat__online_indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.55rem;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0 8px;
+  flex-shrink: 0;
+}
+
+.chat__online_dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.6);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.chat__online_dot--offline,
+.chat__online_dot--error {
+  background: #ef4444;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
+  animation: none;
+}
+
+.chat__online_dot--connecting {
+  background: #fbbf24;
+  box-shadow: 0 0 6px rgba(251, 191, 36, 0.6);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.chat__online_count {
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.message__log {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.message__method {
+  color: #93c5fd;
+  font-weight: 600;
+  text-transform: capitalize;
+}

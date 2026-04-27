@@ -62,7 +62,8 @@
   color: #28ca91;
 }
 
-.container--warning {
+.container--error,
+.container--connecting {
   color: #fbbf24;
 }
 
