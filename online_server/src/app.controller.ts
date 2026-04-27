@@ -8,7 +8,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @ApiExcludeEndpoint()
-  @Get()
+  @Get('status')
   getStatus() {
     return this.appService.getStatus();
   }

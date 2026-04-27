@@ -18,4 +18,6 @@ export const envSchema = z.object({
   UPSTASH_REDIS_REST_TOKEN: z.string().min(1, {
     message: 'UPSTASH_REDIS_REST_TOKEN is required',
   }),
+
+  JWT_SECRET: z.string().min(1, 'JWT_SECRET is required'),
 });

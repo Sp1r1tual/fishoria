@@ -65,6 +65,7 @@ export class ChatGateway
 
   async handleConnection(client: Socket) {
     this.logger.debug(`Client connected to chat: ${client.id}`);
+    await this.broadcastAllLakesStats();
   }
 
   async handleDisconnect(client: Socket) {
@@ -79,9 +80,16 @@ export class ChatGateway
     const roomState = await this.chatService.getLakeRoomState(lakeId);
     this.server.to(lakeId).emit('chat:room_state', roomState);
 
+    await this.broadcastAllLakesStats();
+
     this.logger.debug(
       `User ${user.username} left lake ${lakeId} (${client.id})`,
     );
+  }
+
+  private async broadcastAllLakesStats() {
+    const stats = await this.chatService.getAllLakesOnlineCount();
+    this.server.emit('chat:all_lakes_stats', stats);
   }
 
   @UseGuards(WsAuthGuard)
@@ -123,6 +131,8 @@ export class ChatGateway
 
     client.emit('chat:history', history);
     this.server.to(lakeId).emit('chat:room_state', roomState);
+    await this.broadcastAllLakesStats();
+
     this.server.to(lakeId).emit('chat:user_joined', {
       user: chatUser.username,
       lakeId,

@@ -134,6 +134,28 @@ export class ChatService {
     );
   }
 
+  async getAllLakesOnlineCount(): Promise<Record<string, number>> {
+    try {
+      const keys = await this.redis.keys('chat:lake:*:online');
+      if (!keys || keys.length === 0) return {};
+
+      const counts: Record<string, number> = {};
+      await Promise.all(
+        keys.map(async (key) => {
+          const parts = key.split(':');
+          const lakeId = parts[2];
+          if (lakeId) {
+            counts[lakeId] = await this.redis.hlen(key);
+          }
+        }),
+      );
+      return counts;
+    } catch (error) {
+      this.logger.error('Failed to get all lakes online count', error);
+      return {};
+    }
+  }
+
   private async saveToHistory(
     lakeId: string,
     message: IChatMessage,
