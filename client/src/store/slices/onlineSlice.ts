@@ -18,7 +18,7 @@ interface OnlineState {
   roomState: IChatRoomState | null;
   lakesOnlineStats: Record<string, number>;
   currentChatLakeId: string | null;
-  lastReadMessageId: string | null;
+  readPointers: Record<string, string>;
 }
 
 const initialState: OnlineState = {
@@ -29,7 +29,7 @@ const initialState: OnlineState = {
   roomState: null,
   lakesOnlineStats: {},
   currentChatLakeId: null,
-  lastReadMessageId: null,
+  readPointers: {},
 };
 
 const onlineSlice = createSlice({
@@ -60,11 +60,14 @@ const onlineSlice = createSlice({
 
     setChatHistory(state, action: PayloadAction<IChatHistoryResponse>) {
       state.messages = action.payload.history.slice(-MAX_MESSAGES);
-      state.lastReadMessageId = action.payload.lastReadMessageId;
+      state.readPointers = action.payload.readPointers;
     },
 
-    setLastReadMessageId(state, action: PayloadAction<string | null>) {
-      state.lastReadMessageId = action.payload;
+    setReadPointer(
+      state,
+      action: PayloadAction<{ type: string; messageId: string }>,
+    ) {
+      state.readPointers[action.payload.type] = action.payload.messageId;
     },
 
     setRoomState(state, action: PayloadAction<IChatRoomState>) {
@@ -83,6 +86,7 @@ const onlineSlice = createSlice({
       state.messages = [];
       state.roomState = null;
       state.currentChatLakeId = null;
+      state.readPointers = {};
     },
 
     resetOnline() {
@@ -97,7 +101,7 @@ export const {
   setChatConnectionStatus,
   addChatMessage,
   setChatHistory,
-  setLastReadMessageId,
+  setReadPointer,
   setRoomState,
   setLakesOnlineStats,
   setCurrentChatLakeId,

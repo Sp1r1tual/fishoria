@@ -14,3 +14,4 @@ export * from './news.types';
 export * from './shop.types';
 export * from './inventory.types';
 export * from './online.types';
+export * from './chat.types';

@@ -52,7 +52,7 @@ export interface ICatchEventPayload {
 
 export interface IChatHistoryResponse {
   history: IChatMessage[];
-  lastReadMessageId: string | null;
+  readPointers: Record<string, string>;
 }
 
 export type ConnectionStatusType =

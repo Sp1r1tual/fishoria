@@ -4,21 +4,21 @@ import type {
   IChatMessage,
   IChatRoomState,
   ICatchEventPayload,
+  IChatHistoryResponse,
 } from '@/common/types';
 
 import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import {
   addChatMessage,
   setChatHistory,
-  setLastReadMessageId,
+  setReadPointer,
   setRoomState,
   setCurrentChatLakeId,
   clearChat,
 } from '@/store/slices/onlineSlice';
-import type { IChatHistoryResponse } from '@/common/types';
+import { addToast } from '@/store/slices/uiSlice';
 
 import { getChatSocket } from '@/services/socket.service';
-import { addToast } from '@/store/slices/uiSlice';
 
 export function useOnlineChat(lakeId: string | null) {
   const dispatch = useAppDispatch();
@@ -97,13 +97,13 @@ export function useOnlineChat(lakeId: string | null) {
   }, []);
 
   const markAsRead = useCallback(
-    (messageId: string) => {
+    (messageId: string, type: 'chat' | 'system') => {
       if (!lakeId) return;
       const socket = getChatSocket();
       if (!socket.connected) return;
 
-      socket.emit('chat:mark_read', { lakeId, messageId });
-      dispatch(setLastReadMessageId(messageId));
+      socket.emit('chat:mark_read', { lakeId, messageId, type });
+      dispatch(setReadPointer({ type, messageId }));
     },
     [lakeId, dispatch],
   );
