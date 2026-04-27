@@ -9,6 +9,37 @@ export async function seedNews(prisma: PrismaClient) {
   }[] = [
     {
       title: {
+        en: 'Update 0.5.0: Online Update & Interactions',
+        uk: 'Оновлення 0.5.0: Онлайн та Спілкування',
+      },
+      content: {
+        en: `
+### The World is Now Online!
+* **Real-time Chat System**: Connect with other anglers on the lake! Each location now has its own chat channel where you can share tips or just hang out.
+* **Live Catch Broadcasts**: Celebrate your trophies! Every significant catch is now broadcast to all players at your location in real-time.
+* **Smart UI Polish**: We have significantly refined the overall interface. Transitions are smoother, layouts are cleaner, and the chat experience feels truly premium.
+* **Perspective Scaling**: Improved visual realism – the bobber now correctly scales based on your cast distance, creating a true sense of depth.
+* **Performance & Bugs**: Multiple under-the-hood optimizations and critical bug fixes for a more stable experience.
+
+Tight lines and enjoy the new social of Fishoria!
+        `,
+        uk: `
+### Світ став онлайн!
+* **Чат у реальному часі**: Спілкуйтеся з іншими рибалками прямо на озері! Кожна локація тепер має свій канал чату, де можна ділитися порадами або просто розмовляти.
+* **Живі логи вилову**: Святкуйте свої перемоги разом! Кожен значущий улов тепер транслюється всім гравцям на локації в реальному часі.
+* **Вдосконалення інтерфейсу**: Ми суттєво оновили дизайн та логіку роботи HUD. Анімації стали плавнішими, а робота з чатом — максимально комфортною та преміальною.
+* **Ефект перспективи**: Покращено візуальний реалізм — поплавець тепер динамічно змінює розмір залежно від дальності закиду, створюючи справжнє відчуття глибини.
+* **Стабільність**: Проведено велику роботу над виправленням помилок та загальною оптимізацією продуктивності клієнта.
+
+Гарного кльову та насолоджуйтесь новою ерою у Fishoria!
+        `,
+      },
+      imageUrl:
+        'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/news_icons/0.5.0-beta_update.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL25ld3NfaWNvbnMvMC41LjAtYmV0YV91cGRhdGUud2VicCIsImlhdCI6MTc3NzI3ODUzNCwiZXhwIjo0ODk5MzQyNTM0fQ.H8P0Fnxx0bAkIoIZw7EP31Fg71CQMFgKoV6E328kV0g',
+      createdAt: new Date('2026-04-27T11:00:00Z'),
+    },
+    {
+      title: {
         en: 'Update 0.4.0: Social Fishing & New Fish Behavior',
         uk: 'Оновлення 0.4.0: Соціальна Риболовля та Нова Поведінка Риб',
       },

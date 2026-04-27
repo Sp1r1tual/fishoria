@@ -1,6 +1,6 @@
 {
   "name": "fishoria-api",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "author": "Atmosphoria Software",
   "private": true,
   "scripts": {
