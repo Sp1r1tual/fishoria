@@ -132,7 +132,7 @@ export class ChatGateway
     ]);
 
     client.emit('chat:history', {
-      history,
+      ...history,
       readPointers,
     });
     this.server.to(lakeId).emit('chat:room_state', roomState);
@@ -209,7 +209,7 @@ export class ChatGateway
     }
 
     const catchMessage = this.chatService.createCatchEvent(meta.user, payload);
-    this.server.to(payload.lakeId).emit('chat:message', catchMessage);
+    this.server.to(payload.lakeId).emit('chat:event', catchMessage);
   }
 
   @UseGuards(WsAuthGuard)

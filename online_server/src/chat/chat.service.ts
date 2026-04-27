@@ -16,10 +16,10 @@ const MESSAGE_MAX_LENGTH = 100;
 const MESSAGE_COOLDOWN_MS = 2000;
 
 const redisKeys = {
-  history: (lakeId: string) => `chat:lake:${lakeId}:history`,
+  history: (lakeId: string, type: 'chat' | 'system') =>
+    `chat:lake:${lakeId}:history:${type}`,
   online: (lakeId: string) => `chat:lake:${lakeId}:online`,
-  readPointers: (lakeId: string, userId: string) =>
-    `chat:lake:${lakeId}:user:${userId}:read_pointers`,
+  readPointers: (userId: string) => `chat:user:${userId}:read_pointers`,
 };
 
 @Injectable()
@@ -138,17 +138,30 @@ export class ChatService implements OnModuleInit {
     return { lakeId, onlineCount: users.length, users };
   }
 
-  async getHistory(lakeId: string): Promise<IChatMessage[]> {
-    const raw = await this.redis.lrange<string>(
-      redisKeys.history(lakeId),
-      0,
-      MAX_HISTORY - 1,
-    );
-    if (!raw || raw.length === 0) return [];
+  async getHistory(
+    lakeId: string,
+  ): Promise<{ messages: IChatMessage[]; events: IChatMessage[] }> {
+    const [messagesRaw, eventsRaw] = await Promise.all([
+      this.redis.lrange<string>(
+        redisKeys.history(lakeId, 'chat'),
+        0,
+        MAX_HISTORY - 1,
+      ),
+      this.redis.lrange<string>(
+        redisKeys.history(lakeId, 'system'),
+        0,
+        MAX_HISTORY - 1,
+      ),
+    ]);
 
-    return raw.map((item) =>
+    const messages = (messagesRaw || []).map((item) =>
       typeof item === 'string' ? JSON.parse(item) : item,
     );
+    const events = (eventsRaw || []).map((item) =>
+      typeof item === 'string' ? JSON.parse(item) : item,
+    );
+
+    return { messages, events };
   }
 
   async getAllLakesOnlineCount(): Promise<Record<string, number>> {
@@ -177,20 +190,30 @@ export class ChatService implements OnModuleInit {
     lakeId: string,
     userId: string,
   ): Promise<Record<string, string>> {
-    const raw = await this.redis.hgetall<Record<string, string>>(
-      redisKeys.readPointers(lakeId, userId),
+    const fields = [`${lakeId}:chat`, `${lakeId}:system`];
+    const values = await this.redis.hmget(
+      redisKeys.readPointers(userId),
+      ...fields,
     );
-    return raw || {};
+
+    if (!values) {
+      return { chat: '', system: '' };
+    }
+
+    return {
+      chat: (values[0] as string) || '',
+      system: (values[1] as string) || '',
+    };
   }
 
   async markAsRead(
     lakeId: string,
     userId: string,
     messageId: string,
-    type: 'chat' | 'system' = 'chat',
+    type: 'chat' | 'system',
   ): Promise<void> {
-    await this.redis.hset(redisKeys.readPointers(lakeId, userId), {
-      [type]: messageId,
+    await this.redis.hset(redisKeys.readPointers(userId), {
+      [`${lakeId}:${type}`]: messageId,
     });
   }
 
@@ -199,7 +222,8 @@ export class ChatService implements OnModuleInit {
     message: IChatMessage,
   ): Promise<void> {
     try {
-      const key = redisKeys.history(lakeId);
+      const type = message.type === 'system' ? 'system' : 'chat';
+      const key = redisKeys.history(lakeId, type);
       await this.redis.lpush(key, JSON.stringify(message));
       await this.redis.ltrim(key, 0, MAX_HISTORY - 1);
     } catch (error) {
