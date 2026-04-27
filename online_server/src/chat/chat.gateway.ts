@@ -125,15 +125,15 @@ export class ChatGateway
 
     await this.chatService.addOnlineUser(lakeId, chatUser);
 
-    const [history, roomState, lastReadMessageId] = await Promise.all([
+    const [history, roomState, readPointers] = await Promise.all([
       this.chatService.getHistory(lakeId),
       this.chatService.getLakeRoomState(lakeId),
-      this.chatService.getLastReadMessageId(lakeId, userId),
+      this.chatService.getLastReadPointers(lakeId, userId),
     ]);
 
     client.emit('chat:history', {
       history,
-      lastReadMessageId,
+      readPointers,
     });
     this.server.to(lakeId).emit('chat:room_state', roomState);
     await this.broadcastAllLakesStats();
@@ -224,6 +224,7 @@ export class ChatGateway
       payload.lakeId,
       userId,
       payload.messageId,
+      payload.type,
     );
   }
 }

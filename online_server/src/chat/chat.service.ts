@@ -18,8 +18,8 @@ const MESSAGE_COOLDOWN_MS = 2000;
 const redisKeys = {
   history: (lakeId: string) => `chat:lake:${lakeId}:history`,
   online: (lakeId: string) => `chat:lake:${lakeId}:online`,
-  lastRead: (lakeId: string, userId: string) =>
-    `chat:lake:${lakeId}:user:${userId}:last_read`,
+  readPointers: (lakeId: string, userId: string) =>
+    `chat:lake:${lakeId}:user:${userId}:read_pointers`,
 };
 
 @Injectable()
@@ -173,19 +173,25 @@ export class ChatService implements OnModuleInit {
     }
   }
 
-  async getLastReadMessageId(
+  async getLastReadPointers(
     lakeId: string,
     userId: string,
-  ): Promise<string | null> {
-    return await this.redis.get(redisKeys.lastRead(lakeId, userId));
+  ): Promise<Record<string, string>> {
+    const raw = await this.redis.hgetall<Record<string, string>>(
+      redisKeys.readPointers(lakeId, userId),
+    );
+    return raw || {};
   }
 
   async markAsRead(
     lakeId: string,
     userId: string,
     messageId: string,
+    type: 'chat' | 'system' = 'chat',
   ): Promise<void> {
-    await this.redis.set(redisKeys.lastRead(lakeId, userId), messageId);
+    await this.redis.hset(redisKeys.readPointers(lakeId, userId), {
+      [type]: messageId,
+    });
   }
 
   private async saveToHistory(
