@@ -3,7 +3,7 @@ import { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 import { useAppInit } from '@/hooks/core/useAppInit';
-import { useServerStatus } from '@/hooks/core/useServerStatus';
+import { useGlobalSockets } from '@/hooks/core/useGlobalSockets';
 
 import { LanguageSync } from '@/components/logic/LanguageSync';
 import { AudioController } from '@/components/logic/AudioController';
@@ -13,7 +13,7 @@ import { PreloaderScreen } from '@/components/UI/Preloader/PreloaderScreen';
 
 function App() {
   const { isInitializing, isError, refetch, setLoaded } = useAppInit();
-  useServerStatus();
+  useGlobalSockets();
 
   return (
     <SkeletonTheme baseColor="#202435" highlightColor="#47484967">

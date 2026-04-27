@@ -8,32 +8,24 @@ import type {
 
 import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import {
-  setChatConnectionStatus,
   addChatMessage,
   setChatHistory,
   setRoomState,
-  setLakesOnlineStats,
   setCurrentChatLakeId,
   clearChat,
 } from '@/store/slices/onlineSlice';
 
-import {
-  getChatSocket,
-  connectChat,
-  disconnectChat,
-} from '@/services/socket.service';
+import { getChatSocket } from '@/services/socket.service';
 
 export function useOnlineChat(lakeId: string | null) {
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector((s) => s.auth.isAuthenticated);
   const onlineMode = useAppSelector((s) => s.settings.onlineMode);
-  const currentChatLakeId = useAppSelector((s) => s.online.currentChatLakeId);
   const joinedRef = useRef(false);
 
   useEffect(() => {
-    if (!isAuthenticated || !onlineMode) {
+    if (!isAuthenticated || !onlineMode || !lakeId) {
       if (joinedRef.current) {
-        disconnectChat();
         dispatch(clearChat());
         joinedRef.current = false;
       }
@@ -41,25 +33,7 @@ export function useOnlineChat(lakeId: string | null) {
     }
 
     const socket = getChatSocket();
-
-    const onConnect = () => {
-      dispatch(setChatConnectionStatus('online'));
-
-      if (lakeId) {
-        socket.emit('chat:join', { lakeId });
-        joinedRef.current = true;
-        dispatch(setCurrentChatLakeId(lakeId));
-      }
-    };
-
-    const onDisconnect = () => {
-      dispatch(setChatConnectionStatus('offline'));
-      joinedRef.current = false;
-    };
-
-    const onConnectError = () => {
-      dispatch(setChatConnectionStatus('error'));
-    };
+    if (!socket.connected) return;
 
     const onHistory = (history: IChatMessage[]) => {
       dispatch(setChatHistory(history));
@@ -73,54 +47,30 @@ export function useOnlineChat(lakeId: string | null) {
       dispatch(setRoomState(state));
     };
 
-    const onAllLakesStats = (stats: Record<string, number>) => {
-      dispatch(setLakesOnlineStats(stats));
-    };
-
     const onError = (err: { message: string }) => {
       console.warn('[OnlineChat] Server error:', err.message);
     };
 
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
-    socket.on('connect_error', onConnectError);
     socket.on('chat:history', onHistory);
     socket.on('chat:message', onMessage);
     socket.on('chat:room_state', onRoomState);
-    socket.on('chat:all_lakes_stats', onAllLakesStats);
     socket.on('chat:error', onError);
 
-    dispatch(setChatConnectionStatus('connecting'));
-    // Connect without explicit token — cookies are sent automatically
-    connectChat('');
+    socket.emit('chat:join', { lakeId });
+    joinedRef.current = true;
+    dispatch(setCurrentChatLakeId(lakeId));
 
     return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-      socket.off('connect_error', onConnectError);
       socket.off('chat:history', onHistory);
       socket.off('chat:message', onMessage);
       socket.off('chat:room_state', onRoomState);
-      socket.off('chat:all_lakes_stats', onAllLakesStats);
       socket.off('chat:error', onError);
 
-      disconnectChat();
       dispatch(clearChat());
       joinedRef.current = false;
+      // We don't disconnect the global socket here!
     };
   }, [lakeId, isAuthenticated, onlineMode, dispatch]);
-
-  // Re-join when lakeId changes (without full reconnect)
-  useEffect(() => {
-    if (!lakeId || !joinedRef.current) return;
-    if (currentChatLakeId === lakeId) return;
-
-    const socket = getChatSocket();
-    if (socket.connected) {
-      socket.emit('chat:join', { lakeId });
-      dispatch(setCurrentChatLakeId(lakeId));
-    }
-  }, [lakeId, currentChatLakeId, dispatch]);
 
   const sendMessage = useCallback((text: string) => {
     const socket = getChatSocket();

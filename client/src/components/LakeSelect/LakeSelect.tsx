@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useLakeCardAnimations } from '@/hooks/ui/useLakeCardAnimations';
-import { useOnlineChat } from '@/hooks/game/useOnlineChat';
 
 import { StatBadge } from '../UI/StatBadge/StatBadge';
 import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
@@ -35,8 +34,6 @@ export function LakeSelect() {
     (s) => s.online.chatConnectionStatus,
   );
   const lakesOnlineStats = useAppSelector((s) => s.online.lakesOnlineStats);
-
-  useOnlineChat(null);
 
   useEffect(() => {
     if (pendingLakeId && (connectionStatus === 'online' || !onlineMode)) {
