@@ -210,6 +210,8 @@ export function detectSectorBite(params: ISectorBiteParams): ISectorBiteResult {
       let rigMultiplier = 1.0;
       if (params.rigType === 'feeder') {
         rigMultiplier = BITE_DETECTION.feederBiteMultiplier;
+      } else if (params.rigType === 'float' && params.isOnBottom) {
+        rigMultiplier = BITE_DETECTION.floatBottomBiteMultiplier;
       }
 
       const baseChance =

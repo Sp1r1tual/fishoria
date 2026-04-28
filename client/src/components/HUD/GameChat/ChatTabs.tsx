@@ -81,7 +81,10 @@ export const ChatTabs = ({
         {connectionStatus === 'online' && (
           <span className={styles.chat__online_count}>{onlineCount}</span>
         )}
-        <OnlineDot status={connectionStatus as ConnectionStatusType} />
+        <OnlineDot
+          status={connectionStatus as ConnectionStatusType}
+          size="sm"
+        />
       </div>
       <button
         className={styles.chat__minimize}

@@ -48,6 +48,11 @@ export const BITE_DETECTION = {
   /** Penalty multiplier if fishing on the bottom but it's deeper than preferred */
   outOfRangeBottomPenalty: 0.1,
 
+  /**
+   * Penalty multiplier for bite chance if the float is lying on the bottom.
+   */
+  floatBottomBiteMultiplier: 0.5,
+
   /** Base progress added for an alternative bite phase */
   altProgressBase: 0.4,
   /** Random extra progress added for an alternative bite phase */
