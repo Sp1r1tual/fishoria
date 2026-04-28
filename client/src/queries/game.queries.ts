@@ -12,7 +12,6 @@ import { PLAYER_KEYS } from './player.queries';
 import { store } from '@/store/store';
 import { clearPendingEquips } from '@/store/slices/gameSlice';
 
-import { addToast } from '@/store/slices/uiSlice';
 import { InventoryService } from '../services/inventory.service';
 import { GameService } from '../services/game.service';
 
@@ -115,16 +114,10 @@ export const useCatchFishMutation = () => {
 
       return { previousPlayer };
     },
-    onError: (err: AxiosError<{ message?: string }>, _newCatch, context) => {
+    onError: (_err: AxiosError<{ message?: string }>, _newCatch, context) => {
       if (context?.previousPlayer) {
         queryClient.setQueryData(PLAYER_KEYS.profile(), context.previousPlayer);
       }
-      store.dispatch(
-        addToast({
-          type: 'error',
-          message: err?.response?.data?.message || 'Failed to save catch',
-        }),
-      );
     },
     onSuccess: (data) => {
       queryClient.setQueryData(
@@ -240,17 +233,10 @@ export const useBreakGearMutation = () => {
 
       return { previousPlayer };
     },
-    onError: (err: AxiosError<{ message?: string }>, _vars, context) => {
+    onError: (_err: AxiosError<{ message?: string }>, _vars, context) => {
       if (context?.previousPlayer) {
         queryClient.setQueryData(PLAYER_KEYS.profile(), context.previousPlayer);
       }
-      store.dispatch(
-        addToast({
-          type: 'error',
-          message:
-            err?.response?.data?.message || 'Failed to update gear state',
-        }),
-      );
     },
     onSuccess: (data) => {
       queryClient.setQueryData(

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useEffect, useRef } from 'react';
 
 import type { WeatherType } from '@/common/types';
@@ -23,6 +22,7 @@ import { addToast } from '@/store/slices/uiSlice';
 import i18n from '@/i18n';
 
 import { refreshToken } from '@/http/interceptors/auth.interceptor';
+import { OnlineService } from '@/services/online.service';
 
 import {
   getStatusSocket,
@@ -35,9 +35,6 @@ import {
   connectGame,
   disconnectGame,
 } from '@/services/socket.service';
-
-const ONLINE_SERVER_URL =
-  import.meta.env.VITE_ONLINE_SERVER_URL ?? 'http://localhost:5001';
 
 export function useGlobalSockets() {
   const dispatch = useAppDispatch();
@@ -73,7 +70,12 @@ export function useGlobalSockets() {
       );
     };
 
-    axios.get(`${ONLINE_SERVER_URL}/status`).catch(() => {});
+    const statusInterval = setInterval(
+      () => OnlineService.pingStatus(),
+      10 * 60 * 1000,
+    );
+    OnlineService.pingStatus();
+
     const statusSocket = getStatusSocket();
     const chatSocket = getChatSocket();
     const gameSocket = getGameSocket();
@@ -210,6 +212,7 @@ export function useGlobalSockets() {
       gameSocket.off('connect_error', onConnectionError);
       gameSocket.off('exception', onException);
       disconnectGame();
+      clearInterval(statusInterval);
     };
   }, [dispatch, onlineMode, isAuthenticated, isSessionOffline]);
 }

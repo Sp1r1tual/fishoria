@@ -12,8 +12,13 @@ const $mainApi = axios.create({
   withXSRFToken: true,
 });
 
+const $onlineApi = axios.create({
+  baseURL: import.meta.env.VITE_ONLINE_SERVER_URL,
+  withCredentials: true,
+});
+
 authInterceptors($mainApi);
 xsrfInterceptors($mainApi);
 errorInterceptors($mainApi);
 
-export { $mainApi };
+export { $mainApi, $onlineApi };

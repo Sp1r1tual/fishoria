@@ -8,7 +8,7 @@ import type {
 } from '@/common/types';
 
 import { store } from '@/store/store';
-import { addToast } from '@/store/slices/uiSlice';
+
 import { addPendingEquips } from '@/store/slices/gameSlice';
 import { PLAYER_KEYS } from './player.queries';
 
@@ -79,19 +79,13 @@ export const useEquipMutation = () => {
 
       return { previousProfile };
     },
-    onError: (err: AxiosError<{ message?: string }>, _variables, context) => {
+    onError: (_err: AxiosError<{ message?: string }>, _variables, context) => {
       if (context?.previousProfile) {
         queryClient.setQueryData(
           PLAYER_KEYS.profile(),
           context.previousProfile,
         );
       }
-      store.dispatch(
-        addToast({
-          type: 'error',
-          message: err?.response?.data?.message || 'Failed to equip item',
-        }),
-      );
     },
     onSuccess: (updatedProfile) => {
       if (updatedProfile != null) {
@@ -142,19 +136,13 @@ export const useRepairMutation = () => {
       }
       return { previousProfile };
     },
-    onError: (err: AxiosError<{ message?: string }>, _variables, context) => {
+    onError: (_err: AxiosError<{ message?: string }>, _variables, context) => {
       if (context?.previousProfile) {
         queryClient.setQueryData(
           PLAYER_KEYS.profile(),
           context.previousProfile,
         );
       }
-      store.dispatch(
-        addToast({
-          type: 'error',
-          message: err?.response?.data?.message || 'Failed to repair item',
-        }),
-      );
     },
     onSuccess: (data) => {
       queryClient.setQueryData(
@@ -211,19 +199,13 @@ export const useConsumeMutation = () => {
 
       return { previousProfile };
     },
-    onError: (err: AxiosError<{ message?: string }>, _newItem, context) => {
+    onError: (_err: AxiosError<{ message?: string }>, _newItem, context) => {
       if (context?.previousProfile) {
         queryClient.setQueryData(
           PLAYER_KEYS.profile(),
           context.previousProfile,
         );
       }
-      store.dispatch(
-        addToast({
-          type: 'error',
-          message: err?.response?.data?.message || 'Failed to consume item',
-        }),
-      );
     },
     onSuccess: (data) => {
       queryClient.setQueryData(
@@ -277,19 +259,13 @@ export const useDeleteMutation = () => {
       }
       return { previousProfile };
     },
-    onError: (err: AxiosError<{ message?: string }>, _variables, context) => {
+    onError: (_err: AxiosError<{ message?: string }>, _variables, context) => {
       if (context?.previousProfile) {
         queryClient.setQueryData(
           PLAYER_KEYS.profile(),
           context.previousProfile,
         );
       }
-      store.dispatch(
-        addToast({
-          type: 'error',
-          message: err?.response?.data?.message || 'Failed to delete item',
-        }),
-      );
     },
     onSuccess: (data) => {
       queryClient.setQueryData(
