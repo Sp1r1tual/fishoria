@@ -12,7 +12,11 @@ import styles from './WelcomeModal.module.css';
 
 const WELCOME_KEY = 'fishoria_welcome_shown';
 
-export const WelcomeModal: React.FC = () => {
+interface WelcomeModalProps {
+  onClose?: () => void;
+}
+
+export const WelcomeModal: React.FC<WelcomeModalProps> = ({ onClose }) => {
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -24,6 +28,7 @@ export const WelcomeModal: React.FC = () => {
   const handleClose = () => {
     localStorage.setItem(WELCOME_KEY, 'true');
     setIsVisible(false);
+    if (onClose) onClose();
   };
 
   if (!isVisible) return null;

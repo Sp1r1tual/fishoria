@@ -1,6 +1,6 @@
 import { ProfileModal } from '../UI/modals/ProfileModal/ProfileModal';
 import { WeatherForecastModal } from '../UI/modals/WeatherForecastModal/WeatherForecastModal';
-import { WelcomeModal } from '../UI/WelcomeModal/WelcomeModal';
+import { IntroSequenceManager } from './IntroSequenceManager';
 import { LossSync } from '../GameCanvas/LossSync';
 import { ConfirmChoiceModal } from '../UI/modals/ConfirmChoiceModal/ConfirmChoiceModal';
 
@@ -56,7 +56,7 @@ export function GlobalModals() {
         />
       )}
 
-      <WelcomeModal />
+      <IntroSequenceManager />
       <LossSync />
     </>
   );

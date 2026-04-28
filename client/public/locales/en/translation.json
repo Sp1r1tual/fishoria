@@ -743,6 +743,18 @@
     "description": "We use cookies to save your game progress and settings. By continuing, you agree to our use of cookies.",
     "accept": "I understand"
   },
+  "fullscreen": {
+    "title": "Fullscreen Mode",
+    "description": "We recommend fullscreen mode for better immersion in the atmosphere.",
+    "hints": {
+      "windows": "Press the F11 key on your keyboard to enter fullscreen mode.",
+      "mac": "Press the Cmd + Ctrl + F combination to expand the game to fullscreen.",
+      "ios": "Open the game in Safari, tap the 'Share' button (square with an arrow), and select 'Add to Home Screen'.",
+      "android": "Tap the 'three dots' in your browser menu and select 'Add to Home Screen' or 'Install'.",
+      "default": "Use your browser settings to enter fullscreen mode."
+    },
+    "close": "Got it"
+  },
   "preloader": {
     "initializing": "Initializing download...",
     "loadingTextures": "Loading textures...",

@@ -7,14 +7,22 @@ import styles from './CookieConsent.module.css';
 
 const CONSENT_KEY = 'web-fishing-cookie-consent';
 
-export function CookieConsent() {
+interface CookieConsentProps {
+  onAccept?: () => void;
+}
+
+export function CookieConsent({ onAccept }: CookieConsentProps) {
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const consent = localStorage.getItem(CONSENT_KEY);
     if (!consent) {
-      const timer = setTimeout(() => setIsVisible(true), 1500);
+      const timer = setTimeout(() => {
+        if (!localStorage.getItem(CONSENT_KEY)) {
+          setIsVisible(true);
+        }
+      }, 1500);
       return () => clearTimeout(timer);
     }
   }, []);
@@ -22,6 +30,7 @@ export function CookieConsent() {
   const handleAccept = () => {
     localStorage.setItem(CONSENT_KEY, 'true');
     setIsVisible(false);
+    if (onAccept) onAccept();
   };
 
   if (!isVisible) return null;
@@ -40,8 +49,9 @@ export function CookieConsent() {
         </div>
       </div>
       <WoodyButton
-        variant="brown"
+        variant="green"
         size="sm"
+        isShining={true}
         onClick={handleAccept}
         className={styles['cookie-consent__btn']}
       >

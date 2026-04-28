@@ -72,13 +72,13 @@ export const AuthLayout = () => {
 
   const wasLoggedOut = sessionStorage.getItem('loggedOut') === 'true';
 
-  if (!isAuthenticated || wasLoggedOut) {
-    const isPublicPath =
-      location.pathname === '/welcome' ||
-      location.pathname === '/reset-password' ||
-      location.pathname === '/privacy' ||
-      location.pathname === '/terms';
+  const isPublicPath =
+    location.pathname === '/welcome' ||
+    location.pathname === '/reset-password' ||
+    location.pathname === '/privacy' ||
+    location.pathname === '/terms';
 
+  if (!isAuthenticated || wasLoggedOut) {
     if (!isPublicPath) {
       return <Navigate to="/welcome" replace />;
     }
@@ -90,7 +90,7 @@ export const AuthLayout = () => {
       <ScrollToTop />
       <ToastContainer />
       <Outlet />
-      <CookieConsent />
+      {isPublicPath && <CookieConsent />}
     </>
   );
 };
