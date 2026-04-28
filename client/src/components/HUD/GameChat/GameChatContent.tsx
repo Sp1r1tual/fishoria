@@ -77,7 +77,11 @@ export function GameChatContent({
               <div key={msg.id}>
                 {idx === firstUnreadIdx && firstUnreadIdx !== -1 && (
                   <div className={styles.chat__unread_line}>
-                    <span>{t('hud.chat.unread_messages')}</span>
+                    <span>
+                      {state.activeTab === 'events'
+                        ? t('hud.chat.unread_events')
+                        : t('hud.chat.unread_messages')}
+                    </span>
                   </div>
                 )}
                 <ChatMessage

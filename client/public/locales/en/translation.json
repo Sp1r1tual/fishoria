@@ -335,6 +335,7 @@
     "chat": {
       "placeholder": "Send...",
       "unread_messages": "New messages",
+      "unread_events": "New events",
       "tabs": {
         "events": "Events",
         "eventsShort": "Events",

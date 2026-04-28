@@ -335,6 +335,7 @@
     "chat": {
       "placeholder": "Надіслати...",
       "unread_messages": "Нові повідомлення",
+      "unread_events": "Нові події",
       "tabs": {
         "events": "Події",
         "eventsShort": "Події",
