@@ -82,13 +82,7 @@ export function Inventory({ isModal = false }: { isModal?: boolean }) {
       onClick={handleSellAll}
       disabled={sellMutation.isPending}
     >
-      {t('inventory.sellAll')} –{' '}
-      <img
-        src={coinIcon}
-        alt="coins"
-        className={styles['inventory__coin-icon-btn-sm']}
-      />{' '}
-      {totalValue}
+      {t('inventory.sellAll')}
     </WoodyButton>
   );
 

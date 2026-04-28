@@ -79,7 +79,7 @@
     "balance": "Balance",
     "empty": "Empty",
     "goFish": "Let's go to fishing!",
-    "sellAll": "Sell All Items",
+    "sellAll": "Sell",
     "deleteConfirmTitle": "Delete item?",
     "deleteConfirmMessage": "Are you sure you want to delete {{name}}? This cannot be undone.",
     "deleteConfirmBtn": "Delete",

@@ -79,7 +79,7 @@
     "balance": "Баланс",
     "empty": "Пусто",
     "goFish": "Пора вирушати на рибалку!",
-    "sellAll": "Продати все",
+    "sellAll": "Продати",
     "deleteConfirmTitle": "Видалити предмет?",
     "deleteConfirmMessage": "Ви впевнені, що хочете видалити {{name}}? Цю дію неможливо скасувати.",
     "deleteConfirmBtn": "Видалити",
