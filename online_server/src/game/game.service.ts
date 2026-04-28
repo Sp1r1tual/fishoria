@@ -1,10 +1,6 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 
-import { RedisService } from '../common/redis/redis.service';
-
 export type WeatherType = 'clear' | 'cloudy' | 'rain';
-
-const REDIS_KEY = 'fishoria:game_state';
 
 @Injectable()
 export class GameService implements OnModuleInit {
@@ -18,65 +14,17 @@ export class GameService implements OnModuleInit {
   private weatherForecast: WeatherType[] = [];
   private lastWeatherUpdateHour: number = -1;
 
-  constructor(private readonly redis: RedisService) {
+  constructor() {
     this.initGameTime();
     this.generateForecast();
   }
 
-  async onModuleInit() {
-    try {
-      const savedStateStr = await this.redis.get<string>(REDIS_KEY);
-      if (savedStateStr) {
-        const savedState =
-          typeof savedStateStr === 'string'
-            ? JSON.parse(savedStateStr)
-            : savedStateStr;
-
-        if (savedState && savedState.virtualTime && savedState.savedAt) {
-          const elapsedRealMs = Date.now() - savedState.savedAt;
-          const elapsedVirtualMs = elapsedRealMs * this.gameTimeSpeedMultiplier;
-
-          this.virtualStartTime = savedState.virtualTime + elapsedVirtualMs;
-          this.realStartTime = Date.now();
-
-          if (savedState.weather) this.weather = savedState.weather;
-          if (savedState.weatherForecast)
-            this.weatherForecast = savedState.weatherForecast;
-          if (savedState.lastWeatherUpdateHour !== undefined) {
-            this.lastWeatherUpdateHour = savedState.lastWeatherUpdateHour;
-          }
-
-          this.logger.log('Game state restored from Redis');
-        }
-      }
-    } catch (e) {
-      this.logger.error('Failed to load game state from Redis', e);
-    }
-
-    setInterval(() => {
-      this.saveGameState();
-    }, 60 * 1000);
-  }
-
-  private async saveGameState() {
-    try {
-      const state = {
-        virtualTime: this.getGameTimeAsDate().getTime(),
-        savedAt: Date.now(),
-        weather: this.weather,
-        weatherForecast: this.weatherForecast,
-        lastWeatherUpdateHour: this.lastWeatherUpdateHour,
-      };
-      await this.redis.set(REDIS_KEY, JSON.stringify(state));
-    } catch (e) {
-      this.logger.error('Failed to save game state to Redis', e);
-    }
-  }
+  onModuleInit() {}
 
   private initGameTime() {
     this.realStartTime = Date.now();
     const date = new Date();
-    date.setHours(8, 0, 0, 0);
+    date.setHours(5, 0, 0, 0);
     this.virtualStartTime = date.getTime();
   }
 
@@ -100,7 +48,6 @@ export class GameService implements OnModuleInit {
     date.setHours(hour, 0, 0, 0);
     this.virtualStartTime = date.getTime();
     this.realStartTime = Date.now();
-    this.saveGameState();
   }
 
   public setWeather(weather: WeatherType) {
@@ -108,7 +55,6 @@ export class GameService implements OnModuleInit {
     if (this.weatherForecast.length > 0) {
       this.weatherForecast[0] = weather;
     }
-    this.saveGameState();
   }
 
   public getGameTimeAsDate(): Date {
