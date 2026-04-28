@@ -223,6 +223,35 @@ export class ChatService implements OnModuleInit {
     });
   }
 
+  async deleteMessage(
+    lakeId: string,
+    messageId: string,
+    userId: string,
+  ): Promise<boolean> {
+    try {
+      const key = redisKeys.history(lakeId, 'chat');
+      const raw = await this.redis.lrange<string>(key, 0, MAX_HISTORY - 1);
+      if (!raw || raw.length === 0) return false;
+
+      let targetItem: string | null = null;
+      for (const item of raw) {
+        const msg = typeof item === 'string' ? JSON.parse(item) : item;
+        if (msg.id === messageId && msg.userId === userId) {
+          targetItem = typeof item === 'string' ? item : JSON.stringify(item);
+          break;
+        }
+      }
+
+      if (!targetItem) return false;
+
+      await this.redis.lrem(key, 1, targetItem);
+      return true;
+    } catch (error) {
+      this.logger.error('Failed to delete message', error);
+      return false;
+    }
+  }
+
   private async saveToHistory(
     lakeId: string,
     message: IChatMessage,

@@ -20,6 +20,7 @@ import type { IJwtPayload } from '../auth/auth.service';
 
 import { JoinDto } from './dto/join.dto';
 import { SendMessageDto } from './dto/send-message.dto';
+import { DeleteMessageDto } from './dto/delete-message.dto';
 import { CatchEventDto } from './dto/catch-event.dto';
 import { MarkReadDto } from './dto/mark-read.dto';
 
@@ -193,6 +194,30 @@ export class ChatGateway
     if (!message) return;
 
     this.server.to(lakeId).emit('chat:message', message);
+  }
+
+  @UseGuards(WsAuthGuard)
+  @UsePipes(new ZodValidationPipe())
+  @SubscribeMessage('chat:delete_message')
+  async handleDeleteMessage(
+    @ConnectedSocket() client: IAuthenticatedSocket,
+    @MessageBody() payload: DeleteMessageDto,
+  ) {
+    const meta = this.socketMeta.get(client.id);
+    if (!meta) return;
+
+    const { user, lakeId } = meta;
+    const deleted = await this.chatService.deleteMessage(
+      lakeId,
+      payload.messageId,
+      user.id,
+    );
+
+    if (deleted) {
+      this.server.to(lakeId).emit('chat:message_deleted', {
+        messageId: payload.messageId,
+      });
+    }
   }
 
   @UseGuards(WsAuthGuard)
