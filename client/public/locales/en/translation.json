@@ -393,7 +393,7 @@
   "news": {
     "title": "News & Updates",
     "markRead": "Mark as read",
-    "markAllRead": "Mark all as read",
+    "markAllRead": "All read",
     "noNews": "No news for now.",
     "unread": "Unread",
     "newBadge": "NEW",
@@ -432,6 +432,7 @@
     "placeholder": "Enter name...",
     "namePlaceholder": "Enter your name",
     "save": "Save Changes",
+    "processing": "Saving...",
     "savedSuccess": "Profile updated!",
     "errorLength": "Name must be 3-20 characters",
     "errorChars": "Name contains invalid characters",
@@ -993,6 +994,26 @@
     "error": "Error",
     "serverUnavailable": "Server currently unavailable",
     "retry": "Retry",
-    "delete": "Delete"
+    "delete": "Delete",
+    "loading": "Loading...",
+    "processing": "Processing...",
+    "save": "Save",
+    "close": "Close",
+    "discard": "Discard",
+    "remove": "Remove"
+  },
+  "toasts": {
+    "catch": {
+      "error": "Failed to save catch"
+    },
+    "gear": {
+      "error": "Failed to update gear state"
+    },
+    "inventory": {
+      "equipError": "Failed to equip item",
+      "repairError": "Failed to repair item",
+      "consumeError": "Failed to consume item",
+      "deleteError": "Failed to delete item"
+    }
   }
 }

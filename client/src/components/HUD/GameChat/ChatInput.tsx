@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useIOSInputFix } from '@/hooks/ui/useIOSInputFix';
+
 import styles from './GameChat.module.css';
 
 interface ChatInputProps {
@@ -10,6 +12,7 @@ interface ChatInputProps {
 export const ChatInput = ({ onSendMessage }: ChatInputProps) => {
   const { t } = useTranslation();
   const [inputValue, setInputValue] = useState('');
+  const { inputProps } = useIOSInputFix();
 
   const handleSubmit = useCallback(
     (e: React.SyntheticEvent) => {
@@ -32,6 +35,7 @@ export const ChatInput = ({ onSendMessage }: ChatInputProps) => {
         maxLength={100}
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
+        {...inputProps}
       />
       <span
         className={`${styles.chat__counter} ${

@@ -47,7 +47,6 @@ body {
   padding: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  overflow-y: overlay;
   background-color: #000;
   color: var(--clr-text);
   font-family: var(--font-sans);
@@ -56,8 +55,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   image-rendering: -webkit-optimize-contrast;
-  -webkit-overflow-scrolling: touch;
-  -webkit-text-size-adjust: 100%;
+  -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+  text-size-adjust: none;
   touch-action: manipulation;
 }
 
@@ -158,6 +158,8 @@ button img,
   letter-spacing: 0.02em;
   transition: all var(--transition);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 * {

@@ -14,10 +14,12 @@
 .chat__body {
   display: flex;
   flex-direction: column;
-  max-height: 150px;
+  max-height: 400px; /* increased to fit messages + input */
   opacity: 1;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease;
 }
 
 .chat--minimized .chat__body {
@@ -27,7 +29,7 @@
 }
 
 .chat--minimized .chat__input_wrapper {
-  border-radius: 20px;
+  border-radius: 0 0 12px 12px;
 }
 
 .chat__tabs {
@@ -39,8 +41,7 @@
   overflow: hidden;
   transition:
     background 0.5s ease,
-    border-color 0.5s ease,
-    border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-color 0.5s ease;
 }
 
 .chat--night .chat__tabs {
@@ -176,6 +177,7 @@
   box-shadow:
     0 4px 20px rgba(0, 0, 0, 0.3),
     inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  transition: border-radius 0.3s ease-in; /* Slower radius expansion when minimizing */
 }
 
 .chat--night.chat--minimized .chat__tabs {
@@ -312,8 +314,7 @@
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   transition:
     background 0.5s ease,
-    border-color 0.5s ease,
-    border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-color 0.5s ease;
   display: flex;
   align-items: center;
   gap: 8px;

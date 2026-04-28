@@ -24,6 +24,8 @@
   font-family: var(--font-display);
   overflow: visible;
   white-space: nowrap;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
 }
 
 .woody-button.shining-effect {
@@ -236,12 +238,10 @@
 
 .label {
   line-height: 1.2;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  hyphens: auto;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  overflow: visible;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
 }
 
 .tile-style {

@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import type { AxiosError } from 'axios';
 
 import type {
   IPlayerProfile,
@@ -7,6 +8,7 @@ import type {
 } from '@/common/types';
 
 import { store } from '@/store/store';
+import { addToast } from '@/store/slices/uiSlice';
 import { addPendingEquips } from '@/store/slices/gameSlice';
 import { PLAYER_KEYS } from './player.queries';
 
@@ -24,7 +26,7 @@ export const useEquipMutation = () => {
   const queryClient = useQueryClient();
   return useMutation<
     unknown,
-    unknown,
+    AxiosError<{ message?: string }>,
     EquipPayload,
     { previousProfile: IPlayerProfile | undefined }
   >({
@@ -77,13 +79,19 @@ export const useEquipMutation = () => {
 
       return { previousProfile };
     },
-    onError: (_err, _variables, context) => {
+    onError: (err: AxiosError<{ message?: string }>, _variables, context) => {
       if (context?.previousProfile) {
         queryClient.setQueryData(
           PLAYER_KEYS.profile(),
           context.previousProfile,
         );
       }
+      store.dispatch(
+        addToast({
+          type: 'error',
+          message: err?.response?.data?.message || 'Failed to equip item',
+        }),
+      );
     },
     onSuccess: (updatedProfile) => {
       if (updatedProfile != null) {
@@ -97,7 +105,7 @@ export const useRepairMutation = () => {
   const queryClient = useQueryClient();
   return useMutation<
     unknown,
-    unknown,
+    AxiosError<{ message?: string }>,
     { kitUid: string; targetUid: string; targetType: 'rod' | 'reel' },
     { previousProfile: IPlayerProfile | undefined }
   >({
@@ -134,13 +142,19 @@ export const useRepairMutation = () => {
       }
       return { previousProfile };
     },
-    onError: (_err, _variables, context) => {
+    onError: (err: AxiosError<{ message?: string }>, _variables, context) => {
       if (context?.previousProfile) {
         queryClient.setQueryData(
           PLAYER_KEYS.profile(),
           context.previousProfile,
         );
       }
+      store.dispatch(
+        addToast({
+          type: 'error',
+          message: err?.response?.data?.message || 'Failed to repair item',
+        }),
+      );
     },
     onSuccess: (data) => {
       queryClient.setQueryData(
@@ -166,7 +180,7 @@ export const useConsumeMutation = () => {
   const queryClient = useQueryClient();
   return useMutation<
     unknown,
-    unknown,
+    AxiosError<{ message?: string }>,
     { itemId: string; itemType: string; quantity?: number },
     { previousProfile: IPlayerProfile | undefined }
   >({
@@ -197,13 +211,19 @@ export const useConsumeMutation = () => {
 
       return { previousProfile };
     },
-    onError: (_err, _newItem, context) => {
+    onError: (err: AxiosError<{ message?: string }>, _newItem, context) => {
       if (context?.previousProfile) {
         queryClient.setQueryData(
           PLAYER_KEYS.profile(),
           context.previousProfile,
         );
       }
+      store.dispatch(
+        addToast({
+          type: 'error',
+          message: err?.response?.data?.message || 'Failed to consume item',
+        }),
+      );
     },
     onSuccess: (data) => {
       queryClient.setQueryData(
@@ -229,7 +249,7 @@ export const useDeleteMutation = () => {
   const queryClient = useQueryClient();
   return useMutation<
     unknown,
-    unknown,
+    AxiosError<{ message?: string }>,
     { uid: string },
     { previousProfile: IPlayerProfile | undefined }
   >({
@@ -257,13 +277,19 @@ export const useDeleteMutation = () => {
       }
       return { previousProfile };
     },
-    onError: (_err, _variables, context) => {
+    onError: (err: AxiosError<{ message?: string }>, _variables, context) => {
       if (context?.previousProfile) {
         queryClient.setQueryData(
           PLAYER_KEYS.profile(),
           context.previousProfile,
         );
       }
+      store.dispatch(
+        addToast({
+          type: 'error',
+          message: err?.response?.data?.message || 'Failed to delete item',
+        }),
+      );
     },
     onSuccess: (data) => {
       queryClient.setQueryData(

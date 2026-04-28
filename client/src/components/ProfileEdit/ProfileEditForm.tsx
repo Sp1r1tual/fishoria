@@ -5,6 +5,7 @@ import { Link } from 'react-router';
 import type { IPlayerProfile } from '@/common/types';
 
 import { useClickSound } from '@/hooks/audio/useSoundEffect';
+import { useIOSInputFix } from '@/hooks/ui/useIOSInputFix';
 
 import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
 import { SkeletonImage } from '../UI/skeletons/SkeletonImage/SkeletonImage';
@@ -26,6 +27,7 @@ export function ProfileEditForm({ player }: ProfileEditFormProps) {
   const { t } = useTranslation();
   const updateProfileMutation = useUpdateProfileMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { inputProps } = useIOSInputFix();
 
   const [username, setUsername] = useState(player.user.username || '');
   const [usernameError, setUsernameError] = useState<string | null>(null);
@@ -150,6 +152,7 @@ export function ProfileEditForm({ player }: ProfileEditFormProps) {
             setUsername(e.target.value);
             if (usernameError) setUsernameError(null);
           }}
+          {...inputProps}
           placeholder={t('profile.namePlaceholder')}
           disabled={isPending}
           autoComplete="off"
@@ -248,8 +251,8 @@ export function ProfileEditForm({ player }: ProfileEditFormProps) {
             isUploading
               ? t('profile.uploading')
               : isPending
-                ? t('common.processing')
-                : t('common.save')
+                ? t('profile.processing')
+                : t('profile.save')
           }
           onClick={handleSave}
           disabled={isPending || !hasChanges || !username.trim()}
