@@ -9,9 +9,16 @@ import styles from './GameChat.module.css';
 interface ChatMessageProps {
   msg: IChatMessage;
   onOpenProfile: (userId: string) => void;
+  onDelete?: (id: string) => void;
+  currentUserId?: string;
 }
 
-export const ChatMessage = ({ msg, onOpenProfile }: ChatMessageProps) => {
+export const ChatMessage = ({
+  msg,
+  onOpenProfile,
+  onDelete,
+  currentUserId,
+}: ChatMessageProps) => {
   const { t } = useTranslation();
 
   return (
@@ -41,6 +48,16 @@ export const ChatMessage = ({ msg, onOpenProfile }: ChatMessageProps) => {
           </span>{' '}
           (<span className={styles.message__weight}>{msg.weight}</span>)
         </span>
+      )}
+
+      {msg.type === 'chat' && msg.userId === currentUserId && (
+        <button
+          className={styles.message__delete}
+          onClick={() => onDelete?.(msg.id)}
+          title={t('common.delete')}
+        >
+          ×
+        </button>
       )}
     </div>
   );

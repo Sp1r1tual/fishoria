@@ -983,6 +983,7 @@
   },
   "common": {
     "error": "Error",
-    "serverUnavailable": "Server is currently unavailable"
+    "serverUnavailable": "Server currently unavailable",
+    "delete": "Delete"
   }
 }

@@ -58,6 +58,10 @@ const onlineSlice = createSlice({
       ];
     },
 
+    deleteChatMessage(state, action: PayloadAction<string>) {
+      state.messages = state.messages.filter((m) => m.id !== action.payload);
+    },
+
     setChatHistory(state, action: PayloadAction<IChatHistoryResponse>) {
       state.messages = [...action.payload.messages, ...action.payload.events]
         .sort(
@@ -105,6 +109,7 @@ export const {
   setConnectionStatus,
   setChatConnectionStatus,
   addChatMessage,
+  deleteChatMessage,
   setChatHistory,
   setReadPointer,
   setRoomState,

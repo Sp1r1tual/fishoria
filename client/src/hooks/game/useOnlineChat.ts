@@ -15,6 +15,7 @@ import {
   setRoomState,
   setCurrentChatLakeId,
   clearChat,
+  deleteChatMessage,
 } from '@/store/slices/onlineSlice';
 
 import { getChatSocket } from '@/services/socket.service';
@@ -60,9 +61,14 @@ export function useOnlineChat(lakeId: string | null) {
       dispatch(setRoomState(state));
     };
 
+    const onMessageDeleted = (data: { messageId: string }) => {
+      dispatch(deleteChatMessage(data.messageId));
+    };
+
     socket.on('chat:history', onHistory);
     socket.on('chat:message', onMessage);
     socket.on('chat:event', onMessage);
+    socket.on('chat:message_deleted', onMessageDeleted);
     socket.on('chat:room_state', onRoomState);
 
     socket.emit('chat:join', { lakeId });
@@ -73,6 +79,7 @@ export function useOnlineChat(lakeId: string | null) {
       socket.off('chat:history', onHistory);
       socket.off('chat:message', onMessage);
       socket.off('chat:event', onMessage);
+      socket.off('chat:message_deleted', onMessageDeleted);
       socket.off('chat:room_state', onRoomState);
 
       socket.emit('chat:leave');
@@ -96,6 +103,13 @@ export function useOnlineChat(lakeId: string | null) {
     socket.emit('chat:send_message', { text: text.trim() });
   }, []);
 
+  const deleteMessage = useCallback((messageId: string) => {
+    const socket = getChatSocket();
+    if (!socket.connected) return;
+
+    socket.emit('chat:delete_message', { messageId });
+  }, []);
+
   const sendCatchEvent = useCallback((payload: ICatchEventPayload) => {
     const socket = getChatSocket();
     if (!socket.connected) return;
@@ -116,5 +130,5 @@ export function useOnlineChat(lakeId: string | null) {
     [lakeId, dispatch],
   );
 
-  return { sendMessage, sendCatchEvent, markAsRead };
+  return { sendMessage, deleteMessage, sendCatchEvent, markAsRead };
 }

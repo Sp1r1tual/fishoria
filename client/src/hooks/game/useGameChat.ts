@@ -57,7 +57,8 @@ export function useGameChat(
     (s) => s.online.chatConnectionStatus,
   );
 
-  const { sendMessage, markAsRead } = useOnlineChat(currentLakeId);
+  const { sendMessage, markAsRead, deleteMessage } =
+    useOnlineChat(currentLakeId);
 
   const [selectedPlayer, setSelectedPlayer] = useState<IPlayerProfile | null>(
     null,
@@ -287,6 +288,7 @@ export function useGameChat(
     handleScroll,
     scrollToBottom,
     handleSendMessage,
+    deleteMessage,
     setTab,
     toggleMinimized,
   };

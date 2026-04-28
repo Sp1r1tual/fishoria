@@ -7,6 +7,8 @@ import { ChatTabs } from './ChatTabs';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 
+import { useAppSelector } from '@/hooks/core/useAppStore';
+
 import styles from './GameChat.module.css';
 
 interface IGameChatContentProps {
@@ -37,7 +39,10 @@ export function GameChatContent({
     handleSendMessage,
     setTab,
     toggleMinimized,
+    deleteMessage,
   } = useGameChat(initialReadPointers);
+
+  const currentUser = useAppSelector((s) => s.auth.user);
 
   return (
     <div
@@ -75,7 +80,12 @@ export function GameChatContent({
                     <span>{t('hud.chat.unread_messages')}</span>
                   </div>
                 )}
-                <ChatMessage msg={msg} onOpenProfile={handleOpenProfile} />
+                <ChatMessage
+                  msg={msg}
+                  onOpenProfile={handleOpenProfile}
+                  onDelete={deleteMessage}
+                  currentUserId={currentUser?.id}
+                />
               </div>
             ))
           )}

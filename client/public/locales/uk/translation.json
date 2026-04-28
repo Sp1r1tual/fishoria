@@ -982,6 +982,7 @@
   },
   "common": {
     "error": "Помилка",
-    "serverUnavailable": "Сервер наразі недоступний"
+    "serverUnavailable": "Сервер наразі недоступний",
+    "delete": "Видалити"
   }
 }
