@@ -1,4 +1,4 @@
-import { Application, Container, Assets } from 'pixi.js';
+import { Application, Container, Assets, Graphics, BlurFilter } from 'pixi.js';
 
 import type {
   IScene,
@@ -26,6 +26,7 @@ import { DebugLayer } from '../debug/DebugLayer';
 import { BackgroundRenderer } from '../rendering/BackgroundRenderer';
 import { GroundbaitEffect } from '../effects/GroundbaitEffect';
 import { BubbleEffect } from '../effects/BubbleEffect';
+import { WaterRippleEffect } from '../effects/WaterRippleEffect';
 import { DragonflyEffect } from '../effects/DragonflyEffect';
 import { InputHandler } from '../input/InputHandler';
 import { validateCast } from '@/game/domain/mechanics/CastingSystem';
@@ -118,7 +119,9 @@ export class LakeScene implements IScene {
   private weather: WeatherType = 'clear';
   private groundbaitEffect!: GroundbaitEffect;
   private bubbleEffect!: BubbleEffect;
+  private waterRippleEffect!: WaterRippleEffect;
   private dragonflyEffect!: DragonflyEffect;
+  private strikeHintGfx!: Graphics;
 
   private config: ILakeConfig;
   private callbacks: ILakeSceneCallbacks;
@@ -193,6 +196,9 @@ export class LakeScene implements IScene {
     const bgLayer = new Container();
     this.fishLayer = new Container();
     this.uiLayer = new Container();
+    this.strikeHintGfx = new Graphics();
+    this.uiLayer.addChild(this.strikeHintGfx);
+
     stage.addChild(bgLayer);
     stage.addChild(this.fishLayer);
     stage.addChild(this.uiLayer);
@@ -200,8 +206,12 @@ export class LakeScene implements IScene {
     this.bgRenderer = new BackgroundRenderer(bgLayer, this.config);
     this.bgRenderer.setBackgroundTexture(bgUrl);
 
+    this.waterRippleEffect = new WaterRippleEffect(this.fishLayer);
+
     const W = app.renderer.width;
     const H = app.renderer.height;
+
+    this.drawStrikeHint(W, H);
 
     this.depthSystem = new DepthSystem(this.config.depthMap);
     this.rod = new RodEntity(this.uiLayer);
@@ -473,6 +483,15 @@ export class LakeScene implements IScene {
     this.biteUpdateTimer = 0;
     this.targetInterest = 0;
     this.currentLureDepthM = 0.0;
+
+    this.waterRippleEffect.spawn(
+      this.hookX,
+      this.hookY,
+      1.5,
+      H,
+      H * this.config.environment.waterBoundaryY,
+    );
+
     this.callbacks.onCast?.();
     this.callbacks.onPhaseChange(this.phase);
   }
@@ -837,8 +856,10 @@ export class LakeScene implements IScene {
       isCast,
     );
 
+    this.updateStrikeHint();
     this.weatherLayer.update(deltaTime, this.timeOfDay);
     this.bgRenderer.update(deltaTime);
+    this.waterRippleEffect.update(deltaTime);
 
     let maxInterest = 0;
 
@@ -1078,7 +1099,9 @@ export class LakeScene implements IScene {
     this.weatherLayer.destroy();
     this.groundbaitEffect.destroy();
     this.bubbleEffect.destroy();
+    this.waterRippleEffect.destroy();
     this.dragonflyEffect.destroy();
+    this.strikeHintGfx.destroy({ children: true });
   }
 
   setDebugVisible(visible: boolean): void {
@@ -1200,6 +1223,15 @@ export class LakeScene implements IScene {
             this.hookY,
             1 + Math.floor(Math.random() * 2),
           );
+          if (this.hookConfig?.rigType !== 'feeder') {
+            this.waterRippleEffect.spawn(
+              this.hookX,
+              this.hookY,
+              0.4,
+              H,
+              H * this.config.environment.waterBoundaryY,
+            );
+          }
         }
 
         if (Math.random() < 0.1) {
@@ -1281,10 +1313,26 @@ export class LakeScene implements IScene {
 
       if (isSpinningBite) {
         this.callbacks.onBite();
+        this.waterRippleEffect.spawn(
+          this.hookX,
+          this.hookY,
+          2.5,
+          H,
+          H * this.config.environment.waterBoundaryY,
+        );
         this.hookFish();
       } else {
         this.phase = 'bite';
         this.callbacks.onBite();
+        if (this.hookConfig?.rigType !== 'feeder') {
+          this.waterRippleEffect.spawn(
+            this.hookX,
+            this.hookY,
+            2.5,
+            H,
+            H * this.config.environment.waterBoundaryY,
+          );
+        }
         this.callbacks.onPhaseChange(this.phase);
       }
     }
@@ -1437,5 +1485,34 @@ export class LakeScene implements IScene {
     }
 
     return { min: 0, max: 100 };
+  }
+
+  private drawStrikeHint(W: number, H: number): void {
+    this.strikeHintGfx.clear();
+    // Subtle yellow glow around the edges
+    this.strikeHintGfx.rect(0, 0, W, H);
+    this.strikeHintGfx.stroke({
+      color: 0xffcc00,
+      width: 8,
+      alignment: 1,
+    });
+    this.strikeHintGfx.filters = [new BlurFilter({ strength: 12 })];
+    this.strikeHintGfx.visible = false;
+    this.strikeHintGfx.alpha = 0;
+  }
+
+  private updateStrikeHint(): void {
+    const isBite = this.phase === 'bite';
+    const targetAlpha = isBite
+      ? 0.4 + Math.sin(Date.now() * 0.01) * 0.15 // pulsing
+      : 0;
+
+    if (!isBite && this.strikeHintGfx.alpha < 0.01) {
+      this.strikeHintGfx.visible = false;
+      return;
+    }
+
+    this.strikeHintGfx.visible = true;
+    this.strikeHintGfx.alpha += (targetAlpha - this.strikeHintGfx.alpha) * 0.1;
   }
 }

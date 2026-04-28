@@ -44,6 +44,7 @@ interface IHUDProps {
   topOnly?: boolean;
   bottomOnly?: boolean;
   debugActive?: boolean;
+  isLoading?: boolean;
 }
 
 export function HUD({
@@ -51,6 +52,7 @@ export function HUD({
   topOnly = false,
   bottomOnly = false,
   debugActive = false,
+  isLoading = false,
 }: IHUDProps) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -198,6 +200,7 @@ export function HUD({
     topOnly ? styles['hud--top-only'] : '',
     bottomOnly ? styles['hud--bottom-only'] : '',
     isNight ? styles['hud--night'] : '',
+    isLoading ? styles['hud--loading'] : '',
   ]
     .filter(Boolean)
     .join(' ');
@@ -206,23 +209,34 @@ export function HUD({
     <div className={hudClass}>
       {showTop && (
         <div className={styles['hud__top']}>
-          <div className={styles['hud__top-left']}>
-            <LakeInfo sceneRef={sceneRef} isDebugActive={localDebugActive} />
-          </div>
+          {!isLoading && (
+            <>
+              <div className={styles['hud__top-left']}>
+                <LakeInfo
+                  sceneRef={sceneRef}
+                  isDebugActive={localDebugActive}
+                />
+              </div>
 
-          <div className={styles['hud__top-center']}>
-            <LevelBar />
-            <DebugTerminal
-              isVisible={localDebugActive}
-              onClose={() => sceneRef.current?.toggleDebug()}
-            />
-          </div>
+              <div className={styles['hud__top-center']}>
+                <LevelBar />
+                <DebugTerminal
+                  isVisible={localDebugActive}
+                  onClose={() => sceneRef.current?.toggleDebug()}
+                />
+              </div>
+            </>
+          )}
 
           <div className={styles['hud__top-right']}>
             <div className={styles['hud__top-right-group']}>
-              {onlineMode && <GameChat isNight={isNight} />}
+              {onlineMode && !isLoading && <GameChat isNight={isNight} />}
 
-              <div className={styles['hud__exit-wrapper']}>
+              <div
+                className={`${styles['hud__exit-wrapper']} ${
+                  isLoading ? styles['hud__exit-wrapper--loading'] : ''
+                }`}
+              >
                 <WoodyButton
                   id="hud-exit"
                   variant="glass"

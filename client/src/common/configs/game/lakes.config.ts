@@ -103,6 +103,7 @@ export const LAKES: ILakeConfig[] = [
     },
     environment: {
       waterBoundaryY: 0.55,
+      waterRippleScale: 6,
     },
     trashChance: 0.08,
     unlockLevel: 1,
@@ -220,6 +221,7 @@ export const LAKES: ILakeConfig[] = [
     },
     environment: {
       waterBoundaryY: 0.48,
+      waterRippleScale: 6,
     },
     trashChance: 0.05,
     unlockLevel: 2,
@@ -335,6 +337,7 @@ export const LAKES: ILakeConfig[] = [
     },
     environment: {
       waterBoundaryY: 0.46,
+      waterRippleScale: 6,
     },
     trashChance: 0.02,
     unlockLevel: 2,

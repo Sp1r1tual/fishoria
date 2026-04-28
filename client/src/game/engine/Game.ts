@@ -32,7 +32,7 @@ export class Game {
       autoDensity: true,
       roundPixels: false,
       powerPreference: 'high-performance',
-      preference: isIOS ? 'webgl' : undefined,
+      preference: 'webgl',
     });
 
     if (this.isDestroyed) {

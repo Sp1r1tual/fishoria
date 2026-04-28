@@ -42,6 +42,7 @@ export interface ITimeOfDayLakeConfig {
 
 export interface IEnvironmentConfig {
   waterBoundaryY: number;
+  waterRippleScale?: number;
 }
 
 export interface ILakeConfig {

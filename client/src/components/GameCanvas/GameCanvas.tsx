@@ -18,8 +18,6 @@ export function GameCanvas() {
   return (
     <div className={styles['game-canvas__wrapper']}>
       <div className={styles['game-canvas__viewport']}>
-        {isLoading && <GlobalPreloader delay={700} />}
-
         <SceneSync sceneRef={sceneRef} />
         <CatchSync sceneRef={sceneRef} />
 
@@ -32,13 +30,23 @@ export function GameCanvas() {
           }}
         />
 
-        <HUD sceneRef={sceneRef} topOnly debugActive={debugActive} />
+        {isLoading && (
+          <GlobalPreloader
+            delay={700}
+            className={styles['game-canvas__preloader']}
+          />
+        )}
+        <HUD
+          sceneRef={sceneRef}
+          topOnly
+          debugActive={debugActive}
+          isLoading={isLoading}
+        />
       </div>
 
       <div className={styles['game-canvas__hud-tray']}>
         <HUD sceneRef={sceneRef} bottomOnly debugActive={debugActive} />
       </div>
-
       {isSnagActive && (
         <SnagMinigame
           onComplete={(success: boolean) =>

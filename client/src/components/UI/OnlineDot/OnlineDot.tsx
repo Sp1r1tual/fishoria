@@ -17,11 +17,13 @@ export function OnlineDot({
   const { t } = useTranslation();
 
   return (
-    <div
+    <span
       className={`${styles.dot} ${styles[`dot--${status}`]} ${
         styles[`dot--${size}`]
       } ${className}`}
       title={`${t('common.status', 'Status')}: ${t(`online.status.${status}`, status)}`}
-    />
+    >
+      ●
+    </span>
   );
 }

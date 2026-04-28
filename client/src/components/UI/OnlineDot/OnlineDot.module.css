@@ -1,54 +1,29 @@
 .dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  position: relative;
-  box-shadow: 0 0 10px currentColor;
-  flex-shrink: 0;
-  background-color: currentColor;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  user-select: none;
+  flex: none;
+  font-family: Arial, sans-serif;
 }
 
 .dot--md {
-  width: 10px;
-  height: 10px;
+  font-size: 14px;
 }
 
 .dot--sm {
-  width: 7px;
-  height: 7px;
-}
-
-.dot::after {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 50%;
-  border: 1px solid currentColor;
-  opacity: 0.3;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.4;
-  }
-  70% {
-    transform: scale(2);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0;
-  }
+  font-size: 10px;
 }
 
 .dot--online {
   color: #28ca91;
+  text-shadow: 0 0 8px rgba(40, 202, 145, 0.6);
 }
 
 .dot--connecting {
   color: #fbbf24;
+  text-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
 }
 
 .dot--error,

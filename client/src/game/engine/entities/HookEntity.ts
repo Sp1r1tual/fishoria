@@ -229,14 +229,14 @@ export class HookEntity {
       if (this.rigType === 'feeder') {
         const bulbAlpha = bulbAlphaOverride != null ? bulbAlphaOverride : 1;
         if (bulbAlpha > 0) {
-          this.gfx.circle(bx, totalY, 4 * this.scale);
-          this.gfx.fill({ color: 0x444444, alpha: bulbAlpha });
+          this.gfx.circle(bx, totalY, 3.5 * this.scale);
+          this.gfx.fill({ color: 0xffffff, alpha: bulbAlpha });
           this.gfx.circle(
             bx - 1 * this.scale,
             totalY - 1 * this.scale,
-            1.5 * this.scale,
+            1.2 * this.scale,
           );
-          this.gfx.fill({ color: 0x888888, alpha: bulbAlpha * 0.5 });
+          this.gfx.fill({ color: 0xcccccc, alpha: bulbAlpha * 0.6 });
         }
       } else {
         const bulbDist = 4 * this.scale;
