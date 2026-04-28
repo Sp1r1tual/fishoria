@@ -88,6 +88,7 @@ export class ChatService implements OnModuleInit {
     };
 
     await this.saveToHistory(lakeId, message);
+    await this.markAsRead(lakeId, chatUser.id, message.id, 'chat');
     return message;
   }
 
@@ -110,7 +111,9 @@ export class ChatService implements OnModuleInit {
       timestamp: new Date().toISOString(),
     };
 
-    this.saveToHistory(payload.lakeId, message);
+    this.saveToHistory(payload.lakeId, message).then(() => {
+      this.markAsRead(payload.lakeId, chatUser.id, message.id, 'system');
+    });
     return message;
   }
 
@@ -190,10 +193,13 @@ export class ChatService implements OnModuleInit {
     lakeId: string,
     userId: string,
   ): Promise<Record<string, string>> {
-    const fields = [`${lakeId}:chat`, `${lakeId}:system`];
-    const values = await this.redis.hmget(
+    const chatField = `${lakeId}:chat`;
+    const systemField = `${lakeId}:system`;
+
+    const values = await this.redis.hmget<Record<string, string>>(
       redisKeys.readPointers(userId),
-      ...fields,
+      chatField,
+      systemField,
     );
 
     if (!values) {
@@ -201,8 +207,8 @@ export class ChatService implements OnModuleInit {
     }
 
     return {
-      chat: (values[0] as string) || '',
-      system: (values[1] as string) || '',
+      chat: values[chatField] || '',
+      system: values[systemField] || '',
     };
   }
 

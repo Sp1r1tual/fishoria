@@ -40,7 +40,7 @@ export class WsAuthGuard implements CanActivate {
       this.logger.debug(
         `Auth failed for socket ${client.id}: ${error.message}`,
       );
-      throw error;
+      throw new UnauthorizedException('error.socket.auth_error');
     }
   }
 
