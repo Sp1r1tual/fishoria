@@ -105,7 +105,14 @@ export function MainMenu() {
 
               <div className={styles['main-menu__player-info']}>
                 <div className={styles['main-menu__name-group']}>
-                  <div className={styles['main-menu__player-name']}>{name}</div>
+                  <div
+                    className={styles['main-menu__player-name']}
+                    onClick={() => {
+                      dispatch(openProfileModal({ player: player || null }));
+                    }}
+                  >
+                    {name}
+                  </div>
                   <EditButton
                     onClick={() => setIsProfileModalOpen(true)}
                     title={t('profile.editTitle')}

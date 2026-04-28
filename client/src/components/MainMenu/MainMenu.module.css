@@ -172,6 +172,12 @@
   font-weight: 700;
   color: #fff;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.main-menu__player-name:hover {
+  color: #fbbf24;
 }
 
 .main-menu__avatar-img {
