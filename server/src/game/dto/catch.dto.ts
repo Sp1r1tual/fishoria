@@ -9,7 +9,7 @@ const CatchSchema = z.object({
   lakeId: z.string(),
   lakeName: z.string(),
   baitUsed: z.string(),
-  method: z.enum(['FLOAT', 'SPINNING', 'FEEDER']),
+  method: z.enum(['float', 'spinning', 'feeder']),
   rodDamage: z.number().optional(),
   reelDamage: z.number().optional(),
   maxWeight: z.number().optional(),
