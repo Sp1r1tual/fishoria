@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { ConnectionStatusType } from '@/common/types';
 
 import styles from './OnlineDot.module.css';
@@ -13,12 +14,14 @@ export function OnlineDot({
   size = 'md',
   className = '',
 }: OnlineDotProps) {
+  const { t } = useTranslation();
+
   return (
     <div
       className={`${styles.dot} ${styles[`dot--${status}`]} ${
         styles[`dot--${size}`]
       } ${className}`}
-      title={`Status: ${status}`}
+      title={`${t('common.status', 'Status')}: ${t(`online.status.${status}`, status)}`}
     />
   );
 }

@@ -2,6 +2,10 @@ import { useTranslation } from 'react-i18next';
 
 import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import { updateSettings } from '@/store/slices/settingsSlice';
+import {
+  setSessionOffline,
+  selectGlobalConnectionStatus,
+} from '@/store/slices/onlineSlice';
 
 import { Toggle } from '../UI/Toggle/Toggle';
 import { ServiceStatus } from '../UI/ServiceStatus/ServiceStatus';
@@ -12,10 +16,14 @@ export function NetworkSection() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const onlineMode = useAppSelector((s) => s.settings.onlineMode);
-  const connectionStatus = useAppSelector((s) => s.online.connectionStatus);
+  const connectionStatus = useAppSelector(selectGlobalConnectionStatus);
 
   const handleToggle = () => {
-    dispatch(updateSettings({ onlineMode: !onlineMode }));
+    const nextMode = !onlineMode;
+    dispatch(updateSettings({ onlineMode: nextMode }));
+    if (nextMode) {
+      dispatch(setSessionOffline(false));
+    }
   };
 
   const getStatusLabel = () => {

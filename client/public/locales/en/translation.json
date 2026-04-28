@@ -581,7 +581,10 @@
     }
   },
   "groundbaits": {
-    "none": { "name": "None", "description": "" },
+    "none": {
+      "name": "None",
+      "description": ""
+    },
     "vanillin": {
       "name": "Vanillin Mix",
       "description": "Sweet aroma that quickly gathers schooling fish."
@@ -716,7 +719,10 @@
     }
   },
   "trash": {
-    "old_boot": { "name": "Old Boot", "description": "Wet smelly boot." },
+    "old_boot": {
+      "name": "Old Boot",
+      "description": "Wet smelly boot."
+    },
     "rusty_can": {
       "name": "Rusty Can",
       "description": "Trash from messy fishermen."
@@ -794,7 +800,7 @@
       "internal_error": "Internal server error",
       "forbidden": "Forbidden resource",
       "bad_request": "Bad request",
-      "unknown": "Network error occurred"
+      "unknown": "A connection error occurred"
     }
   },
   "serverUnavailable": {
@@ -977,13 +983,15 @@
       "online": "Online",
       "offline": "Offline",
       "connecting": "Connecting...",
-      "error": "Network Error",
+      "error": "Connection Error",
       "disabled": "Disabled"
     }
   },
   "common": {
+    "status": "Status",
     "error": "Error",
     "serverUnavailable": "Server currently unavailable",
+    "retry": "Retry",
     "delete": "Delete"
   }
 }

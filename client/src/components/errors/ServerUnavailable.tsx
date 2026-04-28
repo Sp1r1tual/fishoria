@@ -28,10 +28,10 @@ export const ServerUnavailable = () => {
             500
           </p>
 
-          <h1 className={styles.title}>{t('common.serverUnavailableTitle')}</h1>
+          <h1 className={styles.title}>{t('serverUnavailable.title')}</h1>
 
           <p className={styles.description}>
-            {t('common.serverUnavailableDesc')}
+            {t('serverUnavailable.description')}
           </p>
 
           <div className={styles.buttonWrapper}>
@@ -39,7 +39,7 @@ export const ServerUnavailable = () => {
               variant="brown"
               size="md"
               onClick={() => (window.location.href = '/')}
-              label={t('common.refresh')}
+              label={t('common.retry')}
             />
           </div>
         </div>

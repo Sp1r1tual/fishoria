@@ -13,6 +13,7 @@ import { usePlayerQuery } from '@/queries/player.queries';
 import { navigateTo } from '@/store/slices/uiSlice';
 import { setCurrentLake } from '@/store/slices/gameSlice';
 import { updateSettings } from '@/store/slices/settingsSlice';
+import { selectGlobalConnectionStatus } from '@/store/slices/onlineSlice';
 
 import { LAKES } from '@/common/configs/game';
 
@@ -29,7 +30,7 @@ export function LakeSelect() {
 
   const [pendingLakeId, setPendingLakeId] = useState<string | null>(null);
   const onlineMode = useAppSelector((s) => s.settings.onlineMode);
-  const connectionStatus = useAppSelector((s) => s.online.connectionStatus);
+  const connectionStatus = useAppSelector(selectGlobalConnectionStatus);
   const chatConnectionStatus = useAppSelector(
     (s) => s.online.chatConnectionStatus,
   );

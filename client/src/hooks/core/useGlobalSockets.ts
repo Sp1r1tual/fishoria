@@ -11,6 +11,7 @@ import {
   setChatConnectionStatus,
   setLakesOnlineStats,
   clearChat,
+  setSessionOffline,
 } from '@/store/slices/onlineSlice';
 import {
   setWeather,
@@ -42,6 +43,7 @@ export function useGlobalSockets() {
   const dispatch = useAppDispatch();
   const onlineMode = useAppSelector((s) => s.settings.onlineMode);
   const isAuthenticated = useAppSelector((s) => s.auth.isAuthenticated);
+  const isSessionOffline = useAppSelector((s) => s.online.isSessionOffline);
   const lastToastTimeRef = useRef<Record<string, number>>({});
 
   useEffect(() => {
@@ -56,6 +58,8 @@ export function useGlobalSockets() {
     }
 
     const showSocketToast = (msgKey: string) => {
+      if (isSessionOffline) return;
+
       const now = Date.now();
       const lastTime = lastToastTimeRef.current[msgKey] || 0;
       if (now - lastTime < 2000) return;
@@ -74,15 +78,34 @@ export function useGlobalSockets() {
     const chatSocket = getChatSocket();
     const gameSocket = getGameSocket();
 
-    const onStatusConnect = () => dispatch(setConnectionStatus('online'));
+    const onStatusConnect = () => {
+      if (isSessionOffline) {
+        dispatch(setSessionOffline(false));
+      }
+      dispatch(setConnectionStatus('online'));
+    };
     const onStatusDisconnect = () => dispatch(setConnectionStatus('offline'));
-    const onChatConnect = () => dispatch(setChatConnectionStatus('online'));
+    const onChatConnect = () => {
+      if (isSessionOffline) {
+        dispatch(setSessionOffline(false));
+      }
+      dispatch(setChatConnectionStatus('online'));
+    };
     const onChatDisconnect = () => dispatch(setChatConnectionStatus('offline'));
 
-    const onConnectionError = () => {
-      dispatch(setConnectionStatus('error'));
-      dispatch(setChatConnectionStatus('error'));
-      showSocketToast('error.socket.connection_error');
+    const onConnectionError = (err: unknown) => {
+      console.warn('[Online] Connection error:', err);
+
+      if (!isSessionOffline) {
+        console.warn(
+          '[Online] Connection error - switching to silent background retry mode',
+        );
+        dispatch(setSessionOffline(true));
+        showSocketToast('error.socket.connection_error');
+      }
+
+      dispatch(setConnectionStatus('offline'));
+      dispatch(setChatConnectionStatus('offline'));
     };
 
     const onException = async (err: { message?: string; error?: string }) => {
@@ -188,5 +211,5 @@ export function useGlobalSockets() {
       gameSocket.off('exception', onException);
       disconnectGame();
     };
-  }, [dispatch, onlineMode, isAuthenticated]);
+  }, [dispatch, onlineMode, isAuthenticated, isSessionOffline]);
 }

@@ -13,6 +13,7 @@ import { ProfileSkeleton } from './ProfileSkeleton';
 import { OnlineDot } from '@/components/UI/OnlineDot/OnlineDot';
 
 import { useAppSelector } from '@/hooks/core/useAppStore';
+import { selectGlobalConnectionStatus } from '@/store/slices/onlineSlice';
 
 import { resolveAvatarImg } from '@/common/utils/avatar.util';
 import { formatDate } from '@/common/utils/date.util';
@@ -35,7 +36,7 @@ export function ProfileModal({
   const { t } = useTranslation();
 
   const currentUser = useAppSelector((s) => s.auth.user);
-  const connectionStatus = useAppSelector((s) => s.online.connectionStatus);
+  const connectionStatus = useAppSelector(selectGlobalConnectionStatus);
   const onlineMode = useAppSelector((s) => s.settings.onlineMode);
   const roomState = useAppSelector((s) => s.online.roomState);
 

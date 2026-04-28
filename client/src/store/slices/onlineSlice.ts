@@ -19,6 +19,7 @@ interface OnlineState {
   lakesOnlineStats: Record<string, number>;
   currentChatLakeId: string | null;
   readPointers: Record<string, string>;
+  isSessionOffline: boolean;
 }
 
 const initialState: OnlineState = {
@@ -30,6 +31,7 @@ const initialState: OnlineState = {
   lakesOnlineStats: {},
   currentChatLakeId: null,
   readPointers: {},
+  isSessionOffline: false,
 };
 
 const onlineSlice = createSlice({
@@ -98,11 +100,42 @@ const onlineSlice = createSlice({
       state.readPointers = {};
     },
 
+    setSessionOffline(state, action: PayloadAction<boolean>) {
+      state.isSessionOffline = action.payload;
+      if (action.payload) {
+        state.connectionStatus = 'offline';
+        state.chatConnectionStatus = 'offline';
+      }
+    },
     resetOnline() {
       return initialState;
     },
   },
 });
+
+export const selectGlobalConnectionStatus = (state: {
+  online: OnlineState;
+}) => {
+  const { connectionStatus, chatConnectionStatus, isSessionOffline } =
+    state.online;
+
+  if (isSessionOffline) return 'offline';
+
+  if (connectionStatus === 'error' || chatConnectionStatus === 'error') {
+    return 'error';
+  }
+  if (
+    connectionStatus === 'connecting' ||
+    chatConnectionStatus === 'connecting'
+  ) {
+    return 'connecting';
+  }
+
+  if (connectionStatus === 'online' && chatConnectionStatus === 'online') {
+    return 'online';
+  }
+  return 'offline';
+};
 
 export const {
   setServerStatus,
@@ -116,6 +149,7 @@ export const {
   setLakesOnlineStats,
   setCurrentChatLakeId,
   clearChat,
+  setSessionOffline,
   resetOnline,
 } = onlineSlice.actions;
 

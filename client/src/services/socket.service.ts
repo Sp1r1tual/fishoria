@@ -16,6 +16,7 @@ export function getStatusSocket(): Socket {
       reconnectionAttempts: Infinity,
       reconnectionDelay: 2000,
       reconnectionDelayMax: 10000,
+      timeout: 60000,
     });
   }
   return statusSocket;
@@ -31,6 +32,7 @@ export function getChatSocket(): Socket {
       reconnectionAttempts: Infinity,
       reconnectionDelay: 2000,
       reconnectionDelayMax: 10000,
+      timeout: 60000,
     });
   }
   return chatSocket;
@@ -71,6 +73,7 @@ export function getGameSocket(): Socket {
       reconnectionAttempts: Infinity,
       reconnectionDelay: 2000,
       reconnectionDelayMax: 10000,
+      timeout: 60000,
     });
   }
   return gameSocket;

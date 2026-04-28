@@ -47,11 +47,11 @@
   color: #28ca91;
 }
 
-.dot--error,
 .dot--connecting {
   color: #fbbf24;
 }
 
+.dot--error,
 .dot--offline {
   color: #ef4444;
 }

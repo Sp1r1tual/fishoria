@@ -1,14 +1,16 @@
 .container {
   position: fixed;
-  top: max(24px, env(safe-area-inset-top));
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2000000;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999999;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 12px;
-  max-width: 90%;
+  padding: max(24px, env(safe-area-inset-top)) 16px;
   pointer-events: none;
+  width: 100%;
 }
 
 .toast {
@@ -150,7 +152,7 @@
 
 @media (max-width: 768px) {
   .container {
-    top: 16px;
+    padding-top: 16px;
     gap: 8px;
   }
 

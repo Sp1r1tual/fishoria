@@ -22,6 +22,7 @@ import {
   openProfileModal,
   openWeatherModal,
 } from '@/store/slices/uiSlice';
+import { selectGlobalConnectionStatus } from '@/store/slices/onlineSlice';
 import { usePlayerQuery } from '@/queries/player.queries';
 
 import { getXpNeededForLevel } from '@/common/utils/experience.util';
@@ -43,7 +44,7 @@ export function MainMenu() {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const { t } = useTranslation();
 
-  const connectionStatus = useAppSelector((s) => s.online.connectionStatus);
+  const connectionStatus = useAppSelector(selectGlobalConnectionStatus);
   const onlineMode = useAppSelector((s) => s.settings.onlineMode);
 
   const level = player?.level ?? 1;
