@@ -45,9 +45,13 @@ export function disconnectStatus(): void {
   statusSocket?.disconnect();
 }
 
-export function connectChat(token: string): void {
+export function connectChat(token?: string): void {
   const s = getChatSocket();
-  s.auth = { token };
+  if (token) {
+    s.auth = { token };
+  } else {
+    s.auth = {};
+  }
   if (!s.connected) s.connect();
 }
 
@@ -72,9 +76,13 @@ export function getGameSocket(): Socket {
   return gameSocket;
 }
 
-export function connectGame(token: string): void {
+export function connectGame(token?: string): void {
   const s = getGameSocket();
-  s.auth = { token };
+  if (token) {
+    s.auth = { token };
+  } else {
+    s.auth = {};
+  }
   if (!s.connected) s.connect();
 }
 

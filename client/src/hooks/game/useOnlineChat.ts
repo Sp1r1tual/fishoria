@@ -22,11 +22,20 @@ import { getChatSocket } from '@/services/socket.service';
 export function useOnlineChat(lakeId: string | null) {
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector((s) => s.auth.isAuthenticated);
+  const currentUser = useAppSelector((s) => s.auth.user);
   const onlineMode = useAppSelector((s) => s.settings.onlineMode);
+  const chatConnectionStatus = useAppSelector(
+    (s) => s.online.chatConnectionStatus,
+  );
   const joinedRef = useRef(false);
 
   useEffect(() => {
-    if (!isAuthenticated || !onlineMode || !lakeId) {
+    if (
+      !isAuthenticated ||
+      !onlineMode ||
+      !lakeId ||
+      chatConnectionStatus !== 'online'
+    ) {
       if (joinedRef.current) {
         dispatch(clearChat());
         joinedRef.current = false;
@@ -35,7 +44,6 @@ export function useOnlineChat(lakeId: string | null) {
     }
 
     const socket = getChatSocket();
-    if (!socket.connected) return;
 
     const onHistory = (response: IChatHistoryResponse) => {
       dispatch(setChatHistory(response));
@@ -43,6 +51,9 @@ export function useOnlineChat(lakeId: string | null) {
 
     const onMessage = (message: IChatMessage) => {
       dispatch(addChatMessage(message));
+      if (message.userId === currentUser?.id) {
+        dispatch(setReadPointer({ type: message.type, messageId: message.id }));
+      }
     };
 
     const onRoomState = (state: IChatRoomState) => {
@@ -69,7 +80,14 @@ export function useOnlineChat(lakeId: string | null) {
       dispatch(clearChat());
       joinedRef.current = false;
     };
-  }, [lakeId, isAuthenticated, onlineMode, dispatch]);
+  }, [
+    lakeId,
+    isAuthenticated,
+    currentUser?.id,
+    onlineMode,
+    chatConnectionStatus,
+    dispatch,
+  ]);
 
   const sendMessage = useCallback((text: string) => {
     const socket = getChatSocket();

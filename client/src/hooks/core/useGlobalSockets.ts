@@ -21,6 +21,8 @@ import { addToast } from '@/store/slices/uiSlice';
 
 import i18n from '@/i18n';
 
+import { refreshToken } from '@/http/interceptors/auth.interceptor';
+
 import {
   getStatusSocket,
   connectStatus,
@@ -83,10 +85,43 @@ export function useGlobalSockets() {
       showSocketToast('error.socket.connection_error');
     };
 
-    const onException = (err: { message?: string; error?: string }) => {
+    const onException = async (err: { message?: string; error?: string }) => {
       console.warn('[Online] Socket Exception:', err);
       dispatch(setChatConnectionStatus('error'));
-      const msgKey = err?.message || err?.error || 'errors.unknown';
+
+      const rawMsg = err?.message || err?.error || 'unknown';
+
+      const msgMap: Record<string, string> = {
+        'Internal server error': 'error.socket.internal_error',
+        'Forbidden resource': 'error.socket.forbidden',
+        Unauthorized: 'error.socket.auth_error',
+        'Invalid token': 'error.socket.auth_error',
+        'Bad Request': 'error.socket.bad_request',
+        'Limit reached': 'error.socket.limit_reached',
+      };
+
+      let msgKey = msgMap[rawMsg];
+      if (!msgKey) {
+        if (rawMsg.includes('Throttler') || rawMsg.includes('Many Requests')) {
+          msgKey = 'error.socket.limit_reached';
+        } else {
+          msgKey = rawMsg.includes(' ') ? 'errors.unknown' : rawMsg;
+        }
+      }
+
+      if (msgKey === 'error.socket.auth_error') {
+        try {
+          await refreshToken();
+
+          statusSocket.disconnect().connect();
+          chatSocket.disconnect().connect();
+          gameSocket.disconnect().connect();
+          return;
+        } catch (refreshErr) {
+          console.error('[Online] Token refresh failed:', refreshErr);
+        }
+      }
+
       showSocketToast(msgKey);
     };
 
@@ -130,8 +165,8 @@ export function useGlobalSockets() {
     dispatch(setChatConnectionStatus('connecting'));
 
     connectStatus();
-    connectChat('');
-    connectGame('');
+    connectChat();
+    connectGame();
 
     return () => {
       statusSocket.off('connect', onStatusConnect);

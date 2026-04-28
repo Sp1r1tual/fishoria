@@ -1,5 +1,7 @@
 import type { ConnectionStatusType } from '@/common/types';
 
+import { OnlineDot } from '../OnlineDot/OnlineDot';
+
 import styles from './ServiceStatus.module.css';
 
 interface ServiceStatusProps {
@@ -21,7 +23,7 @@ export function ServiceStatus({
       onClick={onClick}
       role={onClick ? 'button' : 'presentation'}
     >
-      <span className={styles.dot} />
+      <OnlineDot status={status} />
       {label && <span className={styles.label}>{label}</span>}
     </div>
   );

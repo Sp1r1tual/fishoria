@@ -162,6 +162,10 @@
   gap: 4px;
 }
 
+.main-menu__online-dot {
+  margin-left: auto;
+}
+
 .main-menu__player-name {
   font-family: var(--font-sans);
   font-size: 1.4rem;

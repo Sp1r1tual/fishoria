@@ -61,16 +61,24 @@ export function GameChatContent({
           ref={scrollRef}
           onScroll={handleScroll}
         >
-          {filteredMessages.map((msg, idx) => (
-            <div key={msg.id}>
-              {idx === firstUnreadIdx && firstUnreadIdx !== -1 && (
-                <div className={styles.chat__unread_line}>
-                  <span>{t('hud.chat.unread_messages')}</span>
-                </div>
-              )}
-              <ChatMessage msg={msg} onOpenProfile={handleOpenProfile} />
+          {filteredMessages.length === 0 ? (
+            <div className={styles.chat__empty}>
+              {state.activeTab === 'events'
+                ? t('hud.chat.no_events')
+                : t('hud.chat.no_messages')}
             </div>
-          ))}
+          ) : (
+            filteredMessages.map((msg, idx) => (
+              <div key={msg.id}>
+                {idx === firstUnreadIdx && firstUnreadIdx !== -1 && (
+                  <div className={styles.chat__unread_line}>
+                    <span>{t('hud.chat.unread_messages')}</span>
+                  </div>
+                )}
+                <ChatMessage msg={msg} onOpenProfile={handleOpenProfile} />
+              </div>
+            ))
+          )}
         </div>
         <ChatInput onSendMessage={handleSendMessage} />
       </div>

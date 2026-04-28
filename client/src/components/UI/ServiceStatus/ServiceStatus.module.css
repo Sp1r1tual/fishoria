@@ -10,57 +10,6 @@
   user-select: none;
 }
 
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  position: relative;
-  box-shadow: 0 0 10px currentColor;
-  flex-shrink: 0;
-}
-
-.dot::after {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 50%;
-  border: 1px solid currentColor;
-  opacity: 0.3;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.4;
-  }
-  70% {
-    transform: scale(2);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0;
-  }
-}
-
-.container--online {
-  color: #28ca91;
-}
-
-.container--error,
-.container--connecting {
-  color: #fbbf24;
-}
-
-.container--offline {
-  color: #ef4444;
-}
-
-.dot {
-  background-color: currentColor;
-}
-
 .label {
   font-size: 0.7rem;
   font-weight: 800;

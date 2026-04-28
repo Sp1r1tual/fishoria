@@ -123,7 +123,9 @@ export class DragonflyEffect {
         this.targetY = this.y - 200;
         this.state = 'flying';
       }
-    } else if (this.state === 'perched') {
+    }
+
+    if (this.state === 'perched') {
       const dx = rodTipX - this.x;
       const dy = rodTipY - 2 - this.y;
       const movedDist = Math.sqrt(dx * dx + dy * dy);

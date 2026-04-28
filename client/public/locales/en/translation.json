@@ -344,7 +344,9 @@
       "actions": {
         "minimize": "Minimize",
         "expand": "Expand"
-      }
+      },
+      "no_messages": "No messages",
+      "no_events": "No events"
     },
     "titles": {
       "goHome": "Exit"
@@ -783,7 +785,17 @@
     "gear_incomplete": "Your equipment is incomplete or broken!",
     "no_bait": "You must select bait first!",
     "low_line": "Low fishing line remaining!",
-    "tooManyRequests": "Too many requests. Please try again later."
+    "tooManyRequests": "Too many requests. Please try again later.",
+    "socket": {
+      "connection_error": "Server connection error",
+      "timeout": "Server response timeout",
+      "auth_error": "Authentication error",
+      "limit_reached": "Message limit reached",
+      "internal_error": "Internal server error",
+      "forbidden": "Forbidden resource",
+      "bad_request": "Bad request",
+      "unknown": "Network error occurred"
+    }
   },
   "serverUnavailable": {
     "title": "Fishoria | Server Unavailable",

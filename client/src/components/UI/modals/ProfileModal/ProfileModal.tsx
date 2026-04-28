@@ -1,11 +1,18 @@
 import { useTranslation } from 'react-i18next';
 
-import type { IPlayerProfile, UserRole } from '@/common/types';
+import type {
+  IPlayerProfile,
+  UserRole,
+  ConnectionStatusType,
+} from '@/common/types';
 
 import { Modal } from '../Modal/Modal';
 import { SkeletonImage } from '../../skeletons/SkeletonImage/SkeletonImage';
 import { ErrorView } from '@/components/UI/ErrorView/ErrorView';
 import { ProfileSkeleton } from './ProfileSkeleton';
+import { OnlineDot } from '@/components/UI/OnlineDot/OnlineDot';
+
+import { useAppSelector } from '@/hooks/core/useAppStore';
 
 import { resolveAvatarImg } from '@/common/utils/avatar.util';
 import { formatDate } from '@/common/utils/date.util';
@@ -27,6 +34,11 @@ export function ProfileModal({
 }: IProfileModalProps) {
   const { t } = useTranslation();
 
+  const currentUser = useAppSelector((s) => s.auth.user);
+  const connectionStatus = useAppSelector((s) => s.online.connectionStatus);
+  const onlineMode = useAppSelector((s) => s.settings.onlineMode);
+  const roomState = useAppSelector((s) => s.online.roomState);
+
   if (!isOpen) return null;
 
   const playerUser = player?.user;
@@ -43,6 +55,18 @@ export function ProfileModal({
       : '';
 
   const roleKey = (playerUser?.role as UserRole) || 'PLAYER';
+
+  const isCurrentUser = playerUser?.id === currentUser?.id;
+  const isOnlineInRoom = roomState?.users?.some((u) => u.id === playerUser?.id);
+
+  let dotStatus: ConnectionStatusType = 'offline';
+  if (!onlineMode) {
+    dotStatus = 'offline';
+  } else if (isCurrentUser) {
+    dotStatus = connectionStatus;
+  } else if (isOnlineInRoom) {
+    dotStatus = 'online';
+  }
 
   return (
     <Modal
@@ -78,7 +102,10 @@ export function ProfileModal({
                 </div>
               </a>
               <div className={styles.mainInfo}>
-                <div className={styles.name}>{player.user.username}</div>
+                <div className={styles.nameGroup}>
+                  <div className={styles.name}>{player.user.username}</div>
+                  <OnlineDot status={dotStatus} className={styles.onlineDot} />
+                </div>
                 <div
                   className={`${styles.roleBadge} ${styles[`role_${roleKey}`]}`}
                 >

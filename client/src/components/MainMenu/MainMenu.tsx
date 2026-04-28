@@ -11,11 +11,12 @@ import { GameClock } from '../UI/GameClock/GameClock';
 import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
 import { EditButton } from '../UI/buttons/EditButton/EditButton';
 import { WeatherStatus } from '../UI/WeatherStatus/WeatherStatus';
+import { OnlineDot } from '../UI/OnlineDot/OnlineDot';
 import { Fireflies } from '../Effects/Fireflies/Fireflies';
 import { SkeletonImage } from '../UI/skeletons/SkeletonImage/SkeletonImage';
 import { PlayerSkeleton } from './PlayerSkeleton';
 
-import { useAppDispatch } from '@/hooks/core/useAppStore';
+import { useAppDispatch, useAppSelector } from '@/hooks/core/useAppStore';
 import {
   navigateTo,
   openProfileModal,
@@ -41,6 +42,9 @@ export function MainMenu() {
   const { hasUnread } = useNewsState();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const { t } = useTranslation();
+
+  const connectionStatus = useAppSelector((s) => s.online.connectionStatus);
+  const onlineMode = useAppSelector((s) => s.settings.onlineMode);
 
   const level = player?.level ?? 1;
   const xp = player?.xp ?? 0;
@@ -106,6 +110,12 @@ export function MainMenu() {
                     onClick={() => setIsProfileModalOpen(true)}
                     title={t('profile.editTitle')}
                   />
+                  {onlineMode && (
+                    <OnlineDot
+                      status={connectionStatus}
+                      className={styles['main-menu__online-dot']}
+                    />
+                  )}
                 </div>
                 <div className={styles['main-menu__level-row']}>
                   <div className={styles['main-menu__player-meta']}>

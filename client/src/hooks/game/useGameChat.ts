@@ -121,10 +121,30 @@ export function useGameChat(
 
   const observerRef = useRef<IntersectionObserver | null>(null);
 
+  const messagesRef = useRef(messages);
+  const readPointersRef = useRef(readPointers);
+  const isMinimizedRef = useRef(state.isMinimized);
+
+  useEffect(() => {
+    messagesRef.current = messages;
+    readPointersRef.current = readPointers;
+    isMinimizedRef.current = state.isMinimized;
+  }, [messages, readPointers, state.isMinimized]);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (state.isMinimized) return;
+        if (isMinimizedRef.current) return;
+
+        let maxChatIdx = -1;
+        let maxChatId: string | null = null;
+
+        let maxSystemIdx = -1;
+        let maxSystemId: string | null = null;
+
+        const currentMessages = messagesRef.current;
+        const currentPointers = readPointersRef.current;
+
         for (const entry of entries) {
           if (!entry.isIntersecting) continue;
 
@@ -134,23 +154,33 @@ export function useGameChat(
             | 'system';
           if (!id || !type) continue;
 
-          const msgIdx = getMessageIndex(messages, id);
+          const msgIdx = getMessageIndex(currentMessages, id);
           const currentPointerIdx = getMessageIndex(
-            messages,
-            readPointers[type] || null,
+            currentMessages,
+            currentPointers[type] || null,
           );
 
           if (msgIdx > currentPointerIdx) {
-            markAsRead(id, type);
+            if (type === 'chat' && msgIdx > maxChatIdx) {
+              maxChatIdx = msgIdx;
+              maxChatId = id;
+            } else if (type === 'system' && msgIdx > maxSystemIdx) {
+              maxSystemIdx = msgIdx;
+              maxSystemId = id;
+            }
           }
         }
+
+        if (maxChatId) markAsRead(maxChatId, 'chat');
+        if (maxSystemId) markAsRead(maxSystemId, 'system');
       },
       { threshold: 0.1, root: scrollRef.current },
     );
 
     observerRef.current = observer;
+
     return () => observer.disconnect();
-  }, [markAsRead, messages, readPointers, state.isMinimized]);
+  }, [markAsRead]);
 
   useEffect(() => {
     if (state.isMinimized || !scrollRef.current || !observerRef.current) return;
@@ -165,16 +195,52 @@ export function useGameChat(
 
     return () => {
       clearTimeout(timer);
-      container
-        .querySelectorAll('[data-msg-id]')
-        .forEach((el) => observer.unobserve(el));
+      observer.disconnect();
     };
   }, [messages, state.isMinimized, state.activeTab]);
 
-  const [sessionPointers] = useState(() => ({
+  useEffect(() => {
+    if (state.isMinimized || isScrolledUpRef.current) return;
+
+    if (filteredMessages.length > 0) {
+      const lastMsg = filteredMessages[filteredMessages.length - 1];
+      const currentPointerIdx = getMessageIndex(
+        messages,
+        readPointers[lastMsg.type] || null,
+      );
+      const lastMsgIdx = getMessageIndex(messages, lastMsg.id);
+
+      if (lastMsgIdx > currentPointerIdx) {
+        markAsRead(lastMsg.id, lastMsg.type);
+      }
+    }
+  }, [messages, filteredMessages, readPointers, state.isMinimized, markAsRead]);
+
+  const [prevReadPointers, setPrevReadPointers] = useState(readPointers);
+  const [sessionPointers, setSessionPointers] = useState<{
+    chat: string | null;
+    system: string | null;
+  }>({
     chat: initialReadPointers['chat'] || null,
     system: initialReadPointers['system'] || null,
-  }));
+  });
+
+  if (readPointers !== prevReadPointers) {
+    setPrevReadPointers(readPointers);
+    let changed = false;
+    const next = { ...sessionPointers };
+    if (!next.chat && readPointers['chat']) {
+      next.chat = readPointers['chat'];
+      changed = true;
+    }
+    if (!next.system && readPointers['system']) {
+      next.system = readPointers['system'];
+      changed = true;
+    }
+    if (changed) {
+      setSessionPointers(next);
+    }
+  }
 
   const currentChatType = state.activeTab === 'events' ? 'system' : 'chat';
 

@@ -1,0 +1,47 @@
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 0 10px currentColor;
+  flex-shrink: 0;
+  background-color: currentColor;
+}
+
+.dot::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  opacity: 0.3;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  70% {
+    transform: scale(2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.dot--online {
+  color: #28ca91;
+}
+
+.dot--error,
+.dot--connecting {
+  color: #fbbf24;
+}
+
+.dot--offline {
+  color: #ef4444;
+}

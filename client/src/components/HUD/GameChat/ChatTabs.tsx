@@ -1,16 +1,18 @@
 import { useTranslation } from 'react-i18next';
 
+import type { ConnectionStatusType, ChatTabType } from '@/common/types';
+
+import { OnlineDot } from '@/components/UI/OnlineDot/OnlineDot';
+
 import styles from './GameChat.module.css';
 
-type ChatTab = 'events' | 'messages';
-
 interface ChatTabsProps {
-  activeTab: ChatTab;
+  activeTab: ChatTabType;
   isMinimized: boolean;
   unreadCounts: { system: number; chat: number };
   connectionStatus: string;
   onlineCount: number;
-  onSetTab: (tab: ChatTab) => void;
+  onSetTab: (tab: ChatTabType) => void;
   onToggleMinimized: () => void;
 }
 
@@ -25,20 +27,12 @@ export const ChatTabs = ({
 }: ChatTabsProps) => {
   const { t } = useTranslation();
 
-  const getDotClass = (status: string): string => {
-    switch (status) {
-      case 'online':
-        return '';
-      case 'connecting':
-        return styles['chat__online_dot--connecting'];
-      case 'error':
-        return styles['chat__online_dot--error'];
-      default:
-        return styles['chat__online_dot--offline'];
-    }
-  };
-
-  const tabs: { id: ChatTab; label: string; short: string; badge: number }[] = [
+  const tabs: {
+    id: ChatTabType;
+    label: string;
+    short: string;
+    badge: number;
+  }[] = [
     {
       id: 'events',
       label: t('hud.chat.tabs.events'),
@@ -84,12 +78,10 @@ export const ChatTabs = ({
         />
       </div>
       <div className={styles.chat__online_indicator}>
-        <div
-          className={`${styles.chat__online_dot} ${getDotClass(connectionStatus)}`}
-        />
         {connectionStatus === 'online' && (
           <span className={styles.chat__online_count}>{onlineCount}</span>
         )}
+        <OnlineDot status={connectionStatus as ConnectionStatusType} />
       </div>
       <button
         className={styles.chat__minimize}
