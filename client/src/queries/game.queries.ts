@@ -3,7 +3,6 @@ import type { AxiosError } from 'axios';
 
 import type {
   IPlayerProfile,
-  IOwnedGearItem,
   ICatchFishPayload,
   IBreakGearPayload,
 } from '@/common/types';
@@ -15,28 +14,8 @@ import { clearPendingEquips } from '@/store/slices/gameSlice';
 import { InventoryService } from '../services/inventory.service';
 import { GameService } from '../services/game.service';
 
+import { updateProfilePreservingGear } from '@/common/utils/gear.util';
 import { calculateOptimisticLevel } from '@/common/utils/experience.util';
-
-const preserveValidGearSelection = (
-  localUid: string | null,
-  serverUid: string | null,
-  allGearItems: IOwnedGearItem[],
-) => {
-  if (!localUid) return serverUid;
-  const item = allGearItems.find((gi: IOwnedGearItem) => gi.uid === localUid);
-
-  if (
-    item &&
-    !item.isBroken &&
-    (item.condition === undefined ||
-      item.condition === null ||
-      item.condition > 0)
-  ) {
-    return localUid;
-  }
-
-  return serverUid;
-};
 
 export const useCatchFishMutation = () => {
   const queryClient = useQueryClient();
@@ -49,15 +28,15 @@ export const useCatchFishMutation = () => {
   >({
     mutationFn: async (payload: ICatchFishPayload) => {
       const state = store.getState();
-      const pendingEquips = state.game.pendingEquips;
+      const equipsToFlush = state.game.pendingEquips;
 
-      if (pendingEquips && pendingEquips.length > 0) {
+      if (equipsToFlush && equipsToFlush.length > 0) {
+        store.dispatch(clearPendingEquips());
         try {
-          await InventoryService.equip({ equips: pendingEquips });
+          await InventoryService.equip({ equips: equipsToFlush });
         } catch (error) {
           console.error('Failed to flush gears before catch:', error);
         }
-        store.dispatch(clearPendingEquips());
       }
       return GameService.catchFish(payload);
     },
@@ -122,34 +101,8 @@ export const useCatchFishMutation = () => {
     onSuccess: (data) => {
       queryClient.setQueryData(
         PLAYER_KEYS.profile(),
-        (old: IPlayerProfile | undefined) => {
-          if (!old) return data;
-          return {
-            ...data,
-            activeBait: old.activeBait,
-            activeGroundbait: old.activeGroundbait,
-            equippedRodUid: preserveValidGearSelection(
-              old.equippedRodUid,
-              data.equippedRodUid,
-              data.gearItems,
-            ),
-            equippedReelUid: preserveValidGearSelection(
-              old.equippedReelUid,
-              data.equippedReelUid,
-              data.gearItems,
-            ),
-            equippedLineUid: preserveValidGearSelection(
-              old.equippedLineUid,
-              data.equippedLineUid,
-              data.gearItems,
-            ),
-            equippedHookUid: preserveValidGearSelection(
-              old.equippedHookUid,
-              data.equippedHookUid,
-              data.gearItems,
-            ),
-          };
-        },
+        (old: IPlayerProfile | undefined) =>
+          updateProfilePreservingGear(old, data),
       );
     },
   });
@@ -166,15 +119,15 @@ export const useBreakGearMutation = () => {
   >({
     mutationFn: async (payload: IBreakGearPayload) => {
       const state = store.getState();
-      const pendingEquips = state.game.pendingEquips;
+      const equipsToFlush = state.game.pendingEquips;
 
-      if (pendingEquips && pendingEquips.length > 0) {
+      if (equipsToFlush && equipsToFlush.length > 0) {
+        store.dispatch(clearPendingEquips());
         try {
-          await InventoryService.equip({ equips: pendingEquips });
+          await InventoryService.equip({ equips: equipsToFlush });
         } catch (error) {
           console.error('Failed to flush gears before break:', error);
         }
-        store.dispatch(clearPendingEquips());
       }
       return GameService.breakGear(payload);
     },
@@ -241,34 +194,8 @@ export const useBreakGearMutation = () => {
     onSuccess: (data) => {
       queryClient.setQueryData(
         PLAYER_KEYS.profile(),
-        (old: IPlayerProfile | undefined) => {
-          if (!old) return data;
-          return {
-            ...data,
-            activeBait: old.activeBait,
-            activeGroundbait: old.activeGroundbait,
-            equippedRodUid: preserveValidGearSelection(
-              old.equippedRodUid,
-              data.equippedRodUid,
-              data.gearItems,
-            ),
-            equippedReelUid: preserveValidGearSelection(
-              old.equippedReelUid,
-              data.equippedReelUid,
-              data.gearItems,
-            ),
-            equippedLineUid: preserveValidGearSelection(
-              old.equippedLineUid,
-              data.equippedLineUid,
-              data.gearItems,
-            ),
-            equippedHookUid: preserveValidGearSelection(
-              old.equippedHookUid,
-              data.equippedHookUid,
-              data.gearItems,
-            ),
-          };
-        },
+        (old: IPlayerProfile | undefined) =>
+          updateProfilePreservingGear(old, data),
       );
     },
   });

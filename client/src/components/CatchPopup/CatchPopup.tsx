@@ -115,6 +115,8 @@ export function CatchPopup({ result, sceneRef }: ICatchPopupProps) {
     }
   };
 
+  const isPending = catchMutation.isPending || breakMutation.isPending;
+
   if (result.type === 'trash') {
     return (
       <UniversalModal
@@ -132,6 +134,7 @@ export function CatchPopup({ result, sceneRef }: ICatchPopupProps) {
             variant="green"
             onClick={handleRelease}
             label={t('catch.discard')}
+            disabled={isPending}
           />
         }
       >
@@ -182,6 +185,7 @@ export function CatchPopup({ result, sceneRef }: ICatchPopupProps) {
             onClick={handleKeep}
             label={t('catch.keep')}
             variant="green"
+            disabled={isPending}
           />
 
           <WoodyButton
@@ -189,6 +193,7 @@ export function CatchPopup({ result, sceneRef }: ICatchPopupProps) {
             onClick={handleRelease}
             label={t('catch.release')}
             variant="brown"
+            disabled={isPending}
           />
         </>
       }

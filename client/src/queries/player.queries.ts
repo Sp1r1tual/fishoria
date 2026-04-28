@@ -6,6 +6,8 @@ import {
 } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
+import type { IPlayerProfile } from '@/common/types';
+
 import { ACHIEVEMENT_KEYS } from './achievement.queries';
 import { QUEST_KEYS } from './quest.queries';
 import { INVENTORY_KEYS } from './inventory.queries';
@@ -14,6 +16,7 @@ import { NEWS_KEYS } from './news.queries';
 import { PlayerService } from '../services/player.service';
 import { refreshToken } from '../http/interceptors/auth.interceptor';
 import { useAppSelector } from '../hooks/core/useAppStore';
+import { updateProfilePreservingGear } from '@/common/utils/gear.util';
 
 export const PLAYER_KEYS = {
   all: ['player'] as const,
@@ -55,7 +58,11 @@ export const useAddMoneyMutation = () => {
     mutationFn: (payload: { amount: number; targetUserId?: string }) =>
       PlayerService.addMoney(payload),
     onSuccess: (data) => {
-      queryClient.setQueryData(PLAYER_KEYS.profile(), data);
+      queryClient.setQueryData(
+        PLAYER_KEYS.profile(),
+        (old: IPlayerProfile | undefined) =>
+          updateProfilePreservingGear(old, data),
+      );
     },
   });
 };
@@ -95,7 +102,11 @@ export const useUpdateProfileMutation = () => {
     mutationFn: (payload: { username?: string; avatar?: string }) =>
       PlayerService.updateProfile(payload),
     onSuccess: (data) => {
-      queryClient.setQueryData(PLAYER_KEYS.profile(), data);
+      queryClient.setQueryData(
+        PLAYER_KEYS.profile(),
+        (old: IPlayerProfile | undefined) =>
+          updateProfilePreservingGear(old, data),
+      );
     },
   });
 };

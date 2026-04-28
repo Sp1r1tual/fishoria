@@ -20,6 +20,7 @@ import {
   FISH_SPECIES,
 } from '@/common/configs/game';
 import { ECONOMY } from '@/common/configs/game/system.config';
+import { updateProfilePreservingGear } from '@/common/utils/gear.util';
 
 const getItemPrice = (itemId: string, itemType: string): number => {
   switch (itemType) {
@@ -116,7 +117,11 @@ export const useBuyMutation = () => {
       }
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(PLAYER_KEYS.profile(), data);
+      queryClient.setQueryData(
+        PLAYER_KEYS.profile(),
+        (old: IPlayerProfile | undefined) =>
+          updateProfilePreservingGear(old, data),
+      );
     },
   });
 };
@@ -168,7 +173,11 @@ export const useSellMutation = () => {
       }
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(PLAYER_KEYS.profile(), data);
+      queryClient.setQueryData(
+        PLAYER_KEYS.profile(),
+        (old: IPlayerProfile | undefined) =>
+          updateProfilePreservingGear(old, data),
+      );
     },
   });
 };

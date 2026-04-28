@@ -11,6 +11,7 @@ import { store } from '@/store/store';
 
 import { addPendingEquips } from '@/store/slices/gameSlice';
 import { PLAYER_KEYS } from './player.queries';
+import { updateProfilePreservingGear } from '@/common/utils/gear.util';
 
 import { InventoryService } from '../services/inventory.service';
 
@@ -147,18 +148,8 @@ export const useRepairMutation = () => {
     onSuccess: (data) => {
       queryClient.setQueryData(
         PLAYER_KEYS.profile(),
-        (old: IPlayerProfile | undefined) => {
-          if (!old) return data;
-          return {
-            ...(data as IPlayerProfile),
-            activeBait: old.activeBait,
-            activeGroundbait: old.activeGroundbait,
-            equippedRodUid: old.equippedRodUid,
-            equippedReelUid: old.equippedReelUid,
-            equippedLineUid: old.equippedLineUid,
-            equippedHookUid: old.equippedHookUid,
-          };
-        },
+        (old: IPlayerProfile | undefined) =>
+          updateProfilePreservingGear(old, data as IPlayerProfile),
       );
     },
   });
@@ -210,18 +201,8 @@ export const useConsumeMutation = () => {
     onSuccess: (data) => {
       queryClient.setQueryData(
         PLAYER_KEYS.profile(),
-        (old: IPlayerProfile | undefined) => {
-          if (!old) return data;
-          return {
-            ...(data as IPlayerProfile),
-            activeBait: old.activeBait,
-            activeGroundbait: old.activeGroundbait,
-            equippedRodUid: old.equippedRodUid,
-            equippedReelUid: old.equippedReelUid,
-            equippedLineUid: old.equippedLineUid,
-            equippedHookUid: old.equippedHookUid,
-          };
-        },
+        (old: IPlayerProfile | undefined) =>
+          updateProfilePreservingGear(old, data as IPlayerProfile),
       );
     },
   });
@@ -270,18 +251,8 @@ export const useDeleteMutation = () => {
     onSuccess: (data) => {
       queryClient.setQueryData(
         PLAYER_KEYS.profile(),
-        (old: IPlayerProfile | undefined) => {
-          if (!old) return data;
-          return {
-            ...(data as IPlayerProfile),
-            activeBait: old.activeBait,
-            activeGroundbait: old.activeGroundbait,
-            equippedRodUid: old.equippedRodUid,
-            equippedReelUid: old.equippedReelUid,
-            equippedLineUid: old.equippedLineUid,
-            equippedHookUid: old.equippedHookUid,
-          };
-        },
+        (old: IPlayerProfile | undefined) =>
+          updateProfilePreservingGear(old, data as IPlayerProfile),
       );
     },
   });

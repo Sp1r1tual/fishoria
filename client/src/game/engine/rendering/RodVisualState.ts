@@ -61,7 +61,7 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
     fishMovingTowardsPlayer,
   } = input;
 
-  const isCombat = phase === 'reeling' || phase === 'bite';
+  const isCombat = phase === 'reeling';
   const baseX = isCast
     ? isCombat
       ? Math.max(
@@ -138,8 +138,14 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
     rodTension = tension.value;
     lineSlack = fishMovingTowardsPlayer && tension.value < 0.1 ? 0.5 : 0;
   } else if (phase === 'bite') {
-    rodTension = tension.value;
-    lineSlack = 0;
+    if (rigType === 'feeder') {
+      const biteWave = Math.sin(time * 12) * 0.03;
+      rodTension = 0.12 + biteWave;
+      lineSlack = 0.01;
+    } else {
+      rodTension = tension.value;
+      lineSlack = 0;
+    }
   } else if (isCast && isSpinning && phase === 'waiting') {
     if (playerReeling) {
       lineSlack = 0;

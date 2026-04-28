@@ -76,6 +76,20 @@ export function useGlobalSockets() {
     );
     OnlineService.pingStatus();
 
+    const authCheckInterval = setInterval(async () => {
+      const authExpiry = localStorage.getItem('authExpiry');
+      if (authExpiry && isAuthenticated) {
+        const expiresAt = parseInt(authExpiry, 10);
+        if (Date.now() > expiresAt - 30000) {
+          try {
+            await refreshToken();
+          } catch (e) {
+            console.warn('[Online] Proactive refresh failed', e);
+          }
+        }
+      }
+    }, 30000);
+
     const statusSocket = getStatusSocket();
     const chatSocket = getChatSocket();
     const gameSocket = getGameSocket();
@@ -116,6 +130,26 @@ export function useGlobalSockets() {
 
       const rawMsg = err?.message || err?.error || 'unknown';
 
+      const isAuthError =
+        rawMsg === 'Unauthorized' ||
+        rawMsg === 'Invalid token' ||
+        rawMsg === 'Token expired' ||
+        rawMsg.toLowerCase().includes('unauthorized') ||
+        rawMsg.toLowerCase().includes('token expired');
+
+      if (isAuthError) {
+        try {
+          await refreshToken();
+
+          statusSocket.disconnect().connect();
+          chatSocket.disconnect().connect();
+          gameSocket.disconnect().connect();
+          return;
+        } catch (refreshErr) {
+          console.error('[Online] Token refresh failed:', refreshErr);
+        }
+      }
+
       const msgMap: Record<string, string> = {
         'Internal server error': 'error.socket.internal_error',
         'Forbidden resource': 'error.socket.forbidden',
@@ -131,19 +165,6 @@ export function useGlobalSockets() {
           msgKey = 'error.socket.limit_reached';
         } else {
           msgKey = rawMsg.includes(' ') ? 'errors.unknown' : rawMsg;
-        }
-      }
-
-      if (msgKey === 'error.socket.auth_error') {
-        try {
-          await refreshToken();
-
-          statusSocket.disconnect().connect();
-          chatSocket.disconnect().connect();
-          gameSocket.disconnect().connect();
-          return;
-        } catch (refreshErr) {
-          console.error('[Online] Token refresh failed:', refreshErr);
         }
       }
 
@@ -213,6 +234,7 @@ export function useGlobalSockets() {
       gameSocket.off('exception', onException);
       disconnectGame();
       clearInterval(statusInterval);
+      clearInterval(authCheckInterval);
     };
   }, [dispatch, onlineMode, isAuthenticated, isSessionOffline]);
 }

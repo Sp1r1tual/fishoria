@@ -14,6 +14,7 @@ import { useAppDispatch } from '@/hooks/core/useAppStore';
 import { PLAYER_KEYS } from './player.queries';
 import { addToast } from '@/store/slices/uiSlice';
 
+import { updateProfilePreservingGear } from '@/common/utils/gear.util';
 import { QuestService } from '@/services/quest.service';
 
 export const QUEST_KEYS = {
@@ -77,7 +78,11 @@ export const useClaimQuestReward = () => {
         }),
       );
 
-      queryClient.setQueryData(PLAYER_KEYS.profile(), updatedProfile);
+      queryClient.setQueryData(
+        PLAYER_KEYS.profile(),
+        (old: IPlayerProfile | undefined) =>
+          updateProfilePreservingGear(old, updatedProfile),
+      );
 
       queryClient.invalidateQueries({ queryKey: QUEST_KEYS.all });
     },

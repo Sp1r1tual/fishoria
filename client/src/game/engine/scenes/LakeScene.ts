@@ -710,6 +710,13 @@ export class LakeScene implements IScene {
     this.hookedFish = null;
     this.potentialBiter = null;
     this.playerRelaxing = false;
+    this.tension = {
+      value: 0,
+      isBroken: false,
+      isEscaped: false,
+      escapeProgress: 0,
+      timeSinceLastReel: 0,
+    };
     this.callbacks.onTensionChange(0, false, false);
     if (!suppressPhaseEvent) {
       this.callbacks.onPhaseChange(this.phase);
