@@ -8,7 +8,14 @@ export const errorInterceptors = (axiosInstance: AxiosInstance) => {
   axiosInstance.interceptors.response.use(
     (response) => response,
     (error: AxiosError<{ message?: string }>) => {
-      if (error.response?.status === 429) {
+      const status = error.response?.status;
+      const url = error.config?.url || '';
+
+      if (status === 401 || status === 403 || url.includes('/auth/refresh')) {
+        return Promise.reject(error);
+      }
+
+      if (status === 429) {
         store.dispatch(
           addToast({
             type: 'error',
