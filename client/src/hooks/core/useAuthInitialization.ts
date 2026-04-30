@@ -14,6 +14,7 @@ import {
 import { PLAYER_KEYS } from '@/queries/player.queries';
 
 import { PlayerService } from '@/services/player.service';
+import { isPublicRoute, PUBLIC_ROUTES } from '@/common/constants/routes';
 
 export const useAuthInitialization = () => {
   const dispatch = useAppDispatch();
@@ -29,11 +30,7 @@ export const useAuthInitialization = () => {
     const initializeAuth = async () => {
       if (isInitialized) return;
 
-      const isPublicPath =
-        location.pathname === '/reset-password' ||
-        location.pathname === '/welcome' ||
-        location.pathname === '/privacy' ||
-        location.pathname === '/terms';
+      const isPublicPath = isPublicRoute(location.pathname);
 
       const isActivationFlow = searchParams.get('activated') === 'true';
 
@@ -60,10 +57,7 @@ export const useAuthInitialization = () => {
         const redirectPath = sessionStorage.getItem('redirectAfterLogin');
         if (
           redirectPath &&
-          redirectPath !== '/welcome' &&
-          redirectPath !== '/reset-password' &&
-          redirectPath !== '/privacy' &&
-          redirectPath !== '/terms'
+          !(PUBLIC_ROUTES as readonly string[]).includes(redirectPath)
         ) {
           sessionStorage.removeItem('redirectAfterLogin');
           navigate(redirectPath);

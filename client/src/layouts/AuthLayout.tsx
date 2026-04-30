@@ -18,6 +18,8 @@ import { RouteMetadata } from '@/components/logic/RouteMetadata';
 import { CookieConsent } from '@/components/CookieConsent/CookieConsent';
 import { ToastContainer } from '@/components/UI/Toast/ToastContainer';
 
+import { isPublicRoute } from '@/common/constants/routes';
+
 export const AuthLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -72,11 +74,7 @@ export const AuthLayout = () => {
 
   const wasLoggedOut = sessionStorage.getItem('loggedOut') === 'true';
 
-  const isPublicPath =
-    location.pathname === '/welcome' ||
-    location.pathname === '/reset-password' ||
-    location.pathname === '/privacy' ||
-    location.pathname === '/terms';
+  const isPublicPath = isPublicRoute(location.pathname);
 
   if (!isAuthenticated || wasLoggedOut) {
     if (!isPublicPath) {

@@ -36,6 +36,7 @@ import {
   connectGame,
   disconnectGame,
 } from '@/services/socket.service';
+import { isPublicRoute } from '@/common/constants/routes';
 
 export function useGlobalSockets() {
   const dispatch = useAppDispatch();
@@ -44,16 +45,22 @@ export function useGlobalSockets() {
   const isAuthenticated = useAppSelector((s) => s.auth.isAuthenticated);
   const isSessionOffline = useAppSelector((s) => s.online.isSessionOffline);
   const lastToastTimeRef = useRef<Record<string, number>>({});
+  const isSessionOfflineRef = useRef(isSessionOffline);
+  const locationRef = useRef(location);
 
   useEffect(() => {
-    const isPublicPath =
-      location.pathname === '/welcome' ||
-      location.pathname === '/reset-password' ||
-      location.pathname === '/privacy' ||
-      location.pathname === '/terms';
+    isSessionOfflineRef.current = isSessionOffline;
+  }, [isSessionOffline]);
 
-    const hasSession = localStorage.getItem('hasSession') === 'true';
+  useEffect(() => {
+    locationRef.current = location;
+  }, [location]);
 
+  const isPublicPath = isPublicRoute(location.pathname);
+
+  const hasSession = localStorage.getItem('hasSession') === 'true';
+
+  useEffect(() => {
     if (!onlineMode || !isAuthenticated || isPublicPath || !hasSession) {
       dispatch(setConnectionStatus('offline'));
       dispatch(setChatConnectionStatus('offline'));
@@ -65,7 +72,7 @@ export function useGlobalSockets() {
     }
 
     const showSocketToast = (msgKey: string) => {
-      if (isSessionOffline) return;
+      if (isSessionOfflineRef.current) return;
 
       const now = Date.now();
       const lastTime = lastToastTimeRef.current[msgKey] || 0;
@@ -105,14 +112,14 @@ export function useGlobalSockets() {
     const gameSocket = getGameSocket();
 
     const onStatusConnect = () => {
-      if (isSessionOffline) {
+      if (isSessionOfflineRef.current) {
         dispatch(setSessionOffline(false));
       }
       dispatch(setConnectionStatus('online'));
     };
     const onStatusDisconnect = () => dispatch(setConnectionStatus('offline'));
     const onChatConnect = () => {
-      if (isSessionOffline) {
+      if (isSessionOfflineRef.current) {
         dispatch(setSessionOffline(false));
       }
       dispatch(setChatConnectionStatus('online'));
@@ -122,7 +129,7 @@ export function useGlobalSockets() {
     const onConnectionError = (err: unknown) => {
       console.warn('[Online] Connection error:', err);
 
-      if (!isSessionOffline) {
+      if (!isSessionOfflineRef.current) {
         console.warn(
           '[Online] Connection error - switching to silent background retry mode',
         );
@@ -148,16 +155,12 @@ export function useGlobalSockets() {
         rawMsg.toLowerCase().includes('token expired');
 
       if (isAuthError) {
-        const isPublicPath =
-          location.pathname === '/welcome' ||
-          location.pathname === '/reset-password' ||
-          location.pathname === '/privacy' ||
-          location.pathname === '/terms';
+        const isCurrentlyPublic = isPublicRoute(locationRef.current.pathname);
 
         if (
           isAuthenticated &&
           localStorage.getItem('hasSession') === 'true' &&
-          !isPublicPath
+          !isCurrentlyPublic
         ) {
           try {
             await refreshToken();
@@ -258,11 +261,5 @@ export function useGlobalSockets() {
       clearInterval(statusInterval);
       clearInterval(authCheckInterval);
     };
-  }, [
-    dispatch,
-    location.pathname,
-    onlineMode,
-    isAuthenticated,
-    isSessionOffline,
-  ]);
+  }, [dispatch, onlineMode, isAuthenticated, isPublicPath, hasSession]);
 }
