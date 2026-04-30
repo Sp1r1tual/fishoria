@@ -140,6 +140,12 @@ export class BackgroundRenderer {
     const waterAlpha =
       weather === 'rain' ? 0.5 : weather === 'cloudy' ? 0.4 : 0.3;
     this.waterGfx.fill({ color: tod.waterColor, alpha: waterAlpha });
+
+    if (this.displacementFilter) {
+      const baseScale = this.config.environment.waterRippleScale ?? 6;
+      const waveScale = W < 1080 ? baseScale * 0.5 : baseScale;
+      this.displacementFilter.scale.set(waveScale);
+    }
   }
 
   private applyCurrentTint(): void {

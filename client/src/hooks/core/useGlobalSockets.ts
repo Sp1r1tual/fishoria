@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router';
 
 import type { WeatherType } from '@/common/types';
 
@@ -38,13 +39,22 @@ import {
 
 export function useGlobalSockets() {
   const dispatch = useAppDispatch();
+  const location = useLocation();
   const onlineMode = useAppSelector((s) => s.settings.onlineMode);
   const isAuthenticated = useAppSelector((s) => s.auth.isAuthenticated);
   const isSessionOffline = useAppSelector((s) => s.online.isSessionOffline);
   const lastToastTimeRef = useRef<Record<string, number>>({});
 
   useEffect(() => {
-    if (!onlineMode || !isAuthenticated) {
+    const isPublicPath =
+      location.pathname === '/welcome' ||
+      location.pathname === '/reset-password' ||
+      location.pathname === '/privacy' ||
+      location.pathname === '/terms';
+
+    const hasSession = localStorage.getItem('hasSession') === 'true';
+
+    if (!onlineMode || !isAuthenticated || isPublicPath || !hasSession) {
       dispatch(setConnectionStatus('offline'));
       dispatch(setChatConnectionStatus('offline'));
       disconnectStatus();
@@ -138,15 +148,27 @@ export function useGlobalSockets() {
         rawMsg.toLowerCase().includes('token expired');
 
       if (isAuthError) {
-        try {
-          await refreshToken();
+        const isPublicPath =
+          location.pathname === '/welcome' ||
+          location.pathname === '/reset-password' ||
+          location.pathname === '/privacy' ||
+          location.pathname === '/terms';
 
-          statusSocket.disconnect().connect();
-          chatSocket.disconnect().connect();
-          gameSocket.disconnect().connect();
-          return;
-        } catch (refreshErr) {
-          console.error('[Online] Token refresh failed:', refreshErr);
+        if (
+          isAuthenticated &&
+          localStorage.getItem('hasSession') === 'true' &&
+          !isPublicPath
+        ) {
+          try {
+            await refreshToken();
+
+            statusSocket.disconnect().connect();
+            chatSocket.disconnect().connect();
+            gameSocket.disconnect().connect();
+            return;
+          } catch (refreshErr) {
+            console.error('[Online] Token refresh failed:', refreshErr);
+          }
         }
       }
 
@@ -236,5 +258,11 @@ export function useGlobalSockets() {
       clearInterval(statusInterval);
       clearInterval(authCheckInterval);
     };
-  }, [dispatch, onlineMode, isAuthenticated, isSessionOffline]);
+  }, [
+    dispatch,
+    location.pathname,
+    onlineMode,
+    isAuthenticated,
+    isSessionOffline,
+  ]);
 }

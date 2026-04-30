@@ -71,12 +71,17 @@ export const SkeletonImage = ({
           ref={imgRef}
           src={src}
           alt={alt}
-          className={`${className || ''} ${styles.image} ${isLoaded && !isLoading ? styles.imageVisible : styles.imageHidden}`}
+          className={`${className || ''} ${styles.image} ${
+            isLoaded && !isLoading
+              ? isCached
+                ? styles.imageVisibleCached
+                : styles.imageVisible
+              : styles.imageHidden
+          }`}
           style={{
             ...style,
             objectFit,
             height: height || '100%',
-            transition: isCached ? 'none' : undefined,
           }}
           onLoad={handleLoad}
           onError={handleError}

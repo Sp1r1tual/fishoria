@@ -527,5 +527,6 @@
   padding: 20px;
   font-style: italic;
   pointer-events: none;
-  min-height: 100px;
+  min-height: 100%;
+  width: 100%;
 }

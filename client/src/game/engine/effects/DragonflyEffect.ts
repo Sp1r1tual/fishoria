@@ -26,6 +26,9 @@ export class DragonflyEffect {
     { body: 0x228b22, head: 0x32cd32 }, // Green
     { body: 0x800080, head: 0xda70d6 }, // Purple
     { body: 0xdaa520, head: 0xffd700 }, // Golden/Yellow
+    { body: 0x008b8b, head: 0x00ffff }, // Cyan/Teal
+    { body: 0x8b0000, head: 0xff4500 }, // Crimson/Orange
+    { body: 0x1e90ff, head: 0x00bfff }, // DodgerBlue/DeepSkyBlue
   ];
 
   constructor(parent: Container) {
@@ -231,41 +234,128 @@ export class DragonflyEffect {
         ? Math.max(0.1, distToTarget / 20)
         : 1.0;
 
+    const flapSpeed = 70;
     this.wingAngle =
       this.state === 'perched'
-        ? 0.1
-        : Math.sin(this.time * 60) * 0.5 * flapMult;
-    this.gfx.moveTo(cx, cy);
-    this.gfx.lineTo(
-      cx - Math.cos(this.bodyAngle) * 8,
-      cy - Math.sin(this.bodyAngle) * 8,
-    );
-    this.gfx.stroke({ width: 1.5, color: this.bodyColor, alpha: this.alpha });
+        ? -0.05
+        : Math.sin(this.time * flapSpeed) * 0.6 * flapMult;
+
+    const bodyAngle = this.bodyAngle;
+    const alpha = this.alpha;
+
+    const tailLength = 12;
+    const tailEndX = cx - Math.cos(bodyAngle) * tailLength;
+    const tailEndY = cy - Math.sin(bodyAngle) * tailLength;
 
     this.gfx.moveTo(cx, cy);
-    this.gfx.lineTo(
-      cx + Math.cos(this.bodyAngle) * 4,
-      cy + Math.sin(this.bodyAngle) * 4,
-    );
-    this.gfx.stroke({ width: 2, color: this.headColor, alpha: this.alpha });
+    this.gfx.lineTo(cx - Math.cos(bodyAngle) * 4, cy - Math.sin(bodyAngle) * 4);
+    this.gfx.stroke({ width: 2.2, color: this.bodyColor, alpha });
 
-    const wingLength = 10;
+    this.gfx.moveTo(cx - Math.cos(bodyAngle) * 3, cy - Math.sin(bodyAngle) * 3);
+    this.gfx.lineTo(tailEndX, tailEndY);
+    this.gfx.stroke({ width: 1.2, color: this.bodyColor, alpha });
+
+    const headX = cx + Math.cos(bodyAngle) * 2.5;
+    const headY = cy + Math.sin(bodyAngle) * 2.5;
+    this.gfx.circle(headX, headY, 1.8);
+    this.gfx.fill({ color: this.headColor, alpha });
+
+    const eyeOffset = 0.6;
+    const eyeAngleLeft = bodyAngle + 0.7;
+    const eyeAngleRight = bodyAngle - 0.7;
+    this.gfx.circle(
+      headX + Math.cos(eyeAngleLeft) * eyeOffset,
+      headY + Math.sin(eyeAngleLeft) * eyeOffset,
+      0.8,
+    );
+    this.gfx.circle(
+      headX + Math.cos(eyeAngleRight) * eyeOffset,
+      headY + Math.sin(eyeAngleRight) * eyeOffset,
+      0.8,
+    );
+    this.gfx.fill({ color: 0x000000, alpha: alpha * 0.8 });
+
     const wingColor = 0xffffff;
-    const wingAlpha = (this.state === 'perched' ? 0.6 : 0.3) * this.alpha;
-    const perpAngle = this.bodyAngle + Math.PI / 2;
-    const w1x = cx + Math.cos(perpAngle - this.wingAngle) * wingLength;
-    const w1y = cy + Math.sin(perpAngle - this.wingAngle) * wingLength;
-    this.gfx.moveTo(cx, cy);
-    this.gfx.lineTo(w1x, w1y);
-    this.gfx.stroke({ width: 1, color: wingColor, alpha: wingAlpha });
+    const wingAlpha = (this.state === 'perched' ? 0.45 : 0.25) * alpha;
+    const perpAngle = bodyAngle + Math.PI / 2;
 
-    const w2x =
-      cx + Math.cos(perpAngle + Math.PI + this.wingAngle) * wingLength;
-    const w2y =
-      cy + Math.sin(perpAngle + Math.PI + this.wingAngle) * wingLength;
-    this.gfx.moveTo(cx, cy);
-    this.gfx.lineTo(w2x, w2y);
-    this.gfx.stroke({ width: 1, color: wingColor, alpha: wingAlpha });
+    this.drawWing(
+      cx,
+      cy,
+      perpAngle + this.wingAngle,
+      11,
+      3.5,
+      wingColor,
+      wingAlpha,
+    );
+    this.drawWing(
+      cx,
+      cy,
+      perpAngle + Math.PI - this.wingAngle,
+      11,
+      3.5,
+      wingColor,
+      wingAlpha,
+    );
+
+    const backWingAngle =
+      this.state === 'perched'
+        ? -0.2
+        : Math.sin(this.time * flapSpeed + 1.2) * 0.5 * flapMult;
+
+    const bx = cx - Math.cos(bodyAngle) * 2.5;
+    const by = cy - Math.sin(bodyAngle) * 2.5;
+    this.drawWing(
+      bx,
+      by,
+      perpAngle + backWingAngle,
+      9,
+      3,
+      wingColor,
+      wingAlpha,
+    );
+    this.drawWing(
+      bx,
+      by,
+      perpAngle + Math.PI - backWingAngle,
+      9,
+      3,
+      wingColor,
+      wingAlpha,
+    );
+  }
+
+  private drawWing(
+    x: number,
+    y: number,
+    angle: number,
+    length: number,
+    width: number,
+    color: number,
+    alpha: number,
+  ): void {
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    const pCos = Math.cos(angle + Math.PI / 2);
+    const pSin = Math.sin(angle + Math.PI / 2);
+
+    const tx = x + cos * length;
+    const ty = y + sin * length;
+    const m1x = x + cos * length * 0.5 + pCos * width * 0.5;
+    const m1y = y + sin * length * 0.5 + pSin * width * 0.5;
+    const m2x = x + cos * length * 0.5 - pCos * width * 0.5;
+    const m2y = y + sin * length * 0.5 - pSin * width * 0.5;
+
+    const offset = 1.2;
+    const startX = x + cos * offset;
+    const startY = y + sin * offset;
+
+    this.gfx.moveTo(startX, startY);
+    this.gfx.bezierCurveTo(m1x, m1y, tx, ty, tx, ty);
+    this.gfx.bezierCurveTo(tx, ty, m2x, m2y, startX, startY);
+    this.gfx.fill({ color, alpha });
+
+    this.gfx.stroke({ width: 0.4, color: 0xffffff, alpha: alpha * 0.3 });
   }
 
   public destroy(): void {

@@ -208,8 +208,8 @@ export class LakeScene implements IScene {
 
     this.waterRippleEffect = new WaterRippleEffect(this.fishLayer);
 
-    const W = app.renderer.width;
-    const H = app.renderer.height;
+    const W = app.screen.width;
+    const H = app.screen.height;
 
     this.drawStrikeHint(W, H);
 
@@ -418,8 +418,8 @@ export class LakeScene implements IScene {
       this.resetCast(true);
     }
 
-    const W = this.app.renderer.width;
-    const H = this.app.renderer.height;
+    const W = this.app.screen.width;
+    const H = this.app.screen.height;
 
     const target = validateCast(
       pixel,
@@ -557,8 +557,8 @@ export class LakeScene implements IScene {
   }
 
   public throwGroundbait(): void {
-    const W = this.app.renderer.width;
-    const H = this.app.renderer.height;
+    const W = this.app.screen.width;
+    const H = this.app.screen.height;
     this.groundbaitEffect.spawn(W, H);
   }
 
@@ -613,8 +613,8 @@ export class LakeScene implements IScene {
       this.weatherLayer.setWeather(type);
     }
     if (this.bgRenderer && this.app) {
-      const W = this.app.renderer.width;
-      const H = this.app.renderer.height;
+      const W = this.app.screen.width;
+      const H = this.app.screen.height;
       this.bgRenderer.drawBackground(W, H, this.timeOfDay, type);
     }
   }
@@ -783,8 +783,8 @@ export class LakeScene implements IScene {
   // ─── Update ────────────────────────────────────────────────────────────────
   update(deltaTime: number): void {
     const isCast = this.phase !== 'idle';
-    const W = this.app.renderer.width;
-    const H = this.app.renderer.height;
+    const W = this.app.screen.width;
+    const H = this.app.screen.height;
 
     if (
       this.activeGroundbaitType !== 'none' &&
@@ -1348,8 +1348,8 @@ export class LakeScene implements IScene {
   }
 
   private syncEnvironmentDepth(): void {
-    const W = this.app.renderer.width;
-    const H = this.app.renderer.height;
+    const W = this.app.screen.width;
+    const H = this.app.screen.height;
     const waterY = H * this.config.environment.waterBoundaryY;
     const waterHeight = Math.max(1, H - waterY);
 

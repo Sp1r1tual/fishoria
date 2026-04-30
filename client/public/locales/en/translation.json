@@ -46,7 +46,7 @@
     "ambientSounds": "Ambient Sounds",
     "dangerZone": "Danger Zone",
     "resetWarning": "This will permanently delete all progress, including currency, levels, fish catch history, and equipment.",
-    "resetButton": "Reset Progress (Restart Game)",
+    "resetButton": "Reset Progress",
     "resetConfirm": "Are you sure you want to completely wipe all progress? This cannot be undone!",
     "logoutButton": "Logout from account",
     "logoutConfirmTitle": "Logout",
@@ -822,7 +822,7 @@
     "description": "The Fishoria server are currently unavailable. Please try again later."
   },
   "meta": {
-    "landing": "Fishoria is an online fishing simulator and browser game. Start your journey, catch fish and upgrade your gear directly in your browser.",
+    "landing": "Fishoria is an online fishing simulator. Start your journey, catch fish and upgrade your gear directly in your browser.",
     "resetPassword": "Reset your Fishoria account password securely.",
     "privacy": "Read the Fishoria Privacy Policy to understand how we handle your personal data.",
     "terms": "Review the Fishoria Terms of Service before playing.",
@@ -862,7 +862,7 @@
   },
   "landing": {
     "or_continue_with": "Or continue with",
-    "title": "Fishoria – Online Fishing Simulator & Game",
+    "title": "Fishoria – Online Fishing Simulator",
     "hero": {
       "subtitle": "Fishing simulator in your browser! Authorize to start the game",
       "ariaLabel": "Game introduction"
@@ -970,8 +970,8 @@
     "passwordUpdated": "Password updated successfully"
   },
   "metadata": {
-    "defaultTitle": "Fishoria – Online Fishing Simulator & Game",
-    "defaultDescription": "Fishoria is an online fishing simulator and browser game. Catch fish, explore reservoirs and upgrade your equipment directly in your browser."
+    "defaultTitle": "Fishoria – Online Fishing Simulator",
+    "defaultDescription": "Fishoria is an online fishing simulator. Catch fish, explore reservoirs and upgrade your equipment directly in your browser."
   },
   "welcome": {
     "title": "Welcome to Fishoria!",

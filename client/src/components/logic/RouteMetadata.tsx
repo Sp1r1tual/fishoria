@@ -15,6 +15,58 @@ const setMetaDescription = (content: string) => {
   tag.content = content;
 };
 
+const setCanonical = (url: string) => {
+  let link = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+
+  if (!link) {
+    link = document.createElement('link');
+    link.rel = 'canonical';
+    document.head.appendChild(link);
+  }
+
+  link.href = url;
+};
+
+const setOgUrl = (url: string) => {
+  let tag = document.querySelector<HTMLMetaElement>('meta[property="og:url"]');
+
+  if (!tag) {
+    tag = document.createElement('meta');
+    tag.setAttribute('property', 'og:url');
+    document.head.appendChild(tag);
+  }
+
+  tag.content = url;
+};
+
+const setOgTitle = (title: string) => {
+  let tag = document.querySelector<HTMLMetaElement>(
+    'meta[property="og:title"]',
+  );
+
+  if (!tag) {
+    tag = document.createElement('meta');
+    tag.setAttribute('property', 'og:title');
+    document.head.appendChild(tag);
+  }
+
+  tag.content = title;
+};
+
+const setOgDescription = (description: string) => {
+  let tag = document.querySelector<HTMLMetaElement>(
+    'meta[property="og:description"]',
+  );
+
+  if (!tag) {
+    tag = document.createElement('meta');
+    tag.setAttribute('property', 'og:description');
+    document.head.appendChild(tag);
+  }
+
+  tag.content = description;
+};
+
 export const RouteMetadata = () => {
   const { t } = useTranslation();
   const matches = useMatches();
@@ -27,6 +79,8 @@ export const RouteMetadata = () => {
           description?: string | ((t: TFunction) => string);
         }
       | undefined;
+
+    const currentUrl = `https://www.fishoria.online${window.location.pathname}`;
 
     if (handle) {
       const pageTitle =
@@ -41,10 +95,20 @@ export const RouteMetadata = () => {
 
       document.title = pageTitle;
       setMetaDescription(pageDescription);
+      setOgTitle(pageTitle);
+      setOgDescription(pageDescription);
     } else {
-      document.title = t('metadata.defaultTitle');
-      setMetaDescription(t('metadata.defaultDescription'));
+      const defaultTitle = t('metadata.defaultTitle');
+      const defaultDescription = t('metadata.defaultDescription');
+
+      document.title = defaultTitle;
+      setMetaDescription(defaultDescription);
+      setOgTitle(defaultTitle);
+      setOgDescription(defaultDescription);
     }
+
+    setCanonical(currentUrl);
+    setOgUrl(currentUrl);
   }, [matches, t]);
 
   return null;
