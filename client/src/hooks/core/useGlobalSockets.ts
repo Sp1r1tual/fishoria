@@ -111,6 +111,25 @@ export function useGlobalSockets() {
     const chatSocket = getChatSocket();
     const gameSocket = getGameSocket();
 
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        console.log('[Online] Page became visible - checking connection...');
+        // Force ping on visibility change to ensure quick wakeup
+        OnlineService.pingStatus(true);
+
+        if (isSessionOfflineRef.current) {
+          dispatch(setSessionOffline(false));
+        }
+
+        if (!statusSocket.connected) connectStatus();
+        if (!chatSocket.connected) connectChat();
+        if (!gameSocket.connected) connectGame();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleVisibilityChange);
+
     const onStatusConnect = () => {
       if (isSessionOfflineRef.current) {
         dispatch(setSessionOffline(false));
@@ -128,6 +147,9 @@ export function useGlobalSockets() {
 
     const onConnectionError = (err: unknown) => {
       console.warn('[Online] Connection error:', err);
+
+      // Proactively ping on error to wake up server if it's still asleep
+      OnlineService.pingStatus();
 
       if (!isSessionOfflineRef.current) {
         console.warn(
@@ -258,6 +280,10 @@ export function useGlobalSockets() {
       gameSocket.off('connect_error', onConnectionError);
       gameSocket.off('exception', onException);
       disconnectGame();
+
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleVisibilityChange);
+
       clearInterval(statusInterval);
       clearInterval(authCheckInterval);
     };

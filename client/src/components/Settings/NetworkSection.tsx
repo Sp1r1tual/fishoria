@@ -10,6 +10,8 @@ import {
 import { Toggle } from '../UI/Toggle/Toggle';
 import { ServiceStatus } from '../UI/ServiceStatus/ServiceStatus';
 
+import { OnlineService } from '@/services/online.service';
+
 import styles from './Settings.module.css';
 
 export function NetworkSection() {
@@ -42,6 +44,11 @@ export function NetworkSection() {
 
   const statusType = !onlineMode ? 'offline' : connectionStatus;
 
+  const handleReconnect = () => {
+    OnlineService.pingStatus(true);
+    dispatch(setSessionOffline(false));
+  };
+
   return (
     <div className={styles['settings__network-row']}>
       <Toggle
@@ -50,7 +57,29 @@ export function NetworkSection() {
         onChange={handleToggle}
       />
 
-      <ServiceStatus status={statusType} label={getStatusLabel()} />
+      <div className={styles['settings__network-status-wrapper']}>
+        <ServiceStatus status={statusType} label={getStatusLabel()} />
+
+        {onlineMode &&
+          (connectionStatus === 'offline' || connectionStatus === 'error') && (
+            <button
+              className={styles['settings__reconnect-button']}
+              onClick={handleReconnect}
+              title={t('online.reconnect')}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
+              </svg>
+            </button>
+          )}
+      </div>
     </div>
   );
 }

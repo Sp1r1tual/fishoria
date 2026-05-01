@@ -236,3 +236,34 @@
     padding: 6px 12px;
   }
 }
+
+.settings__network-status-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.settings__reconnect-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.settings__reconnect-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--clr-primary);
+  transform: rotate(30deg);
+}
+
+.settings__reconnect-button:active {
+  transform: rotate(180deg) scale(0.9);
+}

@@ -987,6 +987,7 @@
     "start_btn": "Start Adventure"
   },
   "online": {
+    "reconnect": "Reconnect",
     "waiting": {
       "title": "Network Connection",
       "message": "Please wait. The server may take up to 60 seconds to 'wake up'...",
