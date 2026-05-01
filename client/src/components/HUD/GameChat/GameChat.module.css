@@ -28,24 +28,21 @@
   pointer-events: none;
 }
 
-.chat--minimized .chat__input_wrapper {
-  border-radius: 0 0 12px 12px;
-}
-
 .chat__tabs {
   display: flex;
-  background: #3d4452;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-bottom: none;
-  border-radius: 12px 12px 0 0;
+  border-radius: 16px 16px 0 0;
   overflow: hidden;
-  transition:
-    background 0.5s ease,
-    border-color 0.5s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .chat--night .chat__tabs {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(15, 23, 42, 0.85);
   border-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -165,23 +162,15 @@
 }
 
 .chat--minimized .chat__tabs {
-  background: color-mix(
-    in srgb,
-    rgba(15, 23, 42, 0.65),
-    rgba(255, 255, 255, 0.12) calc(var(--night-intensity) * 100%)
-  );
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 20px;
-  box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.3),
-    inset 0 1px 1px rgba(255, 255, 255, 0.15);
-  transition: border-radius 0.3s ease-in; /* Slower radius expansion when minimizing */
+  background: rgba(15, 23, 42, 0.65);
+  border-radius: 16px;
+  border-bottom: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .chat--night.chat--minimized .chat__tabs {
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.75);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .chat__messages {
@@ -193,19 +182,18 @@
   gap: 4px;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-  background: #3d4452;
-  border-radius: 0;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-top: none;
   border-bottom: none;
-  transition:
-    background 0.5s ease,
-    border-color 0.5s ease;
+  transition: all 0.4s ease;
 }
 
 .chat--night .chat__messages {
-  background: #1e293b;
-  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(15, 23, 42, 0.85);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .chat__messages::-webkit-scrollbar {
@@ -307,22 +295,22 @@
 }
 
 .chat__input_wrapper {
-  background: #4a5468;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   padding: 4px 10px;
-  border-radius: 0 0 12px 12px;
+  border-radius: 0 0 16px 16px;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  transition:
-    background 0.5s ease,
-    border-color 0.5s ease;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.4s ease;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .chat--night .chat__input_wrapper {
-  background: #334155;
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .chat__input {
@@ -389,7 +377,7 @@
   }
 
   .chat--minimized .chat__tabs {
-    border-radius: 14px;
+    border-radius: 12px;
   }
 
   .chat__body {
