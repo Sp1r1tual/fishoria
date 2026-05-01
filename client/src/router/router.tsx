@@ -30,6 +30,7 @@ export const router = createBrowserRouter([
     handle: {
       title: (t: TFunction) => t('serverUnavailable.title'),
       description: (t: TFunction) => t('serverUnavailable.description'),
+      noindex: true,
     },
   },
   {
@@ -52,6 +53,7 @@ export const router = createBrowserRouter([
           title: (t: TFunction) =>
             `Fishoria | ${t('landing.resetPassword.title')}`,
           description: (t: TFunction) => t('meta.resetPassword'),
+          noindex: true,
         },
       },
       {
@@ -60,6 +62,7 @@ export const router = createBrowserRouter([
         handle: {
           title: (t: TFunction) => `Fishoria | ${t('privacy.title')}`,
           description: (t: TFunction) => t('meta.privacy'),
+          noindex: true,
         },
       },
       {
@@ -68,6 +71,7 @@ export const router = createBrowserRouter([
         handle: {
           title: (t: TFunction) => `Fishoria | ${t('terms.title')}`,
           description: (t: TFunction) => t('meta.terms'),
+          noindex: true,
         },
       },
       {

@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /privacy
+Disallow: /terms
 
 # Sitemap link
 Sitemap: https://www.fishoria.online/sitemap.xml

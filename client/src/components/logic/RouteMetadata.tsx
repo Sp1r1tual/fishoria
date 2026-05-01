@@ -67,6 +67,18 @@ const setOgDescription = (description: string) => {
   tag.content = description;
 };
 
+const setRobots = (noindex: boolean) => {
+  let tag = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
+
+  if (!tag) {
+    tag = document.createElement('meta');
+    tag.name = 'robots';
+    document.head.appendChild(tag);
+  }
+
+  tag.content = noindex ? 'noindex, nofollow' : 'index, follow';
+};
+
 export const RouteMetadata = () => {
   const { t } = useTranslation();
   const matches = useMatches();
@@ -77,6 +89,7 @@ export const RouteMetadata = () => {
       | {
           title?: string | ((t: TFunction) => string);
           description?: string | ((t: TFunction) => string);
+          noindex?: boolean;
         }
       | undefined;
 
@@ -97,6 +110,7 @@ export const RouteMetadata = () => {
       setMetaDescription(pageDescription);
       setOgTitle(pageTitle);
       setOgDescription(pageDescription);
+      setRobots(!!handle.noindex);
     } else {
       const defaultTitle = t('metadata.defaultTitle');
       const defaultDescription = t('metadata.defaultDescription');
@@ -105,6 +119,7 @@ export const RouteMetadata = () => {
       setMetaDescription(defaultDescription);
       setOgTitle(defaultTitle);
       setOgDescription(defaultDescription);
+      setRobots(false);
     }
 
     setCanonical(currentUrl);

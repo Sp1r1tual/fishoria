@@ -44,14 +44,13 @@
     <meta name="author" content="Atmosphoria Software" />
     <meta name="apple-mobile-web-app-title" content="Fishoria Simulator" />
     <meta name="theme-color" content="#0d1b2a" />
+    <meta name="google-site-verification" content="google5bcc9d0eb41cb3bf" />
+    <link rel="canonical" href="https://www.fishoria.online/" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Fishoria" />
-    <meta
-      property="og:title"
-      content="Fishoria – Online Fishing Simulator"
-    />
+    <meta property="og:title" content="Fishoria – Online Fishing Simulator" />
     <meta
       property="og:description"
       content="Fishoria is an online fishing simulator. Catch fish, explore reservoirs and upgrade your equipment directly in your browser."
@@ -104,7 +103,24 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <noscript>
+      <div style="padding: 20px; text-align: center; color: white; background: #0d1b2a; height: 100vh;">
+        <h1>Fishoria – Online Fishing Simulator</h1>
+        <p>Please enable JavaScript to play the game.</p>
+        <p>Catch fish, explore reservoirs and upgrade your equipment directly in your browser.</p>
+      </div>
+    </noscript>
+    <div id="root">
+      <div>
+        <h1>Fishoria – Online Fishing Simulator</h1>
+        <p>Fishoria is an online fishing simulator. Catch fish, explore reservoirs and upgrade your equipment directly in your browser. Join thousands of players in the most immersive browser fishing experience.</p>
+        <nav>
+          <a href="/welcome">Play Now</a>
+          <a href="/news">Latest News</a>
+          <a href="/guide">How to Play</a>
+        </nav>
+      </div>
+    </div>
     <div id="portal-root"></div>
 
     <script type="module" src="/src/main.tsx"></script>
