@@ -34,13 +34,6 @@ if (rootElement) {
       </Provider>
     </StrictMode>,
   );
-
-  const initialLoader = document.getElementById('initial-loader');
-  if (initialLoader) {
-    initialLoader.classList.add('loader-hidden');
-
-    setTimeout(() => initialLoader.remove(), 600);
-  }
 } else {
   console.error('Root element not found');
 }

@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next';
 
 import { Bubbles } from '../Bubbles/Bubbles';
 
-import mainLoading from '@/assets/global/main_loading.webp';
-
 import styles from './GlobalPreloader.module.css';
 
 interface GlobalPreloaderProps {
@@ -65,7 +63,7 @@ export const GlobalPreloader = ({
       <Bubbles />
       <div className={styles.loaderContent}>
         <img
-          src={mainLoading}
+          src="/images/main_loading.webp"
           alt={t('common.loading')}
           className={styles.loaderImage}
         />

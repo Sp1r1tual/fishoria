@@ -13,7 +13,7 @@
     <link
       rel="preload"
       as="image"
-      href="/images/atmosphoria_intro.webp"
+      href="/images/main_loading.webp"
       fetchpriority="high"
     />
 
@@ -174,11 +174,15 @@
         width: 160px;
         height: auto;
         position: relative;
+        animation: float 3s ease-in-out infinite;
       }
       .loader-fish-icon img {
         width: 100%;
         height: auto;
-        border-radius: 8px;
+        filter: drop-shadow(0 0 20px rgba(0, 207, 255, 0.5));
+        animation: rotate 4s linear infinite;
+        user-select: none;
+        pointer-events: none;
       }
       .loader-text {
         color: white;
@@ -258,6 +262,14 @@
           transform: translateY(-15px);
         }
       }
+      @keyframes rotate {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
       @keyframes progress {
         0% {
           width: 0%;
@@ -310,8 +322,8 @@
       <div class="loader-content">
         <div class="loader-fish-icon">
           <img
-            src="/images/atmosphoria_intro.webp"
-            alt="Atmosphoria"
+            src="/images/main_loading.webp"
+            alt="Loading"
             fetchpriority="high"
             loading="eager"
           />
@@ -390,10 +402,6 @@
         window.addEventListener('load', () => {
           clearInterval(interval);
           if (bar) bar.style.width = '100%';
-          setTimeout(() => {
-            const loader = document.getElementById('initial-loader');
-            if (loader) loader.classList.add('loader-hidden');
-          }, 400);
         });
       })();
     </script>
