@@ -44,7 +44,7 @@ export const TIME_SYSTEM = {
   gameTimeSpeedMultiplier: 20,
 
   /** Starting hour for game time (24h format) */
-  gameStartHour: 8,
+  gameStartHour: 5,
 
   /** Time-of-day boundaries (24h format) */
   morningStart: 5,
