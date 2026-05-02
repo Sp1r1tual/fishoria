@@ -6,7 +6,14 @@ import {
   Body,
   Query,
   Param,
+  UseInterceptors,
+  UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
+  BadRequestException,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import ms from 'ms';
 import { Throttle } from '@nestjs/throttler';
@@ -16,6 +23,8 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUserId } from '../auth/decorators/get-user-id.decorator';
+
+import { SupabaseStorageService } from '../common/supabase/supabase-storage.service';
 
 import { PlayerService } from './player.service';
 import { AddMoneyDto } from './dto/player.dto';
@@ -28,6 +37,7 @@ export class PlayerController {
   constructor(
     private readonly playerService: PlayerService,
     private readonly configService: ConfigService,
+    private readonly supabaseStorageService: SupabaseStorageService,
   ) {}
 
   @UseGuards(JwtAuthGuard)
@@ -83,5 +93,37 @@ export class PlayerController {
     @Body(new ZodValidationPipe(UpdateProfileDto)) body: UpdateProfileDto,
   ) {
     return this.playerService.updateProfile(userId, body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('avatar')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadAvatar(
+    @GetUserId() userId: string,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }),
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg|webp|gif)' }),
+        ],
+      }),
+    )
+    file: { buffer: Buffer; mimetype: string },
+  ) {
+    if (!file) {
+      throw new BadRequestException('File is required');
+    }
+
+    const publicUrl = await this.supabaseStorageService.uploadAvatarFromBuffer(
+      userId,
+      file.buffer,
+      file.mimetype,
+    );
+
+    if (!publicUrl) {
+      throw new BadRequestException('Failed to upload avatar');
+    }
+
+    return { publicUrl };
   }
 }

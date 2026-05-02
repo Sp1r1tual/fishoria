@@ -88,7 +88,7 @@ export class AdminService {
 
     return {
       playersCount,
-      version: '0.5.0',
+      version: '0.5.1',
     };
   }
 

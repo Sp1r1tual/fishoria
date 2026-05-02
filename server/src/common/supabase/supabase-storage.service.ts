@@ -64,4 +64,45 @@ export class SupabaseStorageService {
       return null;
     }
   }
+
+  async uploadAvatarFromBuffer(
+    userId: string,
+    buffer: Buffer,
+    contentType: string,
+  ): Promise<string | null> {
+    try {
+      const ext = contentType.includes('png')
+        ? 'png'
+        : contentType.includes('gif')
+          ? 'gif'
+          : contentType.includes('jpeg')
+            ? 'jpeg'
+            : 'webp';
+      const filePath = `${userId}.${ext}`;
+
+      const { error } = await this.supabase.storage
+        .from(AVATARS_BUCKET)
+        .upload(filePath, buffer, {
+          cacheControl: '3600',
+          contentType,
+          upsert: true,
+        });
+
+      if (error) {
+        this.logger.error(
+          `Failed to upload avatar to storage: ${error.message}`,
+        );
+        return null;
+      }
+
+      const { data: urlData } = this.supabase.storage
+        .from(AVATARS_BUCKET)
+        .getPublicUrl(filePath);
+
+      return `${urlData.publicUrl}?t=${Date.now()}`;
+    } catch (error) {
+      this.logger.error('Error uploading avatar from buffer:', error);
+      return null;
+    }
+  }
 }
