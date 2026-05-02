@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import {
   Outlet,
   useLocation,
@@ -87,7 +87,11 @@ export const AuthLayout = () => {
       <RouteMetadata />
       <ScrollToTop />
       <ToastContainer />
-      <Outlet />
+
+      <Suspense fallback={null}>
+        <Outlet />
+      </Suspense>
+
       {isPublicPath && <CookieConsent />}
     </>
   );

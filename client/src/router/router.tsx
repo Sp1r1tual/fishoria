@@ -7,26 +7,12 @@ import { AuthLayout } from '@/layouts/AuthLayout';
 import { PageLayout } from '@/layouts/PageLayout';
 import { GameScreen } from '@/components/GameScreen/GameScreen';
 
-import { LandingPage } from './pages/LandingPage';
-import { ShopPage } from './pages/ShopPage';
-import { InventoryPage } from './pages/InventoryPage';
-import { GearPage } from './pages/GearPage';
-import { StatsPage } from './pages/StatsPage';
-import { SettingsPage } from './pages/SettingsPage';
-import { GuidePage } from './pages/GuidePage';
-import { QuestsPage } from './pages/QuestsPage';
-import { HelpPage } from './pages/HelpPage';
-import { NewsPage } from './pages/NewsPage';
-import { ResetPasswordPage } from './pages/ResetPasswordPage';
-import { AchievementsPage } from './pages/AchievementsPage';
-import { PrivacyPage } from './pages/PrivacyPage';
-import { TermsPage } from './pages/TermsPage';
-import { ServerUnavailablePage } from './pages/ServerUnavailablePage';
+import * as Pages from './pages';
 
 export const router = createBrowserRouter([
   {
     path: '/server-unavailable',
-    element: <ServerUnavailablePage />,
+    element: <Pages.ServerUnavailablePage />,
     handle: {
       title: (t: TFunction) => t('serverUnavailable.title'),
       description: (t: TFunction) => t('serverUnavailable.description'),
@@ -40,7 +26,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '/welcome',
-        element: <LandingPage />,
+        element: <Pages.LandingPage />,
         handle: {
           title: (t: TFunction) => t('landing.title'),
           description: (t: TFunction) => t('meta.landing'),
@@ -48,7 +34,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/reset-password',
-        element: <ResetPasswordPage />,
+        element: <Pages.ResetPasswordPage />,
         handle: {
           title: (t: TFunction) =>
             `Fishoria | ${t('landing.resetPassword.title')}`,
@@ -58,7 +44,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/privacy',
-        element: <PrivacyPage />,
+        element: <Pages.PrivacyPage />,
         handle: {
           title: (t: TFunction) => `Fishoria | ${t('privacy.title')}`,
           description: (t: TFunction) => t('meta.privacy'),
@@ -67,7 +53,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/terms',
-        element: <TermsPage />,
+        element: <Pages.TermsPage />,
         handle: {
           title: (t: TFunction) => `Fishoria | ${t('terms.title')}`,
           description: (t: TFunction) => t('meta.terms'),
@@ -91,7 +77,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: 'marketplace',
-                element: <ShopPage />,
+                element: <Pages.ShopPage />,
                 handle: {
                   title: (t: TFunction) => `Fishoria | ${t('shop.title')}`,
                   description: (t: TFunction) => t('meta.shop'),
@@ -99,7 +85,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: 'keepnet',
-                element: <InventoryPage />,
+                element: <Pages.InventoryPage />,
                 handle: {
                   title: (t: TFunction) => `Fishoria | ${t('inventory.title')}`,
                   description: (t: TFunction) => t('meta.inventory'),
@@ -107,7 +93,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: 'equipment',
-                element: <GearPage />,
+                element: <Pages.GearPage />,
                 handle: {
                   title: (t: TFunction) => `Fishoria | ${t('gear.title')}`,
                   description: (t: TFunction) => t('meta.gear'),
@@ -115,7 +101,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: 'statistics',
-                element: <StatsPage />,
+                element: <Pages.StatsPage />,
                 handle: {
                   title: (t: TFunction) =>
                     `Fishoria | ${t('statistics.title')}`,
@@ -124,7 +110,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: 'settings',
-                element: <SettingsPage />,
+                element: <Pages.SettingsPage />,
                 handle: {
                   title: (t: TFunction) => `Fishoria | ${t('settings.title')}`,
                   description: (t: TFunction) => t('meta.settings'),
@@ -132,7 +118,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: 'guide',
-                element: <GuidePage />,
+                element: <Pages.GuidePage />,
                 handle: {
                   title: (t: TFunction) => `Fishoria | ${t('guide.title')}`,
                   description: (t: TFunction) => t('meta.guide'),
@@ -140,7 +126,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: 'quests',
-                element: <QuestsPage />,
+                element: <Pages.QuestsPage />,
                 handle: {
                   title: (t: TFunction) => `Fishoria | ${t('quests.title')}`,
                   description: (t: TFunction) => t('meta.quests'),
@@ -148,7 +134,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: 'help',
-                element: <HelpPage />,
+                element: <Pages.HelpPage />,
                 handle: {
                   title: (t: TFunction) => `Fishoria | ${t('help.title')}`,
                   description: (t: TFunction) => t('meta.help'),
@@ -156,7 +142,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: 'news',
-                element: <NewsPage />,
+                element: <Pages.NewsPage />,
                 handle: {
                   title: (t: TFunction) => `Fishoria | ${t('news.title')}`,
                   description: (t: TFunction) => t('meta.news'),
@@ -164,7 +150,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: 'achievements',
-                element: <AchievementsPage />,
+                element: <Pages.AchievementsPage />,
                 handle: {
                   title: (t: TFunction) =>
                     `Fishoria | ${t('achievements.title')}`,

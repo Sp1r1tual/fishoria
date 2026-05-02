@@ -2,6 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800;900&family=Rubik:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Preload Critical Assets -->
+    <link
+      rel="preload"
+      as="image"
+      href="/images/atmosphoria_intro.webp"
+      fetchpriority="high"
+    />
 
     <!-- Favicons -->
     <link
@@ -23,6 +37,10 @@
     />
     <link rel="manifest" href="/favicon/site.webmanifest" />
     <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico" />
+
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://ysmdydtvfgtffymgillf.supabase.co" />
+    <link rel="dns-prefetch" href="https://ysmdydtvfgtffymgillf.supabase.co" />
 
     <!-- Viewport -->
     <meta
@@ -102,6 +120,133 @@
       }
     </script>
     <style>
+      :root {
+        --bg-color: #050b18;
+        --accent-color: #00d2ff;
+      }
+      body {
+        margin: 0;
+        background-color: var(--bg-color);
+      }
+      #initial-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--bg-color);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        font-family:
+          'Nunito',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          sans-serif;
+        transition:
+          opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+          visibility 0.6s;
+        animation: fadeIn 0.8s ease-out forwards;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      #initial-loader.loader-hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+      .loader-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+      .loader-fish-icon {
+        width: 160px;
+        height: auto;
+        position: relative;
+      }
+      .loader-fish-icon img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+      }
+      .loader-text {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 800;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        margin-left: 0.3em;
+        background: linear-gradient(
+          90deg,
+          #fff 0%,
+          var(--accent-color) 25%,
+          #fff 50%,
+          var(--accent-color) 75%,
+          #fff 100%
+        );
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmer 4s infinite linear;
+      }
+      .loader-author {
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 0.8rem;
+        letter-spacing: 0.1em;
+        margin-top: -10px;
+        margin-bottom: 5px;
+      }
+      .loader-bar-container {
+        width: 280px;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .loader-bar-fill {
+        width: 30%;
+        height: 100%;
+        background: var(--accent-color);
+        box-shadow: 0 0 15px var(--accent-color);
+        animation: progress 2s infinite linear;
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-15px);
+        }
+      }
+      @keyframes progress {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(350%);
+        }
+      }
+      @keyframes shimmer {
+        0% {
+          background-position: -200% center;
+        }
+        100% {
+          background-position: 200% center;
+        }
+      }
       .seo-content {
         position: absolute;
         width: 1px;
@@ -134,58 +279,74 @@
         </p>
       </div>
     </noscript>
-    <div id="root">
-      <div class="seo-content">
-        <h1>Fishoria – The Most Immersive Online Fishing Simulator</h1>
-        <p>
-          Experience the thrill of the catch with Fishoria, a state-of-the-art
-          online fishing simulator accessible directly in your web browser. No
-          downloads required – just jump in and start your fishing adventure
-          today. Fishoria is an online fishing simulator. Catch fish, explore
-          reservoirs and upgrade your equipment directly in your browser. Join
-          thousands of players in the most immersive browser fishing experience.
-        </p>
-
-        <h2>Why Choose Fishoria for Your Fishing Adventure?</h2>
-        <ul>
-          <li>
-            <strong>Realistic Fishing Mechanics:</strong> Our advanced physics
-            engine simulates every tug and pull, making the battle with the fish
-            feel authentic.
-          </li>
-          <li>
-            <strong>Vast Selection of Gear:</strong> From spinning rods to
-            feeder reels, customize your setup with hundreds of equipment
-            combinations.
-          </li>
-          <li>
-            <strong>Dynamic Weather and Time:</strong> Fish activity changes
-            based on the time of day and realistic weather patterns – from sunny
-            mornings to stormy nights.
-          </li>
-          <li>
-            <strong>Beautiful Reservoirs:</strong> Explore a variety of fishing
-            spots, each with its own unique ecosystem and secret monster fish.
-          </li>
-        </ul>
-
-        <p>
-          Join a community of dedicated anglers. Whether you prefer a quiet
-          afternoon at a forest lake or a challenging night session at a
-          reservoir, Fishoria offers the most complete browser-based fishing
-          experience.
-        </p>
-
-        <nav>
-          <a href="/welcome">Play Now</a>
-          <a href="/news">Latest News</a>
-          <a href="/guide">Game Guide</a>
-          <a href="/achievements">Achievements</a>
-          <a href="/shop">Virtual Tackle Shop</a>
-        </nav>
+    <div id="initial-loader">
+      <div class="loader-content">
+        <div class="loader-fish-icon">
+          <img
+            src="/images/atmosphoria_intro.webp"
+            alt="Atmosphoria"
+            fetchpriority="high"
+            loading="eager"
+          />
+        </div>
+        <div class="loader-bar-container">
+          <div class="loader-bar-fill"></div>
+        </div>
+        <div class="loader-text">Fishoria</div>
+        <div class="loader-author">by Atmosphoria Software</div>
       </div>
     </div>
+    <div id="root"></div>
     <div id="portal-root"></div>
+
+    <div class="seo-content">
+      <h1>Fishoria – The Most Immersive Online Fishing Simulator</h1>
+      <p>
+        Experience the thrill of the catch with Fishoria, a state-of-the-art
+        online fishing simulator accessible directly in your web browser. No
+        downloads required – just jump in and start your fishing adventure
+        today. Fishoria is an online fishing simulator. Catch fish, explore
+        reservoirs and upgrade your equipment directly in your browser. Join
+        thousands of players in the most immersive browser fishing experience.
+      </p>
+
+      <h2>Why Choose Fishoria for Your Fishing Adventure?</h2>
+      <ul>
+        <li>
+          <strong>Realistic Fishing Mechanics:</strong> Our advanced physics
+          engine simulates every tug and pull, making the battle with the fish
+          feel authentic.
+        </li>
+        <li>
+          <strong>Vast Selection of Gear:</strong> From spinning rods to feeder
+          reels, customize your setup with hundreds of equipment combinations.
+        </li>
+        <li>
+          <strong>Dynamic Weather and Time:</strong> Fish activity changes based
+          on the time of day and realistic weather patterns – from sunny
+          mornings to stormy nights.
+        </li>
+        <li>
+          <strong>Beautiful Reservoirs:</strong> Explore a variety of fishing
+          spots, each with its own unique ecosystem and secret monster fish.
+        </li>
+      </ul>
+
+      <p>
+        Join a community of dedicated anglers. Whether you prefer a quiet
+        afternoon at a forest lake or a challenging night session at a
+        reservoir, Fishoria offers the most complete browser-based fishing
+        experience.
+      </p>
+
+      <nav>
+        <a href="/welcome">Play Now</a>
+        <a href="/news">Latest News</a>
+        <a href="/guide">Game Guide</a>
+        <a href="/achievements">Achievements</a>
+        <a href="/shop">Virtual Tackle Shop</a>
+      </nav>
+    </div>
 
     <script type="module" src="/src/main.tsx"></script>
   </body>

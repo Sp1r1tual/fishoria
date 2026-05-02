@@ -17,30 +17,38 @@ import { updateSettings } from './store/slices/settingsSlice';
 
 import './index.css';
 
+const rootElement = document.getElementById('root');
+
+if (rootElement) {
+  createRoot(rootElement).render(
+    <StrictMode>
+      <Provider store={store}>
+        <ErrorBoundary>
+          <GlobalErrorOverlay />
+          <ReactQueryProvider>
+            <RouterProvider router={router} />
+            <Analytics />
+            <SpeedInsights />
+          </ReactQueryProvider>
+        </ErrorBoundary>
+      </Provider>
+    </StrictMode>,
+  );
+
+  const initialLoader = document.getElementById('initial-loader');
+  if (initialLoader) {
+    initialLoader.classList.add('loader-hidden');
+
+    setTimeout(() => initialLoader.remove(), 600);
+  }
+} else {
+  console.error('Root element not found');
+}
+
 i18nInitPromise.then(() => {
   const currentLang = i18n.language as SupportedLanguageType;
+
   if (store.getState().settings.language !== currentLang) {
     store.dispatch(updateSettings({ language: currentLang }));
-  }
-
-  const rootElement = document.getElementById('root');
-
-  if (rootElement) {
-    createRoot(rootElement).render(
-      <StrictMode>
-        <Provider store={store}>
-          <ErrorBoundary>
-            <GlobalErrorOverlay />
-            <ReactQueryProvider>
-              <RouterProvider router={router} />
-              <Analytics />
-              <SpeedInsights />
-            </ReactQueryProvider>
-          </ErrorBoundary>
-        </Provider>
-      </StrictMode>,
-    );
-  } else {
-    console.error('Root element not found');
   }
 });
