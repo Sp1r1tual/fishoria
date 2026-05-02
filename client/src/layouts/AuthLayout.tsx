@@ -88,7 +88,7 @@ export const AuthLayout = () => {
       <ScrollToTop />
       <ToastContainer />
 
-      <Suspense fallback={null}>
+      <Suspense fallback={<GlobalPreloader delay={0} />}>
         <Outlet />
       </Suspense>
 

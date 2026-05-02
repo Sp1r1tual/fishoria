@@ -199,7 +199,7 @@
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
-        animation: shimmer 4s infinite linear;
+        animation: shimmer 6s infinite linear;
       }
       .loader-author {
         color: rgba(255, 255, 255, 0.4);
@@ -216,11 +216,29 @@
         overflow: hidden;
       }
       .loader-bar-fill {
-        width: 30%;
+        width: 0%;
         height: 100%;
         background: var(--accent-color);
         box-shadow: 0 0 15px var(--accent-color);
-        animation: progress 2s infinite linear;
+        transition: width 0.4s ease-out;
+        position: relative;
+      }
+      .loader-bar-fill::after {
+        content: '';
+        position: absolute;
+        right: -4px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 8px;
+        height: 8px;
+        background: #fff;
+        border-radius: 50%;
+        box-shadow: 0 0 15px #fff, 0 0 25px var(--accent-color);
+        animation: pulse-runner 1.5s infinite;
+      }
+      @keyframes pulse-runner {
+        0%, 100% { transform: translateY(-50%) scale(1); opacity: 1; }
+        50% { transform: translateY(-50%) scale(1.4); opacity: 0.8; }
       }
       @keyframes float {
         0%,
@@ -233,18 +251,18 @@
       }
       @keyframes progress {
         0% {
-          transform: translateX(-100%);
+          width: 0%;
         }
         100% {
-          transform: translateX(350%);
+          width: 100%;
         }
       }
       @keyframes shimmer {
         0% {
-          background-position: -200% center;
+          background-position: 200% center;
         }
         100% {
-          background-position: 200% center;
+          background-position: -200% center;
         }
       }
       .seo-content {
@@ -348,6 +366,28 @@
       </nav>
     </div>
 
+    <script>
+      (function() {
+        const bar = document.querySelector('.loader-bar-fill');
+        let progress = 0;
+        const interval = setInterval(() => {
+          if (progress < 90) {
+            progress += Math.random() * 15;
+            if (progress > 90) progress = 90;
+            if (bar) bar.style.width = progress + '%';
+          }
+        }, 300);
+
+        window.addEventListener('load', () => {
+          clearInterval(interval);
+          if (bar) bar.style.width = '100%';
+          setTimeout(() => {
+            const loader = document.getElementById('initial-loader');
+            if (loader) loader.classList.add('loader-hidden');
+          }, 400);
+        });
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
