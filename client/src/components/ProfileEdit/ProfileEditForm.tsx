@@ -98,11 +98,7 @@ export function ProfileEditForm({ player }: ProfileEditFormProps) {
       if (customFile) {
         try {
           setIsUploading(true);
-          const publicUrl = await AvatarService.uploadAvatar(
-            player.user.id,
-            customFile,
-            isCurrentExternal ? currentAvatar : undefined,
-          );
+          const publicUrl = await AvatarService.uploadAvatar(customFile);
           avatarValue = publicUrl;
           setCustomFile(null);
           setCustomPreview(publicUrl);

@@ -1,4 +1,4 @@
-import { supabase, AVATARS_BUCKET } from '@/common/configs/libs/supabase';
+import { $mainApi } from '@/http/axios';
 
 const AVATAR_SIZE = 256;
 
@@ -18,54 +18,33 @@ export class AvatarService {
     return null;
   }
 
-  static async uploadAvatar(
-    userId: string,
-    file: File,
-    oldAvatarUrl?: string | null,
-  ): Promise<string> {
+  static async uploadAvatar(file: File): Promise<string> {
     const errorKey = AvatarService.validateAvatar(file);
     if (errorKey) {
       throw new Error(errorKey);
     }
 
     const resizedBlob = await AvatarService.resizeImage(file, AVATAR_SIZE);
-    const filePath = `${userId}_${Date.now()}.webp`;
 
-    const { error } = await supabase.storage
-      .from(AVATARS_BUCKET)
-      .upload(filePath, resizedBlob, {
-        cacheControl: '3600',
-        contentType: 'image/webp',
-      });
+    const formData = new FormData();
+    formData.append('file', resizedBlob, 'avatar.webp');
 
-    if (error) {
+    try {
+      const { data } = await $mainApi.post<{ publicUrl: string }>(
+        '/player/avatar',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      );
+
+      return data.publicUrl;
+    } catch (error) {
       console.error('Avatar upload error:', error);
       throw new Error('profile.avatarErrors.uploadFailed');
     }
-
-    const { data: urlData } = supabase.storage
-      .from(AVATARS_BUCKET)
-      .getPublicUrl(filePath);
-
-    if (oldAvatarUrl && supabase) {
-      const { data: oldUrlData } = supabase.storage
-        .from(AVATARS_BUCKET)
-        .getPublicUrl('');
-      const baseUrl = oldUrlData.publicUrl;
-
-      if (oldAvatarUrl.startsWith(baseUrl)) {
-        const oldFilePath = oldAvatarUrl.replace(baseUrl, '').split('?')[0];
-
-        if (oldFilePath && oldFilePath !== filePath) {
-          supabase.storage
-            .from(AVATARS_BUCKET)
-            .remove([oldFilePath])
-            .catch((err) => console.error('Failed to delete old avatar:', err));
-        }
-      }
-    }
-
-    return `${urlData.publicUrl}?t=${Date.now()}`;
   }
 
   private static resizeImage(file: File, size: number): Promise<Blob> {
