@@ -12,7 +12,7 @@ export const isSmallMobile = (width: number): boolean =>
   width < SCREEN_THRESHOLDS.SMALL_MOBILE;
 
 export const getRenderScale = (width: number): number =>
-  isMobile(width) ? 0.8 : 1.0;
+  isSmallMobile(width) ? 0.65 : isMobile(width) ? 0.75 : 1.0;
 
 export const getBubbleScale = (width: number): number =>
   isMobile(width) ? 0.7 : 1.0;
