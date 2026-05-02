@@ -10,6 +10,7 @@ import { AudioController } from '@/components/logic/AudioController';
 import { SessionSync } from '@/components/logic/SessionSync';
 import { GlobalModals } from '@/components/logic/GlobalModals';
 import { PreloaderScreen } from '@/components/UI/Preloader/PreloaderScreen';
+import { GlobalLoader } from '@/components/UI/GlobalLoader/GlobalLoader';
 
 function App() {
   const { isInitializing, isError, refetch, setLoaded } = useAppInit();
@@ -29,6 +30,7 @@ function App() {
           <AudioController />
           <SessionSync />
           <GlobalModals />
+          <GlobalLoader />
           <Outlet />
         </>
       )}

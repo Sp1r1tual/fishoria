@@ -318,43 +318,44 @@ export class HookEntity {
         drawClippedSegment(
           bx + sinT * (topStemStart - 2 * this.scale),
           totalY + cosT * (topStemStart - 2 * this.scale),
-          bx + sinT * (topStemStart - 8 * this.scale),
-          totalY + cosT * (topStemStart - 8 * this.scale),
+          bx + sinT * (topStemStart - 12 * this.scale),
+          totalY + cosT * (topStemStart - 12 * this.scale),
           stemWidth,
           0xffffff,
         );
 
         drawClippedSegment(
-          bx + sinT * (topStemStart - 8 * this.scale),
-          totalY + cosT * (topStemStart - 8 * this.scale),
-          bx + sinT * (topStemStart - 10 * this.scale),
-          totalY + cosT * (topStemStart - 10 * this.scale),
+          bx + sinT * (topStemStart - 12 * this.scale),
+          totalY + cosT * (topStemStart - 12 * this.scale),
+          bx + sinT * (topStemStart - 14 * this.scale),
+          totalY + cosT * (topStemStart - 14 * this.scale),
           stemWidth,
           0x000000,
         );
 
         drawClippedSegment(
-          bx + sinT * (topStemStart - 10 * this.scale),
-          totalY + cosT * (topStemStart - 10 * this.scale),
-          bx + sinT * (topStemStart - antennaLen),
-          totalY + cosT * (topStemStart - antennaLen),
+          bx + sinT * (topStemStart - 14 * this.scale),
+          totalY + cosT * (topStemStart - 14 * this.scale),
+          bx + sinT * (topStemStart - antennaLen - 4 * this.scale),
+          totalY + cosT * (topStemStart - antennaLen - 4 * this.scale),
           stemWidth,
           0xff4400,
         );
 
+        const extendedAntennaLen = antennaLen + 4 * this.scale;
         const tipLen = 4 * this.scale;
         drawClippedSegment(
-          bx + sinT * (topStemStart - antennaLen + tipLen),
-          totalY + cosT * (topStemStart - antennaLen + tipLen),
-          bx + sinT * (topStemStart - antennaLen),
-          totalY + cosT * (topStemStart - antennaLen),
+          bx + sinT * (topStemStart - extendedAntennaLen + tipLen),
+          totalY + cosT * (topStemStart - extendedAntennaLen + tipLen),
+          bx + sinT * (topStemStart - extendedAntennaLen),
+          totalY + cosT * (topStemStart - extendedAntennaLen),
           stemWidth * 1.3,
           0xffaa00,
         );
 
         this.gfx.circle(
-          bx + sinT * (topStemStart - antennaLen),
-          totalY + cosT * (topStemStart - antennaLen),
+          bx + sinT * (topStemStart - extendedAntennaLen),
+          totalY + cosT * (topStemStart - extendedAntennaLen),
           stemWidth * 0.7,
         );
         this.gfx.fill({ color: 0xff0000, alpha: bulbAlpha });

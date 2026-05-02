@@ -16,7 +16,7 @@ export const BITE_DETECTION = {
    * and there is NO established potentialBiter yet.
    * Keeps early bites rare because the action itself already has a low probability.
    */
-  directBiteChance: 0.25,
+  directBiteChance: 0.3,
 
   /**
    * Ratio of nibble-to-bite when a "something happens" roll succeeds.
@@ -29,12 +29,12 @@ export const BITE_DETECTION = {
    * Passive bite probability multiplier for feeder rig.
    * Encourages using feeder over float for stationary fishing.
    */
-  feederBiteMultiplier: 1.05,
+  feederBiteMultiplier: 1.065,
 
   /**
    * Active bite probability multiplier for spinning rig.
    */
-  spinningBiteMultiplier: 1.05,
+  spinningBiteMultiplier: 1.065,
 
   /** Base progress added for a nibble */
   nibbleProgressBase: 0.3,

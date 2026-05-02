@@ -925,8 +925,8 @@ export class LakeScene implements IScene {
 
       if (bubbleChance > 0 && Math.random() < bubbleChance) {
         const perspectiveScale =
-          0.6 +
-          0.4 * Math.max(0, Math.min(1, (this.hookY - waterY) / waterHeight));
+          0.55 +
+          0.3 * Math.max(0, Math.min(1, (this.hookY - waterY) / waterHeight));
         this.bubbleEffect.spawn(this.hookX, this.hookY, 1, perspectiveScale);
       }
     }
@@ -941,7 +941,8 @@ export class LakeScene implements IScene {
         const spawnY = pos.y * H;
 
         const perspectiveScale =
-          0.6 + 0.4 * Math.max(0, Math.min(1, (spawnY - waterY) / waterHeight));
+          0.55 +
+          0.3 * Math.max(0, Math.min(1, (spawnY - waterY) / waterHeight));
 
         this.bubbleEffect.spawn(
           spawnX,
@@ -954,7 +955,8 @@ export class LakeScene implements IScene {
 
     const renderScale = W < 1000 ? 0.69 : 1.0;
     const perspectiveScale =
-      0.6 + 0.4 * Math.max(0, Math.min(1, (this.hookY - waterY) / waterHeight));
+      0.55 +
+      0.3 * Math.max(0, Math.min(1, (this.hookY - waterY) / waterHeight));
 
     this.hook.update({
       x: this.hookX,

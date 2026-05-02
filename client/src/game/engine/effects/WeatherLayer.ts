@@ -242,7 +242,7 @@ export class WeatherLayer {
 
     let targetTintAlpha = 0;
     if (this.weatherType === 'rain' || this.weatherType === 'cloudy') {
-      targetTintAlpha = 0.12;
+      targetTintAlpha = 0.07;
     }
 
     const lerpSpeed = 0.02;

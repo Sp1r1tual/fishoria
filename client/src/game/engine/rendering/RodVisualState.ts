@@ -86,7 +86,6 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
     phase !== 'bite';
 
   const bobCycle = Math.sin(time * 0.3);
-  let sinkY = 0;
   let tilt = 0;
 
   if (isCast && !isSpinning && rigType !== 'feeder') {
@@ -94,39 +93,17 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
       const pulse = Math.sin(time * 3.0) * maxInterest;
       if (maxInterest > 0.15) {
         if (isLayingOnSide) {
-          sinkY = pulse * 2 * renderScale;
           tilt = Math.PI / 2.1 - pulse * 0.3;
         } else {
-          sinkY = Math.max(0, pulse * 14 * renderScale);
           tilt = bobCycle * 0.15;
         }
       } else if (!isLayingOnSide) {
-        sinkY = 0;
         tilt = bobCycle * 0.15;
       } else {
         tilt = Math.PI / 2.1;
       }
     } else if (phase === 'bite') {
-      sinkY = 5 * renderScale;
       tilt = 0;
-    }
-  }
-
-  let impactOffset = 0;
-  if (
-    isCast &&
-    !isSpinning &&
-    rigType === 'float' &&
-    (phase === 'waiting' || phase === 'bite')
-  ) {
-    const elapsed = timeSinceCast;
-    const duration = 1.5;
-    if (elapsed > 0 && elapsed < duration) {
-      const isSmall = input.canvasWidth < 1080;
-      const freq = 12.0;
-      const amp = (isSmall ? 10.0 : 16.0) * renderScale;
-      const decay = Math.exp(-elapsed * 4.0);
-      impactOffset = Math.sin(elapsed * freq) * amp * decay;
     }
   }
 
@@ -144,7 +121,7 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
 
   const lineTargetY =
     isCast && !isSpinning && (phase === 'waiting' || phase === 'bite')
-      ? (bobberY ?? castY) + sinkY + impactOffset + cosT * stemAttachmentOffset
+      ? (bobberY ?? castY) + cosT * stemAttachmentOffset
       : isCast
         ? hookY
         : baseY;

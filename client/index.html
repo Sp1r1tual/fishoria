@@ -233,12 +233,21 @@
         height: 8px;
         background: #fff;
         border-radius: 50%;
-        box-shadow: 0 0 15px #fff, 0 0 25px var(--accent-color);
+        box-shadow:
+          0 0 15px #fff,
+          0 0 25px var(--accent-color);
         animation: pulse-runner 1.5s infinite;
       }
       @keyframes pulse-runner {
-        0%, 100% { transform: translateY(-50%) scale(1); opacity: 1; }
-        50% { transform: translateY(-50%) scale(1.4); opacity: 0.8; }
+        0%,
+        100% {
+          transform: translateY(-50%) scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: translateY(-50%) scale(1.4);
+          opacity: 0.8;
+        }
       }
       @keyframes float {
         0%,
@@ -367,7 +376,7 @@
     </div>
 
     <script>
-      (function() {
+      (function () {
         const bar = document.querySelector('.loader-bar-fill');
         let progress = 0;
         const interval = setInterval(() => {
