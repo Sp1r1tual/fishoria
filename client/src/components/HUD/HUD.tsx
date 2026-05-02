@@ -292,7 +292,7 @@ export function HUD({
           />
 
           <div
-            className={styles['hud__debug-btn']}
+            className={`${styles['hud__debug-btn']} ${localDebugActive ? styles['hud__debug-btn--active'] : ''}`}
             onClick={() => sceneRef.current?.toggleDebug()}
             title="Toggle Debug"
           >

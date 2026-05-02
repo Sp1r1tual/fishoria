@@ -1,5 +1,7 @@
 import { Container, Graphics } from 'pixi.js';
 
+import { isMobile } from '@/game/utils/ScreenUtils';
+
 interface IParticle {
   x: number;
   y: number;
@@ -29,7 +31,7 @@ export class GroundbaitEffect {
   }
 
   public spawn(W: number, H: number): void {
-    const isSmallScreen = W < 1000;
+    const isSmallScreen = isMobile(W);
     const scale = isSmallScreen ? 0.65 : 1.0;
     const count = isSmallScreen ? 50 : 75;
 

@@ -2,6 +2,8 @@ import { Container, Graphics, Application } from 'pixi.js';
 
 import type { WeatherType } from '@/common/types';
 
+import { isMobile } from '@/game/utils/ScreenUtils';
+
 interface IRainDrop {
   x: number;
   y: number;
@@ -89,7 +91,7 @@ export class WeatherLayer {
   private createRainDrop(randomY = false): IRainDrop {
     const W = this.app.renderer.width;
     const H = this.app.renderer.height > 0 ? this.app.renderer.height : 1000;
-    const isSmall = W < 1000;
+    const isSmall = isMobile(W);
 
     const startY = randomY ? Math.random() * H : -(Math.random() * H) - 50;
 
@@ -126,7 +128,7 @@ export class WeatherLayer {
 
   private spawnBird(W: number, H: number) {
     const isLeft = Math.random() > 0.5;
-    const isSmall = W < 1000;
+    const isSmall = isMobile(W);
     const scale = isSmall ? 0.6 : 1.0;
 
     this.birds.push({
@@ -164,7 +166,7 @@ export class WeatherLayer {
       this.rainGfx.clear();
       this.rainGfx.setStrokeStyle({ color: 0x94a3b8, width: 1, alpha: 0.4 });
 
-      const maxVisibleDrops = W < 1000 ? 70 : this.MAX_RAIN_DROPS;
+      const maxVisibleDrops = isMobile(W) ? 70 : this.MAX_RAIN_DROPS;
 
       for (
         let i = 0;

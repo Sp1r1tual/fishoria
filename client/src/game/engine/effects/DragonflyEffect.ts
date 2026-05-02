@@ -1,5 +1,7 @@
 import { Container, Graphics } from 'pixi.js';
 
+import { isMobile, isSmallMobile } from '@/game/utils/ScreenUtils';
+
 export class DragonflyEffect {
   private gfx: Graphics;
   private state: 'hidden' | 'flying' | 'perched' = 'hidden';
@@ -77,7 +79,7 @@ export class DragonflyEffect {
         this.bodyColor = variation.body;
         this.headColor = variation.head;
 
-        const minApproachDist = W < 768 ? 160 : 250;
+        const minApproachDist = isSmallMobile(W) ? 160 : 250;
         const spawnDist = minApproachDist + Math.random() * 100;
         const spawnAngle = Math.random() * Math.PI * 2;
 
@@ -182,7 +184,7 @@ export class DragonflyEffect {
           : 0.2 + Math.random() * 0.3;
       }
 
-      const speedScale = W < 768 ? 0.6 : W < 1000 ? 0.8 : 1.0;
+      const speedScale = isSmallMobile(W) ? 0.6 : isMobile(W) ? 0.8 : 1.0;
       const targetSpeed = (this.isBursting ? 300 : 20) * speedScale;
 
       this.currentSpeed += (targetSpeed - this.currentSpeed) * dt * 7;

@@ -92,15 +92,58 @@ export class RodEntity {
 
     const hx = bx + (dx / dist) * handleLen;
     const hy = by + (dy / dist) * handleLen;
-    const handleColor = this.isSpinning ? 0x2d5a3d : 0x825a38;
+    const handleColor = this.isSpinning ? 0x2d5a3d : 0xcc9966;
+
     this.gfx.moveTo(bx, by);
     this.gfx.lineTo(hx, hy);
-    this.gfx.stroke({ width: 10 * this.scale, color: handleColor });
+    this.gfx.stroke({
+      width: 10 * this.scale,
+      color: handleColor,
+      cap: 'round',
+    });
 
-    this.gfx.circle(hx, hy + 5 * this.scale, 7 * this.scale);
-    this.gfx.fill({ color: 0x222222 });
+    const nx = -dy / dist;
+    const ny = dx / dist;
 
-    this.guidePoints.push({ x: hx, y: hy + 5 * this.scale });
+    this.gfx.moveTo(bx + nx * 2.5 * this.scale, by + ny * 2.5 * this.scale);
+    this.gfx.lineTo(hx + nx * 2.5 * this.scale, hy + ny * 2.5 * this.scale);
+    this.gfx.stroke({ width: 4 * this.scale, color: 0x000000, alpha: 0.12 });
+
+    this.gfx.moveTo(bx, by);
+    const buttLen = 6 * this.scale;
+    this.gfx.lineTo(bx + (dx / dist) * buttLen, by + (dy / dist) * buttLen);
+    this.gfx.stroke({
+      width: 10.5 * this.scale,
+      color: 0x222222,
+      cap: 'round',
+    });
+
+    const grainColor = this.isSpinning ? 0x1a3322 : 0x825a38;
+    const grainAlpha = this.isSpinning ? 0.4 : 0.3;
+
+    for (let j = 1; j <= 8; j++) {
+      const p = j / 9;
+      const tx = bx + (hx - bx) * p;
+      const ty = by + (hy - by) * p;
+      const side = j % 2 === 0 ? 1 : -1;
+
+      this.gfx.circle(
+        tx + nx * side * 2.2 * this.scale,
+        ty + ny * side * 2.2 * this.scale,
+        (0.6 + (j % 3) * 0.6) * this.scale,
+      );
+      this.gfx.fill({ color: grainColor, alpha: grainAlpha });
+
+      this.gfx.moveTo(tx - nx * 4 * this.scale, ty - ny * 4 * this.scale);
+      this.gfx.lineTo(tx + nx * 4 * this.scale, ty + ny * 4 * this.scale);
+      this.gfx.stroke({
+        width: 1.5 * this.scale,
+        color: grainColor,
+        alpha: 0.18,
+      });
+    }
+
+    this.guidePoints.push({ x: hx, y: hy });
 
     let prevX = hx;
     let prevY = hy;
@@ -115,7 +158,12 @@ export class RodEntity {
       const width = 6.5 * this.scale * (1 - t * 0.9);
       this.gfx.moveTo(prevX, prevY);
       this.gfx.lineTo(currX, currY);
-      this.gfx.stroke({ width: Math.max(0.6, width), color: 0x111111 });
+      this.gfx.stroke({
+        width: Math.max(0.6, width),
+        color: 0x111111,
+        cap: 'round',
+        join: 'round',
+      });
 
       if (i % 6 === 0 || i === segments) {
         const rodDx = currX - prevX;
@@ -169,7 +217,7 @@ export class RodEntity {
       this.lineGfx.quadraticCurveTo(mx, my, p2.x, p2.y);
     }
 
-    const baseWidth = this.scale < 0.75 ? 2.6 : 1.4;
+    const baseWidth = 1.4;
     const lineWidth = baseWidth * this.scale;
 
     this.lineGfx.stroke({ width: lineWidth, color, alpha: alpha });

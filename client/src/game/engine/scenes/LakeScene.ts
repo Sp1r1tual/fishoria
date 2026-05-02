@@ -41,6 +41,11 @@ import { TimeManager } from '@/game/managers/TimeManager';
 import { WeatherLayer } from '../effects/WeatherLayer';
 import { GameEvents } from '../GameEvents';
 import { SnagMechanic } from '@/game/domain/mechanics/SnagMechanic';
+import {
+  getRenderScale,
+  getBubbleScale,
+  isTablet,
+} from '@/game/utils/ScreenUtils';
 
 import {
   FISH_SPECIES,
@@ -881,7 +886,7 @@ export class LakeScene implements IScene {
     this.totalTime += deltaTime;
 
     this.groundbaitEffect.update(deltaTime);
-    const bubbleScale = W < 1000 ? 0.7 : 1.0;
+    const bubbleScale = getBubbleScale(W);
     this.bubbleEffect.update(deltaTime, bubbleScale);
     this.dragonflyEffect.update(
       deltaTime,
@@ -932,7 +937,7 @@ export class LakeScene implements IScene {
     }
 
     const isRaining = this.weather === 'rain';
-    const ambientRate = isRaining ? 25.0 : 1.0;
+    const ambientRate = isRaining ? 50.0 : 1.0;
 
     if (Math.random() < deltaTime * ambientRate) {
       const pos = this.sectorSystem.getRandomAllowedPosition();
@@ -953,7 +958,7 @@ export class LakeScene implements IScene {
       }
     }
 
-    const renderScale = W < 1000 ? 0.69 : 1.0;
+    const renderScale = getRenderScale(W);
     const perspectiveScale =
       0.55 +
       0.3 * Math.max(0, Math.min(1, (this.hookY - waterY) / waterHeight));
@@ -979,7 +984,7 @@ export class LakeScene implements IScene {
       debugActive: this.debugActive,
       escapeProgress: this.tension.escapeProgress,
       timeSinceCast: this.timeSinceCast,
-      isSmall: W < 1080,
+      isSmall: isTablet(W),
     });
 
     const fishMovingTowardsPlayer = !!(
@@ -1499,14 +1504,15 @@ export class LakeScene implements IScene {
 
   private drawStrikeHint(W: number, H: number): void {
     this.strikeHintGfx.clear();
-    // Subtle yellow glow around the edges
+    // Yellow overlay + glow around the edges
     this.strikeHintGfx.rect(0, 0, W, H);
+    this.strikeHintGfx.fill({ color: 0xffcc00, alpha: 0.1 });
     this.strikeHintGfx.stroke({
       color: 0xffcc00,
-      width: 8,
+      width: 24,
       alignment: 1,
     });
-    this.strikeHintGfx.filters = [new BlurFilter({ strength: 12 })];
+    this.strikeHintGfx.filters = [new BlurFilter({ strength: 30 })];
     this.strikeHintGfx.visible = false;
     this.strikeHintGfx.alpha = 0;
   }
@@ -1514,7 +1520,7 @@ export class LakeScene implements IScene {
   private updateStrikeHint(): void {
     const isBite = this.phase === 'bite';
     const targetAlpha = isBite
-      ? 0.4 + Math.sin(Date.now() * 0.01) * 0.15 // pulsing
+      ? 0.5 + Math.sin(Date.now() * 0.012) * 0.2 // slightly softer pulsing
       : 0;
 
     if (!isBite && this.strikeHintGfx.alpha < 0.01) {

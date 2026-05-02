@@ -180,7 +180,7 @@ export class HookEntity {
           impactOffset = Math.sin(elapsed * freq) * amp * decay;
         }
       }
-      let bulbAlphaOverride: number | null = null;
+      let isDiving = false;
 
       if (this.rigType === 'feeder') {
         sinkY = 0;
@@ -194,7 +194,7 @@ export class HookEntity {
             sinkY = pulse * 2 * this.scale;
           } else {
             sinkY = Math.max(0, pulse * 14 * this.scale);
-            if (pulse > dipThreshold) bulbAlphaOverride = 0;
+            if (pulse > dipThreshold) isDiving = true;
           }
         } else if (!isLayingOnSide) {
           sinkY = 0;
@@ -202,12 +202,12 @@ export class HookEntity {
       } else if (phase === 'bite') {
         sinkY = 5 * this.scale;
         tilt = 0;
-        bulbAlphaOverride = 0;
+        isDiving = true;
       }
 
       const totalY = by + sinkY + impactOffset;
 
-      if (phase === 'bite' || bulbAlphaOverride === 0) {
+      if (isDiving) {
         const isStrike = phase === 'bite';
         const maxRippleSec = (isStrike ? 50 : 80) / 60;
         const rippleAge = (time % maxRippleSec) / maxRippleSec;
@@ -223,10 +223,15 @@ export class HookEntity {
         });
       }
 
-      const bulbRadius = 4.5 * this.scale;
+      const bulbRadius = 5.8 * this.scale;
 
       const sinT = Math.sin(tilt);
       const cosT = Math.cos(tilt);
+
+      const getDepthAlpha = (y: number): number => {
+        const underwater = y > by + 1;
+        return underwater ? Math.max(0.1, 0.5 - (y - by) * 0.05) : 1;
+      };
 
       const drawClippedSegment = (
         x0: number,
@@ -237,8 +242,7 @@ export class HookEntity {
         color: number,
       ) => {
         const midY = (y0 + y1) / 2;
-        const underwater = midY > by + 1;
-        const alpha = underwater ? Math.max(0.1, 0.5 - (midY - by) * 0.05) : 1;
+        const alpha = getDepthAlpha(midY);
         if (alpha <= 0) return;
 
         this.gfx.moveTo(x0, y0);
@@ -247,7 +251,7 @@ export class HookEntity {
       };
 
       if (this.rigType === 'feeder') {
-        const bulbAlpha = bulbAlphaOverride != null ? bulbAlphaOverride : 1;
+        const bulbAlpha = getDepthAlpha(totalY);
         if (bulbAlpha > 0) {
           this.gfx.circle(bx, totalY, 3.5 * this.scale);
           this.gfx.fill({ color: 0xffffff, alpha: bulbAlpha });
@@ -262,7 +266,7 @@ export class HookEntity {
         const bulbDist = 0;
         const bulbX = bx + sinT * bulbDist;
         const bulbY = totalY + cosT * bulbDist;
-        const bulbAlpha = bulbAlphaOverride != null ? bulbAlphaOverride : 1;
+        const bulbAlpha = getDepthAlpha(bulbY);
 
         if (bulbAlpha > 0) {
           const colorMain = 0xffffff;
@@ -277,7 +281,7 @@ export class HookEntity {
 
             this.gfx.moveTo(bulbX + bulbRadius, surfaceY);
             this.gfx.arc(bulbX, surfaceY, bulbRadius, 0, Math.PI);
-            this.gfx.fill({ color: 0x880000, alpha: bulbAlpha * 0.7 });
+            this.gfx.fill({ color: 0x444444, alpha: bulbAlpha * 0.7 });
           } else {
             this.gfx.circle(bulbX, bulbY, bulbRadius);
             this.gfx.fill({ color: colorShadow, alpha: bulbAlpha });
@@ -302,7 +306,7 @@ export class HookEntity {
           }
         }
 
-        const stemWidth = 2.4 * this.scale;
+        const stemWidth = 3.2 * this.scale;
         const topStemStart = -bulbRadius;
         const antennaLen = 22 * this.scale;
 
@@ -353,12 +357,13 @@ export class HookEntity {
           0xffaa00,
         );
 
+        const tipY = totalY + cosT * (topStemStart - extendedAntennaLen);
         this.gfx.circle(
           bx + sinT * (topStemStart - extendedAntennaLen),
-          totalY + cosT * (topStemStart - extendedAntennaLen),
-          stemWidth * 0.7,
+          tipY,
+          stemWidth * 1.0,
         );
-        this.gfx.fill({ color: 0xff0000, alpha: bulbAlpha });
+        this.gfx.fill({ color: 0xff0000, alpha: getDepthAlpha(tipY) });
       }
     }
 

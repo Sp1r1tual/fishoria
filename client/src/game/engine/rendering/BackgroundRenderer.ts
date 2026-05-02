@@ -9,6 +9,8 @@ import {
 
 import type { ILakeConfig, TimeOfDayType, WeatherType } from '@/common/types';
 
+import { isTablet } from '@/game/utils/ScreenUtils';
+
 function createDisplacementTexture(size = 256): Texture {
   const canvas = document.createElement('canvas');
   canvas.width = size;
@@ -143,7 +145,7 @@ export class BackgroundRenderer {
 
     if (this.displacementFilter) {
       const baseScale = this.config.environment.waterRippleScale ?? 6;
-      const waveScale = W < 1080 ? baseScale * 0.5 : baseScale;
+      const waveScale = isTablet(W) ? baseScale * 0.5 : baseScale;
       this.displacementFilter.scale.set(waveScale);
     }
   }

@@ -19,7 +19,9 @@ import type {
 
 import type { DepthSystem } from '../systems/DepthSystem';
 import type { SectorSystem } from '../systems/SectorSystem';
+
 import { FISH_SPECIES, BITE_DETECTION } from '@/common/configs/game';
+import { isMobile, isSmallMobile } from '@/game/utils/ScreenUtils';
 
 export class DebugLayer {
   private container: Container;
@@ -204,21 +206,21 @@ export class DebugLayer {
         this.fpsLabel.text = `FPS: ${currentFps}`;
         this.lastFpsUpdateTime = now;
 
-        const isSmall = this.app.renderer.width < 768;
+        const isSmall = isSmallMobile(this.app.renderer.width);
         const targetFpsSize = isSmall ? 10 : 13;
         if (this.fpsLabel.style.fontSize !== targetFpsSize) {
           this.fpsLabel.style.fontSize = targetFpsSize;
         }
       }
 
-      const isSmall = this.app.renderer.width < 768;
-      const targetSnagSize = isSmall ? 9 : 11;
+      const isSmallDevice = isSmallMobile(this.app.renderer.width);
+      const targetSnagSize = isSmallDevice ? 9 : 11;
       if (this.snagLabel.style.fontSize !== targetSnagSize) {
         this.snagLabel.style.fontSize = targetSnagSize;
       }
 
-      const isMobile = this.app.renderer.width < 1000;
-      const targetSectorInfoSize = isMobile ? 9 : 12;
+      const isMobileDevice = isMobile(this.app.renderer.width);
+      const targetSectorInfoSize = isMobileDevice ? 9 : 12;
       if (this.sectorInfoLabel.style.fontSize !== targetSectorInfoSize) {
         this.sectorInfoLabel.style.fontSize = targetSectorInfoSize;
       }
@@ -525,9 +527,9 @@ export class DebugLayer {
 
       this.sectorInfoLabel.position.set(targetX, targetY);
 
-      const isMobile = this.app.renderer.width < 1000;
-      const padding = isMobile ? 5 : 10;
-      const radius = isMobile ? 4 : 6;
+      const isMobileDevice = isMobile(this.app.renderer.width);
+      const padding = isMobileDevice ? 5 : 10;
+      const radius = isMobileDevice ? 4 : 6;
 
       this.infoBgGfx.clear();
       this.infoBgGfx.roundRect(

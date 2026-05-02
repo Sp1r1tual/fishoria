@@ -194,11 +194,27 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.hud__debug-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+@media (hover: hover) {
+  .hud__debug-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+  }
+}
+
+.hud__debug-btn:active {
+  background: rgba(255, 255, 255, 0.4);
   color: #fff;
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(0.95);
+}
+
+.hud__debug-btn--active {
+  background: rgba(239, 68, 68, 0.4);
+  border-color: rgba(239, 68, 68, 0.8);
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+  color: #fff;
 }
 
 @media (max-width: 1080px) {

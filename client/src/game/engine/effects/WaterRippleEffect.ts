@@ -1,5 +1,7 @@
 import { Container, Graphics } from 'pixi.js';
 
+import { SCREEN_THRESHOLDS } from '@/game/utils/ScreenUtils';
+
 interface IRipple {
   x: number;
   y: number;
@@ -35,7 +37,10 @@ export class WaterRippleEffect {
 
     const perspectiveY = 0.15 + normalizedDepth * 0.3;
 
-    const screenScale = Math.max(0.35, Math.min(1.0, canvasH / 1080));
+    const screenScale = Math.max(
+      0.35,
+      Math.min(1.0, canvasH / SCREEN_THRESHOLDS.TABLET),
+    );
     const ringCount = 1;
 
     for (let i = 0; i < ringCount; i++) {
