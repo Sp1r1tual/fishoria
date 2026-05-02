@@ -112,6 +112,24 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
     }
   }
 
+  let impactOffset = 0;
+  if (
+    isCast &&
+    !isSpinning &&
+    rigType === 'float' &&
+    (phase === 'waiting' || phase === 'bite')
+  ) {
+    const elapsed = timeSinceCast;
+    const duration = 1.5;
+    if (elapsed > 0 && elapsed < duration) {
+      const isSmall = input.canvasWidth < 1080;
+      const freq = 12.0;
+      const amp = (isSmall ? 10.0 : 16.0) * renderScale;
+      const decay = Math.exp(-elapsed * 4.0);
+      impactOffset = Math.sin(elapsed * freq) * amp * decay;
+    }
+  }
+
   const stemAttachmentOffset =
     rigType === 'feeder' || isSpinning ? 0 : -0.5 * renderScale;
   const cosT = Math.cos(tilt);
@@ -126,7 +144,7 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
 
   const lineTargetY =
     isCast && !isSpinning && (phase === 'waiting' || phase === 'bite')
-      ? (bobberY ?? castY) + sinkY + cosT * stemAttachmentOffset
+      ? (bobberY ?? castY) + sinkY + impactOffset + cosT * stemAttachmentOffset
       : isCast
         ? hookY
         : baseY;

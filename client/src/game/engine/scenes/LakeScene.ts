@@ -976,7 +976,8 @@ export class LakeScene implements IScene {
           : Math.min(this.hookDepthM, this.groundDepthM),
       debugActive: this.debugActive,
       escapeProgress: this.tension.escapeProgress,
-      isSmall: W < 768,
+      timeSinceCast: this.timeSinceCast,
+      isSmall: W < 1080,
     });
 
     const fishMovingTowardsPlayer = !!(

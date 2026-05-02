@@ -17,6 +17,7 @@ interface IHookRenderState {
   currentDepthM?: number;
   debugActive?: boolean;
   escapeProgress?: number;
+  timeSinceCast?: number;
   isSmall?: boolean;
 }
 
@@ -102,6 +103,8 @@ export class HookEntity {
       maxInterest,
       hookDepthM,
       groundDepthM,
+      state.timeSinceCast ?? 0,
+      isSmall,
     );
 
     if (debugActive && isCast) {
@@ -140,6 +143,8 @@ export class HookEntity {
     maxInterest: number,
     hookDepthM: number,
     groundDepthM: number,
+    timeSinceCast: number,
+    isSmall: boolean,
   ): void {
     this.gfx.clear();
 
@@ -160,6 +165,21 @@ export class HookEntity {
       let tilt = isLayingOnSide ? Math.PI / 2.1 : bobCycle * 0.15;
 
       let sinkY = 0;
+      let impactOffset = 0;
+
+      if (
+        this.rigType === 'float' &&
+        (phase === 'waiting' || phase === 'bite')
+      ) {
+        const elapsed = timeSinceCast;
+        const duration = 1.5;
+        if (elapsed > 0 && elapsed < duration) {
+          const freq = 12.0;
+          const amp = (isSmall ? 10.0 : 16.0) * this.scale;
+          const decay = Math.exp(-elapsed * 4.0);
+          impactOffset = Math.sin(elapsed * freq) * amp * decay;
+        }
+      }
       let bulbAlphaOverride: number | null = null;
 
       if (this.rigType === 'feeder') {
@@ -185,7 +205,7 @@ export class HookEntity {
         bulbAlphaOverride = 0;
       }
 
-      const totalY = by + sinkY;
+      const totalY = by + sinkY + impactOffset;
 
       if (phase === 'bite' || bulbAlphaOverride === 0) {
         const isStrike = phase === 'bite';
@@ -239,7 +259,7 @@ export class HookEntity {
           this.gfx.fill({ color: 0xcccccc, alpha: bulbAlpha * 0.6 });
         }
       } else {
-        const bulbDist = 4 * this.scale;
+        const bulbDist = 0;
         const bulbX = bx + sinT * bulbDist;
         const bulbY = totalY + cosT * bulbDist;
         const bulbAlpha = bulbAlphaOverride != null ? bulbAlphaOverride : 1;
@@ -283,7 +303,7 @@ export class HookEntity {
         }
 
         const stemWidth = 2.4 * this.scale;
-        const topStemStart = 4 * this.scale - bulbRadius;
+        const topStemStart = -bulbRadius;
         const antennaLen = 22 * this.scale;
 
         drawClippedSegment(
