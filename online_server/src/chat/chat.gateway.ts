@@ -48,6 +48,8 @@ interface IAuthenticatedSocket extends Socket {
     },
     credentials: true,
   },
+  pingTimeout: 60000,
+  pingInterval: 25000,
   namespace: '/chat',
 })
 export class ChatGateway

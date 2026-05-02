@@ -28,6 +28,8 @@ import { SetWeatherDto } from './dto/set-weather.dto';
     },
     credentials: true,
   },
+  pingTimeout: 60000,
+  pingInterval: 25000,
   namespace: '/game',
 })
 @UsePipes(new ZodValidationPipe())

@@ -26,6 +26,8 @@ import { StatusService } from './status.service';
     },
     credentials: true,
   },
+  pingTimeout: 60000,
+  pingInterval: 25000,
   namespace: '/status',
 })
 export class StatusGateway
