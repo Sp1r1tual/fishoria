@@ -18,10 +18,12 @@ export class NewsService {
 
     const cached = await this.redis.get(cacheKey);
     if (cached) {
+      if (typeof cached !== 'string') return cached;
       try {
-        return JSON.parse(cached as string);
+        return JSON.parse(cached);
       } catch {
-        console.error('Corrupted cache for news');
+        console.error(`Corrupted cache for news at ${cacheKey}. Clearing...`);
+        await this.redis.del(cacheKey).catch(() => null);
       }
     }
 
