@@ -59,8 +59,8 @@ export function SessionSync() {
 
     if (stateRef.current.onlineMode) return;
 
-    const gTime = TimeManager.getGameTimeHours();
-    const currentHour = Math.floor(gTime);
+    const gTime = TimeManager.getTime('game');
+    const currentHour = gTime.getUTCHours();
 
     const curForecast = loadedForecast || stateRef.current.weatherForecast;
     const lastUpdate =
@@ -74,9 +74,14 @@ export function SessionSync() {
       !curForecast ||
       curForecast.length < 24;
 
-    const diffWeather = lastUpdate !== null ? currentHour - lastUpdate : 0;
+    const diffWeather =
+      lastUpdate !== null
+        ? currentHour >= lastUpdate
+          ? currentHour - lastUpdate
+          : 24 - lastUpdate + currentHour
+        : 0;
 
-    if (isInvalid || diffWeather >= 24 || diffWeather < 0) {
+    if (isInvalid || diffWeather >= 24) {
       const newForecast: WeatherType[] = [];
       for (let i = 0; i < 24; i++) newForecast.push(generateRandomWeather());
       dispatch(setWeatherForecast(newForecast));
@@ -95,17 +100,19 @@ export function SessionSync() {
     lastAutoSaveRef.current = TimeManager.getGameTimeHours();
 
     const interval = setInterval(() => {
-      const gTime = TimeManager.getGameTimeHours();
-      const currentHour = Math.floor(gTime);
+      const gTime = TimeManager.getTime('game');
+      const currentHour = gTime.getUTCHours();
 
-      const diffAutoSave = Math.abs(gTime - lastAutoSaveRef.current);
+      const diffAutoSave = Math.abs(
+        TimeManager.getGameTimeHours() - lastAutoSaveRef.current,
+      );
       if (diffAutoSave >= 0.5) {
         TimeManager.saveSessionData(
           weather,
           weatherForecast,
           lastWeatherUpdateHour,
         );
-        lastAutoSaveRef.current = gTime;
+        lastAutoSaveRef.current = TimeManager.getGameTimeHours();
       }
 
       const {
@@ -122,9 +129,14 @@ export function SessionSync() {
         !curForecast ||
         curForecast.length < 24;
 
-      const diffWeather = lastUpdate !== null ? currentHour - lastUpdate : 0;
+      const diffWeather =
+        lastUpdate !== null
+          ? currentHour >= lastUpdate
+            ? currentHour - lastUpdate
+            : 24 - lastUpdate + currentHour
+          : 0;
 
-      if (isInvalid || diffWeather >= 24 || diffWeather < 0) {
+      if (isInvalid || diffWeather >= 24) {
         const newForecast: WeatherType[] = [];
         for (let i = 0; i < 24; i++) newForecast.push(generateRandomWeather());
 

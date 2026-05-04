@@ -349,7 +349,7 @@ export class LakeScene implements IScene {
   // ─── Time of Day ───────────────────────────────────────────────────────────
   private updateTimeOfDay(): boolean {
     const time = TimeManager.getTime(this.timeMode);
-    const h = time.getHours();
+    const h = time.getUTCHours();
     let newTimeOfDay: TimeOfDayType;
 
     if (h >= TIME_SYSTEM.morningStart && h < TIME_SYSTEM.dayStart)

@@ -4,7 +4,7 @@ import { TIME_SYSTEM } from '@/common/configs/game';
 
 let realStartTime = Date.now();
 const date = new Date();
-date.setHours(TIME_SYSTEM.gameStartHour, 0, 0, 0);
+date.setUTCHours(TIME_SYSTEM.gameStartHour, 0, 0, 0);
 let virtualStartTime = date.getTime();
 
 const saved = localStorage.getItem('fishing_session_data');
@@ -37,7 +37,7 @@ export const TimeManager = {
 
   setGameTime(hour: number) {
     const date = this.getTime('game');
-    date.setHours(hour, 0, 0, 0);
+    date.setUTCHours(hour, 0, 0, 0);
     virtualStartTime = date.getTime();
     realStartTime = Date.now();
 
@@ -47,7 +47,7 @@ export const TimeManager = {
   /**
    * Returns the absolute game time in years since the Unix era.
    * Used to compare timestamps (e.g., end of baiting).
-   * For the hour of the day (0-23) use getTime('game').getHours().
+   * For the hour of the day (0-23) use getTime('game').getUTCHours().
    */
   getGameTimeHours(): number {
     const d = this.getTime('game');
@@ -89,7 +89,7 @@ export const TimeManager = {
     realStartTime = Date.now();
     virtualStartTime = virtualTime;
 
-    const h = new Date(virtualTime).getHours();
+    const h = new Date(virtualTime).getUTCHours();
     GameEvents.emit('timeUpdate', { hour: h, mode: 'game' });
   },
 
@@ -117,7 +117,7 @@ export const TimeManager = {
 
 let lastEmittedHour = -1;
 setInterval(() => {
-  const currentHour = TimeManager.getTime('game').getHours();
+  const currentHour = TimeManager.getTime('game').getUTCHours();
   if (currentHour !== lastEmittedHour) {
     if (lastEmittedHour !== -1) {
       GameEvents.emit('timeUpdate', { hour: currentHour, mode: 'game' });

@@ -26,8 +26,8 @@ export function WeatherForecastModal({
 
   const startHour =
     lastWeatherUpdateHour !== null
-      ? new Date(lastWeatherUpdateHour * 3600000).getHours()
-      : new Date(TimeManager.getTime('game')).getHours();
+      ? new Date(lastWeatherUpdateHour * 3600000).getUTCHours()
+      : new Date(TimeManager.getTime('game')).getUTCHours();
   const middleHour = (startHour + 12) % 24;
   const endHour = (startHour + 23) % 24;
 

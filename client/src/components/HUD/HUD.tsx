@@ -184,7 +184,7 @@ export function HUD({
   useEffect(() => {
     const updateTime = () => {
       const now = TimeManager.getTime('game');
-      const hour = now.getHours();
+      const hour = now.getUTCHours();
       setIsNight(
         hour >= TIME_SYSTEM.nightStart || hour < TIME_SYSTEM.morningStart,
       );

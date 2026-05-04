@@ -27,6 +27,7 @@ export function GameClock({
         timeTextRef.current.innerText = now.toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit',
+          timeZone: 'UTC',
         });
       }
     };

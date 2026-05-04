@@ -22,7 +22,7 @@ export function WeatherStatus({
   const weather = useAppSelector((s) => s.game.weather);
 
   const [currentHour, setCurrentHour] = useState(() =>
-    TimeManager.getTime('game').getHours(),
+    TimeManager.getTime('game').getUTCHours(),
   );
 
   useEffect(() => {
