@@ -107,6 +107,10 @@ export const Masonry = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
                   className={styles.masonryImage}
                   wrapperClassName={styles.masonryImageWrapper}
                   objectFit="cover"
+                  imgProps={{
+                    fetchPriority: item.src === IMAGE_1 ? 'high' : 'auto',
+                    loading: item.src === IMAGE_1 ? 'eager' : 'lazy',
+                  }}
                 />
               </button>
               <figcaption className={styles.masonryCaption}>

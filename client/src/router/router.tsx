@@ -5,7 +5,6 @@ import App from '@/App';
 import { ErrorElement } from '@/components/errors/ErrorElement';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { PageLayout } from '@/layouts/PageLayout';
-import { GameScreen } from '@/components/GameScreen/GameScreen';
 
 import * as Pages from './pages';
 
@@ -66,7 +65,7 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <GameScreen />,
+            lazy: Pages.GamePage,
             handle: {
               title: 'Fishoria',
               description: (t: TFunction) => t('meta.home'),

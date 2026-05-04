@@ -48,3 +48,8 @@ export const ServerUnavailablePage = () =>
   import('./ServerUnavailablePage').then((m) => ({
     Component: m.ServerUnavailablePage,
   }));
+
+export const GamePage = () =>
+  import('@/components/GameScreen/GameScreen').then((m) => ({
+    Component: m.GameScreen,
+  }));

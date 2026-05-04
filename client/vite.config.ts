@@ -25,9 +25,6 @@ export default defineConfig({
             ) {
               return 'vendor';
             }
-            if (id.includes('@supabase')) {
-              return 'supabase';
-            }
             if (
               id.includes('@reduxjs') ||
               id.includes('@tanstack/react-query')
