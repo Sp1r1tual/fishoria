@@ -52,6 +52,8 @@
   font-weight: 700;
   font-size: 0.9rem;
   flex-shrink: 0;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: radial-gradient(white, black);
 }
 
 .toast__message {

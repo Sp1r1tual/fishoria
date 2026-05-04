@@ -55,6 +55,8 @@ export function ToastItem({
     }
   };
 
+  const [imgError, setImgError] = useState(false);
+
   const typeClass = styles[`toast--${type}`] || styles['toast--info'];
   let stateClass = '';
   if (isExiting) stateClass = styles.toastExiting;
@@ -70,14 +72,38 @@ export function ToastItem({
         {type === 'error' && '⚠️'}
         {type === 'warning' && '⚡'}
         {type === 'info' && 'ⓘ'}
-        {type === 'achievement' && imageUrl && (
-          <img src={imageUrl} alt="" className={styles.toast__achievementImg} />
+        {type === 'achievement' && (
+          <>
+            {imageUrl && !imgError ? (
+              <img
+                src={imageUrl}
+                alt=""
+                className={styles.toast__achievementImg}
+                onError={() => setImgError(true)}
+                loading="eager"
+                crossOrigin="anonymous"
+              />
+            ) : (
+              '🏆'
+            )}
+          </>
         )}
-        {type === 'achievement' && !imageUrl && '🏆'}
-        {type === 'quest' && imageUrl && (
-          <img src={imageUrl} alt="" className={styles.toast__achievementImg} />
+        {type === 'quest' && (
+          <>
+            {imageUrl && !imgError ? (
+              <img
+                src={imageUrl}
+                alt=""
+                className={styles.toast__achievementImg}
+                onError={() => setImgError(true)}
+                loading="eager"
+                crossOrigin="anonymous"
+              />
+            ) : (
+              '📋'
+            )}
+          </>
         )}
-        {type === 'quest' && !imageUrl && '📋'}
       </div>
       <div className={styles.toast__message}>{message}</div>
       <button
