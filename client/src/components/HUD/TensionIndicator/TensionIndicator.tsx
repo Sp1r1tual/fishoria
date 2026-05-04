@@ -34,16 +34,6 @@ export function TensionIndicator({
 
     const updateUI = () => {
       if (wrapRef.current) {
-        if (
-          currentPhase === 'waiting' ||
-          currentPhase === 'bite' ||
-          currentPhase === 'reeling'
-        ) {
-          wrapRef.current.classList.add(styles['tension__wrap--visible']);
-        } else {
-          wrapRef.current.classList.remove(styles['tension__wrap--visible']);
-        }
-
         if (isOverloaded && currentPhase === 'reeling') {
           wrapRef.current.classList.add(styles['tension__wrap--overloaded']);
         } else {
@@ -108,13 +98,9 @@ export function TensionIndicator({
 
         if (el) {
           if (isActive) {
-            if (!el.classList.contains(styles['tension__segment--active'])) {
-              el.classList.add(styles['tension__segment--active']);
-            }
+            el.classList.add(styles['tension__segment--active']);
           } else {
-            if (el.classList.contains(styles['tension__segment--active'])) {
-              el.classList.remove(styles['tension__segment--active']);
-            }
+            el.classList.remove(styles['tension__segment--active']);
           }
         }
       }

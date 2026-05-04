@@ -129,32 +129,26 @@
 }
 
 .action__extract-container {
-  width: 0;
+  width: 73px;
   height: 72px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: opacity 0.3s ease-out;
+  will-change: opacity;
   pointer-events: none;
   opacity: 0;
-  margin-left: 0;
 }
 
 @media (max-width: 1080px) {
   .action__extract-container {
     height: 52px;
+    width: 50px;
   }
 }
 
 .action__extract-container--visible {
-  width: 73px;
   opacity: 1;
   pointer-events: all;
-}
-
-@media (max-width: 1080px) {
-  .action__extract-container--visible {
-    width: 50px;
-  }
 }
