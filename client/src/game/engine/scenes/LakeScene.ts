@@ -1533,18 +1533,20 @@ export class LakeScene implements IScene {
 
   private drawStrikeHint(W: number, H: number): void {
     const scale = getRenderScale(W);
-    const baseWidth = isTablet(W) ? 30 : 60;
+
+    const baseWidth = isTablet(W) ? 120 : 180;
     const strokeWidth = baseWidth * scale;
 
     this.strikeHintGfx.clear();
     this.strikeHintGfx.rect(0, 0, W, H);
     this.strikeHintGfx.stroke({
-      color: 0xffcc00,
+      color: 0xfbbf24,
       width: strokeWidth,
-      alignment: 1,
+      alignment: 0,
     });
+
     this.strikeHintGfx.filters = [
-      new BlurFilter({ strength: (baseWidth / 2) * scale }),
+      new BlurFilter({ strength: (strokeWidth / 1.8) * scale }),
     ];
     this.strikeHintGfx.visible = false;
     this.strikeHintGfx.alpha = 0;

@@ -9,7 +9,7 @@ import {
 
 import type { ILakeConfig, TimeOfDayType, WeatherType } from '@/common/types';
 
-import { isTablet } from '@/game/utils/ScreenUtils';
+import { isTablet, isMobile } from '@/game/utils/ScreenUtils';
 
 function createDisplacementTexture(size = 256): Texture {
   const canvas = document.createElement('canvas');
@@ -87,6 +87,11 @@ export class BackgroundRenderer {
         sprite: this.displacementSprite,
         scale: this.config.environment.waterRippleScale ?? 6,
       });
+
+      this.displacementFilter.resolution = Math.min(
+        window.devicePixelRatio || 1,
+        2,
+      );
       this.waterContainer.filters = [this.displacementFilter];
       bgLayer.addChild(this.displacementSprite);
     } catch (e) {
@@ -145,7 +150,12 @@ export class BackgroundRenderer {
 
     if (this.displacementFilter) {
       const baseScale = this.config.environment.waterRippleScale ?? 6;
-      const waveScale = isTablet(W) ? baseScale * 0.5 : baseScale;
+      let waveScale = baseScale;
+      if (isMobile(W)) {
+        waveScale = baseScale * 0.5;
+      } else if (isTablet(W)) {
+        waveScale = baseScale * 0.75;
+      }
       this.displacementFilter.scale.set(waveScale);
     }
   }
