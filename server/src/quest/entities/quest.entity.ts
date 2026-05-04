@@ -153,7 +153,7 @@ export class QuestEntity {
       for (const cond of conditions) {
         if (
           cond.type === 'CATCH_METHOD' &&
-          cond.value === catchData.method &&
+          cond.value.toLowerCase() === catchData.method.toLowerCase() &&
           !TRASH_ITEMS.includes(catchData.speciesId)
         ) {
           const prev = currentProgress[cond.id] || 0;
