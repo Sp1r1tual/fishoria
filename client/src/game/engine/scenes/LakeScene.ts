@@ -158,10 +158,10 @@ export class LakeScene implements IScene {
 
   private resetDelayTimer: ReturnType<typeof setTimeout> | null = null;
   private biteUpdateTimer = 0;
-  private hasInteractedDuringBite = false;
   private heavyFishGuard = false;
   private guardReleased = true;
   private lastBiteTimestamp = 0;
+  private strikePulsePhase = 0;
 
   private updateCtx: Partial<IUpdateContext> = {};
 
@@ -277,18 +277,15 @@ export class LakeScene implements IScene {
       app,
       (pixel) => this.cast(pixel),
       () => {
-        this.checkBiteInteraction();
         this.hookFishExternal();
       },
       () => {
-        this.checkBiteInteraction();
         this.setPlayerReeling(true);
       },
       () => {
         this.setPlayerReeling(false);
       },
       () => {
-        this.checkBiteInteraction();
         this.playerRelaxing = true;
       },
       () => {
@@ -297,7 +294,6 @@ export class LakeScene implements IScene {
       () => this.resetCast(),
       () => this.toggleDebug(),
       (speedIdx) => {
-        this.checkBiteInteraction();
         const levels: RetrieveSpeedType[] = ['slow', 'normal', 'fast'];
         this.currentRetrieveSpeed = levels[speedIdx - 1];
         GameEvents.emit('retrieveSpeed', this.currentRetrieveSpeed);
@@ -405,16 +401,6 @@ export class LakeScene implements IScene {
     this.debugLayer.setVisible(isVisible, this.debugActive);
     this.debugLayer.setLabelsVisible(this.debugActive);
     this.bgRenderer.setDebugVisible(this.debugActive);
-  }
-
-  // ─── Actions ───────────────────────────────────────────────────────────────
-  private checkBiteInteraction(): void {
-    if (
-      this.phase === 'bite' ||
-      (this.phase === 'waiting' && this.smoothedInterest > 0.01)
-    ) {
-      this.hasInteractedDuringBite = true;
-    }
   }
 
   setAvailableLineLength(meters: number): void {
@@ -771,7 +757,6 @@ export class LakeScene implements IScene {
       canvasWidth: W,
     });
     this.biteUpdateTimer = 0;
-    this.hasInteractedDuringBite = false;
     this.snagMechanic.reset();
     this.retrieveReelTime = 0;
     this.retrievePauseTime = 0;
@@ -1082,6 +1067,8 @@ export class LakeScene implements IScene {
     const oldH = this.lastH || newH;
     if (oldW === newW && oldH === newH) return;
 
+    this.drawStrikeHint(newW, newH);
+
     const oldWaterY = oldH * this.config.environment.waterBoundaryY;
     const oldWaterHeight = Math.max(1, oldH - oldWaterY);
     const newWaterY = newH * this.config.environment.waterBoundaryY;
@@ -1329,10 +1316,8 @@ export class LakeScene implements IScene {
         this.targetInterest - decayRate * deltaTime,
       );
     }
-
     if (this.targetInterest === 0 && this.smoothedInterest < 0.01) {
       this.smoothedInterest = 0;
-      this.hasInteractedDuringBite = false;
     }
 
     this.callbacks.onBiteProgress(this.smoothedInterest);
@@ -1382,7 +1367,6 @@ export class LakeScene implements IScene {
       } else {
         this.lastBiteTimestamp = Date.now();
         this.phase = 'bite';
-        this.hasInteractedDuringBite = false;
         this.callbacks.onBite();
         if (this.hookConfig?.rigType !== 'feeder') {
           this.waterRippleEffect.spawn(
@@ -1548,14 +1532,20 @@ export class LakeScene implements IScene {
   }
 
   private drawStrikeHint(W: number, H: number): void {
+    const scale = getRenderScale(W);
+    const baseWidth = isTablet(W) ? 30 : 60;
+    const strokeWidth = baseWidth * scale;
+
     this.strikeHintGfx.clear();
     this.strikeHintGfx.rect(0, 0, W, H);
     this.strikeHintGfx.stroke({
       color: 0xffcc00,
-      width: 80,
+      width: strokeWidth,
       alignment: 1,
     });
-    this.strikeHintGfx.filters = [new BlurFilter({ strength: 40 })];
+    this.strikeHintGfx.filters = [
+      new BlurFilter({ strength: (baseWidth / 2) * scale }),
+    ];
     this.strikeHintGfx.visible = false;
     this.strikeHintGfx.alpha = 0;
   }
@@ -1578,18 +1568,24 @@ export class LakeScene implements IScene {
     else if (this.weather === 'cloudy') dimMultiplier *= 0.85;
 
     const timeSinceBite = Date.now() - this.lastBiteTimestamp;
-    const pulse = Math.max(0, Math.exp(-timeSinceBite / 200) * 0.6);
+    const biteFlash = Math.max(0, Math.exp(-timeSinceBite / 200) * 0.6);
+
+    // Synchronize with ActionControl pulse speed
+    const dt = this.updateCtx.deltaTime ?? 0.016;
+    const pulseSpeed = 2.0 - this.smoothedInterest * 1.65;
+    const freq = (2 * Math.PI) / pulseSpeed;
+    this.strikePulsePhase += freq * dt;
+
+    // Smooth sine wave
+    let syncPulse = (Math.sin(this.strikePulsePhase) + 1) / 2;
+    // Apply smoothstep for better easing (matches ease-in-out better)
+    syncPulse = syncPulse * syncPulse * (3 - 2 * syncPulse);
 
     const targetAlpha =
-      (isBite
-        ? this.hasInteractedDuringBite
-          ? 0.4 + Math.sin(Date.now() * 0.004) * 0.02
-          : 0.6 + Math.sin(Date.now() * 0.012) * 0.1
-        : 0) *
-        dimMultiplier +
-      pulse * dimMultiplier;
+      (isBite ? (0.2 + syncPulse * 0.4) * dimMultiplier : 0) +
+      biteFlash * dimMultiplier;
 
-    if (!isBite && this.strikeHintGfx.alpha < 0.01 && pulse < 0.01) {
+    if (!isBite && this.strikeHintGfx.alpha < 0.01 && biteFlash < 0.01) {
       this.strikeHintGfx.visible = false;
       return;
     }

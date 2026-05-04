@@ -52,6 +52,16 @@ export class SectorSystem {
     this.buildGrid();
   }
 
+  public resize(canvasWidth: number, canvasHeight: number) {
+    const dx = this.bounds.maxX - this.bounds.minX;
+    const dy = this.bounds.maxY - this.bounds.minY;
+
+    const worldAspectRatio = (dx * canvasWidth) / (dy * canvasHeight);
+    this.rows = Math.max(1, Math.floor(this.cols / (worldAspectRatio || 1)));
+
+    this.buildGrid();
+  }
+
   private calculateBounds() {
     if (this.allowedArea.type === 'polygon' && this.allowedArea.points) {
       const xs = this.allowedArea.points.map((p) => p.x);
