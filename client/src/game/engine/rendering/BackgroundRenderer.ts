@@ -152,9 +152,9 @@ export class BackgroundRenderer {
       const baseScale = this.config.environment.waterRippleScale ?? 6;
       let waveScale = baseScale;
       if (isMobile(W)) {
-        waveScale = baseScale * 0.5;
-      } else if (isTablet(W)) {
         waveScale = baseScale * 0.75;
+      } else if (isTablet(W)) {
+        waveScale = baseScale * 0.95;
       }
       this.displacementFilter.scale.set(waveScale);
     }
@@ -179,6 +179,10 @@ export class BackgroundRenderer {
     if (this.displacementSprite) {
       this.displacementSprite.x += 0.3 * dt;
       this.displacementSprite.y += 0.15 * dt;
+      // Wrap coordinates to prevent float precision degradation over time
+      // 256 matches the displacement texture size for seamless tiling
+      if (this.displacementSprite.x > 256) this.displacementSprite.x -= 256;
+      if (this.displacementSprite.y > 256) this.displacementSprite.y -= 256;
     }
   }
 

@@ -78,7 +78,7 @@ export class RodEntity {
     this.gfx.clear();
     this.guidePoints = [];
 
-    const segments = 24;
+    const segments = 16;
     const bx = this.baseX,
       by = this.baseY;
     const tx = this.tipX,
@@ -88,7 +88,7 @@ export class RodEntity {
     const handleLen = 50 * this.scale;
     const dx = tx - bx;
     const dy = ty - by;
-    const dist = Math.sqrt(dx * dx + dy * dy);
+    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
 
     const hx = bx + (dx / dist) * handleLen;
     const hy = by + (dy / dist) * handleLen;
@@ -123,31 +123,24 @@ export class RodEntity {
 
     for (let j = 1; j <= 8; j++) {
       const p = j / 9;
-      const tx = bx + (hx - bx) * p;
-      const ty = by + (hy - by) * p;
+      const gx = bx + (hx - bx) * p;
+      const gy = by + (hy - by) * p;
       const side = j % 2 === 0 ? 1 : -1;
 
       this.gfx.circle(
-        tx + nx * side * 2.2 * this.scale,
-        ty + ny * side * 2.2 * this.scale,
+        gx + nx * side * 2.2 * this.scale,
+        gy + ny * side * 2.2 * this.scale,
         (0.6 + (j % 3) * 0.6) * this.scale,
       );
-      this.gfx.fill({ color: grainColor, alpha: grainAlpha });
-
-      this.gfx.moveTo(tx - nx * 4 * this.scale, ty - ny * 4 * this.scale);
-      this.gfx.lineTo(tx + nx * 4 * this.scale, ty + ny * 4 * this.scale);
-      this.gfx.stroke({
-        width: 1.5 * this.scale,
-        color: grainColor,
-        alpha: 0.18,
-      });
     }
+    this.gfx.fill({ color: grainColor, alpha: grainAlpha });
 
     this.guidePoints.push({ x: hx, y: hy });
 
     let prevX = hx;
     let prevY = hy;
 
+    const batchSize = 4;
     for (let i = 1; i <= segments; i++) {
       const t = i / segments;
 
@@ -158,26 +151,28 @@ export class RodEntity {
       const width = 6.5 * this.scale * (1 - t * 0.9);
       this.gfx.moveTo(prevX, prevY);
       this.gfx.lineTo(currX, currY);
-      this.gfx.stroke({
-        width: Math.max(0.6, width),
-        color: 0x111111,
-        cap: 'round',
-        join: 'round',
-      });
 
-      if (i % 6 === 0 || i === segments) {
+      if (i % batchSize === 0 || i === segments) {
+        this.gfx.stroke({
+          width: Math.max(0.8, width),
+          color: 0x111111,
+          cap: 'round',
+          join: 'round',
+        });
+      }
+
+      if (i % 4 === 0 || i === segments) {
         const rodDx = currX - prevX;
         const rodDy = currY - prevY;
         const len = Math.sqrt(rodDx * rodDx + rodDy * rodDy) || 1;
 
-        const nx = -rodDy / len;
-        const ny = rodDx / len;
-
+        const rnx = -rodDy / len;
+        const rny = rodDx / len;
         const flip = dir;
 
         const offsetDist = width + 1.5 * this.scale;
-        const ringX = currX + nx * flip * offsetDist;
-        const ringY = currY + ny * flip * offsetDist;
+        const ringX = currX + rnx * flip * offsetDist;
+        const ringY = currY + rny * flip * offsetDist;
 
         this.guidePoints.push({ x: ringX, y: ringY });
 

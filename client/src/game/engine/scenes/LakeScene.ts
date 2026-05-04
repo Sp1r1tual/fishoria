@@ -904,6 +904,9 @@ export class LakeScene implements IScene {
     }
 
     this.totalTime += deltaTime;
+    // Wrap totalTime to prevent float precision loss in Math.sin/cos calls
+    // Use a large period that's a multiple of common frequencies used in animations
+    if (this.totalTime > 6283.185) this.totalTime -= 6283.185;
 
     this.groundbaitEffect.update(deltaTime);
     const bubbleScale = getBubbleScale(W);

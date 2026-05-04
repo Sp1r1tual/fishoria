@@ -84,12 +84,12 @@ export class BubbleEffect {
 
       const currentSize = b.size * b.perspectiveScale * scale;
       this.gfx.ellipse(b.x, b.y, currentSize, currentSize * 0.35);
-      this.gfx.stroke({
-        color: 0xffffff,
-        alpha: b.alpha * 0.5,
-        width: 1.0 * b.perspectiveScale * scale,
-      });
     }
+    this.gfx.stroke({
+      color: 0xffffff,
+      alpha: 0.4,
+      width: 1.0 * scale,
+    });
   }
 
   public destroy(): void {

@@ -87,12 +87,12 @@ export class WaterRippleEffect {
       const ry = r.radius * r.perspectiveY;
 
       this.gfx.ellipse(r.x, r.y, rx, ry);
-      this.gfx.stroke({
-        color: 0xffffff,
-        alpha: currentAlpha,
-        width: r.lineWidth * (1 - progress * 0.5),
-      });
     }
+    this.gfx.stroke({
+      color: 0xffffff,
+      alpha: 0.4,
+      width: 1.2,
+    });
   }
 
   public destroy(): void {

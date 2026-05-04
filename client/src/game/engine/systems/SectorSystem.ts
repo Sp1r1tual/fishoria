@@ -6,11 +6,12 @@ import type {
 import { pointInPolygon } from '@/game/utils/MathUtils';
 import { POPULATION } from '@/common/configs/game';
 
-interface ISector {
+export interface ISector {
   nx: number;
   ny: number;
   depthM: number;
   availability: Record<string, number>;
+  availabilityList: [string, number][];
 }
 
 export class SectorSystem {
@@ -137,11 +138,12 @@ export class SectorSystem {
         const depthM = this.getDepthAt(nx, ny);
         const availability = this.calculateAvailabilityAt(depthM);
 
-        const sector = {
+        const sector: ISector = {
           nx,
           ny,
           depthM,
           availability,
+          availabilityList: Object.entries(availability),
         };
         this.grid[c][r] = sector;
         this.validSectors.push(sector);

@@ -183,7 +183,6 @@ export class WeatherLayer {
         if (drop.y > 0 && drop.y < H) {
           this.rainGfx.moveTo(drop.x, drop.y);
           this.rainGfx.lineTo(drop.x + drop.vx * 2, drop.y + drop.length);
-          this.rainGfx.stroke();
         }
 
         if (drop.y > H) {
@@ -195,6 +194,7 @@ export class WeatherLayer {
         }
         if (drop.x < 0) drop.x = W;
       }
+      this.rainGfx.stroke();
     } else {
       this.rainGfx.clear();
     }

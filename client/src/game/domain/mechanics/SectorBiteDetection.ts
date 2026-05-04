@@ -82,11 +82,13 @@ export function detectSectorBite(params: ISectorBiteParams): ISectorBiteResult {
   let maxProgress = 0;
   let progressSpeciesId: string | null = null;
   const isSpinning = params.rigType === 'spinning';
-  const speciesList = Object.entries(sector.availability);
+  let speciesList = sector.availabilityList;
   if (params.potentialBiterSpeciesId) {
     const pId = params.potentialBiterSpeciesId;
     const pEntry = speciesList.find(([id]) => id === pId);
     if (pEntry) {
+      // Only clone if we need to modify the order for potential biter
+      speciesList = [...speciesList];
       const idx = speciesList.indexOf(pEntry);
       speciesList.splice(idx, 1);
       speciesList.unshift(pEntry);

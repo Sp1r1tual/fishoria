@@ -20,7 +20,7 @@ export class Game {
     const H = container.clientHeight || window.innerHeight;
 
     const maxResolution = isIOS
-      ? Math.min(window.devicePixelRatio || 2, 3)
+      ? Math.min(window.devicePixelRatio || 2, 2)
       : window.devicePixelRatio || 1;
 
     await this.app.init({
