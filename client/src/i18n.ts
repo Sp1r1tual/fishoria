@@ -14,6 +14,8 @@ export const i18nInitPromise = i18n
   .init({
     fallbackLng: 'en',
     supportedLngs: ['en', 'uk'],
+    nonExplicitSupportedLngs: true,
+    load: 'languageOnly',
     ns: ['translation'],
     defaultNS: 'translation',
     interpolation: {

@@ -4,6 +4,14 @@ import type { ISettingsState } from '@/common/types';
 
 const SETTINGS_SAVE_KEY = 'fishoria_settings';
 
+const getInitialLanguage = (): 'en' | 'uk' => {
+  const saved = localStorage.getItem('i18nextLng');
+  if (saved === 'en' || saved === 'uk') return saved;
+
+  const browser = navigator.language?.split('-')[0];
+  return browser === 'uk' ? 'uk' : 'en';
+};
+
 const loadSettings = (): ISettingsState => {
   const defaults: ISettingsState = {
     musicEnabled: true,
@@ -13,7 +21,7 @@ const loadSettings = (): ISettingsState => {
     sfxVolume: 80,
     ambientVolume: 60,
     debugMode: false,
-    language: 'en',
+    language: getInitialLanguage(),
     onlineMode: true,
   };
 

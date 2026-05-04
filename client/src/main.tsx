@@ -17,6 +17,15 @@ import { updateSettings } from './store/slices/settingsSlice';
 
 import './index.css';
 
+i18nInitPromise.then(() => {
+  const currentLang = (i18n.resolvedLanguage ||
+    i18n.language) as SupportedLanguageType;
+
+  if (store.getState().settings.language !== currentLang) {
+    store.dispatch(updateSettings({ language: currentLang }));
+  }
+});
+
 const rootElement = document.getElementById('root');
 
 if (rootElement) {
@@ -37,11 +46,3 @@ if (rootElement) {
 } else {
   console.error('Root element not found');
 }
-
-i18nInitPromise.then(() => {
-  const currentLang = i18n.language as SupportedLanguageType;
-
-  if (store.getState().settings.language !== currentLang) {
-    store.dispatch(updateSettings({ language: currentLang }));
-  }
-});

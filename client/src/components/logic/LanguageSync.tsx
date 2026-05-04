@@ -24,7 +24,8 @@ export function LanguageSync() {
     if (syncedRef.current) return;
 
     const serverLang = player.user.language as SupportedLanguageType;
-    const localLang = i18n.language as SupportedLanguageType;
+    const localLang = (i18n.resolvedLanguage ||
+      i18n.language) as SupportedLanguageType;
 
     if (serverLang === localLang) {
       syncedRef.current = true;
