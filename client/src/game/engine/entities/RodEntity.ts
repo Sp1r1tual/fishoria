@@ -213,7 +213,6 @@ export class RodEntity {
 
     const isCritical = this.tension > 0.7;
     const color = isCritical ? 0xff0000 : 0xdddddd;
-    const alpha = isCritical ? 0.9 : 0.4;
 
     this.lineGfx.moveTo(this.guidePoints[0].x, this.guidePoints[0].y);
 
@@ -224,11 +223,6 @@ export class RodEntity {
       const my = (p1.y + p2.y) / 2 + this.lineSlack * 20 * this.scale;
       this.lineGfx.quadraticCurveTo(mx, my, p2.x, p2.y);
     }
-
-    const baseWidth = 1.4;
-    const lineWidth = baseWidth * this.scale;
-
-    this.lineGfx.stroke({ width: lineWidth, color, alpha: alpha });
 
     if (this.isCast) {
       const tip = this.guidePoints[this.guidePointsCount - 1];
@@ -243,16 +237,6 @@ export class RodEntity {
 
         const segments = 12;
         this.internalPoints.length = 0;
-
-        // Reuse or create point objects
-        if (this.internalPoints.length === 0) {
-          for (let i = 0; i <= segments; i++) {
-            this.internalPoints.push({ x: 0, y: 0 });
-          }
-        }
-
-        this.internalPoints[0].x = tip.x;
-        this.internalPoints[0].y = tip.y;
 
         for (let i = 1; i <= segments; i++) {
           const t = i / segments;
@@ -270,8 +254,12 @@ export class RodEntity {
           px += nx * sag;
           py += ny * sag;
 
-          this.internalPoints[i].x = px;
-          this.internalPoints[i].y = py;
+          if (this.internalPoints.length < i + 1) {
+            this.internalPoints.push({ x: px, y: py });
+          } else {
+            this.internalPoints[i].x = px;
+            this.internalPoints[i].y = py;
+          }
         }
 
         for (let i = 1; i < this.internalPoints.length; i++) {
@@ -282,14 +270,20 @@ export class RodEntity {
           this.lineGfx.quadraticCurveTo(p0.x, p0.y, mx, my);
         }
         this.lineGfx.lineTo(this.hookX, this.hookY);
-
-        this.lineGfx.stroke({
-          width: lineWidth * 1.1,
-          color,
-          alpha: isCritical ? 0.95 : 0.6,
-        });
       }
     }
+
+    const baseWidth = 1.4;
+    const lineWidth = baseWidth * this.scale;
+    const finalAlpha = isCritical ? 0.9 : 0.45;
+
+    this.lineGfx.stroke({
+      width: lineWidth,
+      color,
+      alpha: finalAlpha,
+      cap: 'round',
+      join: 'round',
+    });
   }
 
   destroy(): void {

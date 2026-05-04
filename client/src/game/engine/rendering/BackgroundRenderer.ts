@@ -87,6 +87,7 @@ export class BackgroundRenderer {
         sprite: this.displacementSprite,
         scale: this.config.environment.waterRippleScale ?? 6,
       });
+      this.displacementFilter.padding = 2;
 
       this.displacementFilter.resolution = Math.min(
         window.devicePixelRatio || 1,
@@ -136,7 +137,7 @@ export class BackgroundRenderer {
       this.waterGfx.poly(polyPoints);
       this.waterMaskGfx.poly(polyPoints);
     } else {
-      const waterY = this.config.environment.waterBoundaryY * H;
+      const waterY = Math.round(this.config.environment.waterBoundaryY * H);
       const waterH = H - waterY;
       this.waterGfx.rect(0, waterY, W, waterH);
       this.waterMaskGfx.rect(0, waterY, W, waterH);
