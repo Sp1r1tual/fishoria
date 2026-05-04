@@ -1028,5 +1028,12 @@
       "consumeError": "Failed to consume item",
       "deleteError": "Failed to delete item"
     }
+  },
+  "network": {
+    "offline": {
+      "title": "Connection Lost",
+      "description": "Please check your internet connection. The game is paused."
+    },
+    "restored": "Connection restored"
   }
 }

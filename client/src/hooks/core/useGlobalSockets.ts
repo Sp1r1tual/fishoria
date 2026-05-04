@@ -21,6 +21,7 @@ import {
 import { addToast } from '@/store/slices/uiSlice';
 
 import i18n from '@/i18n';
+import { store } from '@/store/store';
 
 import { refreshToken } from '@/http/interceptors/auth.interceptor';
 import { OnlineService } from '@/services/online.service';
@@ -73,6 +74,7 @@ export function useGlobalSockets() {
 
     const showSocketToast = (msgKey: string) => {
       if (isSessionOfflineRef.current) return;
+      if (store.getState().ui.isNetworkOffline) return;
 
       const now = Date.now();
       const lastTime = lastToastTimeRef.current[msgKey] || 0;

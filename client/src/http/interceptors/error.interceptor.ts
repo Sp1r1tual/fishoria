@@ -2,11 +2,20 @@ import type { AxiosInstance, AxiosError } from 'axios';
 import i18n from '@/i18n';
 
 import { store } from '@/store/store';
-import { addToast } from '@/store/slices/uiSlice';
+import { addToast, setNetworkOffline } from '@/store/slices/uiSlice';
 
 export const errorInterceptors = (axiosInstance: AxiosInstance) => {
   axiosInstance.interceptors.response.use(
-    (response) => response,
+    (response) => {
+      const state = store.getState();
+      if (state.ui.isNetworkOffline) {
+        store.dispatch(setNetworkOffline(false));
+        store.dispatch(
+          addToast({ type: 'success', message: i18n.t('network.restored') }),
+        );
+      }
+      return response;
+    },
     (error: AxiosError<{ message?: string }>) => {
       const status = error.response?.status;
       const url = error.config?.url || '';
@@ -35,16 +44,11 @@ export const errorInterceptors = (axiosInstance: AxiosInstance) => {
             message,
           }),
         );
-      } else if (error.request) {
-        store.dispatch(
-          addToast({
-            type: 'error',
-            message: i18n.t(
-              'error.socket.unknown',
-              'A connection error occurred',
-            ),
-          }),
-        );
+      } else if (
+        error.code === 'ERR_NETWORK' ||
+        (!error.response && error.request)
+      ) {
+        store.dispatch(setNetworkOffline(true));
       }
 
       return Promise.reject(error);

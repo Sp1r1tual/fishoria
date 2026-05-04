@@ -19,6 +19,7 @@ interface IUiState {
   };
   isWeatherModalOpen: boolean;
   confirmModal: IModalConfig | null;
+  isNetworkOffline: boolean;
 }
 
 const INITIAL_STATE: IUiState = {
@@ -33,6 +34,8 @@ const INITIAL_STATE: IUiState = {
   },
   isWeatherModalOpen: false,
   confirmModal: null,
+  isNetworkOffline:
+    typeof navigator !== 'undefined' ? !navigator.onLine : false,
 };
 
 const uiSlice = createSlice({
@@ -92,6 +95,9 @@ const uiSlice = createSlice({
     closeConfirmModal(state) {
       state.confirmModal = null;
     },
+    setNetworkOffline(state, action: PayloadAction<boolean>) {
+      state.isNetworkOffline = action.payload;
+    },
   },
 });
 
@@ -106,6 +112,7 @@ export const {
   closeWeatherModal,
   openConfirmModal,
   closeConfirmModal,
+  setNetworkOffline,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;
