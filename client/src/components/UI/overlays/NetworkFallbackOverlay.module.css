@@ -4,8 +4,12 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(5px);
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0.95) 100%
+  );
+  backdrop-filter: blur(12px);
   z-index: 99999;
   display: flex;
   flex-direction: column;
@@ -13,17 +17,40 @@
   align-items: center;
   color: white;
   pointer-events: all;
+  padding: 2rem;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.container {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  max-width: 320px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .spinner {
-  margin-bottom: 1.5rem;
-  height: 4rem;
-  width: 4rem;
-  border-radius: 9999px;
+  display: block;
+  margin: auto;
+  margin-bottom: 2.5rem;
+  height: 4.5rem;
+  width: 4.5rem;
+  border-radius: 50%;
   border: 4px solid transparent;
   border-top-color: #3b82f6;
   border-bottom-color: #3b82f6;
-  animation: spin 1s linear infinite;
+  animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.5));
 }
 
 @keyframes spin {
@@ -36,12 +63,64 @@
 }
 
 .title {
-  margin-bottom: 0.5rem;
-  font-size: 1.875rem;
-  line-height: 2.25rem;
-  font-weight: 700;
+  margin-bottom: 0.75rem;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  line-height: 1.2;
 }
 
 .description {
   color: #d1d5db;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+@media (max-width: 640px) {
+  .title {
+    font-size: 1.75rem;
+  }
+
+  .description {
+    font-size: 1rem;
+    padding: 0 0.5rem;
+  }
+
+  .spinner {
+    height: 3.5rem;
+    width: 3.5rem;
+    border-width: 3px;
+    margin: 0 auto 2rem auto;
+  }
+}
+
+@media (max-width: 380px) {
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .description {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-height: 480px) {
+  .title {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .description {
+    font-size: 0.875rem;
+  }
+
+  .spinner {
+    height: 2.5rem;
+    width: 2.5rem;
+    margin: 0 auto 1.25rem auto;
+    border-width: 3px;
+  }
 }

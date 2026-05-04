@@ -16,9 +16,11 @@ export const NetworkFallbackOverlay: React.FC = () => {
 
   return (
     <div className={styles.overlay}>
-      <div className={styles.spinner} />
-      <h2 className={styles.title}>{t('network.offline.title')}</h2>
-      <p className={styles.description}>{t('network.offline.description')}</p>
+      <div className={styles.container}>
+        <div className={styles.spinner} />
+        <h2 className={styles.title}>{t('network.offline.title')}</h2>
+        <p className={styles.description}>{t('network.offline.description')}</p>
+      </div>
     </div>
   );
 };
