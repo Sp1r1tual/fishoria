@@ -35,12 +35,15 @@ export class WaterRippleEffect {
       Math.min(1, (y - waterY) / waterHeight),
     );
 
-    const perspectiveY = 0.15 + normalizedDepth * 0.3;
+    const perspectiveY = 0.3 + normalizedDepth * 0.15;
+    const distanceScale = 0.65 + normalizedDepth * 0.35;
 
     const screenScale = Math.max(
       0.35,
       Math.min(1.0, canvasH / SCREEN_THRESHOLDS.TABLET),
     );
+    const finalScale = screenScale * distanceScale;
+
     const ringCount = 1;
 
     for (let i = 0; i < ringCount; i++) {
@@ -48,12 +51,12 @@ export class WaterRippleEffect {
       this.ripples.push({
         x,
         y,
-        radius: -delay * 80 * intensity * screenScale,
-        speed: (35 + intensity * 20) * screenScale,
-        maxRadius: (10 + intensity * 20) * screenScale,
+        radius: -delay * 80 * intensity * finalScale,
+        speed: (35 + intensity * 20) * finalScale,
+        maxRadius: (10 + intensity * 20) * finalScale,
         alpha: 0.6,
         perspectiveY,
-        lineWidth: 1.5 * screenScale,
+        lineWidth: 1.5 * finalScale,
       });
     }
   }

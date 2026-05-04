@@ -218,6 +218,8 @@ export function useGameAudio(manageAmbient = true) {
   const currentPhaseRef = useRef<GamePhaseType>('idle');
   const unwindingTimeoutRef = useRef<number | null>(null);
   const currentAmbientRef = useRef<HTMLAudioElement | null>(null);
+  const playerReelingRef = useRef(false);
+  const isFishPullingRef = useRef(false);
 
   // Centralized synchronization function for ambient tracks. Calculates target states
   // and ensures only correct tracks are active, handling iOS-specific reconnects.
@@ -444,6 +446,7 @@ export function useGameAudio(manageAmbient = true) {
 
   const onReelingState = useCallback(
     (playerReeling: boolean) => {
+      playerReelingRef.current = playerReeling;
       const isReelingInFish = currentPhaseRef.current === 'reeling';
       const isRetrievingLure = currentPhaseRef.current === 'waiting';
 
@@ -459,11 +462,13 @@ export function useGameAudio(manageAmbient = true) {
         startLoop('winding');
       } else {
         stopLoop('winding');
-        unwindingTimeoutRef.current = window.setTimeout(() => {
-          if (currentPhaseRef.current === 'reeling') {
-            startLoop('unwinding');
-          }
-        }, 300);
+        if (isFishPullingRef.current) {
+          unwindingTimeoutRef.current = window.setTimeout(() => {
+            if (currentPhaseRef.current === 'reeling') {
+              startLoop('unwinding');
+            }
+          }, 300);
+        }
       }
     },
     [startLoop, stopLoop],
@@ -479,14 +484,54 @@ export function useGameAudio(manageAmbient = true) {
         if (unwindingTimeoutRef.current !== null) {
           window.clearTimeout(unwindingTimeoutRef.current);
         }
-        unwindingTimeoutRef.current = window.setTimeout(() => {
-          if (currentPhaseRef.current === 'reeling') {
-            startLoop('unwinding');
-          }
-        }, 300);
+        if (isFishPullingRef.current) {
+          unwindingTimeoutRef.current = window.setTimeout(() => {
+            if (currentPhaseRef.current === 'reeling') {
+              startLoop('unwinding');
+            }
+          }, 300);
+        }
       }
     },
     [stopAllLoops, startLoop],
+  );
+
+  const onTensionChange = useCallback(
+    (
+      _tension: number,
+      _broken: boolean,
+      _isOverloaded?: boolean,
+      _escapeProgress?: number,
+      isFishPulling?: boolean,
+    ) => {
+      isFishPullingRef.current = !!isFishPulling;
+
+      if (!playerReelingRef.current && isFishPulling) {
+        if (
+          currentPhaseRef.current === 'reeling' &&
+          !activeLoops.unwinding &&
+          unwindingTimeoutRef.current === null
+        ) {
+          unwindingTimeoutRef.current = window.setTimeout(() => {
+            if (
+              currentPhaseRef.current === 'reeling' &&
+              !playerReelingRef.current &&
+              isFishPullingRef.current
+            ) {
+              startLoop('unwinding');
+            }
+            unwindingTimeoutRef.current = null;
+          }, 200);
+        }
+      } else if (!isFishPulling || playerReelingRef.current) {
+        stopLoop('unwinding');
+        if (unwindingTimeoutRef.current) {
+          window.clearTimeout(unwindingTimeoutRef.current);
+          unwindingTimeoutRef.current = null;
+        }
+      }
+    },
+    [startLoop, stopLoop],
   );
 
   const onTimeOfDayChange = useCallback(
@@ -528,6 +573,7 @@ export function useGameAudio(manageAmbient = true) {
     onLineBroke,
     onReelingState,
     onPhaseChange,
+    onTensionChange,
     onTimeOfDayChange,
     onInterest,
   };

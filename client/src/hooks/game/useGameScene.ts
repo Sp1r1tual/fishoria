@@ -136,7 +136,20 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
       const scene = new LakeScene(
         lakeConfig,
         {
-          onTensionChange: (value, broken, isOverloaded, escapeProgress) => {
+          onTensionChange: (
+            value,
+            broken,
+            isOverloaded,
+            escapeProgress,
+            isFishPulling,
+          ) => {
+            audioRef.current.onTensionChange(
+              value,
+              broken,
+              isOverloaded,
+              escapeProgress,
+              isFishPulling,
+            );
             GameEvents.emit('tension', { value, isOverloaded, escapeProgress });
             if (isOverloaded && !shownWarningsRef.current.has('overload')) {
               shownWarningsRef.current.add('overload');

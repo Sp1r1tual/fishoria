@@ -158,6 +158,10 @@ export class LakeScene implements IScene {
 
   private resetDelayTimer: ReturnType<typeof setTimeout> | null = null;
   private biteUpdateTimer = 0;
+  private hasInteractedDuringBite = false;
+  private heavyFishGuard = false;
+  private guardReleased = true;
+  private lastBiteTimestamp = 0;
 
   private updateCtx: Partial<IUpdateContext> = {};
 
@@ -272,10 +276,19 @@ export class LakeScene implements IScene {
       app.canvas as HTMLCanvasElement,
       app,
       (pixel) => this.cast(pixel),
-      () => this.hookFishExternal(),
-      () => this.setPlayerReeling(true),
-      () => this.setPlayerReeling(false),
       () => {
+        this.checkBiteInteraction();
+        this.hookFishExternal();
+      },
+      () => {
+        this.checkBiteInteraction();
+        this.setPlayerReeling(true);
+      },
+      () => {
+        this.setPlayerReeling(false);
+      },
+      () => {
+        this.checkBiteInteraction();
         this.playerRelaxing = true;
       },
       () => {
@@ -284,6 +297,7 @@ export class LakeScene implements IScene {
       () => this.resetCast(),
       () => this.toggleDebug(),
       (speedIdx) => {
+        this.checkBiteInteraction();
         const levels: RetrieveSpeedType[] = ['slow', 'normal', 'fast'];
         this.currentRetrieveSpeed = levels[speedIdx - 1];
         GameEvents.emit('retrieveSpeed', this.currentRetrieveSpeed);
@@ -394,6 +408,15 @@ export class LakeScene implements IScene {
   }
 
   // ─── Actions ───────────────────────────────────────────────────────────────
+  private checkBiteInteraction(): void {
+    if (
+      this.phase === 'bite' ||
+      (this.phase === 'waiting' && this.smoothedInterest > 0.01)
+    ) {
+      this.hasInteractedDuringBite = true;
+    }
+  }
+
   setAvailableLineLength(meters: number): void {
     this.availableLineM = meters;
   }
@@ -523,7 +546,9 @@ export class LakeScene implements IScene {
       this.hookConfig?.maxWeight ?? Infinity,
     );
 
-    if (this.hookedFish.weight > gearMaxWeight) {
+    if (this.hookedFish.weight >= gearMaxWeight * 0.9) {
+      this.heavyFishGuard = true;
+      this.guardReleased = false;
       this.setPlayerReeling(false);
     }
 
@@ -625,6 +650,15 @@ export class LakeScene implements IScene {
   }
 
   setPlayerReeling(v: boolean): void {
+    if (v) {
+      if (this.heavyFishGuard) {
+        if (!this.guardReleased) return;
+        this.heavyFishGuard = false;
+      }
+    } else {
+      this.guardReleased = true;
+    }
+
     this.playerReeling = v;
     this.callbacks.onPlayerReeling?.(v);
   }
@@ -722,7 +756,7 @@ export class LakeScene implements IScene {
       escapeProgress: 0,
       timeSinceLastReel: 0,
     };
-    this.callbacks.onTensionChange(0, false, false);
+    this.callbacks.onTensionChange(0, false, false, 0, false);
     if (!suppressPhaseEvent) {
       this.callbacks.onPhaseChange(this.phase);
     }
@@ -737,6 +771,7 @@ export class LakeScene implements IScene {
       canvasWidth: W,
     });
     this.biteUpdateTimer = 0;
+    this.hasInteractedDuringBite = false;
     this.snagMechanic.reset();
     this.retrieveReelTime = 0;
     this.retrievePauseTime = 0;
@@ -1021,8 +1056,10 @@ export class LakeScene implements IScene {
     const lerpT = 1 - Math.pow(0.001, deltaTime);
     this.smoothedTension +=
       (rodVisuals.rodTension - this.smoothedTension) * Math.min(1, lerpT * 4.0);
+    const slackSpeed = rodVisuals.lineSlack > this.smoothedSlack ? 0.2 : 2.5;
     this.smoothedSlack +=
-      (rodVisuals.lineSlack - this.smoothedSlack) * Math.min(1, lerpT * 2.0);
+      (rodVisuals.lineSlack - this.smoothedSlack) *
+      Math.min(1, lerpT * slackSpeed);
 
     this.rod.update(
       rodVisuals.baseX,
@@ -1295,6 +1332,7 @@ export class LakeScene implements IScene {
 
     if (this.targetInterest === 0 && this.smoothedInterest < 0.01) {
       this.smoothedInterest = 0;
+      this.hasInteractedDuringBite = false;
     }
 
     this.callbacks.onBiteProgress(this.smoothedInterest);
@@ -1327,7 +1365,13 @@ export class LakeScene implements IScene {
         this.playerReeling && this.hookConfig?.rigType === 'spinning';
 
       if (isSpinningBite) {
-        this.callbacks.onBite();
+        this.lastBiteTimestamp = Date.now();
+        this.hookFish();
+
+        if (this.phase === 'reeling') {
+          this.callbacks.onBite();
+        }
+
         this.waterRippleEffect.spawn(
           this.hookX,
           this.hookY,
@@ -1335,9 +1379,10 @@ export class LakeScene implements IScene {
           H,
           H * this.config.environment.waterBoundaryY,
         );
-        this.hookFish();
       } else {
+        this.lastBiteTimestamp = Date.now();
         this.phase = 'bite';
+        this.hasInteractedDuringBite = false;
         this.callbacks.onBite();
         if (this.hookConfig?.rigType !== 'feeder') {
           this.waterRippleEffect.spawn(
@@ -1504,31 +1549,52 @@ export class LakeScene implements IScene {
 
   private drawStrikeHint(W: number, H: number): void {
     this.strikeHintGfx.clear();
-    // Yellow overlay + glow around the edges
     this.strikeHintGfx.rect(0, 0, W, H);
-    this.strikeHintGfx.fill({ color: 0xffcc00, alpha: 0.1 });
     this.strikeHintGfx.stroke({
       color: 0xffcc00,
-      width: 24,
+      width: 80,
       alignment: 1,
     });
-    this.strikeHintGfx.filters = [new BlurFilter({ strength: 30 })];
+    this.strikeHintGfx.filters = [new BlurFilter({ strength: 40 })];
     this.strikeHintGfx.visible = false;
     this.strikeHintGfx.alpha = 0;
   }
 
   private updateStrikeHint(): void {
-    const isBite = this.phase === 'bite';
-    const targetAlpha = isBite
-      ? 0.5 + Math.sin(Date.now() * 0.012) * 0.2 // slightly softer pulsing
-      : 0;
+    const isSpinning = this.hookConfig?.rigType === 'spinning';
 
-    if (!isBite && this.strikeHintGfx.alpha < 0.01) {
+    let isBite = this.phase === 'bite';
+    if (
+      isSpinning &&
+      this.phase === 'waiting' &&
+      this.smoothedInterest > 0.01
+    ) {
+      isBite = true;
+    }
+
+    let dimMultiplier = 1.0;
+    if (this.timeOfDay === 'night') dimMultiplier = 0.5;
+    if (this.weather === 'rain') dimMultiplier *= 0.75;
+    else if (this.weather === 'cloudy') dimMultiplier *= 0.85;
+
+    const timeSinceBite = Date.now() - this.lastBiteTimestamp;
+    const pulse = Math.max(0, Math.exp(-timeSinceBite / 200) * 0.6);
+
+    const targetAlpha =
+      (isBite
+        ? this.hasInteractedDuringBite
+          ? 0.4 + Math.sin(Date.now() * 0.004) * 0.02
+          : 0.6 + Math.sin(Date.now() * 0.012) * 0.1
+        : 0) *
+        dimMultiplier +
+      pulse * dimMultiplier;
+
+    if (!isBite && this.strikeHintGfx.alpha < 0.01 && pulse < 0.01) {
       this.strikeHintGfx.visible = false;
       return;
     }
 
     this.strikeHintGfx.visible = true;
-    this.strikeHintGfx.alpha += (targetAlpha - this.strikeHintGfx.alpha) * 0.1;
+    this.strikeHintGfx.alpha += (targetAlpha - this.strikeHintGfx.alpha) * 0.05;
   }
 }

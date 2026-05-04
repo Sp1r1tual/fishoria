@@ -30,20 +30,23 @@
 
 .chat__tabs {
   display: flex;
-  background: rgba(15, 23, 42, 0.75);
+  background: color-mix(
+    in srgb,
+    rgba(15, 23, 42, 0.65),
+    rgba(255, 255, 255, 0.12) calc(var(--night-intensity) * 100%)
+  );
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-bottom: none;
-  border-radius: 16px 16px 0 0;
+  border-radius: 10px 10px 0 0;
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .chat--night .chat__tabs {
-  background: rgba(15, 23, 42, 0.85);
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .chat__tab {
@@ -162,15 +165,13 @@
 }
 
 .chat--minimized .chat__tabs {
-  background: rgba(15, 23, 42, 0.65);
-  border-radius: 16px;
-  border-bottom: none;
+  border-radius: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .chat--night.chat--minimized .chat__tabs {
-  background: rgba(15, 23, 42, 0.75);
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .chat__messages {
@@ -182,7 +183,11 @@
   gap: 4px;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-  background: rgba(15, 23, 42, 0.7);
+  background: color-mix(
+    in srgb,
+    rgba(15, 23, 42, 0.65),
+    rgba(255, 255, 255, 0.12) calc(var(--night-intensity) * 100%)
+  );
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -192,8 +197,7 @@
 }
 
 .chat--night .chat__messages {
-  background: rgba(15, 23, 42, 0.85);
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .chat__messages::-webkit-scrollbar {
@@ -295,13 +299,17 @@
 }
 
 .chat__input_wrapper {
-  background: rgba(15, 23, 42, 0.8);
+  background: color-mix(
+    in srgb,
+    rgba(15, 23, 42, 0.65),
+    rgba(255, 255, 255, 0.12) calc(var(--night-intensity) * 100%)
+  );
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   padding: 4px 10px;
-  border-radius: 0 0 16px 16px;
+  border-radius: 0 0 10px 10px;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
   transition: all 0.4s ease;
   display: flex;
   align-items: center;
@@ -309,8 +317,7 @@
 }
 
 .chat--night .chat__input_wrapper {
-  background: rgba(15, 23, 42, 0.9);
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .chat__input {
@@ -475,7 +482,7 @@
 .chat__unread_line {
   display: flex;
   align-items: center;
-  margin: 12px 0 8px;
+  margin: 6px 0 4px;
   position: relative;
 }
 

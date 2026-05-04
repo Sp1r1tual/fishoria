@@ -80,6 +80,7 @@ export function updateReelingPhase(
     tension.isBroken,
     tension.isOverloaded,
     tension.escapeProgress,
+    hookedFish.combatAngle < 0 && Math.sin(hookedFish.combatAngle) < -0.1,
   );
 
   const wearMulti = 1.0 + tension.value * GEAR_WEAR.tensionWearMultiplier;

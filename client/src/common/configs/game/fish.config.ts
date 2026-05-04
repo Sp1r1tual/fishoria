@@ -26,8 +26,8 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A feisty predator with striking striped markings. Common near submerged vegetation.',
     weightRange: { min: 0.12, max: 2 },
-    activityByTimeOfDay: { morning: 1.1, day: 0.4, evening: 0.9, night: 0.05 },
-    activityByWeather: { clear: 0.6, cloudy: 1.2, rain: 1.4 },
+    activityByTimeOfDay: { morning: 1.1, day: 0.7, evening: 0.9, night: 0.25 },
+    activityByWeather: { clear: 0.8, cloudy: 1.2, rain: 1.4 },
     preferredBaits: ['worm', 'maggot'],
     preferredGroundbait: 'dried_blood',
 
@@ -55,11 +55,11 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     weightRange: { min: 0.5, max: 10 },
     activityByTimeOfDay: {
       morning: 1.2,
-      day: 0.6,
+      day: 0.85,
       evening: 1.1,
-      night: 0.1,
+      night: 0.35,
     },
-    activityByWeather: { clear: 0.8, cloudy: 1.2, rain: 1.3 },
+    activityByWeather: { clear: 0.9, cloudy: 1.2, rain: 1.3 },
     preferredBaits: ['live_bait'],
     preferredGroundbait: 'dried_blood',
 
@@ -74,9 +74,9 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     isPredator: true,
     priceMultiplier: 1.9,
     lureMultipliers: {
-      vibrotail: 1,
+      vibrotail: 1.2,
       spoon: 1.4,
-      wobbler: 1.6,
+      wobbler: 1.7,
     },
   },
   carp: {
@@ -106,7 +106,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A resilient little fish that survives in low-oxygen water. Bites cautiously.',
     weightRange: { min: 0.25, max: 3 },
-    activityByTimeOfDay: { morning: 1.1, day: 0.5, evening: 1.1, night: 0.6 },
+    activityByTimeOfDay: { morning: 1.1, day: 0.75, evening: 1.1, night: 0.6 },
     activityByWeather: { clear: 0.9, cloudy: 1.1, rain: 1.0 },
     preferredBaits: ['worm', 'bread'],
     preferredGroundbait: 'vanillin',
@@ -127,7 +127,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A shoal fish found near mid-water. Very common, great for beginners.',
     weightRange: { min: 0.15, max: 1.2 },
-    activityByTimeOfDay: { morning: 1.1, day: 0.9, evening: 1.0, night: 0.1 },
+    activityByTimeOfDay: { morning: 1.1, day: 0.9, evening: 1.0, night: 0.3 },
     activityByWeather: { clear: 1.0, cloudy: 1.1, rain: 0.9 },
     preferredBaits: ['maggot', 'bread'],
     preferredGroundbait: 'vanillin',
@@ -148,8 +148,8 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A sleek deep-water predator with excellent eyesight. Hunts in low-light.',
     weightRange: { min: 0.75, max: 12 },
-    activityByTimeOfDay: { morning: 0.8, day: 0.1, evening: 1.3, night: 1.5 },
-    activityByWeather: { clear: 0.6, cloudy: 1.2, rain: 1.4 },
+    activityByTimeOfDay: { morning: 0.8, day: 0.65, evening: 1.3, night: 1.5 },
+    activityByWeather: { clear: 0.8, cloudy: 1.2, rain: 1.4 },
     preferredBaits: ['live_bait'],
     preferredGroundbait: 'dried_blood',
 
@@ -175,7 +175,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A small spiny fish related to the prefix. Often a nuisance bite.',
     weightRange: { min: 0.08, max: 0.4 },
-    activityByTimeOfDay: { morning: 0.8, day: 0.5, evening: 1.1, night: 1.4 },
+    activityByTimeOfDay: { morning: 0.8, day: 0.75, evening: 1.1, night: 1.4 },
     activityByWeather: { clear: 0.9, cloudy: 1.1, rain: 1.3 },
     preferredBaits: ['worm', 'maggot'],
     preferredGroundbait: 'vanillin',
@@ -196,8 +196,8 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'The king of the deep. A nocturnal monster lurking in the darkest depths.',
     weightRange: { min: 2, max: 50 },
-    activityByTimeOfDay: { morning: 0.2, day: 0.05, evening: 1.0, night: 1.7 },
-    activityByWeather: { clear: 0.6, cloudy: 1.1, rain: 1.5 },
+    activityByTimeOfDay: { morning: 0.4, day: 0.45, evening: 1.0, night: 1.7 },
+    activityByWeather: { clear: 0.8, cloudy: 1.1, rain: 1.5 },
     preferredBaits: ['live_bait'],
     preferredGroundbait: 'dried_blood',
 
@@ -223,8 +223,8 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A large herbivore that feeds on aquatic plants. Fights energetically when hooked.',
     weightRange: { min: 1, max: 25 },
-    activityByTimeOfDay: { morning: 0.4, day: 1.3, evening: 0.7, night: 0.2 },
-    activityByWeather: { clear: 1.5, cloudy: 0.6, rain: 0.3 },
+    activityByTimeOfDay: { morning: 0.4, day: 1.3, evening: 0.7, night: 0.45 },
+    activityByWeather: { clear: 1.5, cloudy: 0.8, rain: 0.6 },
     preferredBaits: ['corn', 'dough', 'bread'],
     preferredGroundbait: 'peas',
 
@@ -244,8 +244,8 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A small but extremely active and curious bottom dweller. Often bites in groups.',
     weightRange: { min: 0.1, max: 2.5 },
-    activityByTimeOfDay: { morning: 0.8, day: 0.4, evening: 1.2, night: 1.5 },
-    activityByWeather: { clear: 0.7, cloudy: 1.2, rain: 1.5 },
+    activityByTimeOfDay: { morning: 0.8, day: 0.7, evening: 1.2, night: 1.5 },
+    activityByWeather: { clear: 0.85, cloudy: 1.2, rain: 1.5 },
     preferredBaits: ['worm', 'maggot'],
     preferredGroundbait: 'dried_blood',
 
@@ -271,8 +271,8 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A lightning-fast predator of the upper water layers. Known for powerful surface strikes.',
     weightRange: { min: 0.5, max: 7.0 },
-    activityByTimeOfDay: { morning: 1.4, day: 1.5, evening: 0.8, night: 0.05 },
-    activityByWeather: { clear: 1.5, cloudy: 0.7, rain: 0.4 },
+    activityByTimeOfDay: { morning: 1.4, day: 1.5, evening: 0.8, night: 0.3 },
+    activityByWeather: { clear: 1.5, cloudy: 0.9, rain: 0.7 },
     preferredBaits: ['live_bait'],
     preferredGroundbait: 'dried_blood',
 
@@ -298,8 +298,8 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A flat-bodied bottom dweller. Very cautious and prefers deep, quiet areas.',
     weightRange: { min: 0.4, max: 6.0 },
-    activityByTimeOfDay: { morning: 1.1, day: 0.3, evening: 1.2, night: 1.4 },
-    activityByWeather: { clear: 0.6, cloudy: 1.3, rain: 1.1 },
+    activityByTimeOfDay: { morning: 1.1, day: 0.7, evening: 1.2, night: 1.4 },
+    activityByWeather: { clear: 0.8, cloudy: 1.3, rain: 1.1 },
     preferredBaits: ['maggot', 'worm', 'dough'],
     preferredGroundbait: 'vanillin',
 
@@ -318,7 +318,7 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     name: 'Crayfish',
     description: 'A bottom-dwelling crustacean. Usually a sign of clean water.',
     weightRange: { min: 0.05, max: 0.35 },
-    activityByTimeOfDay: { morning: 0.15, day: 0.05, evening: 1.1, night: 1.8 },
+    activityByTimeOfDay: { morning: 0.4, day: 0.3, evening: 1.1, night: 1.8 },
     activityByWeather: { clear: 0.8, cloudy: 1.2, rain: 1.6 },
     preferredBaits: ['worm', 'bread'],
     preferredGroundbait: 'none',
@@ -339,8 +339,8 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A mysterious, snake-like fish. Strictly nocturnal and very strong.',
     weightRange: { min: 0.4, max: 4.5 },
-    activityByTimeOfDay: { morning: 0.05, day: 0.02, evening: 0.7, night: 2.0 },
-    activityByWeather: { clear: 0.4, cloudy: 1.3, rain: 1.8 },
+    activityByTimeOfDay: { morning: 0.3, day: 0.25, evening: 0.7, night: 2.0 },
+    activityByWeather: { clear: 0.7, cloudy: 1.3, rain: 1.8 },
     preferredBaits: ['worm', 'live_bait'],
     preferredGroundbait: 'dried_blood',
 
@@ -361,8 +361,8 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A small, schooling fish that loves sandy bottoms and clear water.',
     weightRange: { min: 0.02, max: 0.15 },
-    activityByTimeOfDay: { morning: 1.3, day: 1.4, evening: 0.6, night: 0.05 },
-    activityByWeather: { clear: 1.5, cloudy: 0.7, rain: 0.5 },
+    activityByTimeOfDay: { morning: 1.3, day: 1.4, evening: 0.6, night: 0.3 },
+    activityByWeather: { clear: 1.5, cloudy: 0.9, rain: 0.8 },
     preferredBaits: ['worm', 'maggot'],
     preferredGroundbait: 'vanillin',
 
@@ -382,8 +382,8 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'A huge plankton eater. Can jump out of the water when startled.',
     weightRange: { min: 2.0, max: 35.0 },
-    activityByTimeOfDay: { morning: 0.5, day: 1.5, evening: 0.7, night: 0.15 },
-    activityByWeather: { clear: 1.6, cloudy: 0.6, rain: 0.3 },
+    activityByTimeOfDay: { morning: 0.5, day: 1.5, evening: 0.7, night: 0.4 },
+    activityByWeather: { clear: 1.6, cloudy: 0.8, rain: 0.6 },
     preferredBaits: ['bread', 'dough'],
     preferredGroundbait: 'peas',
 
@@ -403,8 +403,8 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'The "doctor" fish of the reservoir. Very shy and lives in thick weeds.',
     weightRange: { min: 0.3, max: 4.5 },
-    activityByTimeOfDay: { morning: 1.5, day: 0.1, evening: 1.6, night: 0.2 },
-    activityByWeather: { clear: 0.4, cloudy: 1.6, rain: 1.4 },
+    activityByTimeOfDay: { morning: 1.5, day: 0.7, evening: 1.6, night: 0.5 },
+    activityByWeather: { clear: 0.7, cloudy: 1.6, rain: 1.4 },
     preferredBaits: ['worm', 'maggot'],
     preferredGroundbait: 'vanillin',
 
@@ -424,8 +424,8 @@ export const FISH_SPECIES: Record<string, IFishSpeciesConfig> = {
     description:
       'Can predict weather changes. Becomes very active before a storm.',
     weightRange: { min: 0.05, max: 0.3 },
-    activityByTimeOfDay: { morning: 0.3, day: 0.1, evening: 1.2, night: 1.8 },
-    activityByWeather: { clear: 0.3, cloudy: 1.2, rain: 2.2 },
+    activityByTimeOfDay: { morning: 0.45, day: 0.6, evening: 1.2, night: 1.8 },
+    activityByWeather: { clear: 0.6, cloudy: 1.2, rain: 2.2 },
     preferredBaits: ['worm'],
     preferredGroundbait: 'vanillin',
 

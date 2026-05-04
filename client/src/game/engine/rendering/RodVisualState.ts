@@ -146,12 +146,15 @@ export function computeRodVisuals(input: IRodVisualInput): IRodVisualOutput {
       lineSlack = 0;
       rodTension = 0.08;
     } else {
-      const depthRatio = currentLureDepthM / Math.max(0.1, groundDepthM);
-
+      const isOnBottom = currentLureDepthM >= groundDepthM - 0.05;
       const depthFactor = Math.min(1.0, 0.3 + (groundDepthM / 4.0) * 0.7);
-      const baseSlack = (0.1 + Math.pow(depthRatio, 1.2) * 0.75) * depthFactor;
-      const subtleWave = Math.sin(time * 0.9) * 0.01 * depthRatio;
-      lineSlack = Math.max(0, Math.min(1.0, baseSlack + subtleWave));
+
+      if (isOnBottom) {
+        lineSlack = 0.85 * depthFactor;
+      } else {
+        const subtleWave = Math.sin(time * 0.9) * 0.01;
+        lineSlack = 0.05 + subtleWave;
+      }
       rodTension = 0;
     }
   } else if (isCast && phase === 'waiting') {

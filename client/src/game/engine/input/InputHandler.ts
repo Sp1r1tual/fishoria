@@ -57,6 +57,7 @@ export class InputHandler {
     };
 
     this.keyDownBound = (e: KeyboardEvent) => {
+      if (e.repeat) return;
       if (document.activeElement?.tagName === 'INPUT') return;
       const phase = getPhase();
 

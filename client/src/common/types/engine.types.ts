@@ -17,6 +17,7 @@ export interface ILakeSceneCallbacks {
     broken: boolean,
     isOverloaded?: boolean,
     escapeProgress?: number,
+    isFishPulling?: boolean,
   ) => void;
   onDepthChange: (depthM: number) => void;
   onBite: () => void;

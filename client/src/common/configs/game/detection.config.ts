@@ -9,7 +9,7 @@ export const BITE_DETECTION = {
   verticalGapPenaltyFactor: 2.5,
 
   /** Chance for a predator to strike a spinning lure instantly vs starting a follow phase */
-  spinningImmediateBiteChance: 0.15,
+  spinningImmediateBiteChance: 0.4,
 
   /**
    * Probability of an actual hook-up when the "direct bite" action branch fires
@@ -29,12 +29,12 @@ export const BITE_DETECTION = {
    * Passive bite probability multiplier for feeder rig.
    * Encourages using feeder over float for stationary fishing.
    */
-  feederBiteMultiplier: 1.065,
+  feederBiteMultiplier: 1.07,
 
   /**
    * Active bite probability multiplier for spinning rig.
    */
-  spinningBiteMultiplier: 1.065,
+  spinningBiteMultiplier: 1.1,
 
   /** Base progress added for a nibble */
   nibbleProgressBase: 0.3,

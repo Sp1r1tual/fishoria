@@ -86,7 +86,7 @@ export function TensionIndicator({
 
       let fillValue = isReelingOrBite ? currentTension : 0;
       if (currentPhase === 'waiting') {
-        if (isSpinning || localDebugActive) {
+        if (localDebugActive) {
           fillValue = currentBite;
         }
       }
@@ -100,20 +100,24 @@ export function TensionIndicator({
         if (el) {
           if (isActive) {
             el.classList.add(styles['tension__segment--active']);
+
+            const baseColor = !useColorful
+              ? '#3b82f6'
+              : i < 10
+                ? '#10b981'
+                : i < 15
+                  ? '#eab308'
+                  : i < 18
+                    ? '#f97316'
+                    : '#ef4444';
+
+            el.style.backgroundColor = baseColor;
+            el.style.boxShadow = `0 0 8px ${baseColor}, 0 0 12px ${baseColor}40`;
           } else {
             el.classList.remove(styles['tension__segment--active']);
+            el.style.backgroundColor = '';
+            el.style.boxShadow = '';
           }
-
-          const bgColor = !useColorful
-            ? '#60a5fa'
-            : i < 8
-              ? '#4ade80'
-              : i < 14
-                ? '#fbbf24'
-                : '#ef4444';
-
-          el.style.backgroundColor = bgColor;
-          el.style.color = bgColor;
         }
       }
     };
