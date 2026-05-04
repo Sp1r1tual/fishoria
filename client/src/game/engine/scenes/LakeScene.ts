@@ -145,6 +145,9 @@ export class LakeScene implements IScene {
   private debugActive = false;
   private echoSounderActive = false;
   private isGearReady = false;
+  private uiUpdateTimer = 0;
+  private lastEmittedDepth = -1;
+  private lastEmittedInterest = -1;
 
   private retrieveReelTime = 0;
   private retrievePauseTime = 0;
@@ -1323,7 +1326,18 @@ export class LakeScene implements IScene {
       this.smoothedInterest = 0;
     }
 
-    this.callbacks.onBiteProgress(this.smoothedInterest);
+    if (
+      Math.abs(this.smoothedInterest - this.lastEmittedInterest) > 0.005 ||
+      this.uiUpdateTimer >= 0.033
+    ) {
+      this.callbacks.onBiteProgress(this.smoothedInterest);
+      this.lastEmittedInterest = this.smoothedInterest;
+    }
+
+    if (this.uiUpdateTimer >= 0.033) {
+      this.uiUpdateTimer = 0;
+    }
+    this.uiUpdateTimer += deltaTime;
 
     if (
       this.playerReeling &&
@@ -1402,16 +1416,21 @@ export class LakeScene implements IScene {
       this.currentLureDepthM = this.hookedFish.depth;
     }
 
-    this.callbacks.onLureDepthChange?.(
-      this.currentLureDepthM,
-      this.groundDepthM,
-    );
-    GameEvents.emit('lureDepth', {
-      depth: this.currentLureDepthM,
-      groundDepth: this.groundDepthM,
-      x: this.hookX,
-      canvasWidth: W,
-    });
+    const depthDiff = Math.abs(this.currentLureDepthM - this.lastEmittedDepth);
+
+    if (depthDiff > 0.01 || this.uiUpdateTimer >= 0.033) {
+      this.callbacks.onLureDepthChange?.(
+        this.currentLureDepthM,
+        this.groundDepthM,
+      );
+      GameEvents.emit('lureDepth', {
+        depth: this.currentLureDepthM,
+        groundDepth: this.groundDepthM,
+        x: this.hookX,
+        canvasWidth: W,
+      });
+      this.lastEmittedDepth = this.currentLureDepthM;
+    }
   }
 
   private updateBitePhase(): void {

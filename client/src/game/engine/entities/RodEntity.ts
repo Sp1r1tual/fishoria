@@ -57,7 +57,14 @@ export class RodEntity {
     this.drawLine();
   }
 
-  private guidePoints: { x: number; y: number }[] = [];
+  private guidePoints: { x: number; y: number }[] = Array.from(
+    { length: 17 },
+    () => ({
+      x: 0,
+      y: 0,
+    }),
+  );
+  private internalPoints: { x: number; y: number }[] = [];
 
   public get tipX(): number {
     const dx = this.aimX - this.baseX;
@@ -74,9 +81,11 @@ export class RodEntity {
     return this.baseY - length + this.tension * 80 * this.scale + vOffset;
   }
 
+  private guidePointsCount = 0;
+
   private drawRod(): void {
     this.gfx.clear();
-    this.guidePoints = [];
+    this.guidePointsCount = 0;
 
     const segments = 16;
     const bx = this.baseX,
@@ -135,7 +144,9 @@ export class RodEntity {
     }
     this.gfx.fill({ color: grainColor, alpha: grainAlpha });
 
-    this.guidePoints.push({ x: hx, y: hy });
+    this.guidePoints[this.guidePointsCount].x = hx;
+    this.guidePoints[this.guidePointsCount].y = hy;
+    this.guidePointsCount++;
 
     let prevX = hx;
     let prevY = hy;
@@ -174,7 +185,9 @@ export class RodEntity {
         const ringX = currX + rnx * flip * offsetDist;
         const ringY = currY + rny * flip * offsetDist;
 
-        this.guidePoints.push({ x: ringX, y: ringY });
+        this.guidePoints[this.guidePointsCount].x = ringX;
+        this.guidePoints[this.guidePointsCount].y = ringY;
+        this.guidePointsCount++;
 
         if (i < segments) {
           this.gfx.moveTo(currX, currY);
@@ -196,7 +209,7 @@ export class RodEntity {
 
   private drawLine(): void {
     this.lineGfx.clear();
-    if (this.guidePoints.length < 2) return;
+    if (this.guidePointsCount < 2) return;
 
     const isCritical = this.tension > 0.7;
     const color = isCritical ? 0xff0000 : 0xdddddd;
@@ -204,7 +217,7 @@ export class RodEntity {
 
     this.lineGfx.moveTo(this.guidePoints[0].x, this.guidePoints[0].y);
 
-    for (let i = 1; i < this.guidePoints.length; i++) {
+    for (let i = 1; i < this.guidePointsCount; i++) {
       const p1 = this.guidePoints[i - 1];
       const p2 = this.guidePoints[i];
       const mx = (p1.x + p2.x) / 2;
@@ -218,7 +231,7 @@ export class RodEntity {
     this.lineGfx.stroke({ width: lineWidth, color, alpha: alpha });
 
     if (this.isCast) {
-      const tip = this.guidePoints[this.guidePoints.length - 1];
+      const tip = this.guidePoints[this.guidePointsCount - 1];
       const dx = this.hookX - tip.x;
       const dy = this.hookY - tip.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
@@ -229,20 +242,26 @@ export class RodEntity {
         this.lineGfx.moveTo(tip.x, tip.y);
 
         const segments = 12;
-        const points: { x: number; y: number }[] = [];
-        points.push({ x: tip.x, y: tip.y });
+        this.internalPoints.length = 0;
+
+        // Reuse or create point objects
+        if (this.internalPoints.length === 0) {
+          for (let i = 0; i <= segments; i++) {
+            this.internalPoints.push({ x: 0, y: 0 });
+          }
+        }
+
+        this.internalPoints[0].x = tip.x;
+        this.internalPoints[0].y = tip.y;
 
         for (let i = 1; i <= segments; i++) {
           const t = i / segments;
-
           let px = tip.x + dx * t;
           let py = tip.y + dy * t;
-
           const sag = Math.sin(t * Math.PI) * finalSlack;
 
           let nx = -dy / dist;
           let ny = dx / dist;
-
           if (ny < 0) {
             nx = -nx;
             ny = -ny;
@@ -251,12 +270,13 @@ export class RodEntity {
           px += nx * sag;
           py += ny * sag;
 
-          points.push({ x: px, y: py });
+          this.internalPoints[i].x = px;
+          this.internalPoints[i].y = py;
         }
 
-        for (let i = 1; i < points.length; i++) {
-          const p0 = points[i - 1];
-          const p1 = points[i];
+        for (let i = 1; i < this.internalPoints.length; i++) {
+          const p0 = this.internalPoints[i - 1];
+          const p1 = this.internalPoints[i];
           const mx = (p0.x + p1.x) / 2;
           const my = (p0.y + p1.y) / 2;
           this.lineGfx.quadraticCurveTo(p0.x, p0.y, mx, my);

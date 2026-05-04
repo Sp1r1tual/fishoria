@@ -11,10 +11,27 @@ interface IBubble {
   alpha: number;
   delay: number;
   perspectiveScale: number;
+  active: boolean;
 }
 
 export class BubbleEffect {
-  private bubbles: IBubble[] = [];
+  private static readonly POOL_SIZE = 64;
+  private pool: IBubble[] = Array.from(
+    { length: BubbleEffect.POOL_SIZE },
+    () => ({
+      x: 0,
+      y: 0,
+      vx: 0,
+      vy: 0,
+      life: 0,
+      maxLife: 0,
+      size: 0,
+      alpha: 0,
+      delay: 0,
+      perspectiveScale: 1,
+      active: false,
+    }),
+  );
   private gfx: Graphics;
 
   constructor(parent: Container) {
@@ -28,38 +45,48 @@ export class BubbleEffect {
     amount: number = 3,
     perspectiveScale: number = 1.0,
   ): void {
-    for (let i = 0; i < amount; i++) {
+    let spawned = 0;
+    for (const b of this.pool) {
+      if (spawned >= amount) break;
+      if (b.active) continue;
+
       const size = 1.5;
       const life = 0.8 + Math.random() * 1.0;
+      const delay = spawned * (0.3 + Math.random() * 0.4);
 
-      const delay = i * (0.3 + Math.random() * 0.4);
-
-      this.bubbles.push({
-        x: x + (Math.random() - 0.5) * 35 * perspectiveScale,
-        y: y + (Math.random() - 0.5) * 20 * perspectiveScale,
-
-        vx: 0,
-        vy: 0,
-        life: life,
-        maxLife: life,
-        size: size,
-        alpha: 0,
-        delay: delay,
-        perspectiveScale: perspectiveScale,
-      });
+      b.x = x + (Math.random() - 0.5) * 35 * perspectiveScale;
+      b.y = y + (Math.random() - 0.5) * 20 * perspectiveScale;
+      b.vx = 0;
+      b.vy = 0;
+      b.life = life;
+      b.maxLife = life;
+      b.size = size;
+      b.alpha = 0;
+      b.delay = delay;
+      b.perspectiveScale = perspectiveScale;
+      b.active = true;
+      spawned++;
     }
   }
 
   public update(dt: number, scale: number = 1.0): void {
-    if (this.bubbles.length === 0) {
+    let hasActive = false;
+    for (const b of this.pool) {
+      if (b.active) {
+        hasActive = true;
+        break;
+      }
+    }
+
+    if (!hasActive) {
       if (this.gfx.alpha > 0) this.gfx.clear();
       return;
     }
 
     this.gfx.clear();
 
-    for (let i = this.bubbles.length - 1; i >= 0; i--) {
-      const b = this.bubbles[i];
+    for (const b of this.pool) {
+      if (!b.active) continue;
 
       if (b.delay > 0) {
         b.delay -= dt;
@@ -67,7 +94,6 @@ export class BubbleEffect {
       }
 
       b.life -= dt;
-
       b.size += dt * 8.0;
 
       if (b.life > b.maxLife - 0.2) {
@@ -77,14 +103,14 @@ export class BubbleEffect {
       }
 
       if (b.life <= 0) {
-        this.bubbles[i] = this.bubbles[this.bubbles.length - 1];
-        this.bubbles.pop();
+        b.active = false;
         continue;
       }
 
       const currentSize = b.size * b.perspectiveScale * scale;
       this.gfx.ellipse(b.x, b.y, currentSize, currentSize * 0.35);
     }
+
     this.gfx.stroke({
       color: 0xffffff,
       alpha: 0.4,

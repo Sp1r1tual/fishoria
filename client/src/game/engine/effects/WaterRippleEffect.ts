@@ -11,10 +11,25 @@ interface IRipple {
   alpha: number;
   perspectiveY: number;
   lineWidth: number;
+  active: boolean;
 }
 
 export class WaterRippleEffect {
-  private ripples: IRipple[] = [];
+  private static readonly POOL_SIZE = 32;
+  private pool: IRipple[] = Array.from(
+    { length: WaterRippleEffect.POOL_SIZE },
+    () => ({
+      x: 0,
+      y: 0,
+      radius: 0,
+      speed: 0,
+      maxRadius: 0,
+      alpha: 0,
+      perspectiveY: 1,
+      lineWidth: 1.5,
+      active: false,
+    }),
+  );
   private gfx: Graphics;
 
   constructor(parent: Container) {
@@ -44,32 +59,39 @@ export class WaterRippleEffect {
     );
     const finalScale = screenScale * distanceScale;
 
-    const ringCount = 1;
-
-    for (let i = 0; i < ringCount; i++) {
-      const delay = i * 0.12;
-      this.ripples.push({
-        x,
-        y,
-        radius: -delay * 80 * intensity * finalScale,
-        speed: (35 + intensity * 20) * finalScale,
-        maxRadius: (10 + intensity * 20) * finalScale,
-        alpha: 0.6,
-        perspectiveY,
-        lineWidth: 1.5 * finalScale,
-      });
+    // Find an inactive ripple from the pool
+    const r = this.pool.find((rp) => !rp.active);
+    if (r) {
+      r.x = x;
+      r.y = y;
+      r.radius = 0;
+      r.speed = (35 + intensity * 20) * finalScale;
+      r.maxRadius = (10 + intensity * 20) * finalScale;
+      r.alpha = 0.6;
+      r.perspectiveY = perspectiveY;
+      r.lineWidth = 1.5 * finalScale;
+      r.active = true;
     }
   }
 
   public update(dt: number): void {
-    if (this.ripples.length === 0) {
+    let hasActive = false;
+    for (const r of this.pool) {
+      if (r.active) {
+        hasActive = true;
+        break;
+      }
+    }
+
+    if (!hasActive) {
+      this.gfx.clear();
       return;
     }
 
     this.gfx.clear();
 
-    for (let i = this.ripples.length - 1; i >= 0; i--) {
-      const r = this.ripples[i];
+    for (const r of this.pool) {
+      if (!r.active) continue;
 
       r.radius += r.speed * dt;
 
@@ -79,7 +101,7 @@ export class WaterRippleEffect {
       const currentAlpha = r.alpha * Math.max(0, 1 - progress * progress);
 
       if (r.radius >= r.maxRadius || currentAlpha <= 0.01) {
-        this.ripples.splice(i, 1);
+        r.active = false;
         continue;
       }
 
@@ -88,6 +110,7 @@ export class WaterRippleEffect {
 
       this.gfx.ellipse(r.x, r.y, rx, ry);
     }
+
     this.gfx.stroke({
       color: 0xffffff,
       alpha: 0.4,
@@ -97,6 +120,5 @@ export class WaterRippleEffect {
 
   public destroy(): void {
     this.gfx.destroy({ children: true });
-    this.ripples = [];
   }
 }

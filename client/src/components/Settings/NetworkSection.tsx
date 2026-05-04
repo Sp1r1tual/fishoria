@@ -11,6 +11,11 @@ import { Toggle } from '../UI/Toggle/Toggle';
 import { ServiceStatus } from '../UI/ServiceStatus/ServiceStatus';
 
 import { OnlineService } from '@/services/online.service';
+import {
+  connectStatus,
+  connectChat,
+  connectGame,
+} from '@/services/socket.service';
 
 import styles from './Settings.module.css';
 
@@ -47,6 +52,10 @@ export function NetworkSection() {
   const handleReconnect = () => {
     OnlineService.pingStatus(true);
     dispatch(setSessionOffline(false));
+
+    connectStatus();
+    connectChat();
+    connectGame();
   };
 
   return (

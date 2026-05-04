@@ -10,6 +10,7 @@ interface IRainDrop {
   vy: number;
   vx: number;
   length: number;
+  active: boolean;
 }
 
 interface IScreenDroplet {
@@ -20,6 +21,7 @@ interface IScreenDroplet {
   targetAlpha: number;
   life: number;
   maxLife: number;
+  active: boolean;
 }
 
 interface IBird {
@@ -31,6 +33,7 @@ interface IBird {
   flapSpeed: number;
   time: number;
   scale: number;
+  active: boolean;
 }
 
 interface IMeteor {
@@ -41,6 +44,7 @@ interface IMeteor {
   life: number;
   maxLife: number;
   length: number;
+  active: boolean;
 }
 
 export class WeatherLayer {
@@ -84,11 +88,33 @@ export class WeatherLayer {
 
   private initRain() {
     for (let i = 0; i < this.MAX_RAIN_DROPS; i++) {
-      this.rainDrops.push(this.createRainDrop(false));
+      const drop = {
+        x: 0,
+        y: 0,
+        vx: 0,
+        vy: 0,
+        length: 0,
+        active: false,
+      };
+      this.resetRainDrop(drop, true);
+      this.rainDrops.push(drop);
+    }
+
+    for (let i = 0; i < this.MAX_SCREEN_DROPLETS; i++) {
+      this.screenDroplets.push({
+        x: 0,
+        y: 0,
+        r: 0,
+        alpha: 0,
+        targetAlpha: 0,
+        life: 0,
+        maxLife: 0,
+        active: false,
+      });
     }
   }
 
-  private createRainDrop(randomY = false): IRainDrop {
+  private resetRainDrop(drop: IRainDrop, randomY = false): void {
     const W = this.app.renderer.width;
     const H = this.app.renderer.height > 0 ? this.app.renderer.height : 1000;
     const isSmall = isMobile(W);
@@ -98,28 +124,30 @@ export class WeatherLayer {
     const speedScale = isSmall ? 0.6 : 1.0;
     const lengthScale = isSmall ? 0.5 : 1.0;
 
-    return {
-      x: Math.random() * W,
-      y: startY,
-      vx: (-1 - Math.random() * 1.5) * speedScale,
-      vy: (12 + Math.random() * 6) * speedScale,
-      length: (15 + Math.random() * 20) * lengthScale,
-    };
+    drop.x = Math.random() * W;
+    drop.y = startY;
+    drop.vx = (-1 - Math.random() * 1.5) * speedScale;
+    drop.vy = (12 + Math.random() * 6) * speedScale;
+    drop.length = (15 + Math.random() * 20) * lengthScale;
+    drop.active = true;
   }
 
-  private createScreenDroplet(): IScreenDroplet {
+  private spawnScreenDroplet(): void {
     const W = this.app.renderer.width;
     const H = this.app.renderer.height;
+
+    const d = this.screenDroplets.find((sd) => !sd.active);
+    if (!d) return;
+
     const maxLife = 80 + Math.random() * 80;
-    return {
-      x: Math.random() * W,
-      y: Math.random() * H,
-      r: 1.5 + Math.random() * 2.5,
-      alpha: 0,
-      targetAlpha: 0.1 + Math.random() * 0.2,
-      life: maxLife,
-      maxLife: maxLife,
-    };
+    d.x = Math.random() * W;
+    d.y = Math.random() * H;
+    d.r = 1.5 + Math.random() * 2.5;
+    d.alpha = 0;
+    d.targetAlpha = 0.1 + Math.random() * 0.2;
+    d.life = maxLife;
+    d.maxLife = maxLife;
+    d.active = true;
   }
 
   public setWeather(type: WeatherType) {
@@ -131,28 +159,57 @@ export class WeatherLayer {
     const isSmall = isMobile(W);
     const scale = isSmall ? 0.6 : 1.0;
 
-    this.birds.push({
-      x: isLeft ? -50 : W + 50,
-      y: Math.random() * (H * 0.12) + 5,
-      vx: (isLeft ? 1 : -1) * (1 + Math.random() * 2),
-      vy: (Math.random() - 0.5) * 0.2,
-      wingSpan: (6 + Math.random() * 6) * scale,
-      flapSpeed: 0.1 + Math.random() * 0.1,
-      time: Math.random() * 100,
-      scale,
-    });
+    let b = this.birds.find((bird) => !bird.active);
+    if (!b) {
+      b = {
+        x: 0,
+        y: 0,
+        vx: 0,
+        vy: 0,
+        wingSpan: 0,
+        flapSpeed: 0,
+        time: 0,
+        scale: 1,
+        active: false,
+      };
+      this.birds.push(b);
+    }
+
+    b.x = isLeft ? -50 : W + 50;
+    b.y = Math.random() * (H * 0.12) + 5;
+    b.vx = (isLeft ? 1 : -1) * (1 + Math.random() * 2);
+    b.vy = (Math.random() - 0.5) * 0.2;
+    b.wingSpan = (6 + Math.random() * 6) * scale;
+    b.flapSpeed = 0.1 + Math.random() * 0.1;
+    b.time = Math.random() * 100;
+    b.scale = scale;
+    b.active = true;
   }
 
   private spawnMeteor(W: number) {
-    this.meteors.push({
-      x: Math.random() * W,
-      y: -50,
-      vx: -15 + Math.random() * 30,
-      vy: 10 + Math.random() * 15,
-      life: 1.0,
-      maxLife: 1.0,
-      length: 80 + Math.random() * 100,
-    });
+    let m = this.meteors.find((met) => !met.active);
+    if (!m) {
+      m = {
+        x: 0,
+        y: 0,
+        vx: 0,
+        vy: 0,
+        life: 0,
+        maxLife: 0,
+        length: 0,
+        active: false,
+      };
+      this.meteors.push(m);
+    }
+
+    m.x = Math.random() * W;
+    m.y = -50;
+    m.vx = -15 + Math.random() * 30;
+    m.vy = 10 + Math.random() * 15;
+    m.life = 1.0;
+    m.maxLife = 1.0;
+    m.length = 80 + Math.random() * 100;
+    m.active = true;
   }
 
   public update(dtSeconds: number, timeOfDay: string = 'day') {
@@ -187,9 +244,10 @@ export class WeatherLayer {
 
         if (drop.y > H) {
           if (this.weatherType === 'rain') {
-            Object.assign(drop, this.createRainDrop());
+            this.resetRainDrop(drop);
           } else {
             drop.y = -100;
+            drop.active = false;
           }
         }
         if (drop.x < 0) drop.x = W;
@@ -199,22 +257,13 @@ export class WeatherLayer {
       this.rainGfx.clear();
     }
 
-    if (this.weatherType === 'rain' || this.screenDroplets.length > 0) {
-      this.dropletsGfx.clear();
-    } else {
-      this.dropletsGfx.clear();
+    if (this.weatherType === 'rain' && Math.random() < 0.02 * dt) {
+      this.spawnScreenDroplet();
     }
 
-    if (
-      this.weatherType === 'rain' &&
-      this.screenDroplets.length < this.MAX_SCREEN_DROPLETS &&
-      Math.random() < 0.02 * dt
-    ) {
-      this.screenDroplets.push(this.createScreenDroplet());
-    }
+    for (const d of this.screenDroplets) {
+      if (!d.active) continue;
 
-    for (let i = this.screenDroplets.length - 1; i >= 0; i--) {
-      const d = this.screenDroplets[i];
       d.life -= dt;
 
       if (d.life > d.maxLife * 0.7) {
@@ -228,18 +277,16 @@ export class WeatherLayer {
         }
       }
 
-      this.dropletsGfx.moveTo(d.x, d.y);
+      if (d.life <= 0 || d.alpha < 0.01) {
+        d.active = false;
+        continue;
+      }
+
       this.dropletsGfx.circle(d.x, d.y, d.r);
       this.dropletsGfx.fill({ color: 0xffffff, alpha: d.alpha });
 
       this.dropletsGfx.circle(d.x - d.r / 3, d.y - d.r / 3, d.r / 4);
       this.dropletsGfx.fill({ color: 0xffffff, alpha: d.alpha * 1.5 });
-
-      if (d.life <= 0 || d.alpha < 0.01) {
-        this.screenDroplets[i] =
-          this.screenDroplets[this.screenDroplets.length - 1];
-        this.screenDroplets.pop();
-      }
     }
 
     let targetTintAlpha = 0;
@@ -267,8 +314,9 @@ export class WeatherLayer {
       }
     }
 
-    for (let i = this.birds.length - 1; i >= 0; i--) {
-      const b = this.birds[i];
+    for (const b of this.birds) {
+      if (!b.active) continue;
+
       b.x += b.vx * dt;
       b.y += b.vy * dt;
       b.time += dt;
@@ -304,8 +352,7 @@ export class WeatherLayer {
       this.ambientGfx.fill({ color: 0x1a202c, alpha });
 
       if (b.x < -100 || b.x > W + 100) {
-        this.birds[i] = this.birds[this.birds.length - 1];
-        this.birds.pop();
+        b.active = false;
       }
     }
 
@@ -317,8 +364,9 @@ export class WeatherLayer {
       this.spawnMeteor(W);
     }
 
-    for (let i = this.meteors.length - 1; i >= 0; i--) {
-      const m = this.meteors[i];
+    for (const m of this.meteors) {
+      if (!m.active) continue;
+
       m.x += m.vx * dt;
       m.y += m.vy * dt;
       m.life -= dt * 0.02;
@@ -330,14 +378,13 @@ export class WeatherLayer {
       this.ambientGfx.stroke({ width: 2, color: 0xfffbea, alpha });
 
       if (m.life <= 0 || m.y > H * 0.2) {
-        this.meteors[i] = this.meteors[this.meteors.length - 1];
-        this.meteors.pop();
+        m.active = false;
       }
     }
   }
 
   public resize() {
-    this.screenDroplets = [];
+    for (const d of this.screenDroplets) d.active = false;
   }
 
   public destroy() {

@@ -84,6 +84,16 @@ export function TensionIndicator({
 
       const useColorful = isReelingOrBite || currentTension > 0.01;
 
+      if (useColorful) {
+        tensionBarsRef.current.classList.add(
+          styles['tension__triangle--colorful'],
+        );
+      } else {
+        tensionBarsRef.current.classList.remove(
+          styles['tension__triangle--colorful'],
+        );
+      }
+
       let fillValue = isReelingOrBite ? currentTension : 0;
       if (currentPhase === 'waiting') {
         if (localDebugActive) {
@@ -93,30 +103,18 @@ export function TensionIndicator({
 
       for (let i = 0; i < 20; i++) {
         const threshold = i / 20;
-
         const isActive = threshold + 0.001 < fillValue;
         const el = segments[i] as HTMLDivElement;
 
         if (el) {
           if (isActive) {
-            el.classList.add(styles['tension__segment--active']);
-
-            const baseColor = !useColorful
-              ? '#3b82f6'
-              : i < 10
-                ? '#10b981'
-                : i < 15
-                  ? '#eab308'
-                  : i < 18
-                    ? '#f97316'
-                    : '#ef4444';
-
-            el.style.backgroundColor = baseColor;
-            el.style.boxShadow = `0 0 8px ${baseColor}, 0 0 12px ${baseColor}40`;
+            if (!el.classList.contains(styles['tension__segment--active'])) {
+              el.classList.add(styles['tension__segment--active']);
+            }
           } else {
-            el.classList.remove(styles['tension__segment--active']);
-            el.style.backgroundColor = '';
-            el.style.boxShadow = '';
+            if (el.classList.contains(styles['tension__segment--active'])) {
+              el.classList.remove(styles['tension__segment--active']);
+            }
           }
         }
       }
