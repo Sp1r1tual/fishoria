@@ -228,10 +228,7 @@ export class HookEntity {
       const sinT = Math.sin(tilt);
       const cosT = Math.cos(tilt);
 
-      const getDepthAlpha = (y: number): number => {
-        const underwater = y > by + 1;
-        return underwater ? Math.max(0.1, 0.5 - (y - by) * 0.05) : 1;
-      };
+      const getDepthAlpha = (y: number): number => this.getDepthAlpha(y, by);
 
       const drawClippedSegment = (
         x0: number,
@@ -240,15 +237,7 @@ export class HookEntity {
         y1: number,
         width: number,
         color: number,
-      ) => {
-        const midY = (y0 + y1) / 2;
-        const alpha = getDepthAlpha(midY);
-        if (alpha <= 0) return;
-
-        this.gfx.moveTo(x0, y0);
-        this.gfx.lineTo(x1, y1);
-        this.gfx.stroke({ width: width * this.scale, color, alpha });
-      };
+      ) => this.drawClippedSegment(x0, y0, x1, y1, width, color, by);
 
       if (this.rigType === 'feeder') {
         const bulbAlpha = getDepthAlpha(totalY);
@@ -406,6 +395,29 @@ export class HookEntity {
         this.gfx.stroke({ width: 1.5 * this.scale, color: 0xc0c0c0 });
       }
     }
+  }
+
+  private getDepthAlpha(y: number, by: number): number {
+    const underwater = y > by + 1;
+    return underwater ? Math.max(0.1, 0.5 - (y - by) * 0.05) : 1;
+  }
+
+  private drawClippedSegment(
+    x0: number,
+    y0: number,
+    x1: number,
+    y1: number,
+    width: number,
+    color: number,
+    by: number,
+  ) {
+    const midY = (y0 + y1) / 2;
+    const alpha = this.getDepthAlpha(midY, by);
+    if (alpha <= 0) return;
+
+    this.gfx.moveTo(x0, y0);
+    this.gfx.lineTo(x1, y1);
+    this.gfx.stroke({ width: width * this.scale, color, alpha });
   }
 
   destroy(): void {

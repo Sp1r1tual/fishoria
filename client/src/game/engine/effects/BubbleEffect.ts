@@ -94,12 +94,17 @@ export class BubbleEffect {
       }
 
       b.life -= dt;
-      b.size += dt * 8.0;
 
-      if (b.life > b.maxLife - 0.2) {
-        b.alpha = (b.maxLife - b.life) / 0.2;
+      const expansionSpeed = 10.0 * Math.pow(b.life / b.maxLife, 0.5);
+      b.size += dt * expansionSpeed;
+
+      const lifeRatio = b.life / b.maxLife;
+      if (lifeRatio > 0.8) {
+        b.alpha = (1 - lifeRatio) / 0.2;
+      } else if (lifeRatio < 0.5) {
+        b.alpha = Math.pow(lifeRatio / 0.5, 2.2);
       } else {
-        b.alpha = b.life / (b.maxLife - 0.2);
+        b.alpha = 1.0;
       }
 
       if (b.life <= 0) {
@@ -108,14 +113,20 @@ export class BubbleEffect {
       }
 
       const currentSize = b.size * b.perspectiveScale * scale;
-      this.gfx.ellipse(b.x, b.y, currentSize, currentSize * 0.35);
-    }
+      const finalAlpha = b.alpha * 0.5;
 
-    this.gfx.stroke({
-      color: 0xffffff,
-      alpha: 0.4,
-      width: 1.0 * scale,
-    });
+      this.gfx.ellipse(b.x, b.y, currentSize, currentSize * 0.35);
+      this.gfx.stroke({
+        color: 0xffffff,
+        alpha: finalAlpha,
+        width: 1.0 * scale,
+      });
+
+      this.gfx.fill({
+        color: 0xffffff,
+        alpha: finalAlpha * 0.15,
+      });
+    }
   }
 
   public destroy(): void {

@@ -127,6 +127,7 @@ export class LakeScene implements IScene {
   private waterRippleEffect!: WaterRippleEffect;
   private dragonflyEffect!: DragonflyEffect;
   private strikeHintGfx!: Graphics;
+  private allowedAreaBounds = { minY: 0, maxY: 1 };
 
   private config: ILakeConfig;
   private callbacks: ILakeSceneCallbacks;
@@ -251,6 +252,8 @@ export class LakeScene implements IScene {
       H,
       50,
     );
+
+    this.updateAllowedAreaBounds();
 
     this.debugLayer = new DebugLayer(
       this.fishLayer,
@@ -473,19 +476,10 @@ export class LakeScene implements IScene {
     this.hookY = this.castY;
 
     const normX = this.hookX / W;
-    let minY = this.config.environment.waterBoundaryY;
-    let maxY = 1.0;
-    if (
-      this.config.allowedCastArea.type === 'polygon' &&
-      this.config.allowedCastArea.points
-    ) {
-      const ys = this.config.allowedCastArea.points.map((p) => p.y);
-      minY = Math.min(...ys);
-      maxY = Math.max(...ys);
-    }
+    const { minY, maxY } = this.allowedAreaBounds;
     const normY = Math.max(
       0,
-      Math.min(1, (this.hookY / H - minY) / (maxY - minY)),
+      Math.min(1, (this.hookY / H - minY) / (maxY - minY || 0.001)),
     );
 
     this.groundDepthM = this.depthSystem.getDepthAt(normX, normY);
@@ -504,7 +498,7 @@ export class LakeScene implements IScene {
     this.waterRippleEffect.spawn(
       this.hookX,
       this.hookY,
-      1.5,
+      2.5,
       H,
       H * this.config.environment.waterBoundaryY,
     );
@@ -579,6 +573,8 @@ export class LakeScene implements IScene {
     const W = this.app.screen.width;
     const H = this.app.screen.height;
     this.groundbaitEffect.spawn(W, H);
+    this.bubbleEffect.spawn(W / 2, H * 0.85, 12, 1.5);
+    this.waterRippleEffect.spawn(W / 2, H * 0.85, 2.0, H, H * 0.5);
   }
 
   setBaseDepth(depth: number): void {
@@ -898,7 +894,7 @@ export class LakeScene implements IScene {
 
     let maxInterest = 0;
 
-    if (isCast && this.phase === 'waiting') {
+    if (isCast && this.phase === 'waiting' && this.timeSinceCast > 1.2) {
       maxInterest = this.updateWaitingPhase(W, H, deltaTime);
     } else if (this.phase === 'bite' && this.hookedFish) {
       this.updateBitePhase();
@@ -1103,17 +1099,8 @@ export class LakeScene implements IScene {
       this.config.fishSpawns,
       this.config.allowedCastArea,
       (nx, ny) => {
-        let minY = this.config.environment.waterBoundaryY;
-        let maxY = 1.0;
-        if (
-          this.config.allowedCastArea.type === 'polygon' &&
-          this.config.allowedCastArea.points
-        ) {
-          const ys = this.config.allowedCastArea.points.map((p) => p.y);
-          minY = Math.min(...ys);
-          maxY = Math.max(...ys);
-        }
-        const localNy = (ny - minY) / (maxY - minY);
+        const { minY, maxY } = this.allowedAreaBounds;
+        const localNy = (ny - minY) / (maxY - minY || 0.001);
         return this.depthSystem.getDepthAt(
           nx,
           Math.max(0, Math.min(1, localNy)),
@@ -1123,6 +1110,7 @@ export class LakeScene implements IScene {
       newH,
       50,
     );
+    this.updateAllowedAreaBounds();
     this.debugLayer.setSystems(this.depthSystem, this.sectorSystem);
     this.debugLayer.resize();
     this.weatherLayer.resize();
@@ -1393,6 +1381,12 @@ export class LakeScene implements IScene {
             H,
             H * this.config.environment.waterBoundaryY,
           );
+          this.bubbleEffect.spawn(
+            this.hookX,
+            this.hookY,
+            4 + Math.floor(Math.random() * 4),
+            1.2,
+          );
         }
         this.callbacks.onPhaseChange(this.phase);
       }
@@ -1617,5 +1611,19 @@ export class LakeScene implements IScene {
 
     this.strikeHintGfx.visible = true;
     this.strikeHintGfx.alpha += (targetAlpha - this.strikeHintGfx.alpha) * 0.05;
+  }
+
+  private updateAllowedAreaBounds(): void {
+    if (
+      this.config.allowedCastArea.type === 'polygon' &&
+      this.config.allowedCastArea.points
+    ) {
+      const ys = this.config.allowedCastArea.points.map((p) => p.y);
+      this.allowedAreaBounds.minY = Math.min(...ys);
+      this.allowedAreaBounds.maxY = Math.max(...ys);
+    } else {
+      this.allowedAreaBounds.minY = this.config.environment.waterBoundaryY;
+      this.allowedAreaBounds.maxY = 1.0;
+    }
   }
 }

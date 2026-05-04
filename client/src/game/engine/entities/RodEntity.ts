@@ -236,7 +236,9 @@ export class RodEntity {
         this.lineGfx.moveTo(tip.x, tip.y);
 
         const segments = 12;
-        this.internalPoints.length = 0;
+        while (this.internalPoints.length < segments) {
+          this.internalPoints.push({ x: 0, y: 0 });
+        }
 
         for (let i = 1; i <= segments; i++) {
           const t = i / segments;
@@ -254,15 +256,12 @@ export class RodEntity {
           px += nx * sag;
           py += ny * sag;
 
-          if (this.internalPoints.length < i + 1) {
-            this.internalPoints.push({ x: px, y: py });
-          } else {
-            this.internalPoints[i].x = px;
-            this.internalPoints[i].y = py;
-          }
+          const p = this.internalPoints[i - 1];
+          p.x = px;
+          p.y = py;
         }
 
-        for (let i = 1; i < this.internalPoints.length; i++) {
+        for (let i = 1; i < segments; i++) {
           const p0 = this.internalPoints[i - 1];
           const p1 = this.internalPoints[i];
           const mx = (p0.x + p1.x) / 2;
