@@ -171,9 +171,17 @@ export function updateReelingPhase(
     );
 
     const waterHeight = Math.max(1, H * (1 - params.waterBoundaryY));
-    const nx = hookedFish.position.x / params.canvasWidth;
-    const ny =
-      (hookedFish.position.y - H * params.waterBoundaryY) / waterHeight;
+    const nx = Math.max(
+      0,
+      Math.min(1, hookedFish.position.x / params.canvasWidth),
+    );
+    const ny = Math.max(
+      0,
+      Math.min(
+        1,
+        (hookedFish.position.y - H * params.waterBoundaryY) / waterHeight,
+      ),
+    );
     hookedFish.depth = params.getDepthAt(nx, ny);
   }
 

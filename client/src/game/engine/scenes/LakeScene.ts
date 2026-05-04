@@ -1361,7 +1361,7 @@ export class LakeScene implements IScene {
     const waterY = H * this.config.environment.waterBoundaryY;
     const waterHeight = Math.max(1, H - waterY);
 
-    const normX = this.hookX / W;
+    const normX = Math.max(0, Math.min(1, this.hookX / W));
     const normY = Math.max(0, Math.min(1, (this.hookY - waterY) / waterHeight));
 
     this.groundDepthM = this.depthSystem.getDepthAt(normX, normY);

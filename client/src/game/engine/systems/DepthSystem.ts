@@ -33,10 +33,10 @@ export class DepthSystem {
     const x = normX * (cols - 1);
     const y = normY * (rows - 1);
 
-    const x1 = Math.floor(x);
-    const x2 = Math.min(x1 + 1, cols - 1);
-    const y1 = Math.floor(y);
-    const y2 = Math.min(y1 + 1, rows - 1);
+    const x1 = Math.max(0, Math.min(cols - 1, Math.floor(x)));
+    const x2 = Math.max(0, Math.min(cols - 1, x1 + 1));
+    const y1 = Math.max(0, Math.min(rows - 1, Math.floor(y)));
+    const y2 = Math.max(0, Math.min(rows - 1, y1 + 1));
 
     const fx = x - x1;
     const fy = y - y1;
