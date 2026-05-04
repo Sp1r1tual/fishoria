@@ -26,8 +26,9 @@ export const errorInterceptors = (axiosInstance: AxiosInstance) => {
           }),
         );
       } else if (error.response) {
-        const message =
-          error.response.data?.message || i18n.t('errors.unknown');
+        const message = i18n.t(
+          error.response.data?.message || 'errors.unknown',
+        );
         store.dispatch(
           addToast({
             type: 'error',

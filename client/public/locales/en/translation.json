@@ -807,11 +807,11 @@
     "low_line": "Low fishing line remaining!",
     "tooManyRequests": "Too many requests. Please try again later.",
     "socket": {
-      "connection_error": "Server connection error",
+      "connection_error": "Server unavailable or connection error",
       "timeout": "Server response timeout",
       "auth_error": "Authentication error",
       "limit_reached": "Message limit reached",
-      "internal_error": "Internal server error",
+      "internal_error": "A server error occurred. Please try again later",
       "forbidden": "Forbidden resource",
       "bad_request": "Bad request",
       "unknown": "A connection error occurred"

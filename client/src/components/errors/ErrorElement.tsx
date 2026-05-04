@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useRouteError, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
@@ -9,6 +10,14 @@ export function ErrorElement() {
   const error = useRouteError() as { statusText?: string; message?: string };
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const initialLoader = document.getElementById('initial-loader');
+    if (initialLoader) {
+      initialLoader.classList.add('loader-hidden');
+      setTimeout(() => initialLoader.remove(), 600);
+    }
+  }, []);
 
   console.error('Router Error:', error);
 

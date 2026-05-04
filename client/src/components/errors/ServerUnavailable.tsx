@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { WoodyButton } from '@/components/UI/buttons/WoodyButton/WoodyButton';
@@ -10,6 +11,14 @@ import styles from './ServerUnavailable.module.css';
 
 export const ServerUnavailable = () => {
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const initialLoader = document.getElementById('initial-loader');
+    if (initialLoader) {
+      initialLoader.classList.add('loader-hidden');
+      setTimeout(() => initialLoader.remove(), 600);
+    }
+  }, []);
 
   return (
     <div className={styles.container}>

@@ -261,9 +261,9 @@
 .settings__reconnect-button:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: var(--clr-primary);
-  transform: rotate(30deg);
+  transform: scale(1.05);
 }
 
 .settings__reconnect-button:active {
-  transform: rotate(180deg) scale(0.9);
+  transform: scale(0.95);
 }

@@ -198,7 +198,7 @@ export function useGlobalSockets() {
       }
 
       const msgMap: Record<string, string> = {
-        'Internal server error': 'error.socket.internal_error',
+        'Internal server error': 'error.socket.connection_error',
         'Forbidden resource': 'error.socket.forbidden',
         Unauthorized: 'error.socket.auth_error',
         'Invalid token': 'error.socket.auth_error',
