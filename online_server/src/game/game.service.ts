@@ -24,7 +24,7 @@ export class GameService implements OnModuleInit {
   private initGameTime() {
     this.realStartTime = Date.now();
     const date = new Date();
-    date.setHours(5, 0, 0, 0);
+    date.setUTCHours(5, 0, 0, 0);
     this.virtualStartTime = date.getTime();
   }
 
@@ -45,7 +45,7 @@ export class GameService implements OnModuleInit {
 
   public setGameTime(hour: number) {
     const date = this.getGameTimeAsDate();
-    date.setHours(hour, 0, 0, 0);
+    date.setUTCHours(hour, 0, 0, 0);
     this.virtualStartTime = date.getTime();
     this.realStartTime = Date.now();
   }
@@ -78,7 +78,7 @@ export class GameService implements OnModuleInit {
   }
 
   public updateStateIfNecessary() {
-    const currentHour = this.getGameTimeAsDate().getHours();
+    const currentHour = this.getGameTimeAsDate().getUTCHours();
     let changed = false;
 
     if (this.lastWeatherUpdateHour === -1) {
