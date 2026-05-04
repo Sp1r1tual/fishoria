@@ -575,7 +575,11 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(handleResize, 100);
     };
-    const orientationHandler = () => setTimeout(handleResize, 300);
+    const orientationHandler = () => {
+      handleResize();
+      setTimeout(handleResize, 100);
+      setTimeout(handleResize, 300);
+    };
 
     window.addEventListener('resize', debouncedResize);
     window.addEventListener('orientationchange', orientationHandler);
