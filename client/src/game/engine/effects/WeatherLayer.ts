@@ -261,6 +261,8 @@ export class WeatherLayer {
       this.spawnScreenDroplet();
     }
 
+    this.dropletsGfx.clear();
+
     for (const d of this.screenDroplets) {
       if (!d.active) continue;
 
