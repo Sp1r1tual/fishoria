@@ -1513,6 +1513,7 @@ export class LakeScene implements IScene {
         this.callbacks.onCatch(reelingResult.catchResult);
       }
       if (reelingResult.newPhase === 'broken') {
+        this.callbacks.onLineBroke(Math.round(this.castDistanceM));
         this.scheduleReset(SCENE_TIMING.brokenResetDelay);
       } else if (reelingResult.newPhase === 'escaped') {
         this.scheduleReset(SCENE_TIMING.escapedResetDelay);
