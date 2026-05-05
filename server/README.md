@@ -166,6 +166,7 @@ Detailed module documentation is available in the `docs/` directory and via the 
 | Document                                                  | Description                       |
 | :-------------------------------------------------------- | :-------------------------------- |
 | [AUTH_MODULE.md](docs/AUTH_MODULE.md)                     | Authentication & authorization    |
+| [ADMIN_MODULE.md](docs/ADMIN_MODULE.md)                   | Admin dashboard & moderation      |
 | [PLAYER_MODULE.md](docs/PLAYER_MODULE.md)                 | Player profiles & progression     |
 | [GAME_MODULE.md](docs/GAME_MODULE.md)                     | Fishing mechanics & transactions  |
 | [INVENTORY_MODULE.md](docs/INVENTORY_MODULE.md)           | Equipment & consumable management |

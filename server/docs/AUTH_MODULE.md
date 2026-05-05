@@ -94,8 +94,10 @@ Ban with expiration support: when banning a user, `expiresAt` can be provided. R
 | `POST`   | `/auth/forgot-password`    | Request password reset email             | Public      |
 | `POST`   | `/auth/verify-reset-token` | Verify password reset token validity     | Public      |
 | `POST`   | `/auth/reset-password`     | Set new password using reset token       | Public      |
-| `POST`   | `/auth/ban`                | Ban a user (with optional expiration)    | Admin       |
-| `DELETE` | `/auth/ban`                | Unban a user                             | Admin       |
+
+> Note: banning/unbanning is handled by the **Admin module**, not the Auth controller.
+
+See [ADMIN_MODULE.md](ADMIN_MODULE.md) for `/admin/*` endpoints (ban/unban/check-ban + dashboard/wiki).
 
 ### Rate Limits
 

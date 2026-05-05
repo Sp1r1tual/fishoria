@@ -74,12 +74,18 @@ The `GET /player/profile` endpoint appends `expiresIn` (JWT access token TTL in 
 | Method | Path                | Description                                       | Access    |
 | :----- | :------------------ | :------------------------------------------------ | :-------- |
 | `GET`  | `/player/profile`   | Retrieve the full player profile (with expiresIn) | User      |
+| `GET`  | `/player/profile/:userId` | Retrieve another user's profile               | User      |
 | `POST` | `/player/update`    | Update profile data (username, avatar)            | User      |
 | `POST` | `/player/language`  | Change the user's display language                | User      |
 | `POST` | `/player/reset`     | Delete and recreate the player profile            | User      |
 | `POST` | `/player/add-money` | Add currency to a player's balance                | Moderator |
+| `POST` | `/player/avatar`    | Upload avatar image (multipart/form-data)         | User      |
 
 All endpoints return the updated profile or operation result.
+
+### Query Parameters
+
+- `GET /player/profile?lang=uk|en` (optional) – forces localization for quests/achievements mapping. If omitted, the server uses the language from the JWT (when applicable).
 
 ## 📦 Schemas & DTOs
 

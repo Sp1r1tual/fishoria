@@ -71,10 +71,10 @@ All environment variables are strictly typed and validated via Zod:
 
 ### 6. Admin Dashboard (`common/templates`)
 
-The root route (`GET /`) serves a server-rendered HTML admin dashboard:
+The server exposes an Admin Dashboard (server-rendered HTML) under `GET /admin`.
 
 - Displays total registered player count and server version (`v0.3.0`).
-- Sidebar with **Internal Wiki** – lists all `.md` files from the `docs/` directory. Clicking a file fetches its content via `GET /api/docs-content/:filename`, renders it with `marked` (Markdown → HTML), and displays in a modal.
+- Sidebar with **Internal Wiki** – lists all `.md` files from the `docs/` directory. Clicking a file fetches its content via `GET /admin/api/docs-content/:filename`, renders it with `marked` (Markdown → HTML), and displays in a modal.
 - Link to Swagger API documentation (`/docs`).
 - Styled with a dark theme, glassmorphism, Inter font, and accent glow animations.
 
@@ -99,8 +99,9 @@ Uses a separate Prisma client with `@prisma/adapter-pg` for direct PostgreSQL po
 
 | Method | Path                      | Description                   | Access |
 | :----- | :------------------------ | :---------------------------- | :----- |
-| `GET`  | `/`                       | Admin Dashboard (HTML)        | Public |
-| `GET`  | `/api/docs-content/:file` | Rendered markdown doc content | Public |
+| `GET`  | `/`                       | Redirect to `/admin`          | Public |
+| `GET`  | `/admin`                  | Admin Dashboard (HTML)        | Public |
+| `GET`  | `/admin/api/docs-content/:filename` | Rendered markdown doc content | Public |
 | `GET`  | `/favicon.ico`            | Favicon redirect              | Public |
 
 ## 📡 Logging

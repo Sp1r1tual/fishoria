@@ -45,6 +45,8 @@ When creating a news item via `POST /news`, the system accepts objects with tran
 
 This allows creating a news item for all language versions of the site in a single request. The system iterates over all keys in the `title` object to determine the available languages and creates a `NewsTranslation` record for each.
 
+> Note: `isPublished` is optional. If omitted, the stored value depends on the database default.
+
 ### 4. Ordering
 
 Published news is returned sorted by `createdAt` in descending order (newest first).

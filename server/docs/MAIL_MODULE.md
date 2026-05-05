@@ -5,7 +5,7 @@ The Mail module handles sending system messages to players via email (SMTP).
 ## 🚀 Key Features
 
 - **Transactional emails**: Sending registration confirmations and password reset requests.
-- **Localization**: Email subjects and bodies are automatically adapted to the user's language (`uk`/`en`).
+- **Localization**: Email bodies are localized via templates; subjects currently switch to Ukrainian only when `lang === 'ua'` (see note below).
 - **Styled templates**: HTML templates are used to produce professional-looking emails.
 - **Error logging**: Every failed send attempt is recorded in the server's system logs with full stack traces.
 - **Error propagation**: Failed sends throw `InternalServerErrorException` to notify the calling code.
@@ -32,6 +32,8 @@ The email body is not hardcoded in the service. Instead, template functions from
 
 - `getActivationTemplate(link, projectName, lang)` – styled HTML for account activation.
 - `getPasswordResetTemplate(link, projectName, lang)` – styled HTML for password reset.
+- `getBanTemplate(reason, projectName, lang)` – styled HTML for ban notification.
+- `getUnbanTemplate(projectName, lang)` – styled HTML for unban notification.
 
 This makes it easy to update email designs without touching the business logic.
 
@@ -49,6 +51,8 @@ The email subject is selected dynamically based on the language:
 | :------------- | :--------------------------------- | :------------------------------ |
 | Activation     | `Activate your account - Fishoria` | `Активація акаунту - Fishoria`  |
 | Password Reset | `Password Reset - Fishoria`        | `Відновлення паролю - Fishoria` |
+| Ban            | `Account Suspended - Fishoria`     | `Блокування акаунту - Fishoria` |
+| Unban          | `Account Unbanned - Fishoria`      | `Акаунт розблоковано - Fishoria` |
 
 The language parameter is also passed through to the template function for body localization.
 
@@ -65,6 +69,8 @@ Both send methods wrap the `transporter.sendMail` call in a try/catch:
 | :---------------------- | :--------------- | :-------------------------------------------------- |
 | `sendActivationMail`    | `to, link, lang` | Email for confirming an address after registration. |
 | `sendPasswordResetMail` | `to, link, lang` | Email with a link to set a new password.            |
+| `sendBanMail`           | `to, reason, lang` | Email notifying the user about a ban.             |
+| `sendUnbanMail`         | `to, lang`       | Email notifying the user about an unban.            |
 
 ### Integration Points
 
@@ -80,4 +86,4 @@ Both send methods wrap the `transporter.sendMail` call in a try/catch:
 
 When deploying to production, make sure "App Passwords" is enabled in your Google account settings if you are using Gmail as the SMTP server.
 
-Note: The language code for Ukrainian in email subjects uses `'ua'` (not `'uk'` as in the rest of the system). If you add new email types, keep this convention consistent or refactor to use the standard `'uk'` code.
+Note: The language code for Ukrainian in email subjects uses `'ua'` (not `'uk'` as in the rest of the system). If the rest of the app passes `uk`, the subject will remain English even though the template is localized using `lang`. Consider normalizing to `uk` in `MailService`.
