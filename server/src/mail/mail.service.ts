@@ -17,6 +17,10 @@ export class MailService {
   private readonly logger = new Logger(MailService.name);
   private readonly projectName = 'Fishoria';
 
+  private isUkrainian(lang?: string) {
+    return lang === 'uk' || lang === 'ua';
+  }
+
   constructor(private readonly configService: ConfigService) {
     this.transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -28,8 +32,7 @@ export class MailService {
   }
 
   async sendActivationMail(to: string, link: string, lang: string = 'en') {
-    const isUa = lang === 'ua';
-    const subject = isUa
+    const subject = this.isUkrainian(lang)
       ? `Активація акаунту - ${this.projectName}`
       : `Activate your account - ${this.projectName}`;
 
@@ -50,8 +53,7 @@ export class MailService {
   }
 
   async sendPasswordResetMail(to: string, link: string, lang: string = 'en') {
-    const isUa = lang === 'ua';
-    const subject = isUa
+    const subject = this.isUkrainian(lang)
       ? `Відновлення паролю - ${this.projectName}`
       : `Password Reset - ${this.projectName}`;
 
@@ -72,8 +74,7 @@ export class MailService {
   }
 
   async sendBanMail(to: string, reason: string, lang: string = 'en') {
-    const isUa = lang === 'ua';
-    const subject = isUa
+    const subject = this.isUkrainian(lang)
       ? `Блокування акаунту - ${this.projectName}`
       : `Account Suspended - ${this.projectName}`;
 
@@ -90,8 +91,7 @@ export class MailService {
   }
 
   async sendUnbanMail(to: string, lang: string = 'en') {
-    const isUa = lang === 'ua';
-    const subject = isUa
+    const subject = this.isUkrainian(lang)
       ? `Акаунт розблоковано - ${this.projectName}`
       : `Account Unbanned - ${this.projectName}`;
 
