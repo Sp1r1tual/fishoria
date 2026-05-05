@@ -1283,6 +1283,10 @@ export class LakeScene implements IScene {
             this.targetInterest = 0.5;
           }
         }
+      } else if (this.potentialBiter && !isSpinning) {
+        if (Math.random() < 0.2) {
+          this.potentialBiter = null;
+        }
       }
 
       if (biteResult.progress > 0 && !biteResult.biteSpeciesId) {

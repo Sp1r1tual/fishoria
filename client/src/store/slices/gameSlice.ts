@@ -38,6 +38,9 @@ const gameSlice = createSlice({
 
     setCurrentLake(state, action: PayloadAction<string | null>) {
       state.currentLakeId = action.payload;
+      if (action.payload === null) {
+        state.baseDepth = 100;
+      }
     },
 
     setPhase(state, action: PayloadAction<GamePhaseType>) {
