@@ -57,14 +57,12 @@ export function SessionSync() {
       }
     }
 
-    if (stateRef.current.onlineMode) return;
-
     const gTime = TimeManager.getTime('game');
     const currentHour = gTime.getUTCHours();
 
     const curForecast = loadedForecast || stateRef.current.weatherForecast;
     const lastUpdate =
-      loadedLastHour !== undefined
+      loadedLastHour !== undefined && loadedLastHour !== null
         ? loadedLastHour
         : stateRef.current.lastWeatherUpdateHour;
 
@@ -94,6 +92,8 @@ export function SessionSync() {
       dispatch(setWeatherForecast(newForecast));
       dispatch(setLastWeatherUpdateHour(currentHour));
     }
+
+    if (stateRef.current.onlineMode) return;
   }, [dispatch]);
 
   useEffect(() => {

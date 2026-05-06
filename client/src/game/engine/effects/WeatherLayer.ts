@@ -88,16 +88,14 @@ export class WeatherLayer {
 
   private initRain() {
     for (let i = 0; i < this.MAX_RAIN_DROPS; i++) {
-      const drop = {
+      this.rainDrops.push({
         x: 0,
         y: 0,
         vx: 0,
         vy: 0,
         length: 0,
         active: false,
-      };
-      this.resetRainDrop(drop, true);
-      this.rainDrops.push(drop);
+      });
     }
 
     for (let i = 0; i < this.MAX_SCREEN_DROPLETS; i++) {
@@ -217,7 +215,9 @@ export class WeatherLayer {
     const W = this.app.renderer.width;
     const H = this.app.renderer.height;
 
-    const hasVisibleDrops = this.rainDrops.some((d) => d.y > -50 && d.y < H);
+    const hasVisibleDrops = this.rainDrops.some(
+      (d) => d.active && d.y > -50 && d.y < H,
+    );
 
     if (this.weatherType === 'rain' || hasVisibleDrops) {
       this.rainGfx.clear();
@@ -231,11 +231,16 @@ export class WeatherLayer {
         i++
       ) {
         const drop = this.rainDrops[i];
-
-        if (this.weatherType === 'rain' || drop.y > -50) {
-          drop.x += drop.vx * dt;
-          drop.y += drop.vy * dt;
+        if (!drop.active) {
+          if (this.weatherType === 'rain') {
+            this.resetRainDrop(drop);
+          } else {
+            continue;
+          }
         }
+
+        drop.x += drop.vx * dt;
+        drop.y += drop.vy * dt;
 
         if (drop.y > 0 && drop.y < H) {
           this.rainGfx.moveTo(drop.x, drop.y);

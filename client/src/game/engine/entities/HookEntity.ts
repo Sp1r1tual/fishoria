@@ -275,20 +275,29 @@ export class HookEntity {
             this.gfx.circle(bulbX, bulbY, bulbRadius);
             this.gfx.fill({ color: colorShadow, alpha: bulbAlpha });
 
-            this.gfx.moveTo(bulbX - bulbRadius, bulbY);
-            this.gfx.arc(bulbX, bulbY, bulbRadius, Math.PI, 0, true);
+            const startAngle = Math.PI - tilt;
+            const endAngle = 0 - tilt;
+            this.gfx.moveTo(
+              bulbX + Math.cos(startAngle) * bulbRadius,
+              bulbY + Math.sin(startAngle) * bulbRadius,
+            );
+            this.gfx.arc(bulbX, bulbY, bulbRadius, startAngle, endAngle, true);
             this.gfx.fill({ color: 0xcc0000, alpha: bulbAlpha });
 
+            const highlight1X = -1 * cosT + -1.5 * sinT;
+            const highlight1Y = 1 * sinT + -1.5 * cosT;
             this.gfx.circle(
-              bulbX - 1 * this.scale,
-              bulbY - 1.5 * this.scale,
+              bulbX + highlight1X * this.scale,
+              bulbY + highlight1Y * this.scale,
               bulbRadius * 0.45,
             );
             this.gfx.fill({ color: 0xffffff, alpha: bulbAlpha * 0.6 });
 
+            const highlight2X = -2 * cosT + -2 * sinT;
+            const highlight2Y = 2 * sinT + -2 * cosT;
             this.gfx.circle(
-              bulbX - 2 * this.scale,
-              bulbY - 2 * this.scale,
+              bulbX + highlight2X * this.scale,
+              bulbY + highlight2Y * this.scale,
               bulbRadius * 0.15,
             );
             this.gfx.fill({ color: 0xffffff, alpha: bulbAlpha * 0.9 });

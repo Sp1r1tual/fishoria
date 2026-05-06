@@ -287,8 +287,8 @@ export class DebugLayer {
       this.mapMask.fill(0xffffff);
     }
 
-    const rows = 64;
-    const cols = 64;
+    const rows = 128;
+    const cols = 128;
     const canvas = document.createElement('canvas');
     canvas.width = cols;
     canvas.height = rows;

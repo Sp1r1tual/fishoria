@@ -227,7 +227,6 @@ export class LakeScene implements IScene {
     this.drawStrikeHint(W, H);
 
     this.depthSystem = new DepthSystem(this.config.depthMap);
-    this.rod = new RodEntity(this.uiLayer);
     this.sectorSystem = new SectorSystem(
       this.config.fishSpawns,
       this.config.allowedCastArea,
@@ -256,12 +255,14 @@ export class LakeScene implements IScene {
     this.updateAllowedAreaBounds();
 
     this.debugLayer = new DebugLayer(
-      this.fishLayer,
+      this.uiLayer,
       this.app,
       this.depthSystem,
       this.sectorSystem,
       this.config,
     );
+
+    this.rod = new RodEntity(this.uiLayer);
 
     this.bubbleEffect = new BubbleEffect(this.fishLayer);
     this.hook = new HookEntity(this.fishLayer);
