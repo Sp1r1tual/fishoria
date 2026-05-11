@@ -7,6 +7,7 @@ import type {
 } from '@/common/types';
 
 import { PLAYER_KEYS } from './player.queries';
+import { QUEST_KEYS } from './quest.queries';
 
 import { ShopService } from '../services/shop.service';
 import {
@@ -122,6 +123,10 @@ export const useBuyMutation = () => {
         (old: IPlayerProfile | undefined) =>
           updateProfilePreservingGear(old, data),
       );
+
+      if (data.playerQuests) {
+        queryClient.setQueryData(QUEST_KEYS.all, data.playerQuests);
+      }
     },
   });
 };
@@ -178,6 +183,10 @@ export const useSellMutation = () => {
         (old: IPlayerProfile | undefined) =>
           updateProfilePreservingGear(old, data),
       );
+
+      if (data.playerQuests) {
+        queryClient.setQueryData(QUEST_KEYS.all, data.playerQuests);
+      }
     },
   });
 };

@@ -59,6 +59,9 @@ export function MainMenu() {
   const xpPct = Math.min(100, (xp / xpNeeded) * 100);
 
   const menuActions = getMenuActions(t);
+  const hasUnclaimedQuests = player?.playerQuests?.some(
+    (pq) => pq.isCompleted && !pq.isClaimed,
+  );
 
   return (
     <main className={`screen ${styles['main-menu']}`}>
@@ -188,6 +191,9 @@ export function MainMenu() {
                 icon={item.icon}
                 label={item.label}
                 onClick={() => navigate(item.path)}
+                badge={
+                  item.id === 'btn-quests' ? hasUnclaimedQuests : undefined
+                }
               />
             ))}
             <WoodyButton

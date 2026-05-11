@@ -8,6 +8,7 @@ import type {
 } from '@/common/types';
 
 import { PLAYER_KEYS } from './player.queries';
+import { QUEST_KEYS } from './quest.queries';
 import { store } from '@/store/store';
 import { clearPendingEquips } from '@/store/slices/gameSlice';
 
@@ -104,6 +105,10 @@ export const useCatchFishMutation = () => {
         (old: IPlayerProfile | undefined) =>
           updateProfilePreservingGear(old, data),
       );
+
+      if (data.playerQuests) {
+        queryClient.setQueryData(QUEST_KEYS.all, data.playerQuests);
+      }
     },
   });
 };
@@ -197,6 +202,10 @@ export const useBreakGearMutation = () => {
         (old: IPlayerProfile | undefined) =>
           updateProfilePreservingGear(old, data),
       );
+
+      if (data.playerQuests) {
+        queryClient.setQueryData(QUEST_KEYS.all, data.playerQuests);
+      }
     },
   });
 };

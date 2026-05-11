@@ -84,7 +84,11 @@ export const useClaimQuestReward = () => {
           updateProfilePreservingGear(old, updatedProfile),
       );
 
-      queryClient.invalidateQueries({ queryKey: QUEST_KEYS.all });
+      if (updatedProfile.playerQuests) {
+        queryClient.setQueryData(QUEST_KEYS.all, updatedProfile.playerQuests);
+      } else {
+        queryClient.invalidateQueries({ queryKey: QUEST_KEYS.all });
+      }
     },
   });
 };

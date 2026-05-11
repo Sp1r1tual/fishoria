@@ -11,6 +11,7 @@ import { store } from '@/store/store';
 
 import { addPendingEquips } from '@/store/slices/gameSlice';
 import { PLAYER_KEYS } from './player.queries';
+import { QUEST_KEYS } from './quest.queries';
 import { updateProfilePreservingGear } from '@/common/utils/gear.util';
 
 import { InventoryService } from '../services/inventory.service';
@@ -90,7 +91,12 @@ export const useEquipMutation = () => {
     },
     onSuccess: (updatedProfile) => {
       if (updatedProfile != null) {
-        queryClient.setQueryData(PLAYER_KEYS.profile(), updatedProfile);
+        const profile = updatedProfile as IPlayerProfile;
+        queryClient.setQueryData(PLAYER_KEYS.profile(), profile);
+
+        if (profile.playerQuests) {
+          queryClient.setQueryData(QUEST_KEYS.all, profile.playerQuests);
+        }
       }
     },
   });
@@ -146,11 +152,16 @@ export const useRepairMutation = () => {
       }
     },
     onSuccess: (data) => {
+      const profile = data as IPlayerProfile;
       queryClient.setQueryData(
         PLAYER_KEYS.profile(),
         (old: IPlayerProfile | undefined) =>
-          updateProfilePreservingGear(old, data as IPlayerProfile),
+          updateProfilePreservingGear(old, profile),
       );
+
+      if (profile.playerQuests) {
+        queryClient.setQueryData(QUEST_KEYS.all, profile.playerQuests);
+      }
     },
   });
 };
@@ -199,11 +210,16 @@ export const useConsumeMutation = () => {
       }
     },
     onSuccess: (data) => {
+      const profile = data as IPlayerProfile;
       queryClient.setQueryData(
         PLAYER_KEYS.profile(),
         (old: IPlayerProfile | undefined) =>
-          updateProfilePreservingGear(old, data as IPlayerProfile),
+          updateProfilePreservingGear(old, profile),
       );
+
+      if (profile.playerQuests) {
+        queryClient.setQueryData(QUEST_KEYS.all, profile.playerQuests);
+      }
     },
   });
 };
@@ -249,11 +265,16 @@ export const useDeleteMutation = () => {
       }
     },
     onSuccess: (data) => {
+      const profile = data as IPlayerProfile;
       queryClient.setQueryData(
         PLAYER_KEYS.profile(),
         (old: IPlayerProfile | undefined) =>
-          updateProfilePreservingGear(old, data as IPlayerProfile),
+          updateProfilePreservingGear(old, profile),
       );
+
+      if (profile.playerQuests) {
+        queryClient.setQueryData(QUEST_KEYS.all, profile.playerQuests);
+      }
     },
   });
 };
