@@ -13,7 +13,10 @@ export const calculateOptimisticLevel = (
 ): { newLevel: number; newXp: number } => {
   const species = FISH_SPECIES[speciesId];
   const multiplier = species?.priceMultiplier || 1.0;
-  const xpGain = Math.ceil((weight || 0) * EXPERIENCE.baseXpPerKg * multiplier);
+  const weightXp = Math.ceil(
+    (weight || 0) * EXPERIENCE.baseXpPerKg * multiplier,
+  );
+  const xpGain = Math.max(EXPERIENCE.minXpPerCatch, weightXp);
 
   let newXp = currentXp + xpGain;
   let newLevel = currentLevel;

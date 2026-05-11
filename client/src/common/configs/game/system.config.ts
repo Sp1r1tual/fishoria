@@ -90,6 +90,8 @@ export const SCENE_TIMING = {
 export const EXPERIENCE = {
   /** Base XP gained per kilogram of fish caught */
   baseXpPerKg: 25,
+  /** Minimum XP per catch */
+  minXpPerCatch: 10,
 } as const;
 
 export const ECONOMY = {
