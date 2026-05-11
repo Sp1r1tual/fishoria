@@ -33,9 +33,10 @@ export class GameService {
     }
 
     const multiplier = FISH_SPECIES_MULTIPLIERS[body.speciesId] || 1.0;
-    const xpGain = Math.ceil(
+    const weightXp = Math.ceil(
       (body.weight || 0) * EXPERIENCE.baseXpPerKg * multiplier,
     );
+    const xpGain = Math.max(EXPERIENCE.minXpPerCatch, weightXp);
     const updatedProfile = await this.gameEntity.executeCatchFishTx(
       profile,
       body,

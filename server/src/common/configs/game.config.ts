@@ -7,4 +7,5 @@ export const TRASH_ITEMS = [
 
 export const EXPERIENCE = {
   baseXpPerKg: 25,
+  minXpPerCatch: 10,
 } as const;
