@@ -28,7 +28,7 @@ export const BAITS: Record<string, IBaitConfig> = {
     id: 'maggot',
     name: 'Maggots',
     description: 'Excellent for roach and small fish.',
-    price: 3,
+    price: 2,
     icon: maggotIcon,
   },
   bread: {
@@ -42,21 +42,21 @@ export const BAITS: Record<string, IBaitConfig> = {
     id: 'corn',
     name: 'Sweetcorn',
     description: 'Attracts larger carp and grass carp.',
-    price: 7,
+    price: 5,
     icon: cornIcon,
   },
   dough: {
     id: 'dough',
     name: 'Dough Ball',
     description: 'Soft bait, fish love to nibble it.',
-    price: 3,
+    price: 2,
     icon: doughIcon,
   },
   live_bait: {
     id: 'live_bait',
     name: 'Live Bait',
     description: 'Small fish, attracts predators like pike.',
-    price: 20,
+    price: 15,
     icon: liveBaitIcon,
   },
 };

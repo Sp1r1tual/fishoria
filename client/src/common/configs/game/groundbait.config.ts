@@ -10,7 +10,7 @@ export const GROUNDBAITS: Record<string, IGroundbaitConfig> = {
     name: 'Vanillin Mix',
     description:
       'Sweet aroma that quickly attracts small schooling fish like roach and crucian.',
-    price: 45,
+    price: 30,
     icon: vanillinIcon,
     fishedSpeciesMultiplier: { roach: 1.4, crucian: 1.4, ruffe: 1.1 },
   },
@@ -20,7 +20,7 @@ export const GROUNDBAITS: Record<string, IGroundbaitConfig> = {
     name: 'Crushed Peas',
     description:
       'Heavy mix that stays on the bottom. Excellent for carp and grass carp.',
-    price: 99,
+    price: 65,
     icon: peasIcon,
     fishedSpeciesMultiplier: { carp: 1.5, grass_carp: 1.4, crucian: 1.1 },
   },
@@ -30,7 +30,7 @@ export const GROUNDBAITS: Record<string, IGroundbaitConfig> = {
     name: 'Dried Blood',
     description:
       'Strong trailing scent. Drives predators like perch, pike, and catfish crazy.',
-    price: 150,
+    price: 100,
     icon: bloodIcon,
     fishedSpeciesMultiplier: {
       perch: 1.15,

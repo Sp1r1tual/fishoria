@@ -42,16 +42,16 @@ const ITEM_PRICES: Record<string, number> = {
 
   // Baits
   worm: 2,
-  maggot: 3,
+  maggot: 2,
   bread: 1,
-  corn: 7,
-  dough: 3,
-  live_bait: 20,
+  corn: 5,
+  dough: 2,
+  live_bait: 15,
 
   // Groundbaits
-  vanillin: 45,
-  peas: 99,
-  dried_blood: 150,
+  vanillin: 30,
+  peas: 65,
+  dried_blood: 100,
 
   // Gadgets
   echo_sounder: 5000,
