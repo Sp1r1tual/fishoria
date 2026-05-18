@@ -4,8 +4,11 @@ import { useTranslation } from 'react-i18next';
 
 import { ScreenContainer } from '@/components/UI/ScreenContainer/ScreenContainer';
 import { ExpandButton } from '@/components/UI/buttons/ExpandButton/ExpandButton';
+import { WoodyButton } from '@/components/UI/buttons/WoodyButton/WoodyButton';
+import { GlassPanel } from '@/components/UI/GlassPanel/GlassPanel';
 
 import helpIcon from '@/assets/ui/help.webp';
+import guideIcon from '@/assets/ui/guide.webp';
 
 import styles from './Help.module.css';
 
@@ -28,6 +31,19 @@ export function Help() {
       onBack={() => navigate('/')}
       className={styles.help}
     >
+      <GlassPanel className={styles['help__guide-banner']}>
+        <h2 className={styles['help__guide-title']}>
+          {t('help.learnMoreFish', 'Дізнатись більше про риби:')}
+        </h2>
+        <WoodyButton
+          variant="brown"
+          size="sm"
+          icon={guideIcon}
+          label={t('mainMenu.guide')}
+          onClick={() => navigate('/guide')}
+          className={styles['help__guide-btn']}
+        />
+      </GlassPanel>
       <section className={styles['help__content']}>
         {Array.isArray(sections) &&
           sections.map((section, sIdx) => (

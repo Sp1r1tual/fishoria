@@ -36,9 +36,9 @@ export function Guide() {
     <ScreenContainer
       title={t('guide.title')}
       titleIcon={guideIcon}
-      onBack={() => navigate('/')}
+      onBack={() => navigate('/help')}
       className={styles.guide}
-      width="lg"
+      width="md"
     >
       <div>
         <div className={styles['guide__filter']}>

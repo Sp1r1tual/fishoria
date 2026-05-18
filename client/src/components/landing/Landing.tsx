@@ -13,7 +13,7 @@ import { CompanyBranding } from '@/components/landing/CompanyBranding';
 import { AuthBox } from '@/components/landing/AuthBox';
 import { ScrollHint } from '@/components/landing/ScrollHint';
 import { TapHint } from '@/components/landing/TapHint';
-import { ScrollToTop } from '@/components/landing/ScrollToTop';
+import { ScrollToTop } from '@/components/UI/ScrollToTop/ScrollToTop';
 
 import styles from './Landing.module.css';
 

@@ -1,6 +1,6 @@
 import type { TFunction } from 'i18next';
 
-import type { IGearItemBase } from '@/common/types';
+import type { IGearItemBase, IGearItemDisplay } from '@/common/types';
 
 import { CircleButton } from '@/components/UI/buttons/CircleButton/CircleButton';
 import { ConditionBar } from '@/components/Gear/ConditionBar';
@@ -50,6 +50,8 @@ export function GearItem({
 
   const conditionColor = (val: number) =>
     val < 20 ? '#ef4444' : val < 50 ? '#fbbf24' : '#4ade80';
+
+  const displayItem = item as IGearItemDisplay;
 
   return (
     <div
@@ -139,6 +141,33 @@ export function GearItem({
         <div className={styles['gear-item__desc']}>
           {getItemDescription(item)}
         </div>
+
+        {(displayItem.maxWeight !== undefined ||
+          displayItem.speed !== undefined ||
+          displayItem.quality !== undefined) && (
+          <div className={styles['gear-item__stats']}>
+            {displayItem.maxWeight !== undefined && (
+              <div className={styles['gear-item__stat']}>
+                {t('gear.stats.maxWeight')}:{' '}
+                <span>
+                  {displayItem.maxWeight}
+                  {t('gear.stats.kg')}
+                </span>
+              </div>
+            )}
+            {displayItem.speed !== undefined && (
+              <div className={styles['gear-item__stat']}>
+                {t('gear.stats.speed')}: <span>{displayItem.speed}x</span>
+              </div>
+            )}
+            {displayItem.quality !== undefined && (
+              <div className={styles['gear-item__stat']}>
+                {t('gear.stats.quality')}:{' '}
+                <span>{Math.round(displayItem.quality * 100)}%</span>
+              </div>
+            )}
+          </div>
+        )}
 
         {isSelected && (
           <div className={styles['gear-item__status--equipped']}>

@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { useGear } from '@/hooks/game/useGear';
 
 import { ScreenContainer } from '../UI/ScreenContainer/ScreenContainer';
 import { ConfirmChoiceModal } from '../UI/modals/ConfirmChoiceModal/ConfirmChoiceModal';
+import { UniversalModal } from '../UI/modals/UniversalModal/UniversalModal';
 import { ScreenHeader } from '../UI/ScreenHeader/ScreenHeader';
+import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
+import { GlassPanel } from '../UI/GlassPanel/GlassPanel';
 import { GearCategory } from './GearCategory';
 import { RepairModal } from './RepairModal';
 
@@ -11,7 +15,21 @@ import coinIcon from '@/assets/ui/coin.webp';
 
 import styles from './Gear.module.css';
 
+const GEAR_TABS = [
+  'all',
+  'rods',
+  'reels',
+  'lines',
+  'hooks',
+  'gadgets',
+  'bait',
+  'groundbait',
+] as const;
+type GearTabType = (typeof GEAR_TABS)[number];
+
 export function Gear({ onClose }: { onClose?: () => void }) {
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<GearTabType>('all');
   const {
     t,
     isLoading,
@@ -43,7 +61,7 @@ export function Gear({ onClose }: { onClose?: () => void }) {
   const guideText = t('gear.equipment_guide');
 
   const handleShowInfo = () => {
-    alert(guideText);
+    setIsInfoOpen(true);
   };
 
   if (isLoading || !player) {
@@ -71,100 +89,131 @@ export function Gear({ onClose }: { onClose?: () => void }) {
         </>
       )}
 
+      <div className={styles['gear__tabs_wrapper']}>
+        <GlassPanel>
+          <div className={styles['gear__tabs']}>
+            {GEAR_TABS.map((tab) => (
+              <WoodyButton
+                key={tab}
+                variant={activeTab === tab ? 'green' : 'brown'}
+                size="sm"
+                className={styles['gear__tab']}
+                onClick={() => setActiveTab(tab)}
+                label={t(`shop.tabs.${tab}`)}
+              />
+            ))}
+          </div>
+        </GlassPanel>
+      </div>
+
       <div
         className={`${styles['gear__container']} ${
           onClose ? styles.with_fade : ''
         }`}
       >
-        <GearCategory
-          title={t('shop.tabs.rods')}
-          items={getRodInstances()}
-          currentUid={player.equippedRodUid}
-          onEquip={(item) => handleEquip('rod', item, item.uid ?? null)}
-          onDelete={(item) =>
-            handleDelete(
-              'rod',
-              item.uid as string,
-              t(`gear_items.${item.id}.name`),
-            )
-          }
-          styles={styles}
-          t={t}
-        />
-        <GearCategory
-          title={t('shop.tabs.reels')}
-          items={getReelInstances()}
-          currentUid={player.equippedReelUid}
-          onEquip={(item) => handleEquip('reel', item, item.uid ?? null)}
-          onDelete={(item) =>
-            handleDelete(
-              'reel',
-              item.uid as string,
-              t(`gear_items.${item.id}.name`),
-            )
-          }
-          styles={styles}
-          t={t}
-        />
-        <GearCategory
-          title={t('shop.tabs.lines')}
-          items={getLineInstances()}
-          currentUid={player.equippedLineUid}
-          onEquip={(item) => handleEquip('line', item, item.uid ?? null)}
-          onDelete={(item) =>
-            handleDelete(
-              'line',
-              item.uid as string,
-              t(`gear_items.${item.id}.name`),
-            )
-          }
-          styles={styles}
-          t={t}
-        />
-        <GearCategory
-          title={t('shop.tabs.hooks')}
-          items={getHookInstances()}
-          currentUid={player.equippedHookUid}
-          onEquip={(item) => handleEquip('hook', item, item.uid ?? null)}
-          onDelete={(item) =>
-            handleDelete(
-              'hook',
-              item.uid as string,
-              t(`gear_items.${item.id}.name`),
-            )
-          }
-          styles={styles}
-          t={t}
-        />
-        <GearCategory
-          title={t('shop.tabs.gadgets')}
-          items={getGadgetInstances()}
-          onEquip={(item) => {
-            if (item.id === 'repair_kit' && item.uid) {
-              setRepairModal({ isOpen: true, kitUid: item.uid });
+        {(activeTab === 'all' || activeTab === 'rods') && (
+          <GearCategory
+            title={t('shop.tabs.rods')}
+            items={getRodInstances()}
+            currentUid={player.equippedRodUid}
+            onEquip={(item) => handleEquip('rod', item, item.uid ?? null)}
+            onDelete={(item) =>
+              handleDelete(
+                'rod',
+                item.uid as string,
+                t(`gear_items.${item.id}.name`),
+              )
             }
-          }}
-          styles={styles}
-          t={t}
-        />
-        <GearCategory
-          title={t('hud.bait')}
-          items={getOwnedBaits()}
-          currentId={activeBait}
-          onEquip={(item) => handleEquip('bait', item)}
-          styles={styles}
-          t={t}
-          isUnavailable={isSpinningRod}
-          unavailableMessage={t('gear.notAvailableForSpinning')}
-        />
-        <GearCategory
-          title={t('hud.groundbait')}
-          items={getOwnedGroundbaits()}
-          currentId={activeGroundbait}
-          onEquip={(item) => handleEquip('groundbait', item)}
-          styles={styles}
-          t={t}
-        />
+            styles={styles}
+            t={t}
+          />
+        )}
+        {(activeTab === 'all' || activeTab === 'reels') && (
+          <GearCategory
+            title={t('shop.tabs.reels')}
+            items={getReelInstances()}
+            currentUid={player.equippedReelUid}
+            onEquip={(item) => handleEquip('reel', item, item.uid ?? null)}
+            onDelete={(item) =>
+              handleDelete(
+                'reel',
+                item.uid as string,
+                t(`gear_items.${item.id}.name`),
+              )
+            }
+            styles={styles}
+            t={t}
+          />
+        )}
+        {(activeTab === 'all' || activeTab === 'lines') && (
+          <GearCategory
+            title={t('shop.tabs.lines')}
+            items={getLineInstances()}
+            currentUid={player.equippedLineUid}
+            onEquip={(item) => handleEquip('line', item, item.uid ?? null)}
+            onDelete={(item) =>
+              handleDelete(
+                'line',
+                item.uid as string,
+                t(`gear_items.${item.id}.name`),
+              )
+            }
+            styles={styles}
+            t={t}
+          />
+        )}
+        {(activeTab === 'all' || activeTab === 'hooks') && (
+          <GearCategory
+            title={t('shop.tabs.hooks')}
+            items={getHookInstances()}
+            currentUid={player.equippedHookUid}
+            onEquip={(item) => handleEquip('hook', item, item.uid ?? null)}
+            onDelete={(item) =>
+              handleDelete(
+                'hook',
+                item.uid as string,
+                t(`gear_items.${item.id}.name`),
+              )
+            }
+            styles={styles}
+            t={t}
+          />
+        )}
+        {(activeTab === 'all' || activeTab === 'gadgets') && (
+          <GearCategory
+            title={t('shop.tabs.gadgets')}
+            items={getGadgetInstances()}
+            onEquip={(item) => {
+              if (item.id === 'repair_kit' && item.uid) {
+                setRepairModal({ isOpen: true, kitUid: item.uid });
+              }
+            }}
+            styles={styles}
+            t={t}
+          />
+        )}
+        {(activeTab === 'all' || activeTab === 'bait') && (
+          <GearCategory
+            title={t('hud.bait')}
+            items={getOwnedBaits()}
+            currentId={activeBait}
+            onEquip={(item) => handleEquip('bait', item)}
+            styles={styles}
+            t={t}
+            isUnavailable={isSpinningRod}
+            unavailableMessage={t('gear.notAvailableForSpinning')}
+          />
+        )}
+        {(activeTab === 'all' || activeTab === 'groundbait') && (
+          <GearCategory
+            title={t('hud.groundbait')}
+            items={getOwnedGroundbaits()}
+            currentId={activeGroundbait}
+            onEquip={(item) => handleEquip('groundbait', item)}
+            styles={styles}
+            t={t}
+          />
+        )}
       </div>
     </div>
   );
@@ -194,6 +243,31 @@ export function Gear({ onClose }: { onClose?: () => void }) {
           t={t}
         />
       )}
+
+      <UniversalModal
+        isOpen={isInfoOpen}
+        title={t('gear.title')}
+        onClose={() => setIsInfoOpen(false)}
+        actions={
+          <WoodyButton
+            variant="brown"
+            size="md"
+            onClick={() => setIsInfoOpen(false)}
+            label={t('nav.back')}
+          />
+        }
+      >
+        <p
+          style={{
+            lineHeight: 1.5,
+            textAlign: 'left',
+            margin: 0,
+            whiteSpace: 'pre-line',
+          }}
+        >
+          {guideText}
+        </p>
+      </UniversalModal>
     </>
   );
 

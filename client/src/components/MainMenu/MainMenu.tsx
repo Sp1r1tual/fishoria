@@ -42,6 +42,7 @@ export function MainMenu() {
   const { data: player, isLoading } = usePlayerQuery();
   const { hasUnread } = useNewsState();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isBaseModalOpen, setIsBaseModalOpen] = useState(false);
   const { t } = useTranslation();
 
   const connectionStatus = useAppSelector(selectGlobalConnectionStatus);
@@ -190,7 +191,13 @@ export function MainMenu() {
                 isTile={true}
                 icon={item.icon}
                 label={item.label}
-                onClick={() => navigate(item.path)}
+                onClick={() => {
+                  if (item.id === 'btn-home') {
+                    setIsBaseModalOpen(true);
+                  } else {
+                    navigate(item.path);
+                  }
+                }}
                 badge={
                   item.id === 'btn-quests' ? hasUnclaimedQuests : undefined
                 }
@@ -221,6 +228,30 @@ export function MainMenu() {
         closeButtonVariant="wooden"
       >
         <ProfileEdit />
+      </Modal>
+
+      <Modal
+        isOpen={isBaseModalOpen}
+        onClose={() => setIsBaseModalOpen(false)}
+        title={t('mainMenu.base', 'База')}
+        showCloseButton={true}
+        closeButtonVariant="wooden"
+      >
+        <div
+          style={{
+            padding: '20px',
+            textAlign: 'center',
+            color: '#fff',
+            fontSize: '18px',
+          }}
+        >
+          <p>
+            {t(
+              'mainMenu.baseUnderDevelopment',
+              'Секція бази знаходиться у розробці. Слідкуйте за оновленнями!',
+            )}
+          </p>
+        </div>
       </Modal>
     </main>
   );

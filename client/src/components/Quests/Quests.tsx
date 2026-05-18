@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
@@ -14,6 +15,7 @@ import styles from './Quests.module.css';
 export function Quests() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [openQuestId, setOpenQuestId] = useState<string | null>(null);
 
   const { data: rawQuests, isLoading } = useQuests();
 
@@ -34,7 +36,14 @@ export function Quests() {
         ) : quests.length > 0 ? (
           <div className={`${styles.quest_list} fade-in`}>
             {quests.map((pq) => (
-              <QuestItem key={pq.id} pq={pq} />
+              <QuestItem
+                key={pq.id}
+                pq={pq}
+                isExpanded={openQuestId === pq.id}
+                onToggle={() =>
+                  setOpenQuestId(openQuestId === pq.id ? null : pq.id)
+                }
+              />
             ))}
           </div>
         ) : (

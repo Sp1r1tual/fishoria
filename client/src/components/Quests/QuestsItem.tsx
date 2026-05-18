@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type {
@@ -16,10 +15,17 @@ import coinIcon from '@/assets/ui/coin.webp';
 
 import styles from './Quests.module.css';
 
-export function QuestItem({ pq }: { pq: IPlayerQuest }) {
+export function QuestItem({
+  pq,
+  isExpanded = false,
+  onToggle,
+}: {
+  pq: IPlayerQuest;
+  isExpanded?: boolean;
+  onToggle?: () => void;
+}) {
   const { t } = useTranslation();
   const claimMutation = useClaimQuestReward();
-  const [isExpanded, setIsExpanded] = useState(false);
 
   const quest = pq.quest;
   const isClaimed = pq.isClaimed;
@@ -60,7 +66,7 @@ export function QuestItem({ pq }: { pq: IPlayerQuest }) {
           <>
             <div
               className={`${styles.quest_condition} ${styles['quest_condition--toggle']}`}
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={onToggle}
             >
               <div className={styles.quest_condition__label}>
                 <span>{t('quests.progress', 'Progress')}</span>

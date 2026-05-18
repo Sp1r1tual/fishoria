@@ -241,7 +241,7 @@ export function Inventory({ isModal = false }: { isModal?: boolean }) {
       onBack={handleBack}
       className={styles.inventory}
       headerExtra={sellButton}
-      width="lg"
+      width="md"
     >
       {content}
     </ScreenContainer>

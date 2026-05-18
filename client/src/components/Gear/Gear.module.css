@@ -37,6 +37,28 @@
   min-height: 0;
 }
 
+.gear__tabs_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gear__tabs {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gear__tab {
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 0;
+  min-width: fit-content;
+}
+
 .with_fade {
   overflow-y: auto;
   flex: 1;
@@ -117,6 +139,7 @@
   height: 100%;
   min-height: 120px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (max-width: 480px) {
@@ -128,7 +151,7 @@
 }
 
 .gear-item:not(.gear-item--equipped):not(.gear-item--broken):hover {
-  background: #334155;
+  background: #2f3c4e;
   border-color: rgba(255, 255, 255, 0.15);
   transform: translateY(-1px);
 }
@@ -137,7 +160,8 @@
   background-image:
     radial-gradient(
       ellipse at center,
-      rgba(255, 253, 230, 0.8) 0%,
+      rgba(255, 255, 255, 0.85) 0%,
+      rgba(255, 255, 255, 0.45) 40%,
       transparent 100%
     ),
     var(--pattern-wood-url);
@@ -150,7 +174,7 @@
 
 .gear-item--equipped .gear-item__name {
   color: #000;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
+  text-shadow: none;
 }
 
 .gear-item--equipped .gear-item__desc {
@@ -183,17 +207,18 @@
 .gear-item__icon {
   width: 48px;
   height: 48px;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.85);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
   flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .gear-item--equipped .gear-item__icon {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.85);
 }
 
 .gear-item__icon img {
@@ -279,6 +304,44 @@
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
 }
 
+.gear-item__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 4px;
+}
+
+.gear-item--equipped .gear-item__stats {
+  background: rgba(0, 0, 0, 0.15);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.gear-item__stat {
+  font-size: 0.75rem;
+  color: var(--clr-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.gear-item--equipped .gear-item__stat {
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.gear-item__stat span {
+  color: var(--clr-accent);
+  font-weight: 800;
+  margin-left: 4px;
+}
+
+.gear-item--equipped .gear-item__stat span {
+  color: #000;
+}
+
 .gear-item__status--equipped {
   align-self: flex-end;
   margin-top: 8px;
@@ -333,7 +396,7 @@
 }
 
 .gear__repair-modal-inner {
-  background: #1e293b;
+  background: #1c2637;
   border: 1px solid rgba(251, 191, 36, 0.3);
   border-radius: 12px;
   width: 100%;
@@ -408,9 +471,10 @@
 .gear__repair-item-icon {
   width: 40px;
   height: 40px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.85);
   border-radius: 6px;
   padding: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .gear__repair-item-icon img {
@@ -480,6 +544,15 @@
   .gear-item__desc {
     font-size: 0.75rem;
     line-height: 1.25;
+  }
+
+  .gear-item__stats {
+    padding: 4px 8px;
+    gap: 4px 8px;
+  }
+
+  .gear-item__stat {
+    font-size: 0.65rem;
   }
 
   .gear-item__condition-bar {

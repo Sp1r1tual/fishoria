@@ -13,12 +13,22 @@ import { useAuthInitialization } from '../hooks/core/useAuthInitialization';
 import { addToast } from '@/store/slices/uiSlice';
 
 import { GlobalPreloader } from '@/components/UI/GlobalPreloader/GlobalPreloader';
-import { ScrollToTop } from '@/components/UI/ScrollToTop/ScrollToTop';
 import { RouteMetadata } from '@/components/logic/RouteMetadata';
 import { CookieConsent } from '@/components/CookieConsent/CookieConsent';
 import { ToastContainer } from '@/components/UI/Toast/ToastContainer';
 
 import { isPublicRoute } from '@/common/constants/routes';
+
+const ScrollResetter = () => {
+  const { pathname } = useLocation();
+  const screen = useAppSelector((state) => state.ui.screen);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname, screen]);
+
+  return null;
+};
 
 export const AuthLayout = () => {
   const location = useLocation();
@@ -95,7 +105,7 @@ export const AuthLayout = () => {
   return (
     <>
       <RouteMetadata />
-      <ScrollToTop />
+      <ScrollResetter />
       <ToastContainer />
 
       <Suspense fallback={<GlobalPreloader delay={0} />}>

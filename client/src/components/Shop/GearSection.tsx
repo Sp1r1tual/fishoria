@@ -1,6 +1,10 @@
 import type { TFunction } from 'i18next';
 
-import type { IGearItemBase, GearItemType, GearTypeType } from '@/common/types';
+import type {
+  GearItemType,
+  GearTypeType,
+  IGearItemDisplay,
+} from '@/common/types';
 
 import { ItemIcon } from '../UI/ItemIcon/ItemIcon';
 import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
@@ -17,13 +21,6 @@ interface IGearSectionProps {
   isUniqueGadget: (id: string) => boolean;
   styles: Record<string, string>;
   t: TFunction;
-}
-
-interface IGearItemDisplay extends IGearItemBase {
-  maxWeight?: number;
-  speed?: number;
-  totalLength?: number;
-  quality?: number;
 }
 
 export function GearSection({

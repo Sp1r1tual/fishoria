@@ -12,6 +12,7 @@
     "coin": "монет"
   },
   "mainMenu": {
+    "home": "База",
     "startFishing": "Почати рибалку",
     "shop": "Магазин",
     "keepnet": "Садок",
@@ -117,6 +118,7 @@
   },
   "help": {
     "title": "Допомога",
+    "learnMoreFish": "Дізнатись більше про риби:",
     "sections": [
       {
         "title": "Основи геймплею",
@@ -368,6 +370,7 @@
     "available": "В наявності",
     "notEnoughMoney": "Недостатньо грошей!",
     "tabs": {
+      "all": "Всі",
       "bait": "Наживка",
       "groundbait": "Суміш",
       "rods": "Вудлища",

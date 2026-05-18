@@ -10,6 +10,40 @@
   gap: 32px;
 }
 
+.help__guide-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  margin-bottom: 24px;
+  gap: 16px;
+  border-left: 4px solid var(--clr-accent);
+}
+
+.help__guide-title {
+  font-size: 1.2rem;
+  color: var(--clr-primary-light);
+  margin: 0;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .help__guide-btn {
+    padding: 10px 20px !important;
+    font-size: 0.8rem !important;
+    min-height: 40px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .help__guide-banner {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    padding: 16px;
+  }
+}
+
 .help__category-group {
   display: flex;
   flex-direction: column;

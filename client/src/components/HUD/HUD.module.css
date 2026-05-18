@@ -34,9 +34,6 @@
 
 .hud__exit-wrapper--loading {
   z-index: 10001;
-  position: fixed;
-  top: max(12px, env(safe-area-inset-top));
-  right: max(20px, env(safe-area-inset-right));
   pointer-events: auto;
 }
 

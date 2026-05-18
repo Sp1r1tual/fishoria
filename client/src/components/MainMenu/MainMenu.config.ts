@@ -5,7 +5,7 @@ import equipmentIcon from '@/assets/ui/equipment.webp';
 import shopIcon from '@/assets/ui/shop.webp';
 import settingsIcon from '@/assets/ui/settings.webp';
 import statisticsIcon from '@/assets/ui/statistics.webp';
-import guideIcon from '@/assets/ui/guide.webp';
+import homeIcon from '@/assets/ui/home.webp';
 import questsIcon from '@/assets/ui/quests.webp';
 import helpIcon from '@/assets/ui/help.webp';
 import achievementsIcon from '@/assets/ui/achievements.webp';
@@ -30,10 +30,10 @@ export const getMenuActions = (t: TFunction) => [
     path: '/marketplace',
   },
   {
-    id: 'btn-stats',
-    icon: statisticsIcon,
-    label: t('mainMenu.statistics'),
-    path: '/statistics',
+    id: 'btn-home',
+    icon: homeIcon,
+    label: t('mainMenu.home', 'Home'),
+    path: '/',
   },
   {
     id: 'btn-quests',
@@ -48,10 +48,10 @@ export const getMenuActions = (t: TFunction) => [
     path: '/achievements',
   },
   {
-    id: 'btn-guide',
-    icon: guideIcon,
-    label: t('mainMenu.guide'),
-    path: '/guide',
+    id: 'btn-stats',
+    icon: statisticsIcon,
+    label: t('mainMenu.statistics'),
+    path: '/statistics',
   },
   {
     id: 'btn-help',

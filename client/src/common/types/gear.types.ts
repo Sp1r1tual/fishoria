@@ -117,6 +117,13 @@ export interface IGearItemBase {
   rodCategory?: 'float' | 'feeder' | 'spinning';
 }
 
+export interface IGearItemDisplay extends IGearItemBase {
+  maxWeight?: number;
+  speed?: number;
+  totalLength?: number;
+  quality?: number;
+}
+
 export interface IGearAction {
   targetType: 'rod' | 'reel' | 'line' | 'hook' | 'bait' | 'groundbait';
   uid?: string | null;

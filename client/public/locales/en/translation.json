@@ -12,6 +12,7 @@
     "coin": "coins"
   },
   "mainMenu": {
+    "home": "Base",
     "startFishing": "Start Fishing",
     "shop": "Shop",
     "keepnet": "Keepnet",
@@ -117,6 +118,7 @@
   },
   "help": {
     "title": "Help & FAQ",
+    "learnMoreFish": "Learn more about fish:",
     "sections": [
       {
         "title": "General Gameplay",
@@ -368,6 +370,7 @@
     "available": "Available",
     "notEnoughMoney": "Not enough money!",
     "tabs": {
+      "all": "All",
       "bait": "Bait",
       "groundbait": "Mixture",
       "rods": "Rods",
