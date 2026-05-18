@@ -58,10 +58,7 @@
 
 @media (max-width: 768px) {
   .scrollToTop {
-    bottom: max(
-      calc(env(safe-area-inset-bottom, 16px) + 75px),
-      calc(var(--footer-offset, 0px) + 20px)
-    );
+    bottom: max(75px, calc(var(--footer-offset, 0px) + 20px));
     right: 20px;
     width: 44px;
     height: 44px;
