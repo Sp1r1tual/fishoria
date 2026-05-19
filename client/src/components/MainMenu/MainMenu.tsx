@@ -245,12 +245,7 @@ export function MainMenu() {
             fontSize: '18px',
           }}
         >
-          <p>
-            {t(
-              'mainMenu.baseUnderDevelopment',
-              'Секція бази знаходиться у розробці. Слідкуйте за оновленнями!',
-            )}
-          </p>
+          <p>{t('mainMenu.baseUnderDevelopment')}</p>
         </div>
       </Modal>
     </main>

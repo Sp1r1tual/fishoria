@@ -9,10 +9,25 @@ export interface INews {
   updatedAt: string;
 }
 
+export interface IPaginatedNews {
+  data: INews[];
+  hasMore: boolean;
+}
+
 export class NewsService {
-  static async getAll(lang: string = 'en') {
-    const { data } = await $mainApi.get<INews[]>('/news', {
-      params: { lang },
+  static async getAll(lang?: string): Promise<INews[]>;
+  static async getAll(
+    lang: string,
+    page: number,
+    limit: number,
+  ): Promise<IPaginatedNews>;
+  static async getAll(
+    lang: string = 'en',
+    page?: number,
+    limit?: number,
+  ): Promise<INews[] | IPaginatedNews> {
+    const { data } = await $mainApi.get<INews[] | IPaginatedNews>('/news', {
+      params: { lang, page, limit },
     });
     return data;
   }

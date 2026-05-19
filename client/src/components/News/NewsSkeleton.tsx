@@ -2,9 +2,13 @@ import Skeleton from 'react-loading-skeleton';
 
 import styles from './News.module.css';
 
-export const NewsSkeleton = () => (
+interface NewsSkeletonProps {
+  count?: number;
+}
+
+export const NewsSkeleton = ({ count = 2 }: NewsSkeletonProps) => (
   <div className={styles.news__list}>
-    {[1, 2].map((i) => (
+    {Array.from({ length: count }).map((_, i) => (
       <div key={i} className={styles.newsItem}>
         <div className={styles.newsItem__imageWrap}>
           <Skeleton height={240} width="100%" style={{ display: 'block' }} />

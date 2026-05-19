@@ -27,7 +27,9 @@
     "savedSuccess": "Game saved!",
     "savedError": "Failed to save game!",
     "news": "News",
-    "achievements": "Achievements"
+    "achievements": "Achievements",
+    "base": "Base",
+    "baseUnderDevelopment": "Under development. Something interesting is coming very soon"
   },
   "settings": {
     "title": "Settings",

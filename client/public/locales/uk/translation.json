@@ -27,7 +27,9 @@
     "savedSuccess": "Гру збережено!",
     "savedError": "Не вдалось зберегти гру!",
     "news": "Новини",
-    "achievements": "Досягнення"
+    "achievements": "Досягнення",
+    "base": "База",
+    "baseUnderDevelopment": "У розробці. Тут буде дещо цікаве зовсім скоро"
   },
   "settings": {
     "title": "Налаштування",
