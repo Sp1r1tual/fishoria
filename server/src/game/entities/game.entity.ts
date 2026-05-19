@@ -219,6 +219,13 @@ export class GameEntity {
         profile.id,
         isTrophy,
       );
+
+      if (body.tackleStrengthExceeded) {
+        await this.achievementEntity.checkAndAssignOnTheEdgeAchievement(
+          tx,
+          profile.id,
+        );
+      }
     });
 
     return await this.findProfileWithFullInclude(profile.id, _language);

@@ -63,6 +63,29 @@ const PlayerAchievementSchema = z.object({
   }),
 });
 
+const DailyRewardSchema = z.object({
+  day: z.number(),
+  money: z.number().optional(),
+  consumables: z
+    .array(
+      z.object({
+        itemType: z.string(),
+        itemId: z.string(),
+        quantity: z.number(),
+      }),
+    )
+    .optional(),
+  gearItems: z
+    .array(
+      z.object({
+        itemType: z.string(),
+        itemId: z.string(),
+        quantity: z.number().optional(),
+      }),
+    )
+    .optional(),
+});
+
 const PlayerProfileResponseSchema = z.object({
   id: z.string(),
   userId: z.string(),
@@ -82,6 +105,9 @@ const PlayerProfileResponseSchema = z.object({
   lakeStats: z.array(LakeStatisticSchema),
   playerQuests: z.array(PlayerQuestSchema),
   playerAchievements: z.array(PlayerAchievementSchema),
+  lastLoginAt: z.iso.datetime().or(z.any()).nullable().optional(),
+  consecutiveDays: z.number().nullable().optional(),
+  dailyReward: DailyRewardSchema.nullable().optional(),
   createdAt: z.iso.datetime().or(z.any()).optional(),
   updatedAt: z.iso.datetime().or(z.any()).optional(),
   user: z.object({

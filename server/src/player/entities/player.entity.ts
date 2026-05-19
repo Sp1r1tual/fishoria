@@ -4,6 +4,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { FULL_PROFILE_INCLUDE } from '../constants/player.constants';
 import { getXpNeededForLevel } from '../utils/player-experience.util';
+import { DailyReward } from '../../common/configs/daily-rewards.config';
 
 @Injectable()
 export class PlayerEntity {
@@ -42,6 +43,76 @@ export class PlayerEntity {
       where: { id: profileId },
       data,
       include: FULL_PROFILE_INCLUDE,
+    });
+  }
+
+  async applyDailyReward(
+    profileId: string,
+    consecutiveDays: number,
+    reward: DailyReward,
+  ) {
+    return this.prisma.$transaction(async (tx) => {
+      const updateData: Prisma.PlayerProfileUpdateInput = {
+        lastLoginAt: new Date(),
+        consecutiveDays,
+      };
+
+      if (reward.money) {
+        updateData.money = { increment: reward.money };
+      }
+
+      await tx.playerProfile.update({
+        where: { id: profileId },
+        data: updateData,
+      });
+
+      if (reward.consumables) {
+        for (const cons of reward.consumables) {
+          const existing = await tx.consumableItem.findFirst({
+            where: {
+              profileId,
+              itemId: cons.itemId,
+              itemType: cons.itemType,
+            },
+          });
+          if (existing) {
+            await tx.consumableItem.update({
+              where: { id: existing.id },
+              data: { quantity: { increment: cons.quantity } },
+            });
+          } else {
+            await tx.consumableItem.create({
+              data: {
+                profileId,
+                itemType: cons.itemType,
+                itemId: cons.itemId,
+                quantity: cons.quantity,
+              },
+            });
+          }
+        }
+      }
+
+      if (reward.gearItems) {
+        for (const gear of reward.gearItems) {
+          const q = gear.quantity || 1;
+          for (let i = 0; i < q; i++) {
+            await tx.gearItem.create({
+              data: {
+                profileId,
+                itemType: gear.itemType,
+                itemId: gear.itemId,
+                condition: 100,
+              },
+            });
+          }
+        }
+      }
+
+      return tx.playerProfile.findUnique({
+        where: { id: profileId },
+        include: FULL_PROFILE_INCLUDE,
+      });
     });
   }
 

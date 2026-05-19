@@ -91,4 +91,31 @@ export class AchievementEntity {
       }
     }
   }
+
+  async checkAndAssignOnTheEdgeAchievement(
+    tx: Prisma.TransactionClient,
+    profileId: string,
+  ) {
+    const achCode = 'on_the_edge';
+    const ach = await tx.achievement.findUnique({
+      where: { code: achCode },
+    });
+
+    if (ach) {
+      const hasAch = await tx.playerAchievement.findUnique({
+        where: {
+          profileId_achievementId: {
+            profileId,
+            achievementId: ach.id,
+          },
+        },
+      });
+
+      if (!hasAch) {
+        await tx.playerAchievement.create({
+          data: { profileId, achievementId: ach.id },
+        });
+      }
+    }
+  }
 }

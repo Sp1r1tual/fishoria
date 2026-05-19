@@ -4,41 +4,66 @@
  */
 
 const ITEM_PRICES: Record<string, number> = {
-  // Rods
+  // Rods (Float - 8 Items)
   rod_starter: 0,
   rod_basic: 650,
+  rod_amateur: 1500,
   rod_pro: 3500,
+  rod_advanced: 8000,
   rod_titanium: 15000,
-  rod_spinning_basic: 0,
-  rod_spinning_pro: 4200,
-  rod_spinning_ultra: 18000,
+  rod_nanotube: 26000,
+  rod_kraken: 48000,
 
-  // Reels
+  // Rods (Spinning - 8 Items)
+  rod_spinning_basic: 0,
+  rod_spinning_amateur: 750,
+  rod_spinning_classic: 1800,
+  rod_spinning_pro: 4200,
+  rod_spinning_advanced: 9000,
+  rod_spinning_ultra: 18000,
+  rod_spinning_ocean: 30000,
+  rod_spinning_leviathan: 50000,
+
+  // Reels (8 Items)
   reel_handmade: 0,
   reel_basic: 550,
+  reel_amateur: 1400,
   reel_multi: 3200,
+  reel_advanced: 7500,
   reel_electric: 16000,
+  reel_marine: 26000,
+  reel_poseidon: 48000,
 
-  // Lines
+  // Lines (8 Items)
   line_thread: 0,
   line_mono: 180,
+  line_fluorocarbon_basic: 600,
   line_fluoro: 1200,
+  line_braid_light: 2500,
   line_braid: 4500,
+  line_tungsten: 7000,
+  line_nanofiber: 12000,
 
   // Hooks (float)
   hook_rusted: 0,
   hook_iron: 80,
   hook_steel: 400,
   hook_barbed: 1800,
+  hook_tungsten: 2800,
+  hook_kraken: 5000,
 
   // Hooks (feeder)
   hook_feeder_basic: 150,
   hook_feeder_pro: 1400,
+  hook_feeder_heavy: 2200,
+  hook_feeder_titan: 4500,
 
   // Lures (spinning)
   lure_vibrotail: 120,
   lure_spoon: 350,
   lure_wobbler: 1600,
+  lure_spoon_heavy: 2500,
+  lure_wobbler_titan: 4800,
 
   // Baits
   worm: 2,

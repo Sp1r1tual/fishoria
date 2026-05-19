@@ -15,6 +15,7 @@ const CatchSchema = z.object({
   maxWeight: z.number().optional(),
   sizeRank: z.enum(['small', 'good', 'trophy']).optional(),
   isReleased: z.boolean().optional(),
+  tackleStrengthExceeded: z.boolean().optional(),
 });
 
 export class CatchDto extends createZodDto(CatchSchema) {}

@@ -27,6 +27,20 @@ export async function seedAchievements(prisma: PrismaClient) {
         'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/achievements_icons/achievement_sportsman_fisher.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL2FjaGlldmVtZW50c19pY29ucy9hY2hpZXZlbWVudF9zcG9ydHNtYW5fZmlzaGVyLndlYnAiLCJpYXQiOjE3NzU4MjEwMTUsImV4cCI6NDg5Nzg4NTAxNX0.H3EPE-8Kfb7mkPG9tiqNb4pjoR-8cibHvHKw4ZcuxxY',
       order: 2,
     },
+    {
+      code: 'on_the_edge',
+      title: {
+        en: 'On the Edge',
+        uk: 'На межі',
+      },
+      description: {
+        en: 'Catch a fish that exceeds the strength of your tackle.',
+        uk: 'Витягнути рибу, яка перевищує міцність ваших снастей.',
+      },
+      imageUrl:
+        'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/public/Game/achievements_icons/achievement_on_the_edge.webp',
+      order: 3,
+    },
   ];
 
   for (const ach of achievements) {

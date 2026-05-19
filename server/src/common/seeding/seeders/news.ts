@@ -9,6 +9,43 @@ export async function seedNews(prisma: PrismaClient) {
   }[] = [
     {
       title: {
+        en: 'Update 0.6.0: Three New Lakes & Daily Rewards',
+        uk: 'Оновлення 0.6.0: Три нові озера та щоденні бонуси',
+      },
+      content: {
+        en: `
+### 0.6.0 Update: New Horizons!
+We are thrilled to bring you one of our largest updates yet, introducing massive new content, rewards, and optimizations!
+
+* **Three Brand New Locations**: Explore gorgeous new waters, including the wild **Mountain River**, the majestic **Black Sea**, and the mysterious **City Lake**. Each location features unique visual styling, realistic hydrological depth relief, and custom casting boundaries.
+* **New Fish Species**: Adapt your tackle and strategies to catch a whole range of new marine and freshwater giants! Fill your collection with exotic species.
+* **New Tackle & Gear**: Equip brand new rods, reels, lines, and hooks designed specifically to withstand the tension of deep-sea giants and fast mountain river flows.
+* **Daily Bonus System**: Log in every day to claim valuable rewards! Keep your streak active to earn premium bonuses.
+* **Interface Improvements**: Beautiful refinements to the HUD and menus. Enjoy smoother navigation, improved depth display and real-time interactive lure physics.
+* **Bug Fixes & Technical Polish**: Fixed several critical bugs including rod/reel physics, bobber delay on cast, and general optimization for mobile screens.
+
+Pack your gear and get ready to conquer the new waters!
+        `,
+        uk: `
+### Оновлення 0.6.0: Нові Горизонти!
+Ми раді представити одне з найбільших оновлень гри, яке приносить море свіжого контенту, щедрі нагороди та безліч оптимізацій!
+
+* **Три нові локації**: Досліджуйте мальовничі нові водойми – бурхливу **Гірську річку**, величне **Чорне море** та загадкове **Міське озеро**. Кожна локація отримала унікальний дизайн, реалістичний рельєф глибин та витончені межі ловлі.
+* **Нові види риб**: Підбирайте наживки та розробляйте стратегії для вилову нових прісноводних та морських гігантів! Поповнюйте свій довідник унікальними трофеями.
+* **Нові снасті та спорядження**: Оновіть свій арсенал новими вудлищами, потужними котушками, міцними волосінями та гачками, створеними спеціально для протистояння глибоководним монстрам та стрімким гірським річкам.
+* **Щоденний бонус**: Заходьте в гру щодня та отримуйте цінні подарунки! Підтримуйте щоденну серію входів, щоб забирати найкрутіші нагороди.
+* **Покращення інтерфейсу**: Суттєво доопрацьовано HUD та меню. Насолоджуйтесь плавнішою навігацією, миттєвим відображенням глибини та інтерактивною фізикою проводки спінінга.
+* **Виправлення багів**: Усунено критичні помилки з фізикою вудлищ/котушок, прибрано затримку перед першим підтягуванням приманки та оптимізовано відображення інтерфейсу.
+
+Збирайте снасті та вирушайте підкорювати нові вершини у Fishoria!
+        `,
+      },
+      imageUrl:
+        'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/public/Game/news_icons/0.6.0-beta_update.webp',
+      createdAt: new Date('2026-05-19T12:00:00Z'),
+    },
+    {
+      title: {
         en: 'Update 0.5.0: Online Update & Interactions',
         uk: 'Оновлення 0.5.0: Онлайн та Спілкування',
       },

@@ -15,6 +15,8 @@ import {
 
 import { mapPlayerProfile } from './mappers/player.mapper';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { DAILY_REWARDS } from '../common/configs/daily-rewards.config';
+import { getDaysDifference } from '../common/utils/date.util';
 
 const QUEST_COUNT_CACHE_KEY = 'cache:quest_count';
 const QUEST_COUNT_TTL = 300;
@@ -101,6 +103,53 @@ export class PlayerService {
     }
 
     if (isMe && profile) {
+      const now = new Date();
+      const profileDto = profile as PlayerProfileResponseDto;
+      const lastLoginAtStr = profileDto.lastLoginAt;
+      const lastLogin = lastLoginAtStr
+        ? new Date(lastLoginAtStr as string)
+        : null;
+      let consecutiveDays = (profileDto.consecutiveDays as number) || 0;
+      let grantReward = false;
+
+      if (!lastLogin) {
+        grantReward = true;
+        consecutiveDays = 1;
+      } else {
+        const diffDays = getDaysDifference(now, lastLogin);
+
+        if (diffDays === 1) {
+          grantReward = true;
+          consecutiveDays += 1;
+          if (consecutiveDays > 7) consecutiveDays = 1;
+        } else if (diffDays > 1) {
+          grantReward = true;
+          consecutiveDays = 1;
+        }
+      }
+
+      if (grantReward) {
+        const rewardConfig =
+          DAILY_REWARDS.find((r) => r.day === consecutiveDays) ||
+          DAILY_REWARDS[0];
+
+        const updatedRawProfile = await this.playerEntity.applyDailyReward(
+          profile.id,
+          consecutiveDays,
+          rewardConfig,
+        );
+
+        profile = mapPlayerProfile(
+          updatedRawProfile,
+          lang,
+        ) as unknown as PlayerProfileResponseDto;
+
+        profile = {
+          ...profile,
+          dailyReward: rewardConfig,
+        } as unknown as PlayerProfileResponseDto;
+      }
+
       await this.syncQuests(profile.id, profile.playerQuests?.length ?? 0);
     }
 
