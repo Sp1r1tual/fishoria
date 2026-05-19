@@ -20,8 +20,14 @@ export class NewsController {
   constructor(private readonly newsService: NewsService) {}
 
   @Get()
-  getAllNews(@Query('lang') lang?: string) {
-    return this.newsService.getAllNews(lang);
+  getAllNews(
+    @Query('lang') lang?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const pageNum = page ? parseInt(page, 10) : undefined;
+    const limitNum = limit ? parseInt(limit, 10) : undefined;
+    return this.newsService.getAllNews(lang, pageNum, limitNum);
   }
 
   @Get(':id')

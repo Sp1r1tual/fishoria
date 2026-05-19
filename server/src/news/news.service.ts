@@ -4,6 +4,16 @@ import { News, NewsTranslation, Prisma } from '@prisma/client';
 import { RedisService } from '../common/redis/redis.service';
 import { NewsEntity } from './entities/news.entity';
 
+export interface ILocalizedNews {
+  id: string;
+  imageUrl: string | null;
+  isPublished: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  title: string;
+  content: string;
+}
+
 const NEWS_CACHE_TTL = 600;
 
 @Injectable()
@@ -13,26 +23,42 @@ export class NewsService {
     private readonly redis: RedisService,
   ) {}
 
-  async getAllNews(language: string = 'en') {
+  async getAllNews(language: string = 'en', page?: number, limit?: number) {
     const cacheKey = `cache:news:${language}`;
 
+    let result: ILocalizedNews[] | null = null;
     const cached = await this.redis.get(cacheKey);
     if (cached) {
-      if (typeof cached !== 'string') return cached;
-      try {
-        return JSON.parse(cached);
-      } catch {
-        console.error(`Corrupted cache for news at ${cacheKey}. Clearing...`);
-        await this.redis.del(cacheKey).catch(() => null);
+      if (typeof cached !== 'string') {
+        result = cached as unknown as ILocalizedNews[];
+      } else {
+        try {
+          result = JSON.parse(cached);
+        } catch {
+          console.error(`Corrupted cache for news at ${cacheKey}. Clearing...`);
+          await this.redis.del(cacheKey).catch(() => null);
+        }
       }
     }
 
-    const news = await this.newsEntity.findPublished(language);
-    const result = news.map((item) => this.mapLocalized(item));
+    if (!result) {
+      const news = await this.newsEntity.findPublished(language);
+      result = news.map((item) => this.mapLocalized(item));
 
-    await this.redis
-      .set(cacheKey, JSON.stringify(result), { ex: NEWS_CACHE_TTL })
-      .catch(() => null);
+      await this.redis
+        .set(cacheKey, JSON.stringify(result), { ex: NEWS_CACHE_TTL })
+        .catch(() => null);
+    }
+
+    if (page !== undefined && limit !== undefined) {
+      const startIndex = (page - 1) * limit;
+      const endIndex = startIndex + limit;
+      const paginatedData = result.slice(startIndex, endIndex);
+      return {
+        data: paginatedData,
+        hasMore: endIndex < result.length,
+      };
+    }
 
     return result;
   }
@@ -77,6 +103,13 @@ export class NewsService {
       },
     };
 
-    return this.newsEntity.create(createInput);
+    const created = await this.newsEntity.create(createInput);
+
+    // Invalidate caches
+    for (const lang of languages) {
+      await this.redis.del(`cache:news:${lang}`).catch(() => null);
+    }
+
+    return created;
   }
 }
