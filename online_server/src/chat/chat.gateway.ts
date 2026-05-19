@@ -222,6 +222,8 @@ export class ChatGateway
     }
   }
 
+  private readonly lastCatchEvent = new Map<string, number>();
+
   @UseGuards(WsAuthGuard)
   @UsePipes(new ZodValidationPipe())
   @SubscribeMessage('chat:catch_event')
@@ -234,6 +236,15 @@ export class ChatGateway
       client.emit('chat:error', { message: 'Not authenticated in chat' });
       return;
     }
+
+    const now = Date.now();
+    const lastTime = this.lastCatchEvent.get(meta.user.id) || 0;
+
+    if (now - lastTime < 5000) {
+      this.logger.warn(`User ${meta.user.username} spammed catch events`);
+      return;
+    }
+    this.lastCatchEvent.set(meta.user.id, now);
 
     const catchMessage = this.chatService.createCatchEvent(meta.user, payload);
     this.server.to(payload.lakeId).emit('chat:event', catchMessage);
