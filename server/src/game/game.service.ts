@@ -20,18 +20,6 @@ export class GameService {
     const profile = await this.gameEntity.findProfile(userId);
     if (!profile) throw new BadRequestException('Profile not found');
 
-    const duplicate = await this.gameEntity.findDuplicateCatch(
-      profile.id,
-      body,
-    );
-    if (duplicate) {
-      const fullProfile = await this.gameEntity.findFullProfile(
-        profile.id,
-        lang,
-      );
-      return mapPlayerProfile(fullProfile);
-    }
-
     const multiplier = FISH_SPECIES_MULTIPLIERS[body.speciesId] || 1.0;
     const weightXp = Math.ceil(
       (body.weight || 0) * EXPERIENCE.baseXpPerKg * multiplier,

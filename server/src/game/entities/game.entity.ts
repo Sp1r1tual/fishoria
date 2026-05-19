@@ -39,16 +39,12 @@ export class GameEntity {
     });
   }
 
-  async findDuplicateCatch(profileId: string, body: CatchDto) {
+  async findRecentCatch(profileId: string) {
     const fiveSecondsAgo = new Date(Date.now() - 5000);
 
     return this.prisma.fishCatch.findFirst({
       where: {
         profileId,
-        speciesId: body.speciesId,
-        weight: body.weight,
-        length: body.length,
-        lakeId: body.lakeId,
         caughtAt: { gte: fiveSecondsAgo },
       },
     });
@@ -62,6 +58,15 @@ export class GameEntity {
   ) {
     await this.prisma.$transaction(async (tx) => {
       await tx.$executeRaw`SELECT 1 FROM player_profiles WHERE id = ${profile.id} FOR UPDATE`;
+
+      const fiveSecondsAgo = new Date(Date.now() - 5000);
+      const recent = await tx.fishCatch.findFirst({
+        where: { profileId: profile.id, caughtAt: { gte: fiveSecondsAgo } },
+      });
+
+      if (recent) {
+        return;
+      }
 
       await tx.fishCatch.create({
         data: {
