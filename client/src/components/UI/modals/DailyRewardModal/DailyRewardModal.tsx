@@ -74,7 +74,7 @@ export function DailyRewardModal() {
   const getLocalResetTimeStr = () => {
     try {
       const d = new Date();
-      d.setUTCHours(24, 0, 0, 0);
+      d.setHours(24, 0, 0, 0);
       const hours = String(d.getHours()).padStart(2, '0');
       const minutes = String(d.getMinutes()).padStart(2, '0');
       return `${hours}:${minutes}`;
