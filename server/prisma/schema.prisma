@@ -46,6 +46,7 @@ model PasswordResetToken {
   createdAt DateTime @default(now())
 
   @@index([userId])
+  @@index([expiresAt])
   @@map("password_reset_tokens")
 }
 
@@ -61,6 +62,7 @@ model RefreshToken {
   createdAt DateTime  @default(now())
 
   @@index([userId])
+  @@index([expiresAt])
   @@map("refresh_tokens")
 }
 
@@ -70,7 +72,7 @@ model UserBan {
   user       User      @relation("BannedUser", fields: [userId], references: [id], onDelete: Cascade)
   reason     String
   bannedById String
-  bannedBy   User      @relation("BannedByModerator", fields: [bannedById], references: [id], onDelete: Cascade)
+  bannedBy   User      @relation("BannedByModerator", fields: [bannedById], references: [id])
   expiresAt  DateTime?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -119,8 +121,7 @@ model GearItem {
   createdAt DateTime      @default(now())
 
   @@index([profileId])
-  @@index([itemType])
-  @@index([itemId])
+  @@index([profileId, itemType])
   @@map("gear_items")
 }
 
@@ -133,6 +134,7 @@ model ConsumableItem {
   quantity  Int           @default(0)
 
   @@unique([profileId, itemId])
+  @@index([profileId])
   @@map("consumable_items")
 }
 
@@ -149,10 +151,9 @@ model FishCatch {
   baitUsed    String
   method      String        @default("FLOAT")
   isReleased  Boolean       @default(false)
+  caughtAt    DateTime      @default(now())
 
-  caughtAt DateTime @default(now())
-
-  @@index([profileId])
+  @@index([profileId, caughtAt])
   @@index([lakeId])
   @@index([speciesId])
   @@index([caughtAt])
@@ -170,6 +171,7 @@ model LakeStatistic {
   minWeights     Json          @default("{}")
   speciesCounts  Json          @default("{}")
   speciesWeights Json          @default("{}")
+  updatedAt      DateTime      @updatedAt
 
   @@unique([profileId, lakeId])
   @@map("lake_statistics")
