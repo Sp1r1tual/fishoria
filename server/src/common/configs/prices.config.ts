@@ -4,68 +4,68 @@
  */
 
 const ITEM_PRICES: Record<string, number> = {
-  // Rods (Float - 8 Items)
+  // ─── Float Rods ───────────────────────────────────────────────────
   rod_starter: 0,
-  rod_basic: 650,
+  rod_basic: 500,
   rod_amateur: 1500,
-  rod_pro: 3500,
-  rod_advanced: 8000,
-  rod_titanium: 15000,
-  rod_nanotube: 26000,
-  rod_kraken: 48000,
+  rod_pro: 4000,
+  rod_advanced: 9000,
+  rod_titanium: 17000,
+  rod_nanotube: 30000,
+  rod_kraken: 52000,
 
-  // Rods (Spinning - 8 Items)
+  // ─── Spinning Rods ───────────────────────────────────────────────
   rod_spinning_basic: 0,
-  rod_spinning_amateur: 750,
+  rod_spinning_amateur: 600,
   rod_spinning_classic: 1800,
-  rod_spinning_pro: 4200,
-  rod_spinning_advanced: 9000,
-  rod_spinning_ultra: 18000,
-  rod_spinning_ocean: 30000,
-  rod_spinning_leviathan: 50000,
+  rod_spinning_pro: 4500,
+  rod_spinning_advanced: 10000,
+  rod_spinning_ultra: 20000,
+  rod_spinning_ocean: 34000,
+  rod_spinning_leviathan: 55000,
 
-  // Reels (8 Items)
+  // ─── Reels ───────────────────────────────────────────────────────
   reel_handmade: 0,
-  reel_basic: 550,
-  reel_amateur: 1400,
-  reel_multi: 3200,
-  reel_advanced: 7500,
+  reel_basic: 400,
+  reel_amateur: 1200,
+  reel_multi: 3000,
+  reel_advanced: 7000,
   reel_electric: 16000,
-  reel_marine: 26000,
-  reel_poseidon: 48000,
+  reel_marine: 28000,
+  reel_poseidon: 52000,
 
-  // Lines (8 Items)
+  // ─── Lines ──────────────────────────────
   line_thread: 0,
-  line_mono: 180,
-  line_fluorocarbon_basic: 600,
-  line_fluoro: 1200,
-  line_braid_light: 2500,
-  line_braid: 4500,
-  line_tungsten: 7000,
-  line_nanofiber: 12000,
+  line_mono: 150,
+  line_fluorocarbon_basic: 500,
+  line_fluoro: 1000,
+  line_braid_light: 2000,
+  line_braid: 4000,
+  line_tungsten: 6500,
+  line_nanofiber: 11000,
 
-  // Hooks (float)
+  // ─── Hooks float ──────────────────────────────
   hook_rusted: 0,
-  hook_iron: 80,
-  hook_steel: 400,
-  hook_barbed: 1800,
-  hook_tungsten: 2800,
-  hook_kraken: 5000,
+  hook_iron: 60,
+  hook_steel: 200,
+  hook_barbed: 650,
+  hook_tungsten: 2000,
+  hook_kraken: 4500,
 
-  // Hooks (feeder)
-  hook_feeder_basic: 150,
-  hook_feeder_pro: 1400,
+  // ─── Hooks feeder ────────────────────────────────────────────────
+  hook_feeder_basic: 120,
+  hook_feeder_pro: 1200,
   hook_feeder_heavy: 2200,
   hook_feeder_titan: 4500,
 
-  // Lures (spinning)
-  lure_vibrotail: 120,
-  lure_spoon: 350,
-  lure_wobbler: 1600,
+  // ─── Lures spinning ─────────────────────────
+  lure_vibrotail: 100,
+  lure_spoon: 300,
+  lure_wobbler: 1500,
   lure_spoon_heavy: 2500,
-  lure_wobbler_titan: 4800,
+  lure_wobbler_titan: 5000,
 
-  // Baits
+  // ─── Baits ───────────────────────────
   worm: 2,
   maggot: 2,
   bread: 1,
@@ -73,14 +73,14 @@ const ITEM_PRICES: Record<string, number> = {
   dough: 2,
   live_bait: 15,
 
-  // Groundbaits
+  // ─── Groundbaits ─────────────────────────────────────────────────────────
   vanillin: 30,
   peas: 65,
   dried_blood: 100,
 
-  // Gadgets
+  // ─── Gadgets ─────────────────────────────────────────────────────────────
   echo_sounder: 5000,
-  repair_kit: 800,
+  repair_kit: 600,
 };
 
 /** Fish base sell price multiplier: total = weight * FISH_SELL_MULTIPLIER * speciesMultiplier */
