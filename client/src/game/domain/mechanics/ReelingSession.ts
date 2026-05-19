@@ -159,6 +159,7 @@ export function updateReelingPhase(
       params.getDepthAt,
       params.waterBoundaryY * H,
       params.canvasWidth,
+      params.isPositionAllowed,
     );
     hookedFish.combatTimer = 0;
   } else {

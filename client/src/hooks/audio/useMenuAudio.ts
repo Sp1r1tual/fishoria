@@ -14,9 +14,9 @@ import {
 // Music playlist – tracks rotate after each one finishes
 // ---------------------------------------------------------------------------
 const MUSIC_URLS = [
-  'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/sounds/ui/main_theme_1.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL3NvdW5kcy91aS9tYWluX3RoZW1lXzEubXAzIiwiaWF0IjoxNzc1ODU4NTQyLCJleHAiOjQ4OTc5MjI1NDJ9.4tO1WzKsLCqgTiQbVwZOKzyLjNIq4ETa1l18rca89Co',
-  'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/sounds/ui/main_theme_2.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL3NvdW5kcy91aS9tYWluX3RoZW1lXzIubXAzIiwiaWF0IjoxNzc1ODU3NDQ0LCJleHAiOjQ4OTc5MjE0NDR9.x3vBk9_neLPBfJflTYV992DyNQi08snn4A0FDXQY9fY',
-  'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/sign/Game/sounds/ui/main_theme_3.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zYWEzNmIwMC1mZDM5LTRjNzYtOGY4NC1jOTk0NWE1OGJjYjYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJHYW1lL3NvdW5kcy91aS9tYWluX3RoZW1lXzMubXAzIiwiaWF0IjoxNzc1ODU4MTc5LCJleHAiOjQ4OTc5MjIxNzl9.iP_8KHf9ImXdX4eachOgDvErWGcF9R4oFjgCtUMZTg4',
+  'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/public/Game/sounds/ui/main_theme_1.mp3',
+  'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/public/Game/sounds/ui/main_theme_2.mp3',
+  'https://ysmdydtvfgtffymgillf.supabase.co/storage/v1/object/public/Game/sounds/ui/main_theme_3.mp3',
 ];
 
 const musicTracks = MUSIC_URLS.map((url) => {

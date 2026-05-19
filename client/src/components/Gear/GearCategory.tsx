@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 
 import type { IGearItemBase } from '@/common/types';
 
 import { GearItem } from './GearItem';
+import { SlidingTextTabs } from '../UI/SlidingTextTabs/SlidingTextTabs';
 
 interface IGearCategoryProps {
   title: string;
@@ -17,6 +19,7 @@ interface IGearCategoryProps {
   t: TFunction;
   isUnavailable?: boolean;
   unavailableMessage?: string;
+  isSpinningActive?: boolean;
 }
 
 export function GearCategory({
@@ -31,8 +34,35 @@ export function GearCategory({
   t,
   isUnavailable,
   unavailableMessage,
+  isSpinningActive,
 }: IGearCategoryProps) {
   const { t: translate } = useTranslation();
+  const [rodFilter, setRodFilter] = useState<'all' | 'float' | 'spinning'>(
+    'all',
+  );
+  const [hookFilter, setHookFilter] = useState<'all' | 'float' | 'feeder'>(
+    'all',
+  );
+
+  const isRodsSection =
+    title === translate('shop.tabs.rods') ||
+    items.some((i) => i.itemType === 'rod');
+
+  const isHooksSection =
+    title === translate('shop.tabs.hooks') ||
+    items.some((i) => i.itemType === 'hook');
+
+  const filteredItems =
+    isRodsSection && rodFilter !== 'all'
+      ? items.filter(
+          (item) =>
+            (item as { rodCategory?: string }).rodCategory === rodFilter,
+        )
+      : isHooksSection && hookFilter !== 'all'
+        ? items.filter(
+            (item) => (item as { rigType?: string }).rigType === hookFilter,
+          )
+        : items;
 
   const getItemName = (item: IGearItemBase) => {
     let key = `gear_items.${item.id}.name`;
@@ -66,14 +96,44 @@ export function GearCategory({
 
   return (
     <div className={styles['gear__section']}>
-      <h3 className={styles['gear__section-title']}>{title}</h3>
+      <div className={styles['gear__section-header']}>
+        <h3 className={styles['gear__section-title']}>{title}</h3>
+        {isRodsSection && (
+          <SlidingTextTabs
+            activeTab={rodFilter}
+            onChange={(val) =>
+              setRodFilter(val as 'all' | 'float' | 'spinning')
+            }
+            tabs={
+              [
+                { id: 'all', label: t('gear.categories.all') },
+                { id: 'float', label: t('gear.categories.float') },
+                { id: 'spinning', label: t('gear.categories.spinning') },
+              ] as const
+            }
+          />
+        )}
+        {isHooksSection && !isSpinningActive && (
+          <SlidingTextTabs
+            activeTab={hookFilter}
+            onChange={(val) => setHookFilter(val as 'all' | 'float' | 'feeder')}
+            tabs={
+              [
+                { id: 'all', label: t('gear.categories.all') },
+                { id: 'float', label: t('gear.categories.float_hook') },
+                { id: 'feeder', label: t('gear.categories.feeder') },
+              ] as const
+            }
+          />
+        )}
+      </div>
       {isUnavailable ? (
         <div className={styles['gear__empty']}>{unavailableMessage}</div>
-      ) : items.length === 0 ? (
+      ) : filteredItems.length === 0 ? (
         <div className={styles['gear__empty']}>{t('inventory.empty')}</div>
       ) : (
         <div className={styles['gear__grid']}>
-          {items.map((item, idx) => {
+          {filteredItems.map((item, idx) => {
             const isBaitOrGroundbait =
               title === translate('hud.bait') ||
               title === translate('hud.groundbait');

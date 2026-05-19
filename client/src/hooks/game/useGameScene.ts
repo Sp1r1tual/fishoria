@@ -198,9 +198,52 @@ export function useGameScene({ currentLakeId }: UseGameSceneOptions) {
             const res = result as CatchResultType & {
               rodDamage?: number;
               reelDamage?: number;
+              tackleStrengthExceeded?: boolean;
             };
             res.rodDamage = rodDamageRef.current;
             res.reelDamage = reelDamageRef.current;
+
+            const p = playerRef.current;
+            if (p && res.type === 'fish') {
+              const rodInst = p.gearItems.find(
+                (g: IOwnedGearItem) => g.uid === p.equippedRodUid,
+              );
+              const reelInst = p.gearItems.find(
+                (g: IOwnedGearItem) => g.uid === p.equippedReelUid,
+              );
+              const lineInst = p.gearItems.find(
+                (g: IOwnedGearItem) => g.uid === p.equippedLineUid,
+              );
+              const hookInst = p.gearItems.find(
+                (g: IOwnedGearItem) => g.uid === p.equippedHookUid,
+              );
+
+              const rodCfg = rodInst
+                ? SHOP_RODS.find((r) => r.id === rodInst.itemId)
+                : null;
+              const reelCfg = reelInst
+                ? SHOP_REELS.find((r) => r.id === reelInst.itemId)
+                : null;
+              const lineCfg = lineInst
+                ? SHOP_LINES.find((l) => l.id === lineInst.itemId)
+                : null;
+              const hookCfg = hookInst
+                ? SHOP_HOOKS.find((h) => h.id === hookInst.itemId)
+                : null;
+
+              const rodMax = rodCfg?.maxWeight ?? Infinity;
+              const reelMax = reelCfg?.maxWeight ?? Infinity;
+              const lineMax = lineCfg?.maxWeight ?? Infinity;
+              const hookMax = hookCfg?.maxWeight ?? Infinity;
+
+              const tackleMaxWeight = Math.min(
+                rodMax,
+                reelMax,
+                lineMax,
+                hookMax,
+              );
+              res.tackleStrengthExceeded = res.weight > tackleMaxWeight;
+            }
 
             dispatch(setCatch(result));
           },

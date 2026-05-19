@@ -113,7 +113,7 @@ export class BubbleEffect {
       }
 
       const currentSize = b.size * b.perspectiveScale * scale;
-      const finalAlpha = b.alpha * 0.5;
+      const finalAlpha = b.alpha * 0.25;
 
       this.gfx.ellipse(b.x, b.y, currentSize, currentSize * 0.35);
       this.gfx.stroke({

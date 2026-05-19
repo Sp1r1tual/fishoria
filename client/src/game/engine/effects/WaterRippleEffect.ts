@@ -67,7 +67,7 @@ export class WaterRippleEffect {
       r.radius = 0;
       r.speed = (35 + intensity * 20) * finalScale;
       r.maxRadius = (10 + intensity * 20) * finalScale;
-      r.alpha = Math.min(1.0, 0.4 + intensity * 0.25);
+      r.alpha = Math.min(1.0, 0.2 + intensity * 0.15);
       r.perspectiveY = perspectiveY;
       r.lineWidth = 1.5 * finalScale;
       r.active = true;
@@ -111,7 +111,7 @@ export class WaterRippleEffect {
       this.gfx.ellipse(r.x, r.y, rx, ry);
       this.gfx.stroke({
         color: 0xffffff,
-        alpha: currentAlpha * 0.7,
+        alpha: currentAlpha * 0.35,
         width: r.lineWidth * (1 - progress * 0.5),
       });
     }

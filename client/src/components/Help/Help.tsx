@@ -33,7 +33,7 @@ export function Help() {
     >
       <GlassPanel className={styles['help__guide-banner']}>
         <h2 className={styles['help__guide-title']}>
-          {t('help.learnMoreFish', 'Дізнатись більше про риби:')}
+          {t('help.learnMoreFish', 'Дізнатись більше про риб:')}
         </h2>
         <WoodyButton
           variant="brown"

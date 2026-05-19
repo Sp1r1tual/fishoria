@@ -3,7 +3,7 @@ import { useGear } from '@/hooks/game/useGear';
 
 import { ScreenContainer } from '../UI/ScreenContainer/ScreenContainer';
 import { ConfirmChoiceModal } from '../UI/modals/ConfirmChoiceModal/ConfirmChoiceModal';
-import { UniversalModal } from '../UI/modals/UniversalModal/UniversalModal';
+import { Modal } from '../UI/modals/Modal/Modal';
 import { ScreenHeader } from '../UI/ScreenHeader/ScreenHeader';
 import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
 import { GlassPanel } from '../UI/GlassPanel/GlassPanel';
@@ -177,6 +177,7 @@ export function Gear({ onClose }: { onClose?: () => void }) {
             }
             styles={styles}
             t={t}
+            isSpinningActive={isSpinningRod}
           />
         )}
         {(activeTab === 'all' || activeTab === 'gadgets') && (
@@ -244,30 +245,24 @@ export function Gear({ onClose }: { onClose?: () => void }) {
         />
       )}
 
-      <UniversalModal
+      <Modal
         isOpen={isInfoOpen}
-        title={t('gear.title')}
         onClose={() => setIsInfoOpen(false)}
-        actions={
+        title={t('gear.title')}
+        showCloseButton
+        closeButtonVariant="wooden"
+        maxWidth="500px"
+      >
+        <p className={styles['gear__info-text']}>{guideText}</p>
+        <div className={styles['gear__info-footer']}>
           <WoodyButton
             variant="brown"
             size="md"
             onClick={() => setIsInfoOpen(false)}
             label={t('nav.back')}
           />
-        }
-      >
-        <p
-          style={{
-            lineHeight: 1.5,
-            textAlign: 'left',
-            margin: 0,
-            whiteSpace: 'pre-line',
-          }}
-        >
-          {guideText}
-        </p>
-      </UniversalModal>
+        </div>
+      </Modal>
     </>
   );
 

@@ -895,7 +895,12 @@ export class LakeScene implements IScene {
 
     let maxInterest = 0;
 
-    if (isCast && this.phase === 'waiting' && this.timeSinceCast > 1.2) {
+    const isSpinning = this.hookConfig?.rigType === 'spinning';
+    if (
+      isCast &&
+      this.phase === 'waiting' &&
+      (isSpinning || this.timeSinceCast > 1.2)
+    ) {
       maxInterest = this.updateWaitingPhase(W, H, deltaTime);
     } else if (this.phase === 'bite' && this.hookedFish) {
       this.updateBitePhase();
@@ -904,8 +909,7 @@ export class LakeScene implements IScene {
     }
 
     this.totalTime += deltaTime;
-    // Wrap totalTime to prevent float precision loss in Math.sin/cos calls
-    // Use a large period that's a multiple of common frequencies used in animations
+
     if (this.totalTime > 6283.185) this.totalTime -= 6283.185;
 
     this.groundbaitEffect.update(deltaTime);
@@ -969,8 +973,8 @@ export class LakeScene implements IScene {
         const spawnY = pos.y * H;
 
         const perspectiveScale =
-          0.55 +
-          0.3 * Math.max(0, Math.min(1, (spawnY - waterY) / waterHeight));
+          0.25 +
+          0.5 * Math.max(0, Math.min(1, (spawnY - waterY) / waterHeight));
 
         this.bubbleEffect.spawn(
           spawnX,
@@ -1161,6 +1165,8 @@ export class LakeScene implements IScene {
         retrieveSpeedMult:
           INTEREST_RATES.spinning.speedMultipliers[this.currentRetrieveSpeed],
         depthSystem: this.depthSystem,
+        isPositionAllowed: (x, y) =>
+          !!this.sectorSystem.getSectorAt(x / W, y / H),
       });
 
       this.hookY = lureState.hookY;

@@ -85,6 +85,13 @@ export interface IPlayerAchievement {
   createdAt: string;
 }
 
+export interface IDailyReward {
+  day: number;
+  money?: number;
+  consumables?: { itemType: string; itemId: string; quantity: number }[];
+  gearItems?: { itemType: string; itemId: string; quantity?: number }[];
+}
+
 export interface IPlayerProfile {
   id: string;
   user: IUser;
@@ -104,5 +111,6 @@ export interface IPlayerProfile {
   lakeStats: ILakeStatMetadata[];
   playerQuests: IPlayerQuest[];
   playerAchievements: IPlayerAchievement[];
+  dailyReward?: IDailyReward;
   createdAt: string;
 }

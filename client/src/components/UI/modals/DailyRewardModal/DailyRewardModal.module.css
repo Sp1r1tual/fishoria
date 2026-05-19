@@ -1,0 +1,177 @@
+.rewardContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+}
+
+.resetCaption {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.calendarGrid {
+  display: flex;
+  justify-content: flex-start;
+  gap: 6px;
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 6px 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  cursor: grab;
+  user-select: none;
+}
+
+.calendarGrid:active {
+  cursor: grabbing;
+}
+
+@media (pointer: fine) {
+  .calendarGrid {
+    scrollbar-width: none;
+  }
+  .calendarGrid::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .calendarGrid {
+    scrollbar-width: thin;
+  }
+  .calendarGrid::-webkit-scrollbar {
+    height: 4px;
+    display: block;
+  }
+  .calendarGrid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+  }
+  .calendarGrid::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+  }
+}
+
+.calendarCell {
+  flex: 1 0 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.calendarCellTitle {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.calendarCellIcon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  margin-bottom: 4px;
+}
+
+.iconStack {
+  position: relative;
+  width: 36px;
+  height: 28px;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.stackedIcon {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6));
+  transition: all 0.2s ease;
+}
+
+.stackedIcon:nth-child(1) {
+  transform: translateX(-8px) translateY(3px) rotate(-15deg);
+  z-index: 1;
+}
+
+.stackedIcon:nth-child(2) {
+  transform: translateX(8px) translateY(3px) rotate(15deg);
+  z-index: 2;
+}
+
+.stackedIcon:nth-child(3) {
+  transform: translateY(-4px) scale(1.1);
+  z-index: 3;
+}
+
+.calendarCellQty {
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: #ffd700;
+}
+
+.claimedCell {
+  background: rgba(74, 222, 128, 0.08);
+  border-color: rgba(74, 222, 128, 0.2);
+  opacity: 0.7;
+}
+
+.claimedCell .calendarCellTitle {
+  color: rgba(74, 222, 128, 0.8);
+}
+
+.claimedBadge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 15px;
+  height: 15px;
+  background: #4ade80;
+  color: #000;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: bold;
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.6);
+}
+
+.activeCell {
+  background: rgba(255, 215, 0, 0.12);
+  border: 1px solid #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.25);
+  transform: scale(1.04);
+}
+
+.activeCell .calendarCellTitle {
+  color: #ffd700;
+}
+
+.activeCell .calendarCellQty {
+  color: #fff;
+}
+
+.lockedCell {
+  opacity: 0.4;
+}

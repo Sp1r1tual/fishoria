@@ -74,25 +74,27 @@ export function WoodySelect({
       <div
         className={`${styles['woody-select__dropdown']} ${isOpen ? styles['woody-select__dropdown--visible'] : ''}`}
       >
-        {options.map((option) => (
-          <div
-            key={option.value}
-            className={`${styles['woody-select__option']} ${
-              option.value === value
-                ? styles['woody-select__option--selected']
-                : ''
-            }`}
-            onClick={() => {
-              onChange(option.value);
-              setIsOpen(false);
-            }}
-          >
-            {option.label}
-            {option.value === value && (
-              <span className={styles['woody-select__check']}>✓</span>
-            )}
-          </div>
-        ))}
+        <div className={styles['woody-select__dropdown-inner']}>
+          {options.map((option) => (
+            <div
+              key={option.value}
+              className={`${styles['woody-select__option']} ${
+                option.value === value
+                  ? styles['woody-select__option--selected']
+                  : ''
+              }`}
+              onClick={() => {
+                onChange(option.value);
+                setIsOpen(false);
+              }}
+            >
+              {option.label}
+              {option.value === value && (
+                <span className={styles['woody-select__check']}>✓</span>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

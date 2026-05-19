@@ -18,6 +18,7 @@ interface ISpinningLureUpdateParams {
   hookConfig: IHookConfig;
   retrieveSpeedMult: number;
   depthSystem: DepthSystem;
+  isPositionAllowed?: (x: number, y: number) => boolean;
 }
 
 export function updateSpinningLure(
@@ -46,7 +47,11 @@ export function updateSpinningLure(
   const normX = hookX / W;
   const waterY = H * waterBoundaryY;
   const normY = Math.max(0, Math.min(1, (hookY - waterY) / (H - waterY)));
-  const groundDepthM = depthSystem.getDepthAt(normX, normY);
+
+  const posAllowed = params.isPositionAllowed
+    ? params.isPositionAllowed(hookX, hookY)
+    : true;
+  const groundDepthM = posAllowed ? depthSystem.getDepthAt(normX, normY) : 0;
 
   if (playerReeling) {
     const pullSpeed =
@@ -56,13 +61,18 @@ export function updateSpinningLure(
       (H / 800);
 
     const shoreBoundary = H * SPINNING_LURE.shoreBoundaryFraction;
+    const nextY = hookY + pullSpeed;
 
-    if (hookY < shoreBoundary) {
-      hookY += pullSpeed;
+    const nextAllowed = params.isPositionAllowed
+      ? params.isPositionAllowed(hookX, nextY)
+      : true;
+
+    if (!nextAllowed || hookY >= shoreBoundary) {
+      reachedShore = true;
+    } else {
+      hookY = nextY;
       castX = hookX;
       castY = hookY;
-    } else {
-      reachedShore = true;
     }
 
     if (lureType === 'wobbler') {

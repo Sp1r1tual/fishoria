@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { TFunction } from 'i18next';
 
 import type {
@@ -8,6 +9,7 @@ import type {
 
 import { ItemIcon } from '../UI/ItemIcon/ItemIcon';
 import { WoodyButton } from '../UI/buttons/WoodyButton/WoodyButton';
+import { SlidingTextTabs } from '../UI/SlidingTextTabs/SlidingTextTabs';
 
 import coinIcon from '@/assets/ui/coin.webp';
 
@@ -34,11 +36,63 @@ export function GearSection({
   styles,
   t,
 }: IGearSectionProps) {
+  const [rodFilter, setRodFilter] = useState<'all' | 'float' | 'spinning'>(
+    'all',
+  );
+  const [hookFilter, setHookFilter] = useState<
+    'all' | 'float' | 'feeder' | 'spinning'
+  >('all');
+
+  const filteredItems =
+    type === 'rod' && rodFilter !== 'all'
+      ? items.filter(
+          (item) =>
+            (item as { rodCategory?: string }).rodCategory === rodFilter,
+        )
+      : type === 'hook' && hookFilter !== 'all'
+        ? items.filter(
+            (item) => (item as { rigType?: string }).rigType === hookFilter,
+          )
+        : items;
+
   return (
     <div className={styles['shop__section']}>
-      <div className={styles['shop__section-title']}>{title}</div>
+      <div className={styles['shop__section-header']}>
+        <div className={styles['shop__section-title']}>{title}</div>
+        {type === 'rod' && (
+          <SlidingTextTabs
+            activeTab={rodFilter}
+            onChange={(val) =>
+              setRodFilter(val as 'all' | 'float' | 'spinning')
+            }
+            tabs={
+              [
+                { id: 'all', label: t('gear.categories.all') },
+                { id: 'float', label: t('gear.categories.float') },
+                { id: 'spinning', label: t('gear.categories.spinning') },
+              ] as const
+            }
+          />
+        )}
+        {type === 'hook' && (
+          <SlidingTextTabs
+            activeTab={hookFilter}
+            onChange={(val) =>
+              setHookFilter(val as 'all' | 'float' | 'feeder' | 'spinning')
+            }
+            tabs={
+              [
+                { id: 'all', label: t('gear.categories.all') },
+                { id: 'float', label: t('gear.categories.float_hook') },
+                { id: 'feeder', label: t('gear.categories.feeder') },
+                { id: 'spinning', label: t('gear.categories.spinning_hook') },
+              ] as const
+            }
+          />
+        )}
+      </div>
       <div className={styles['shop__grid']}>
-        {items.map((item) => {
+        {filteredItems.map((item) => {
           const ownedCount = ownedCountFn(type, item.id);
           const isOwned =
             type === 'gadget' && isUniqueGadget(item.id) && ownedCount > 0;

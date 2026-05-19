@@ -110,3 +110,13 @@ export const useUpdateProfileMutation = () => {
     },
   });
 };
+
+export const useClaimDailyReward = () => {
+  const queryClient = useQueryClient();
+
+  return () => {
+    queryClient.setQueryData<IPlayerProfile>(PLAYER_KEYS.profile(), (old) =>
+      old ? { ...old, dailyReward: undefined } : undefined,
+    );
+  };
+};

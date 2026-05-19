@@ -43,6 +43,7 @@ export interface IFishCatch {
   lakeName: string;
   rodDamage?: number;
   reelDamage?: number;
+  tackleStrengthExceeded?: boolean;
 }
 
 export interface ITrashCatch {

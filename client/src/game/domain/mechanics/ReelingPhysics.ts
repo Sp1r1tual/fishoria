@@ -12,6 +12,7 @@ export function pullFishToShore(
   getDepthAt: (nx: number, ny: number) => number,
   horizonY: number,
   canvasWidth: number,
+  isPositionAllowed?: (x: number, y: number) => boolean,
 ): void {
   const dtSec = deltaTime;
   const fishWeight =
@@ -42,8 +43,29 @@ export function pullFishToShore(
   const dist = Math.sqrt(dx * dx + dy * dy);
 
   if (dist > 1 * scale) {
-    fish.position.x += (dx / dist) * pullSpeed;
-    fish.position.y += (dy / dist) * pullSpeed;
+    const moveX = (dx / dist) * pullSpeed;
+    const moveY = (dy / dist) * pullSpeed;
+    const nextX = fish.position.x + moveX;
+    const nextY = fish.position.y + moveY;
+
+    if (isPositionAllowed) {
+      if (isPositionAllowed(nextX, nextY)) {
+        fish.position.x = nextX;
+        fish.position.y = nextY;
+      } else {
+        const slideSpeed = pullSpeed * 1.5;
+        const slideRightX = fish.position.x + slideSpeed;
+        if (isPositionAllowed(slideRightX, nextY)) {
+          fish.position.x = slideRightX;
+          fish.position.y = nextY;
+        } else if (isPositionAllowed(slideRightX, fish.position.y)) {
+          fish.position.x = slideRightX;
+        }
+      }
+    } else {
+      fish.position.x = nextX;
+      fish.position.y = nextY;
+    }
 
     const waterHeight = Math.max(1, targetY - horizonY);
     const nx = Math.max(

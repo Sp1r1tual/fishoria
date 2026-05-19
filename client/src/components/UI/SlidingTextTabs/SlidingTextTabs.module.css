@@ -1,0 +1,69 @@
+.tabs-container {
+  --tabs-gap: 6px;
+  --tab-width: 72px;
+  --underline-width: 30px;
+
+  display: flex;
+  gap: var(--tabs-gap);
+  align-items: center;
+  position: relative;
+  padding-bottom: 2px;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  width: var(--tab-width);
+  padding: 4px 0;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  transition: color 0.25s ease;
+  outline: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tab-button:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.tab-button.active {
+  color: #fbbf24;
+}
+
+.underline-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: calc(var(--active-index, 0) * (var(--tab-width) + var(--tabs-gap)));
+  width: var(--tab-width);
+  height: 2px;
+  transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+}
+
+.underline-line {
+  width: var(--underline-width);
+  height: 100%;
+  background-color: #fbbf24;
+}
+
+@media (max-width: 480px) {
+  .tabs-container {
+    --tabs-gap: 4px;
+    --tab-width: 55px;
+    --underline-width: 20px;
+  }
+
+  .tab-button {
+    font-size: 0.65rem;
+    padding: 3px 0;
+  }
+}

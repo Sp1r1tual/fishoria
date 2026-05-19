@@ -102,7 +102,8 @@
     "favoredBaits": "Favored Baits",
     "favoredMix": "Favored Groundbait",
     "any": "Any",
-    "habitats": "Habitats"
+    "habitats": "Habitats",
+    "noPreference": "None"
   },
   "quests": {
     "title": "Active Quests",
@@ -404,6 +405,14 @@
   },
   "gear": {
     "title": "My Equipment",
+    "categories": {
+      "all": "All",
+      "float": "Casting",
+      "spinning": "Spinning",
+      "feeder": "Feeder",
+      "float_hook": "Float",
+      "spinning_hook": "Spinning"
+    },
     "rod": "Rod",
     "reel": "Reel",
     "line": "Line",
@@ -545,6 +554,78 @@
     "weatherfish": {
       "name": "Weatherfish",
       "description": "Can predict weather changes. Becomes very active before a storm."
+    },
+    "pond_turtle": {
+      "name": "Pond Turtle",
+      "description": "A released pet turtle that has fully adapted to the city lake. Extremely shy, moves slowly, but puts up a tough, heavy struggle once hooked."
+    },
+    "rotan": {
+      "name": "Rotan",
+      "description": "An incredibly hardy and aggressive predator capable of surviving in any urban mud puddle. Bites ravenously and has no fear."
+    },
+    "chub": {
+      "name": "Chub",
+      "description": "An omnivorous, strong fish that loves to stay under overhanging trees. Very cautious but fights fiercely."
+    },
+    "brown_trout": {
+      "name": "Brown Trout",
+      "description": "The queen of wild, cold mountain streams. An incredibly cautious, swift fish with bright red spots. A true trophy for spin fishing enthusiasts."
+    },
+    "grayling": {
+      "name": "Grayling",
+      "description": "A beautiful fish with a massive, sail-like dorsal fin. Inhabits the fastest river currents and feeds on surface insects."
+    },
+    "barbel": {
+      "name": "Barbel",
+      "description": "A powerful bottom-dwelling resident of river rapids. Features distinct barbels and outstanding strength when hooked in strong currents."
+    },
+    "danube_salmon": {
+      "name": "Danube Salmon",
+      "description": "A legendary, endangered giant of mountain rivers. The largest and strongest predator of cold, rapid waters."
+    },
+    "spiny_dogfish": {
+      "name": "Spiny Dogfish",
+      "description": "A powerful, swift predator of deep waters, requiring reliable gear and endurance."
+    },
+    "turbot": {
+      "name": "Turbot",
+      "description": "A large flatfish that camouflages on the sandy seabed. A rare and extremely valuable trophy for bottom fishing."
+    },
+    "red_mullet": {
+      "name": "Red Mullet",
+      "description": "Small but extremely popular due to its excellent taste and distinctive barbels used to search for food."
+    },
+    "garfish": {
+      "name": "Garfish",
+      "description": "A silvery sea arrow with a long, thin beak. Hunts in schools near the very surface, swiftly attacking shiny lures."
+    },
+    "goby": {
+      "name": "Goby",
+      "description": "An extremely common bottom dweller that bites instantly on almost any bait."
+    },
+    "annular_seabream": {
+      "name": "Annular Seabream",
+      "description": "A beautiful golden-silver fish of coastal reefs with a prominent black spot near its tail. Very energetic and cunning."
+    },
+    "horse_mackerel": {
+      "name": "Horse Mackerel",
+      "description": "Extremely active and caught in huge numbers."
+    },
+    "mullet": {
+      "name": "Mullet",
+      "description": "A strong, swift, schooling silver fish that migrates along sandy shores and puts up a remarkable struggle when hooked."
+    },
+    "beluga": {
+      "name": "Beluga",
+      "description": "A legendary relic sturgeon, capable of reaching colossal sizes. Catching one is the pinnacle of angling mastery."
+    },
+    "bonito": {
+      "name": "Bonito",
+      "description": "A swift predator of the mackerel family, closely related to tuna. Possesses outstanding pulling power and lightning-fast speeds."
+    },
+    "hake": {
+      "name": "Hake",
+      "description": "A formidable predatory sea fish of the cod family. Inhabits deep waters during the day and migrates closer to shore and upper layers at night to hunt."
     }
   },
   "baits": {
@@ -615,6 +696,18 @@
     "pasture_canal": {
       "name": "Pasture Canal",
       "description": "A long irrigation canal passing through lush green pastures. Steady current and steep grassy banks."
+    },
+    "city_lake": {
+      "name": "City Lake",
+      "description": "A scenic urban lake located in the heart of a bustling city park. Home to various fish species accustomed to the city noise."
+    },
+    "mountain_river": {
+      "name": "Mountain River",
+      "description": "A crystal clear, fast-flowing mountain river. Its deep pools hidden behind massive boulders are home to cautious and energetic fish."
+    },
+    "black_sea": {
+      "name": "Black Sea",
+      "description": "A vast saltwater expanse. Extremely deep water, powerful waves, and a home to unique and strong marine giants."
     }
   },
   "gear_items": {
@@ -623,16 +716,32 @@
       "description": "Strong but very basic bamboo rod."
     },
     "rod_basic": {
-      "name": "Glass Fiber",
+      "name": "Fiberglass Rod",
       "description": "Decent rod with some flexibility."
     },
+    "rod_amateur": {
+      "name": "Composite Tele-Rod",
+      "description": "Sturdy composite build with great action."
+    },
     "rod_pro": {
-      "name": "Carbon Rod",
+      "name": "Carbon Match Rod",
       "description": "Light, strong, professional level."
+    },
+    "rod_advanced": {
+      "name": "Kevlar Match Rod",
+      "description": "Kevlar-reinforced layers for intense battles."
     },
     "rod_titanium": {
       "name": "Titanium Beast",
       "description": "Unbreakable rod for true monsters."
+    },
+    "rod_nanotube": {
+      "name": "High-Modulus Carbon",
+      "description": "State-of-the-art weave, handles the heaviest freshwater giants."
+    },
+    "rod_kraken": {
+      "name": "Heavy Duty Tele-Rod",
+      "description": "Legendary, heavy-duty deep-sea rod designed to lift krakens."
     },
     "hook_rusted": {
       "name": "Rusted Hook",
@@ -658,21 +767,45 @@
       "name": "Professional Feeder",
       "description": "Long-range mixture cage with extra sharp hook."
     },
+    "hook_feeder_heavy": {
+      "name": "Heavy Bottom Rig 100g",
+      "description": "Reinforced cage and hook for deep sea bottom feeders."
+    },
+    "hook_feeder_titan": {
+      "name": "Trophy Bottom Rig 150g",
+      "description": "Industrial-grade heavy bottom rig for 100kg freshwater giants."
+    },
     "line_thread": {
       "name": "Cotton Thread",
       "description": "Breaks just by looking at it."
     },
     "line_mono": {
-      "name": "Mono Line 5lb",
+      "name": "Mono Line 15lb",
       "description": "Average cheap fishing line."
     },
+    "line_fluorocarbon_basic": {
+      "name": "Fluorocarbon 25lb",
+      "description": "Nearly invisible, great for medium lakes."
+    },
     "line_fluoro": {
-      "name": "Fluorocarbon 12lb",
-      "description": "Nearly invisible in water."
+      "name": "Fluorocarbon 35lb",
+      "description": "Highly resilient and nearly invisible underwater."
+    },
+    "line_braid_light": {
+      "name": "Braided Line PE #3.0",
+      "description": "Excellent sensitivity and great strength."
     },
     "line_braid": {
-      "name": "Braid Cord 30lb",
+      "name": "Braid Cord 65lb",
       "description": "Incredibly strong but visible."
+    },
+    "line_tungsten": {
+      "name": "Heavy Braided PE #6.0",
+      "description": "Heavy tungsten-infused braided line. Ultra thin but incredibly tough."
+    },
+    "line_nanofiber": {
+      "name": "Professional Braid PE #8.0",
+      "description": "Next-generation synthetic fiber. Completely unbreakable and crystal clear."
     },
     "reel_handmade": {
       "name": "Wooden Coil",
@@ -682,25 +815,61 @@
       "name": "Spinning Reel",
       "description": "Does the job for small fish."
     },
+    "reel_amateur": {
+      "name": "Rear-Drag Spinner",
+      "description": "Reliable mechanical drag with bronze gears."
+    },
     "reel_multi": {
-      "name": "Multiplicator",
+      "name": "Multiplier Reel",
       "description": "Fast retrieval, smooth friction."
+    },
+    "reel_advanced": {
+      "name": "Front-Drag Power Reel",
+      "description": "Extremely durable drag built to halt powerful runs."
     },
     "reel_electric": {
       "name": "Electric Winch",
       "description": "Power like a crane."
     },
+    "reel_marine": {
+      "name": "Saltwater Heavy Reel",
+      "description": "Saltwater protected, massive torque, highly optimized for large prey."
+    },
+    "reel_poseidon": {
+      "name": "Big Game Multiplier",
+      "description": "A motorized masterpiece capable of reeling in a shark with ease."
+    },
     "rod_spinning_basic": {
-      "name": "Starter Spinning",
+      "name": "Basic Spinning",
       "description": "Lightweight rod designed for active lure work."
+    },
+    "rod_spinning_amateur": {
+      "name": "Light Spinning",
+      "description": "Fast-action blank perfect for soft baits."
+    },
+    "rod_spinning_classic": {
+      "name": "Medium-Light Spin",
+      "description": "Versatile spinning rod with excellent sensitivity."
     },
     "rod_spinning_pro": {
       "name": "Graphite Master",
       "description": "Great balance between sensitivity and strength."
     },
+    "rod_spinning_advanced": {
+      "name": "Medium-Heavy spinning",
+      "description": "Ultra-tough glass fiber blend for strong strikes."
+    },
     "rod_spinning_ultra": {
-      "name": "Nano-Carbon Spin",
+      "name": "Nano-Carbon spinning",
       "description": "The peak of spinning technology."
+    },
+    "rod_spinning_ocean": {
+      "name": "Heavy Casting spinning",
+      "description": "Extremely rigid backbone for fighting large marine predators."
+    },
+    "rod_spinning_leviathan": {
+      "name": "Trophy Saltwater spinning",
+      "description": "The ultimate spinning weapon. Capable of landing sea leviathans."
     },
     "lure_vibrotail": {
       "name": "Vibrotail 7cm",
@@ -713,6 +882,22 @@
     "lure_wobbler": {
       "name": "Minnow Wobbler",
       "description": "Injured fish imitation for mid-depths."
+    },
+    "lure_spoon_heavy": {
+      "name": "Heavy Casting Spoon 45g",
+      "description": "Huge reflective metal lure designed for active pelagic predators."
+    },
+    "lure_wobbler_titan": {
+      "name": "Deep Diver Wobbler 150F",
+      "description": "Extra-large wobbler with hydrodynamic dive lips for 100kg leviathans."
+    },
+    "hook_tungsten": {
+      "name": "Forged Steel Hook 4/0",
+      "description": "Virtually indestructible hook with high penetration power."
+    },
+    "hook_kraken": {
+      "name": "Forged Sea Hook 8/0",
+      "description": "Massive, forged titanium hook for the ocean's strongest beasts."
     },
     "echo_sounder": {
       "name": "Echo Sounder",
@@ -1038,5 +1223,13 @@
       "description": "Please check your internet connection. The game is paused."
     },
     "restored": "Connection restored"
+  },
+  "dailyReward": {
+    "title": "Daily Bonus",
+    "day": "Day {{day}}",
+    "dayShort": "D {{day}}",
+    "coins": "Coins",
+    "claim": "Claim",
+    "resetCaption": "* New reward available after {{time}} local time"
   }
 }

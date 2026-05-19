@@ -215,7 +215,11 @@
 
 .settings__logout-container {
   display: flex;
-  justify-content: center;
+  width: 100%;
+}
+
+.settings__logout-container > * {
+  width: 100%;
 }
 
 .settings__network-row {

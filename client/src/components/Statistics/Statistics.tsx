@@ -14,6 +14,9 @@ import { LAKES } from '@/common/configs/game';
 import forestLakeDay from '@/assets/locations/01_forest_lake_day.webp';
 import canalDay from '@/assets/locations/02_pasture_canal_day.webp';
 import reservoirDay from '@/assets/locations/03_reservoir_day.webp';
+import cityLakeDay from '@/assets/locations/04_city_lake_day.webp';
+import mountainRiverDay from '@/assets/locations/05_mountain_river_day.webp';
+import blackSeaDay from '@/assets/locations/06_black_sea_day.webp';
 
 import statisticsIcon from '@/assets/ui/statistics.webp';
 
@@ -23,6 +26,9 @@ const LAKE_PREVIEWS: Record<string, string> = {
   forest_lake: forestLakeDay,
   pasture_canal: canalDay,
   fish_farm: reservoirDay,
+  city_lake: cityLakeDay,
+  mountain_river: mountainRiverDay,
+  black_sea: blackSeaDay,
 };
 
 export function Statistics() {

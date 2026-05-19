@@ -59,6 +59,7 @@ export function CatchPopup({ result, sceneRef }: ICatchPopupProps) {
         isReleased: false,
         rodDamage: fish.rodDamage || 0,
         reelDamage: fish.reelDamage || 0,
+        tackleStrengthExceeded: fish.tackleStrengthExceeded || false,
       });
     }
   };
@@ -87,6 +88,7 @@ export function CatchPopup({ result, sceneRef }: ICatchPopupProps) {
         isReleased: true,
         rodDamage: fish.rodDamage || 0,
         reelDamage: fish.reelDamage || 0,
+        tackleStrengthExceeded: fish.tackleStrengthExceeded || false,
       });
     } else if (result.type === 'trash') {
       const trash = result as ITrashCatch;

@@ -172,14 +172,14 @@ export const useBottomInfoAnimation = ({
       const fishOp = Math.min(1, fish.opacity * 3);
       const facingLeft = Math.abs(fish.angle) > Math.PI / 2;
 
-      const A = fishSize * 1.35;
-      const B = fishSize * 0.75;
+      const A = fishSize * 1.6;
+      const B = fishSize * 1.4;
       const cosT = Math.cos(fish.angle);
       const sinT = Math.sin(fish.angle);
       const localYScale = facingLeft ? -1 : 1;
 
-      const localX = -15 * (fishSize / 100);
-      const localY = -15 * (fishSize / 100);
+      const localX = -30 * (fishSize / 100);
+      const localY = 0;
       const rotatedX = localX * cosT - localY * localYScale * sinT;
       const rotatedY = localX * sinT + localY * localYScale * cosT;
       const centerX = fish.x + rotatedX;

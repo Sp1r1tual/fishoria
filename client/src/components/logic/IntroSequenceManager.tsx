@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { CookieConsent } from '../CookieConsent/CookieConsent';
 import { WelcomeModal } from '../UI/WelcomeModal/WelcomeModal';
 import { FullscreenTip } from '../UI/FullscreenTip/FullscreenTip';
+import { DailyRewardModal } from '../UI/modals/DailyRewardModal/DailyRewardModal';
 
 type SequenceStep = 'cookies' | 'welcome' | 'fullscreen' | 'none';
 
@@ -44,7 +45,7 @@ export const IntroSequenceManager = () => {
     });
   };
 
-  if (step === 'none') return null;
+  if (step === 'none') return <DailyRewardModal />;
 
   return (
     <>

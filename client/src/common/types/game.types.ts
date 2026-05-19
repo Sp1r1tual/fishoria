@@ -44,6 +44,7 @@ export interface ICatchFishPayload {
   maxWeight?: number;
   sizeRank?: 'small' | 'good' | 'trophy';
   isReleased?: boolean;
+  tackleStrengthExceeded?: boolean;
 }
 
 export interface IBreakGearPayload {
