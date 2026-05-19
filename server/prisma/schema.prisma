@@ -89,7 +89,7 @@ model PlayerProfile {
   user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   level              Int                 @default(1)
   xp                 Int                 @default(0)
-  money              Int                 @default(100)
+  money              Int                 @default(1000)
   equippedRodUid     String?
   equippedReelUid    String?
   equippedLineUid    String?

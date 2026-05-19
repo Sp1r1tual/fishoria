@@ -1,4 +1,4 @@
-export const STARTER_MONEY = 100;
+export const STARTER_MONEY = 1000;
 export const STARTER_LEVEL = 1;
 export const STARTER_XP = 0;
 export const DEFAULT_AVATAR = 'profile_01.webp';
