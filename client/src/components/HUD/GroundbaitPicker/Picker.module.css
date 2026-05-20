@@ -83,7 +83,7 @@
   gap: 8px;
 }
 
-.picker__step--bait {
+.picker__step--gb {
   justify-content: flex-start;
   font-size: 0.8rem;
   white-space: nowrap;
@@ -133,7 +133,7 @@
     font-size: 0.8rem;
     gap: 6px;
   }
-  .picker__step--bait {
+  .picker__step--gb {
     font-size: 0.75rem;
   }
   .picker__icon-img {

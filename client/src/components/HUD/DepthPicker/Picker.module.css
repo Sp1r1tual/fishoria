@@ -98,7 +98,7 @@
   padding: 8px 6px;
   text-align: center;
   color: rgba(255, 255, 255, 0.6);
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.1s;
@@ -155,7 +155,7 @@
   }
   .picker__step {
     padding: 6px 4px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     gap: 6px;
   }
   .picker__step--bait {

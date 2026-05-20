@@ -48,7 +48,6 @@
   gap: 10px;
   overflow-x: auto;
   overflow-y: hidden;
-  padding-bottom: 4px;
   flex-wrap: nowrap;
   -webkit-overflow-scrolling: touch;
 }
@@ -72,6 +71,7 @@
   margin: 0;
   padding: 0;
   line-height: 1;
+  overflow: visible;
 }
 
 .with_fade {
