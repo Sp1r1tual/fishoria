@@ -10,14 +10,6 @@
   width: 100%;
 }
 
-.resetCaption {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.4);
-  text-align: center;
-  margin-top: 4px;
-  font-style: italic;
-}
-
 .calendarGrid {
   display: flex;
   justify-content: flex-start;

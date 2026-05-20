@@ -1,7 +1,19 @@
+.wrapper {
+  position: sticky;
+  bottom: 30px;
+  height: 50px;
+  margin-top: -70px;
+  margin-bottom: 20px;
+  width: 100%;
+  pointer-events: none;
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+}
+
 .scrollToTop {
-  position: fixed;
-  bottom: max(30px, calc(var(--footer-offset, 0px) + 30px));
-  right: 30px;
+  position: relative;
+  margin-right: 30px;
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -14,7 +26,6 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 1000;
   opacity: 0;
   visibility: hidden;
   transform: translateY(20px) scale(0.8);
@@ -25,6 +36,7 @@
     background 0.3s ease,
     box-shadow 0.3s ease;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
 }
 
 .visible {
@@ -57,9 +69,15 @@
 }
 
 @media (max-width: 768px) {
+  .wrapper {
+    bottom: 75px;
+    height: 44px;
+    margin-top: -64px;
+    margin-bottom: 20px;
+  }
+
   .scrollToTop {
-    bottom: max(75px, calc(var(--footer-offset, 0px) + 20px));
-    right: 20px;
+    margin-right: 20px;
     width: 44px;
     height: 44px;
   }

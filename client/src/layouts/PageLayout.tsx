@@ -14,9 +14,11 @@ export function PageLayout({ children }: IPageLayoutProps) {
   return (
     <div className={styles.layout}>
       <div className={styles.scrollArea}>
-        <Suspense fallback={<GlobalPreloader delay={0} />}>
-          {children ?? <Outlet />}
-        </Suspense>
+        <div className={styles.mainContent}>
+          <Suspense fallback={<GlobalPreloader delay={0} />}>
+            {children ?? <Outlet />}
+          </Suspense>
+        </div>
 
         <Footer />
       </div>

@@ -42,7 +42,7 @@ export function GameScreen() {
       <Modal
         isOpen={screen === 'gear'}
         onClose={() => dispatch(navigateTo('game'))}
-        maxWidth="800px"
+        maxWidth="1100px"
         disableScroll
       >
         <Gear onClose={() => dispatch(navigateTo('game'))} />

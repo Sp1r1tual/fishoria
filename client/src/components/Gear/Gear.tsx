@@ -254,14 +254,6 @@ export function Gear({ onClose }: { onClose?: () => void }) {
         maxWidth="500px"
       >
         <p className={styles['gear__info-text']}>{guideText}</p>
-        <div className={styles['gear__info-footer']}>
-          <WoodyButton
-            variant="brown"
-            size="md"
-            onClick={() => setIsInfoOpen(false)}
-            label={t('nav.back')}
-          />
-        </div>
       </Modal>
     </>
   );

@@ -37,7 +37,12 @@ export function Modal({
     >
       <div
         className={styles.modal}
-        style={{ width: width || '100%', maxWidth: maxWidth || '500px' }}
+        style={
+          {
+            width: width || '100%',
+            '--modal-max-width': maxWidth || '500px',
+          } as React.CSSProperties
+        }
       >
         {(title || showCloseButton) && (
           <div className={styles.header}>

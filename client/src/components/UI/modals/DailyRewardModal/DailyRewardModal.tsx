@@ -71,20 +71,6 @@ export function DailyRewardModal() {
     return SHOP_HOOKS.find((h) => h.id === itemId)?.icon;
   };
 
-  const getLocalResetTimeStr = () => {
-    try {
-      const d = new Date();
-      d.setHours(24, 0, 0, 0);
-      const hours = String(d.getHours()).padStart(2, '0');
-      const minutes = String(d.getMinutes()).padStart(2, '0');
-      return `${hours}:${minutes}`;
-    } catch {
-      return '00:00';
-    }
-  };
-
-  const localTimeStr = getLocalResetTimeStr();
-
   const getDayPreview = (dayConfig: (typeof DAILY_REWARDS)[0]) => {
     if (dayConfig.money) {
       return {
@@ -179,13 +165,6 @@ export function DailyRewardModal() {
                   {isClaimed && <span className={styles.claimedBadge}>✓</span>}
                 </div>
               );
-            })}
-          </div>
-
-          <div className={styles.resetCaption}>
-            {t('dailyReward.resetCaption', {
-              time: localTimeStr,
-              defaultValue: `* Нова нагорода доступна після ${localTimeStr} за вашим часом`,
             })}
           </div>
         </div>
